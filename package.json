@@ -1,0 +1,29 @@
+{
+  "name": "sofit-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "workspaces": [
+    "user-front",
+    "admin-front"
+  ],
+  "scripts": {
+    "dev:user": "npm run dev --workspace=user-front",
+    "dev:admin": "npm run dev --workspace=admin-front",
+    "build:user": "npm run build --workspace=user-front",
+    "build:admin": "npm run build --workspace=admin-front",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "@tanstack/react-query": "^5.100.10",
+    "axios": "^1.16.0",
+    "react-router-dom": "^7.15.0",
+    "tailwindcss": "^4.3.0",
+    "zustand": "^5.0.13"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  }
+}
