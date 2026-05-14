@@ -10,7 +10,7 @@
  *   2. 다음 버튼 → PIN 입력 화면 전환
  *   3. PIN 6자리 입력 완료 → onSubmit 호출
  */
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { PinInput } from "./PinInput";
 import { BottomButton } from "@/components/common/BottomButton";
 
@@ -47,10 +47,16 @@ export function CustomerVerifyPage({
   const [rrnBack, setRrnBack] = useState("");   // 뒷자리 첫째 1자리
   const [phone, setPhone] = useState("");
 
+  const rrnBackRef = useRef<HTMLInputElement>(null);
+
   /** 생년월일 입력 (숫자만, 최대 6자리) */
   const handleRrnFrontChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
     setRrnFront(digits);
+
+    if (digits.length === 6) {
+        rrnBackRef.current?.focus();
+    }
   };
 
   /** 뒷자리 첫째 입력 (숫자만, 최대 1자리) */
@@ -90,23 +96,11 @@ export function CustomerVerifyPage({
 
   if (step === "PIN") {
     return (
-      <div className="flex flex-col h-full">
-        <div className="flex flex-col items-center pt-16 px-5">
-          <h1 className="text-xl font-bold text-text-primary mb-2 text-center">
-            PIN 인증
-          </h1>
-          <p className="text-sm text-text-secondary mb-8 text-center">
-            금융인증서 PIN 6자리를 입력해 주세요
-          </p>
-        </div>
-        <div className="flex-1 flex flex-col justify-end px-5 pb-10">
-          <PinInput
-            onSubmit={handlePinSubmit}
-            isLoading={isLoading}
-            errorMessage={errorMessage}
-          />
-        </div>
-      </div>
+      <PinInput
+        onSubmit={handlePinSubmit}
+        isLoading={isLoading}
+        errorMessage={errorMessage}
+      />
     );
   }
 
@@ -147,26 +141,27 @@ export function CustomerVerifyPage({
               주민등록번호
             </label>
             <div className="flex items-center gap-2">
-              <input
-                type="text"
-                inputMode="numeric"
-                value={rrnFront}
-                onChange={handleRrnFrontChange}
-                placeholder="생년월일"
-                maxLength={6}
-                className="h-12 rounded-lg border border-border-default bg-white text-base text-text-primary text-center placeholder:text-text-disabled focus:outline-none focus:border-border-focus transition-colors"
-              />
-              <span className="text-text-disabled text-lg">—</span>
-              <input
-                type="text"
-                inputMode="numeric"
-                value={rrnBack}
-                onChange={handleRrnBackChange}
-                placeholder="●"
-                maxLength={1}
-                className="w-10 h-12 rounded-lg border border-border-default bg-white text-base text-text-primary text-center placeholder:text-text-disabled focus:outline-none focus:border-border-focus transition-colors"
-              />
-              <span className="text-text-disabled">● ● ● ● ● ●</span>
+                <input
+                    type="text"
+                    inputMode="numeric"
+                    value={rrnFront}
+                    onChange={handleRrnFrontChange}
+                    placeholder="생년월일"
+                    maxLength={6}
+                    className="w-40 h-12 px-4 rounded-lg border border-border-default bg-white text-base text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-border-focus transition-colors"
+                />
+                <span className="text-text-disabled text-lg">—</span>
+                <input
+                    ref={rrnBackRef}
+                    type="text"
+                    inputMode="numeric"
+                    value={rrnBack}
+                    onChange={handleRrnBackChange}
+                    placeholder="●"
+                    maxLength={1}
+                    className="w-10 h-12 rounded-lg border border-border-default bg-white text-base text-text-primary text-center placeholder:text-text-disabled focus:outline-none focus:border-border-focus transition-colors"
+                />
+                <span className="text-text-disabled">● ● ● ● ● ●</span>
             </div>
           </div>
 
