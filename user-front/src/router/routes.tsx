@@ -15,6 +15,7 @@ import HomePage from "@/pages/home/HomePage";
 import LoanListPage from "@/pages/loan/LoanListPage";
 import LoanDetailPage from "@/pages/loan/LoanDetailPage";
 import LoanApplyPage from "@/pages/loan/LoanApplyPage";
+import LoanPreApplyPage from "@/pages/loan/LoanPreApplyPage";
 import LoanReviewPage from "@/pages/loan/LoanReviewPage";
 import LoanResultPage from "@/pages/loan/LoanResultPage";
 import LoanAgreementPage from "@/pages/loan/LoanAgreementPage";
@@ -61,6 +62,9 @@ export const router = createBrowserRouter([
     children: [
       // 대출 신청 — /loan/apply 내부에서 step 기반 흐름
       { path: "/loan/apply", element: <LoanApplyPage /> },
+
+      // 대출 사전 입력
+      { path: "/loan/pre-apply/:productId", element: <LoanPreApplyPage /> },
 
       // 대출 상품
       { path: "/loan", element: <LoanListPage /> },

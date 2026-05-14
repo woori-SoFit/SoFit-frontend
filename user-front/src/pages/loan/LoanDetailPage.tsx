@@ -121,7 +121,7 @@ export default function LoanDetailPage() {
       {/* 대출 신청 버튼 */}
       <BottomButton
         label="대출 신청"
-        onClick={() => navigate("/loan/apply", { state: { productId: product.id } })}
+        onClick={() => navigate(`/loan/pre-apply/${product.id}`)}
       />
     </div>
   );
