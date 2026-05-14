@@ -20,7 +20,9 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { useLoanApplyStore } from "@/stores/loanApplyStore";
 import { TermsPage } from "@/components/terms/TermsPage";
 import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
+import { BizInfoConfirm } from "@/components/loan/BizInfoConfirm";
 import { MOCK_LOAN_TERMS } from "@/mocks/loanTerms";
+import { MOCK_BIZ_INFO_ROWS } from "@/mocks/bizInfo";
 
 export default function LoanApplyPage() {
   const currentStep = useLoanApplyStore((s) => s.currentStep);
@@ -61,9 +63,12 @@ export default function LoanApplyPage() {
 
     case "BIZ_CONFIRM":
       return (
-        <div className="flex items-center justify-center h-full px-5">
-          <p className="text-text-secondary text-center">사업자 정보 확인 (다음 커밋에서 구현)</p>
-        </div>
+        <BizInfoConfirm
+          title={<><span className="text-primary">사업자 정보</span>를 불러왔어요</>}
+          description="아래 정보가 맞는지 확인해주세요."
+          rows={MOCK_BIZ_INFO_ROWS}
+          onConfirm={() => nextStep()}
+        />
       );
 
     case "MYDATA_TERMS":
