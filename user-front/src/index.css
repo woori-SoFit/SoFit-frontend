@@ -71,12 +71,12 @@ body {
   /* ── Background ── */
   --color-bg-base: #fafaf8;
   --color-bg-surface: #ffffff;
-  --color-bg-muted: #f1f5f9;
+  --color-bg-muted: #eee;
 
   /* ── Text ── */
   --color-text-primary: #0f172a;
   --color-text-secondary: #475569;
-  --color-text-disabled: #94a3b8;
+  --color-text-disabled: #64748b;
   --color-text-inverse: #ffffff;
 
   /* ── Border ── */
