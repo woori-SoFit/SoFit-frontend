@@ -10,6 +10,7 @@
  */
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 
 import iconLoanHistory from "@/assets/icons/menu-loan-history.svg";
 import iconLoanList from "@/assets/icons/menu-loan-list.svg";
@@ -22,7 +23,7 @@ import iconMenuCard from "@/assets/icons/menu-card1.svg";
 const PRODUCT_CARDS = [
   {
     id: 1,
-    bg: "#6366f1",
+    bg: "#294f71",
     tag: "최고 연",
     rate: "6.00%",
     desc: "기본 2.00%, 12개월 기준",
@@ -31,7 +32,7 @@ const PRODUCT_CARDS = [
   },
   {
     id: 2,
-    bg: "#2d9e6b",
+    bg: "#27476e",
     tag: "최저 연",
     rate: "4.50%",
     desc: "우대금리 적용 시",
@@ -40,7 +41,7 @@ const PRODUCT_CARDS = [
   },
   {
     id: 3,
-    bg: "#9b59b6",
+    bg: "#376996",
     tag: "한도",
     rate: "5천만원",
     desc: "S등급 우대 적용",
@@ -72,7 +73,7 @@ const MENU_ITEMS = [
   {
     id: "calculator",
     label: "사전 계산기",
-    to: "/calculator",
+    to: "/calculate",
     icon: iconCalculator,
   },
 ];
@@ -188,17 +189,13 @@ export default function HomePage() {
         </div>
 
         {/* 페이지 인디케이터 */}
-        <div className="flex items-center justify-center gap-3 mt-3 text-sm text-[--color-text-secondary]">
+        <div className="flex items-center justify-center gap-2 mt-3 text-sm text-[--color-text-secondary]">
           <button type="button" aria-label="이전" className="p-1" onClick={handlePrev}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
+            <ChevronLeft size={16} />
           </button>
-          <span className="font-medium">{displayIndex + 1} / {PRODUCT_CARDS.length}</span>
+          <span className="font-medium pt-0.5">{displayIndex + 1} / {PRODUCT_CARDS.length}</span>
           <button type="button" aria-label="다음" className="p-1" onClick={handleNext}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
+            <ChevronRight size={16} />
           </button>
           <button
             type="button"
@@ -206,16 +203,7 @@ export default function HomePage() {
             className="p-1 ml-1"
             onClick={() => setIsPaused((p) => !p)}
           >
-            {isPaused ? (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5 3 19 12 5 21 5 3" />
-              </svg>
-            ) : (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="6" y="4" width="4" height="16" rx="1" />
-                <rect x="14" y="4" width="4" height="16" rx="1" />
-              </svg>
-            )}
+            {isPaused ? <Play size={12} /> : <Pause size={12} />}
           </button>
         </div>
       </section>
@@ -254,19 +242,7 @@ export default function HomePage() {
                   {item.label}
                 </span>
               </div>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-gray-400 flex-none"
-              >
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
+              <ChevronRight size={16} className="text-gray-400 flex-none" />
             </Link>
           ))}
         </div>

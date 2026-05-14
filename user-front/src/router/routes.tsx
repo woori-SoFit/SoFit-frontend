@@ -19,6 +19,7 @@ import LoanReviewPage from "@/pages/loan/LoanReviewPage";
 import LoanResultPage from "@/pages/loan/LoanResultPage";
 import LoanAgreementPage from "@/pages/loan/LoanAgreementPage";
 import LoanExecutionPage from "@/pages/loan/LoanExecutionPage";
+import LoanProgressPage from "@/pages/loan/LoanProgressPage";
 
 // Biz Data
 import BizDataPage from "@/pages/bizData/BizDataPage";
@@ -26,6 +27,9 @@ import BizDataCollectPage from "@/pages/bizData/BizDataCollectPage";
 
 // Grade Report
 import GradeReportPage from "@/pages/grade/GradeReportPage";
+
+// Calculate
+import CalculatePage from "@/pages/calculator/CalculatorPage";
 
 // Mypage
 import MyPage from "@/pages/mypage/MyPage";
@@ -80,6 +84,7 @@ export const router = createBrowserRouter([
       { path: "/loan/:productId", element: <LoanDetailPage /> },
 
       // 심사 이후 — route 기반 분리
+      { path: "/loan-applications", element: <LoanProgressPage />},
       { path: "/loan/review/:applicationId", element: <LoanReviewPage /> },
       { path: "/loan/result/:applicationId", element: <LoanResultPage /> },
       { path: "/loan/execution/:applicationId", element: <LoanExecutionPage /> },
@@ -89,6 +94,9 @@ export const router = createBrowserRouter([
 
       // 성장 S등급 분석 리포트
       { path: "/grade-report", element: <GradeReportPage /> },
+
+      // 사전계산기
+      { path: "/calculate", element: <CalculatePage />},
 
       // 마이페이지
       { path: "/mypage", element: <MyPage /> },
