@@ -1,5 +1,45 @@
 @import "tailwindcss";
 
+/* ── 전체 앱 기반 스타일 ── */
+html,
+body,
+#root {
+  height: 100%;
+  background-color: #fafaf8;
+}
+
+body {
+  font-family: "Pretendard", "Apple SD Gothic Neo", -apple-system,
+    BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 모바일 앱 컨테이너 — 최대 너비 430px, 중앙 정렬, 흰 배경 */
+#root {
+  display: flex;
+  justify-content: center;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100%;
+  background-color: #fafaf8;
+  position: relative;
+  overflow-x: hidden;
+  box-shadow: 0 0 40px rgb(0 0 0 / 0.08);
+}
+
+/* 스크롤바 숨김 유틸 */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 @theme {
   /* ── Brand Colors ── */
   --color-primary: #0067ac;
@@ -29,7 +69,7 @@
   --color-gray-900: #0f172a;
 
   /* ── Background ── */
-  --color-bg-base: #f8fafc;
+  --color-bg-base: #fafaf8;
   --color-bg-surface: #ffffff;
   --color-bg-muted: #f1f5f9;
 
@@ -46,13 +86,13 @@
   /* ── Typography ── */
   --font-sans: "Pretendard", "Apple SD Gothic Neo", sans-serif;
 
-  --font-size-xs: 0.75rem;    /* 12px */
-  --font-size-sm: 0.875rem;   /* 14px */
-  --font-size-base: 1rem;     /* 16px */
-  --font-size-lg: 1.125rem;   /* 18px */
-  --font-size-xl: 1.25rem;    /* 20px */
-  --font-size-2xl: 1.5rem;    /* 24px */
-  --font-size-3xl: 1.875rem;  /* 30px */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.815rem;     /* 13px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
 
   /* ── Spacing ── */
   --spacing-page-x: 1.25rem;  /* 모바일 좌우 여백 20px */

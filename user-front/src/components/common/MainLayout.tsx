@@ -1,22 +1,27 @@
 /**
  * MainLayout — 인증된 사용자용 레이아웃
  *
- * - 하단 네비게이션 바 포함
- * - 세션 미인증 시 /login 리다이렉트
- * - 서버 인증 상태는 React Query (useQuery)로 관리
+ * 구조:
+ *   - 전체: max-w-[430px] 중앙 정렬 앱 컨테이너
+ *   - 상단 헤더 고정 (sticky top-0)
+ *   - 하단 탭바 없음
+ *   - 콘텐츠 영역: 세로 스크롤
  */
 import { Outlet } from "react-router-dom";
+import { AppHeader } from "./AppHeader";
 
 export function MainLayout() {
   // TODO: useQuery로 /api/members/me 조회 → 미인증 시 /login 리다이렉트
-  // TODO: 하단 네비게이션 바 구현
 
   return (
-    <div data-testid="main-layout">
-      <main>
+    <div className="app-container flex flex-col min-h-screen bg-[--color-bg-base]">
+      {/* 상단 헤더 고정 */}
+      <AppHeader />
+
+      {/* 콘텐츠 영역 — 헤더 높이만큼 패딩, 세로 스크롤 */}
+      <main className="flex-1 overflow-y-auto">
         <Outlet />
       </main>
-      {/* TODO: BottomNavBar */}
     </div>
   );
 }
