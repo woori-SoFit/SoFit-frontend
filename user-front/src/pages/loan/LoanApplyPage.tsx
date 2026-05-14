@@ -21,8 +21,10 @@ import { useLoanApplyStore } from "@/stores/loanApplyStore";
 import { TermsPage } from "@/components/terms/TermsPage";
 import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { BizInfoConfirm } from "@/components/loan/BizInfoConfirm";
+import { MydataLoadingStep } from "@/components/loan/MydataLoadingStep";
 import { MOCK_LOAN_TERMS } from "@/mocks/loanTerms";
 import { MOCK_BIZ_INFO_ROWS } from "@/mocks/bizInfo";
+import { MOCK_MYDATA_TERMS } from "@/mocks/mydataTerms";
 
 export default function LoanApplyPage() {
   const currentStep = useLoanApplyStore((s) => s.currentStep);
@@ -73,16 +75,20 @@ export default function LoanApplyPage() {
 
     case "MYDATA_TERMS":
       return (
-        <div className="flex items-center justify-center h-full px-5">
-          <p className="text-text-secondary text-center">마이데이터 약관 동의 (다음 커밋에서 구현)</p>
-        </div>
+        <TermsPage
+          title="마이데이터 정보 동의"
+          description="대출 심사를 위해 마이데이터 정보 활용에 동의해 주세요."
+          terms={MOCK_MYDATA_TERMS}
+          submitLabel="동의하고 계속"
+          onSubmit={() => {
+            nextStep();
+          }}
+        />
       );
 
     case "MYDATA_LOADING":
       return (
-        <div className="flex items-center justify-center h-full px-5">
-          <p className="text-text-secondary text-center">마이데이터 로딩 중... (다음 커밋에서 구현)</p>
-        </div>
+        <MydataLoadingStep onComplete={() => nextStep()} />
       );
 
     case "LOAN_CONDITIONS":
