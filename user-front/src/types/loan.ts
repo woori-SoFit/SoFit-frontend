@@ -13,6 +13,7 @@ export type LoanApplicationStatus =
 export interface LoanProduct {
   id: number;
   name: string;
+  title: string;
   minAmount: number;
   maxAmount: number;
   minRate: number;
