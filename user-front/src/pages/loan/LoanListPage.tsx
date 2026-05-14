@@ -7,49 +7,9 @@
  */
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
-import type { LoanProduct } from "@/types/loan";
 import { useEffect } from "react";
 import { useLayoutStore } from "@/stores/layoutStore";
-
-/** 임시 Mock 데이터 */
-const MOCK_PRODUCTS: LoanProduct[] = [
-  {
-    id: 1,
-    name: "우리 사장님 대출",
-    title: "우리 사장님 곁을 든든하게!",
-    minAmount: 5_000_000,
-    maxAmount: 100_000_000,
-    minRate: 4.5,
-    maxRate: 8.9,
-    minTerm: 12,
-    maxTerm: 60,
-    description: "소상공인 맞춤 신용대출",
-  },
-  {
-    id: 2,
-    name: "성장 사다리 대출",
-    title: "성장하는 사업에 날개를 달아드려요",
-    minAmount: 10_000_000,
-    maxAmount: 200_000_000,
-    minRate: 3.9,
-    maxRate: 7.5,
-    minTerm: 12,
-    maxTerm: 84,
-    description: "성장S등급 우대 대출",
-  },
-  {
-    id: 3,
-    name: "긴급 운영자금 대출",
-    title: "급할 때 빠르게, 운영자금 지원",
-    minAmount: 1_000_000,
-    maxAmount: 50_000_000,
-    minRate: 5.0,
-    maxRate: 9.9,
-    minTerm: 6,
-    maxTerm: 36,
-    description: "빠른 심사 소액 대출",
-  },
-];
+import { MOCK_LOAN_PRODUCTS } from "@/mocks/loanProducts";
 
 /** 금액 포맷 (만원 단위) */
 function formatAmount(amount: number) {
@@ -66,22 +26,22 @@ export default function LoanListPage() {
   //   queryKey: LOAN_KEYS.list(),
   //   queryFn: fetchLoanProducts,
   // });
-  const products = MOCK_PRODUCTS;
+  const products = MOCK_LOAN_PRODUCTS;
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("대출 상품");
   }, []);
 
   return (
-    <div className="px-5 pt-6 pb-8">
+    <div className="px-5 pb-8">
       {/* 상품 카드 목록 */}
-      <ul className="flex flex-col gap-4">
+      <ul className="flex flex-col gap-3">
         {products.map((product) => (
           <li key={product.id}>
             <button
               type="button"
               onClick={() => navigate(`/loan/${product.id}`)}
-              className="w-full text-left p-5 rounded-xl bg-white border border-border-default hover:border-primary transition-colors shadow-card"
+              className="w-full text-left p-5 rounded-xl bg-white border border-border-default hover:border-primary transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1">
