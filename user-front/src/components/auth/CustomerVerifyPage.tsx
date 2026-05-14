@@ -176,7 +176,7 @@ export function CustomerVerifyPage({
               value={phone}
               onChange={handlePhoneChange}
               placeholder="010-0000-0000"
-              className="h-12 px-4 rounded-xl border border-border-default bg-white text-base text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-border-focus transition-colors"
+              className="h-12 px-4 rounded-lg border border-border-default bg-white text-base text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-border-focus transition-colors"
             />
           </div>
         </div>
