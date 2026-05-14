@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    triggers {
+        githubPush()
+    }
 
     environment {
         REGISTRY = '172.21.33.225:5000'
