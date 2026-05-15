@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 // import { useQuery } from "@tanstack/react-query";
 // import axiosInstance from "@/api/axiosInstance";
 // import { AUTH_KEYS } from "@/constants/queryKeys";
-import { Bell, UserCircle } from "lucide-react";
+import { Bell, ChevronRight, UserCircle } from "lucide-react";
 import mainLogo from "@/assets/mainLogo.svg";
 
 // TODO: 백엔드 연결 후 아래 함수 사용
@@ -63,9 +63,9 @@ export function AppHeader() {
             /* 비로그인: 로그인 버튼만 */
             <Link
               to="/login"
-              className="px-3.5 py-1.5 flex items-center rounded-md bg-white border border-border-default text-xs font-medium text-text-primary hover:bg-gray-50 active:bg-gray-100 transition-colors"
+              className="flex items-center text-xs font-medium text-text-primary hover:text-primary"
             >
-              로그인
+              로그인<ChevronRight size={18} className="pb-0.5"/>
             </Link>
           )}
         </div>
