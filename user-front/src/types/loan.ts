@@ -40,6 +40,30 @@ export interface LoanProductListResponse {
   };
 }
 
+/** API 응답 기준 대출 상품 상세 */
+export interface LoanProductDetail {
+  productId: number;
+  productName: string;
+  title: string;
+  subtitle: string;
+  minLimit: number;
+  maxLimit: number;
+  maxTerm: number;
+  industryType: string;
+  interest_rate: {
+    minRate: number;
+    maxRate: number;
+  };
+}
+
+/** 대출 상품 상세 API 응답 구조 */
+export interface LoanProductDetailResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: LoanProductDetail;
+}
+
 export interface LoanApplication {
   id: number;
   productId: number;
