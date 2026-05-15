@@ -28,6 +28,7 @@ export interface LoanProductListItem {
   productId: number;
   productName: string;
   title: string;
+  maxLimit: number;
 }
 
 /** 대출 상품 목록 API 응답 구조 */
@@ -49,7 +50,7 @@ export interface LoanProductDetail {
   minLimit: number;
   maxLimit: number;
   maxTerm: number;
-  industryType: string;
+  targetDescription: string;
   interest_rate: {
     minRate: number;
     maxRate: number;

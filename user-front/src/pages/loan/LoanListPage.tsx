@@ -11,6 +11,13 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProducts } from "@/api/loanApi";
 
+/** 금액 포맷 (만원 단위) */
+function formatAmount(amount: number) {
+  const man = amount / 10_000;
+  if (man >= 10_000) return `${(man / 10_000).toFixed(0)}억`;
+  return `${man.toLocaleString()}만`;
+}
+
 export default function LoanListPage() {
   const navigate = useNavigate();
 
@@ -53,15 +60,19 @@ export default function LoanListPage() {
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   {/* 상품명 */}
-                  <p className="text-sm text-text-secondary mb-1">
+                  <p className="text-sm text-text-secondary mb-2">
                     {product.productName}
                   </p>
                   {/* 소개 문구 */}
                   <h3 className="text-base font-semibold text-text-primary">
                     {product.title}
                   </h3>
+                  
                 </div>
-                <ChevronRight size={20} className="text-gray-400 ml-2 shrink-0" />
+                {/* 한도 정보 */}
+                  <p className="text-base text-text-secondary">
+                    최대 <span className="font-bold text-primary">{formatAmount(product.maxLimit)}원</span>
+                  </p>
               </div>
             </button>
           </li>

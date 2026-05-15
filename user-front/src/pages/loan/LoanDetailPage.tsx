@@ -90,8 +90,8 @@ export default function LoanDetailPage() {
             </div>
             <div>
               <p className="text-xs text-text-secondary mb-0.5">대상</p>
-              <p className="text-base font-semibold text-text-primary">
-                사업기간 1년 이상 {product.industryType}
+              <p className="text-sm font-semibold text-text-primary">
+                {product.targetDescription}
               </p>
             </div>
           </li>
