@@ -58,7 +58,6 @@ export function TermsDetailSheet({
 
   const handleAgree = () => {
     onAgree?.(term);
-    onClose();
   };
 
   return (

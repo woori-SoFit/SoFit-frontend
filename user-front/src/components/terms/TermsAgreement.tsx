@@ -5,6 +5,11 @@
  * - 대출 신청 약관 동의
  * - My Biz Data 약관 동의
  * - 회원가입 약관 동의
+ *
+ * 동작:
+ * - 체크 영역(아이콘+텍스트) 클릭: 동의 토글 (이미 동의 → 취소, 미동의 → 시트 열기)
+ * - 상세보기(>) 버튼: 시트만 열기 (동의 상태 변경 없음)
+ * - 전체 동의: onAllAgree 콜백 호출 (부모에서 시트 순차 표시 처리)
  */
 import type { TermsItem } from "@/types/common";
 import { ChevronRight, Circle, CircleCheckBig } from "lucide-react";
@@ -13,7 +18,10 @@ interface TermsAgreementProps {
   terms: TermsItem[];
   agreedIds: number[];
   onChange: (agreedIds: number[]) => void;
+  /** 개별 약관 상세 보기 (시트 열기만, 동의 상태 변경 없음) */
   onViewDetail: (term: TermsItem) => void;
+  /** 전체 동의 클릭 시 호출 (이미 전체 동의 상태면 전체 해제) */
+  onAllAgree: () => void;
 }
 
 export function TermsAgreement({
@@ -21,31 +29,37 @@ export function TermsAgreement({
   agreedIds,
   onChange,
   onViewDetail,
+  onAllAgree,
 }: TermsAgreementProps) {
   const allChecked = terms.length > 0 && terms.every((t) => agreedIds.includes(t.id));
 
   /** 전체 동의 토글 */
   const handleAllChange = () => {
     if (allChecked) {
+      // 이미 전체 동의 → 전체 해제
       onChange([]);
     } else {
-      onChange(terms.map((t) => t.id));
+      // 미동의 항목 있음 → 부모에서 시트 순차 표시
+      onAllAgree();
     }
   };
 
   /** 개별 약관 토글 */
-  const handleItemChange = (id: number) => {
-    if (agreedIds.includes(id)) {
-      onChange(agreedIds.filter((v) => v !== id));
+  const handleItemChange = (term: TermsItem) => {
+    const isAgreed = agreedIds.includes(term.id);
+    if (isAgreed) {
+      // 동의 상태 → 바로 취소
+      onChange(agreedIds.filter((v) => v !== term.id));
     } else {
-      onChange([...agreedIds, id]);
+      // 미동의 → 시트 열어서 동의 유도
+      onViewDetail(term);
     }
   };
 
   return (
     <div data-testid="terms-agreement" className="flex flex-col gap-3 px-5 py-6 border border-border-default rounded-lg">
       {/* 전체 동의 */}
-      <label
+      <div
         className="flex items-center gap-3 rounded-xl cursor-pointer"
         onClick={handleAllChange}
       >
@@ -53,7 +67,7 @@ export function TermsAgreement({
         <span className="text-base font-semibold text-text-primary">
           전체 동의
         </span>
-      </label>
+      </div>
 
       {/* 구분선 */}
       <div className="h-px bg-border-default" />
@@ -63,19 +77,11 @@ export function TermsAgreement({
         {terms.map((term) => {
           const isAgreed = agreedIds.includes(term.id);
           return (
-            <li key={term.id}>
-              <label
-                className="flex items-center gap-3 py-3 cursor-pointer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (isAgreed) {
-                    // 이미 동의한 항목: 시트 없이 바로 취소
-                    handleItemChange(term.id);
-                  } else {
-                    // 미동의 항목: 약관 열람 후 동의
-                    onViewDetail(term);
-                  }
-                }}
+            <li key={term.id} className="flex items-center gap-3 py-3">
+              {/* 체크 영역 (아이콘 + 텍스트) — 클릭 시 동의 토글 */}
+              <div
+                className="flex items-center gap-3 flex-1 cursor-pointer"
+                onClick={() => handleItemChange(term)}
               >
                 <Checkbox checked={isAgreed} />
                 <span className="flex-1 text-sm text-text-primary">
@@ -84,19 +90,17 @@ export function TermsAgreement({
                   </span>
                   {term.title}
                 </span>
-                {/* 상세 보기 — label 클릭 전파 차단 */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onViewDetail(term);
-                  }}
-                  aria-label={`${term.title} 상세 보기`}
-                  className="flex items-center justify-center w-7 h-7 text-text-disabled hover:text-text-secondary transition-colors"
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </label>
+              </div>
+
+              {/* 상세 보기 — 시트만 열기, 동의 상태 변경 없음 */}
+              <button
+                type="button"
+                onClick={() => onViewDetail(term)}
+                aria-label={`${term.title} 상세 보기`}
+                className="flex items-center justify-center w-7 h-7 text-text-disabled hover:text-text-secondary transition-colors"
+              >
+                <ChevronRight size={16} />
+              </button>
             </li>
           );
         })}
@@ -105,7 +109,7 @@ export function TermsAgreement({
   );
 }
 
-/** 내부 체크박스 컴포넌트 — 클릭은 부모 label이 처리 */
+/** 내부 체크박스 컴포넌트 */
 function Checkbox({ checked }: { checked: boolean }) {
   return (
     <span

@@ -8,7 +8,7 @@
  * - 마이데이터 약관 동의 step (MYDATA_TERMS)
  * - 대출 약정 약관 동의
  */
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { TermsItem } from "@/types/common";
 import { TermsAgreement } from "./TermsAgreement";
 import { TermsDetailSheet } from "./TermsDetailSheet";
@@ -37,6 +37,9 @@ export function TermsPage({
   const [agreedIds, setAgreedIds] = useState<number[]>([]);
   const [detailTerm, setDetailTerm] = useState<TermsItem | null>(null);
 
+  /** 전체 동의 모드: 순차적으로 시트를 보여줄 약관 큐 */
+  const allAgreeQueueRef = useRef<TermsItem[]>([]);
+
   /** 필수 약관을 모두 동의했는지 확인 */
   const requiredTermIds = terms.filter((t) => t.required).map((t) => t.id);
   const allRequiredAgreed = requiredTermIds.every((id) => agreedIds.includes(id));
@@ -44,6 +47,41 @@ export function TermsPage({
   const handleSubmit = () => {
     if (!allRequiredAgreed) return;
     onSubmit(agreedIds);
+  };
+
+  /** 전체 동의 클릭 → 미동의 약관을 순차적으로 시트에 표시 */
+  const handleAllAgree = () => {
+    const unagreed = terms.filter((t) => !agreedIds.includes(t.id));
+    if (unagreed.length === 0) return;
+
+    // 큐에 미동의 약관 저장 후 첫 번째 시트 열기
+    allAgreeQueueRef.current = unagreed.slice(1);
+    setDetailTerm(unagreed[0]);
+  };
+
+  /** 시트에서 동의 클릭 시 */
+  const handleSheetAgree = (term: TermsItem) => {
+    if (!agreedIds.includes(term.id)) {
+      setAgreedIds((prev) => [...prev, term.id]);
+    }
+
+    // 전체 동의 큐에 다음 항목이 있으면 이어서 표시
+    const queue = allAgreeQueueRef.current;
+    if (queue.length > 0) {
+      const next = queue[0];
+      allAgreeQueueRef.current = queue.slice(1);
+      // 약간의 딜레이로 시트 전환 자연스럽게
+      setTimeout(() => setDetailTerm(next), 200);
+    } else {
+      // 큐 비었으면 시트 닫기
+      setDetailTerm(null);
+    }
+  };
+
+  /** 시트 닫기 (전체 동의 큐도 초기화) */
+  const handleSheetClose = () => {
+    setDetailTerm(null);
+    allAgreeQueueRef.current = [];
   };
 
   return (
@@ -68,6 +106,7 @@ export function TermsPage({
           agreedIds={agreedIds}
           onChange={setAgreedIds}
           onViewDetail={setDetailTerm}
+          onAllAgree={handleAllAgree}
         />
       </div>
 
@@ -83,12 +122,8 @@ export function TermsPage({
         term={detailTerm}
         isOpen={detailTerm !== null}
         isAgreed={detailTerm !== null && agreedIds.includes(detailTerm.id)}
-        onClose={() => setDetailTerm(null)}
-        onAgree={(term) => {
-          if (!agreedIds.includes(term.id)) {
-            setAgreedIds((prev) => [...prev, term.id]);
-          }
-        }}
+        onClose={handleSheetClose}
+        onAgree={handleSheetAgree}
       />
     </div>
   );
