@@ -62,7 +62,7 @@ export default function LoanApplyPage() {
       return (
         <CustomerVerifyPage
           description="본인 확인을 위해 정보를 입력해 주세요."
-          onSubmit={() => {
+          onSuccess={() => {
             // PIN 인증 완료 → BIZ_CONFIRM으로 이동
             setStep("BIZ_CONFIRM");
           }}

@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import mydataIcon from "@/assets/icons/mydata.svg";
+import { BottomButton } from "@/components/common/BottomButton";
 
 interface LoadingItem {
   id: string;
@@ -103,7 +104,8 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-full px-5 pt-8 pb-6">
+    <div className="flex flex-col min-h-full">
+      <div className="flex-1 px-5 pt-8 pb-6">
       {/* 상단 안내 */}
       <div className="mb-8">
         <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
@@ -158,21 +160,14 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
         </p>
       </div>
 
-      {/* 하단 버튼 */}
-      <div className="mt-4">
-        <button
-          type="button"
-          disabled={!allDone}
-          onClick={onComplete}
-          className={`w-full h-12 rounded-lg text-base font-semibold transition-colors ${
-            allDone
-              ? "bg-primary text-white cursor-pointer hover:bg-primary-dark active:bg-primary-dark"
-              : "bg-primary text-white opacity-70 cursor-not-allowed"
-          }`}
-        >
-          {allDone ? "다음" : "불러오는 중"}
-        </button>
       </div>
+
+      {/* 하단 버튼 */}
+      <BottomButton
+        label={allDone ? "다음" : "불러오는 중"}
+        onClick={onComplete}
+        disabled={!allDone}
+      />
     </div>
   );
 }
