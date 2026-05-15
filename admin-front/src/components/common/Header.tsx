@@ -15,15 +15,15 @@ export function Header() {
         <span className="text-sm font-medium text-text-secondary">Admin</span>
       </div>
 
-      {/* 우측: 로그아웃 + 사용자 정보 */}
+      {/* 우측: 사용자 정보 + 로그아웃 */}
       <div className="flex items-center gap-3">
+        <span className="text-sm text-text-secondary">admin@email.com</span>
         <button
           type="button"
           className="px-3 py-1.5 text-xs font-medium text-white bg-primary rounded-md hover:bg-primary-dark transition-colors"
         >
           로그아웃
         </button>
-        <span className="text-sm text-text-secondary">admin@email.com</span>
       </div>
     </header>
   );
