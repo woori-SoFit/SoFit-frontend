@@ -62,7 +62,9 @@ export function LoanConditionsStep({
 
   /** 유효성 검사 */
   const numericAmount = Number(amount);
-  const isAmountValid = numericAmount >= minAmount && numericAmount <= maxAmount;
+  const isAmountTooLow = amount.length > 0 && numericAmount < minAmount;
+  const isAmountTooHigh = amount.length > 0 && numericAmount > maxAmount;
+  const isAmountValid = amount.length > 0 && !isAmountTooLow && !isAmountTooHigh;
   const isValid = isAmountValid && term !== null && repayment !== null && purpose !== null;
 
   /** 금액 포맷 (만원 단위) */
@@ -101,13 +103,12 @@ export function LoanConditionsStep({
       <div className="flex-1 px-5 pt-6 pb-4 flex flex-col gap-7">
         {/* 희망 대출금액 */}
         <div>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center mb-2">
             <label className="text-sm font-semibold text-text-primary">희망 대출금액</label>
-            <span className="text-xs text-text-secondary">
-              최대 가능 한도 <span className="font-medium text-text-primary">{formatWon(maxAmount)}</span>
-            </span>
           </div>
-          <div className="flex items-center h-12 px-4 rounded-lg border border-border-default bg-white focus-within:border-border-focus transition-colors">
+          <div className={`flex items-center h-12 px-4 rounded-lg border bg-white focus-within:border-border-focus transition-colors ${
+            isAmountTooLow || isAmountTooHigh ? "border-error" : "border-border-default"
+          }`}>
             <input
               type="text"
               inputMode="numeric"
@@ -118,9 +119,21 @@ export function LoanConditionsStep({
             />
             <span className="text-sm text-text-secondary ml-2">원</span>
           </div>
-          <p className="text-xs text-text-disabled mt-1.5">
-            {formatWon(minAmount)} ~ {formatWon(maxAmount)}
-          </p>
+          {isAmountTooLow && (
+            <p className="text-xs text-error mt-1.5">
+              최소 {formatWon(minAmount)} 이상 입력해주세요.
+            </p>
+          )}
+          {isAmountTooHigh && (
+            <p className="text-xs text-error mt-1.5">
+              최대 가능 한도는 {formatWon(maxAmount)}입니다.
+            </p>
+          )}
+          {!isAmountTooLow && !isAmountTooHigh && (
+            <p className="text-xs text-text-disabled mt-1.5">
+              {formatWon(minAmount)} ~ {formatWon(maxAmount)}
+            </p>
+          )}
         </div>
 
         {/* 대출기간 */}

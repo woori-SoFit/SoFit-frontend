@@ -106,7 +106,7 @@ export function PinInput({ onSubmit, isLoading = false, errorMessage }: PinInput
                   type="button"
                   onClick={() => handlePress(key)}
                   disabled={isLoading}
-                  className="h-14 flex items-center justify-center text-2xl font-medium text-text-primary active:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+                  className="h-14 flex items-center justify-center text-2xl font-medium text-text-primary"
                 >
                   {key}
                 </button>
