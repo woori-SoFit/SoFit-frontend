@@ -60,43 +60,43 @@ admin-front React 프로젝트의 초기 세팅을 구현한다. Vite + React + 
 - [ ] 5. Checkpoint
   - 빌드(`tsc -b && vite build`)가 정상 통과하는지 확인. 문제 발생 시 사용자에게 질문.
 
-- [ ] 6. 공통 컴포넌트 구현
-  - [ ] 6.1 Sidebar 컴포넌트 구현
+- [x] 6. 공통 컴포넌트 구현
+  - [x] 6.1 Sidebar 컴포넌트 구현
     - `src/components/common/Sidebar.tsx` 생성
     - 상단 로고(`@/assets/main-logo.svg`), 4개 메뉴(대출 현황 대시보드, 사용자 관리, API 로그, S등급 배치 관리)
     - NavLink로 라우팅, 활성 메뉴 시각적 구분 (bg-white/10)
     - 진한 남색 배경(bg-sidebar-dark), 고정 너비 240px
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8_
 
-  - [ ] 6.2 AdminLayout 컴포넌트 구현
+  - [x] 6.2 AdminLayout 컴포넌트 구현
     - `src/components/common/AdminLayout.tsx` 생성
     - 좌측 Sidebar 고정 배치, 우측 `<Outlet />` 콘텐츠 영역
     - flex h-screen 레이아웃, 콘텐츠 영역 흰색 배경
     - 반응형 브레이크포인트 없이 데스크톱 전용
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 7. 페이지 구현
-  - [ ] 7.1 라우터 구성
+- [x] 7. 페이지 구현
+  - [x] 7.1 라우터 구성
     - `src/router/routes.tsx`에 createBrowserRouter 정의
     - `/login` → LoginPage (AdminLayout 미적용)
     - `/` → AdminLayout 적용, index → Navigate to /dashboard
     - `/dashboard`, `/users`, `/api-logs`, `/batch` 경로 매핑
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7_
 
-  - [ ] 7.2 LoginPage 구현
+  - [x] 7.2 LoginPage 구현
     - `src/pages/auth/LoginPage.tsx` 생성
     - 독립 전체 화면, 중앙 정렬 로그인 폼
     - 로고, 아이디 입력 필드, 비밀번호 입력 필드, 로그인 버튼
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-  - [ ] 7.3 DashboardPage 구현
+  - [x] 7.3 DashboardPage 구현
     - `src/pages/dashboard/DashboardPage.tsx` 생성
     - 페이지 제목 "대출 현황 대시보드"
     - 테이블 헤더(신청번호, 사업자명, 상품명, 신청금액, 신청일, 상태)
     - 빈 상태 메시지 "조회된 대출 신청 내역이 없습니다."
     - _Requirements: 9.1, 9.2, 9.3, 9.4_
 
-  - [ ] 7.4 Placeholder 페이지 3개 구현
+  - [x] 7.4 Placeholder 페이지 3개 구현
     - `src/pages/placeholder/UsersPage.tsx` — "사용자 관리" 제목 + "준비 중입니다." 메시지
     - `src/pages/placeholder/ApiLogsPage.tsx` — "API 로그" 제목 + "준비 중입니다." 메시지
     - `src/pages/placeholder/BatchPage.tsx` — "S등급 배치 관리" 제목 + "준비 중입니다." 메시지
