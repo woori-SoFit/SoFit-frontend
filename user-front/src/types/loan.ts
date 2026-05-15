@@ -23,6 +23,23 @@ export interface LoanProduct {
   description: string;
 }
 
+/** API 응답 기준 대출 상품 목록 아이템 */
+export interface LoanProductListItem {
+  productId: number;
+  productName: string;
+  title: string;
+}
+
+/** 대출 상품 목록 API 응답 구조 */
+export interface LoanProductListResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    loanProducts: LoanProductListItem[];
+  };
+}
+
 export interface LoanApplication {
   id: number;
   productId: number;
