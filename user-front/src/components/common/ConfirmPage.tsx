@@ -10,7 +10,6 @@
  * 구조: 아이콘 + 타이틀 + 설명 + 정보 테이블(선택) + 하단 버튼
  */
 import type { ReactNode } from "react";
-import { BottomButton } from "./BottomButton";
 import checkIcon from "@/assets/icons/check.svg";
 
 /** 정보 테이블 행 */
@@ -32,6 +31,10 @@ interface ConfirmPageProps {
   buttonLabel?: string;
   /** 하단 버튼 클릭 시 호출 */
   onConfirm: () => void;
+  /** 보조 버튼 레이블 (있으면 메인 버튼 위에 아웃라인 버튼 추가) */
+  secondaryButtonLabel?: string;
+  /** 보조 버튼 클릭 시 호출 */
+  onSecondary?: () => void;
   /** 추가 콘텐츠 (테이블 아래, 버튼 위) */
   children?: ReactNode;
 }
@@ -43,6 +46,8 @@ export function ConfirmPage({
   rows,
   buttonLabel = "확인하기",
   onConfirm,
+  secondaryButtonLabel,
+  onSecondary,
   children,
 }: ConfirmPageProps) {
   return (
@@ -66,7 +71,7 @@ export function ConfirmPage({
 
       {/* 정보 테이블 */}
       {rows && rows.length > 0 && (
-        <div className="mx-5 mb-4 border border-border-default rounded-xl overflow-hidden">
+        <div className="mx-5 mb-4 border border-border-default rounded-lg overflow-hidden">
           <table className="w-full">
             <tbody>
               {rows.map((row, idx) => (
@@ -94,7 +99,24 @@ export function ConfirmPage({
       {!children && <div className="flex-1" />}
 
       {/* 하단 버튼 */}
-      <BottomButton label={buttonLabel} onClick={onConfirm} />
+      <div className="sticky bottom-0 p-5 bg-white flex flex-col gap-3">
+        {secondaryButtonLabel && onSecondary && (
+          <button
+            type="button"
+            onClick={onSecondary}
+            className="w-full h-12 rounded-lg text-base font-semibold border border-primary text-primary bg-white hover:bg-blue-50 active:bg-blue-50 transition-colors cursor-pointer"
+          >
+            {secondaryButtonLabel}
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={onConfirm}
+          className="w-full h-12 rounded-lg text-base font-semibold bg-primary text-white hover:bg-primary-dark active:bg-primary-dark transition-colors cursor-pointer"
+        >
+          {buttonLabel}
+        </button>
+      </div>
     </div>
   );
 }

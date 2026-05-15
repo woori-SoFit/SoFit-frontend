@@ -22,15 +22,21 @@ import { TermsPage } from "@/components/terms/TermsPage";
 import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { BizInfoConfirm } from "@/components/loan/BizInfoConfirm";
 import { MydataLoadingStep } from "@/components/loan/MydataLoadingStep";
+import { LoanConditionsStep } from "@/components/loan/LoanConditionsStep";
+import { LoanApplyResult } from "@/components/loan/LoanApplyResult";
 import { MOCK_LOAN_TERMS } from "@/mocks/loanTerms";
 import { MOCK_BIZ_INFO_ROWS } from "@/mocks/bizInfo";
 import { MOCK_MYDATA_TERMS } from "@/mocks/mydataTerms";
+import { MOCK_LOAN_APPLY_RESULT_ROWS } from "@/mocks/loanApplyResult";
+import { useNavigate } from "react-router-dom";
 
 export default function LoanApplyPage() {
   const currentStep = useLoanApplyStore((s) => s.currentStep);
   const nextStep = useLoanApplyStore((s) => s.nextStep);
   const setStep = useLoanApplyStore((s) => s.setStep);
   const updateFormData = useLoanApplyStore((s) => s.updateFormData);
+  const reset = useLoanApplyStore((s) => s.reset);
+  const navigate = useNavigate();
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("대출 신청");
@@ -93,17 +99,34 @@ export default function LoanApplyPage() {
 
     case "LOAN_CONDITIONS":
       return (
-        <div className="flex items-center justify-center h-full px-5">
-          <p className="text-text-secondary text-center">대출 조건 입력 (다음 커밋에서 구현)</p>
-        </div>
+        <LoanConditionsStep
+          onSubmit={(data) => {
+            updateFormData({
+              desiredAmount: data.desiredAmount,
+              desiredTerm: data.desiredTerm,
+              repaymentMethod: data.repaymentMethod,
+              purpose: data.purpose,
+            });
+            nextStep();
+          }}
+        />
       );
 
-    case "RESULT":
+    case "RESULT": {
       return (
-        <div className="flex items-center justify-center h-full px-5">
-          <p className="text-text-secondary text-center">신청 완료 (다음 커밋에서 구현)</p>
-        </div>
+        <LoanApplyResult
+          rows={MOCK_LOAN_APPLY_RESULT_ROWS}
+          onViewApplications={() => {
+            reset();
+            navigate("/loan-applications");
+          }}
+          onGoHome={() => {
+            reset();
+            navigate("/");
+          }}
+        />
       );
+    }
 
     default:
       return null;

@@ -164,7 +164,7 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
           type="button"
           disabled={!allDone}
           onClick={onComplete}
-          className={`w-full h-12 rounded-xl text-base font-semibold transition-colors ${
+          className={`w-full h-12 rounded-lg text-base font-semibold transition-colors ${
             allDone
               ? "bg-primary text-white cursor-pointer hover:bg-primary-dark active:bg-primary-dark"
               : "bg-primary text-white opacity-70 cursor-not-allowed"

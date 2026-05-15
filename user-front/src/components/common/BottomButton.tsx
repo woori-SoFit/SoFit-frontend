@@ -23,7 +23,7 @@ export function BottomButton({ label, onClick, disabled = false }: BottomButtonP
         type="button"
         onClick={onClick}
         disabled={disabled}
-        className="w-full h-12 rounded-xl text-base font-semibold transition-colors bg-primary text-white hover:bg-primary-dark active:bg-primary-dark cursor-pointer disabled:bg-bg-muted disabled:text-text-disabled disabled:cursor-not-allowed"
+        className="w-full h-12 rounded-lg text-base font-semibold transition-colors bg-primary text-white hover:bg-primary-dark active:bg-primary-dark cursor-pointer disabled:bg-bg-muted disabled:text-text-disabled disabled:cursor-not-allowed"
       >
         {label}
       </button>
