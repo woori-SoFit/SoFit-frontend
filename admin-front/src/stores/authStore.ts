@@ -1,1 +1,13 @@
-// 인증 관련 클라이언트 상태 (Task 4.3에서 구현 예정)
+import { create } from "zustand";
+
+interface AuthState {
+  isLoginModalOpen: boolean;
+  openLoginModal: () => void;
+  closeLoginModal: () => void;
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
+  isLoginModalOpen: false,
+  openLoginModal: () => set({ isLoginModalOpen: true }),
+  closeLoginModal: () => set({ isLoginModalOpen: false }),
+}));

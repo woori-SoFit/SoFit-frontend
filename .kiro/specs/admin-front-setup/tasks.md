@@ -38,21 +38,21 @@ admin-front React 프로젝트의 초기 세팅을 구현한다. Vite + React + 
     - html/body/#root 높이 100% 설정, Pretendard 폰트 패밀리 설정
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
 
-- [ ] 4. API 및 상태 관리 설정
-  - [ ] 4.1 Axios 인스턴스 생성
+- [x] 4. API 및 상태 관리 설정
+  - [x] 4.1 Axios 인스턴스 생성
     - `src/api/axiosInstance.ts` 생성
     - baseURL을 `import.meta.env.VITE_API_BASE_URL`에서 읽기
     - `withCredentials: true`, `Content-Type: application/json` 설정
     - 401 응답 인터셉터에서 `/login`으로 리다이렉트
     - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-  - [ ] 4.2 QueryClient 설정 및 main.tsx 엔트리포인트 구성
+  - [x] 4.2 QueryClient 설정 및 main.tsx 엔트리포인트 구성
     - QueryClient 생성 (staleTime: 300000, retry: 1, refetchOnWindowFocus: false)
     - QueryClientProvider로 앱 감싸기
     - RouterProvider에 router 전달
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-  - [ ] 4.3 Zustand store 및 queryKeys 상수 구현
+  - [x] 4.3 Zustand store 및 queryKeys 상수 구현
     - `src/stores/authStore.ts`에 useAuthStore 구현 (isLoginModalOpen 상태)
     - `src/constants/queryKeys.ts`에 AUTH_KEYS, LOAN_KEYS 상수 정의
     - _Requirements: 12.1, 12.2, 12.3_
