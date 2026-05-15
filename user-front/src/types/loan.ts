@@ -23,6 +23,48 @@ export interface LoanProduct {
   description: string;
 }
 
+/** API 응답 기준 대출 상품 목록 아이템 */
+export interface LoanProductListItem {
+  productId: number;
+  productName: string;
+  title: string;
+  maxLimit: number;
+}
+
+/** 대출 상품 목록 API 응답 구조 */
+export interface LoanProductListResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    loanProducts: LoanProductListItem[];
+  };
+}
+
+/** API 응답 기준 대출 상품 상세 */
+export interface LoanProductDetail {
+  productId: number;
+  productName: string;
+  title: string;
+  subtitle: string;
+  minLimit: number;
+  maxLimit: number;
+  maxTerm: number;
+  targetDescription: string;
+  interest_rate: {
+    minRate: number;
+    maxRate: number;
+  };
+}
+
+/** 대출 상품 상세 API 응답 구조 */
+export interface LoanProductDetailResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: LoanProductDetail;
+}
+
 export interface LoanApplication {
   id: number;
   productId: number;
