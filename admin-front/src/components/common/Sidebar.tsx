@@ -53,7 +53,7 @@ export function Sidebar() {
       {/* 메뉴 그룹 */}
       <nav className="flex-1 px-3">
         {MENU_GROUPS.map((group) => (
-          <div key={group.category} className="mb-4">
+          <div key={group.category} className="mb-6">
             <p className="px-2 mb-1 text-xs font-semibold text-text-disabled uppercase">
               {group.category}
             </p>
