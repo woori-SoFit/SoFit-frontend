@@ -19,8 +19,8 @@ admin-front React 프로젝트의 초기 세팅을 구현한다. Vite + React + 
     - tsconfig.app.json에 `paths` 설정 추가 (`"@/*": ["./src/*"]`)
     - _Requirements: 13.1_
 
-- [ ] 2. 디렉토리 구조 및 기반 파일 생성
-  - [ ] 2.1 src 하위 디렉토리 및 기반 파일 생성
+- [x] 2. 디렉토리 구조 및 기반 파일 생성
+  - [x] 2.1 src 하위 디렉토리 및 기반 파일 생성
     - `src/api/index.ts` (barrel export 빈 파일)
     - `src/components/common/` 디렉토리 생성
     - `src/constants/queryKeys.ts` 생성
