@@ -5,7 +5,7 @@ html,
 body,
 #root {
   height: 100%;
-  background-color: #f5f5f5;
+  background-color: #F8FAFC;
 }
 
 body {
@@ -25,7 +25,7 @@ body {
   width: 100%;
   max-width: 430px;
   min-height: 100%;
-  background-color: #f5f5f5;
+  background-color: #F8FAFC;
   position: relative;
   overflow-x: hidden;
   box-shadow: 0 0 40px rgb(0 0 0 / 0.08);
@@ -89,7 +89,7 @@ body {
   --color-gray-900: #0f172a;
 
   /* ── Background ── */
-  --color-bg-base: #f5f5f5;
+  --color-bg-base: #F8FAFC;
   --color-bg-surface: #ffffff;
   --color-bg-muted: #eee;
 
