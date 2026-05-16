@@ -16,7 +16,6 @@ import {
   FileText,
   ShieldCheck,
   CircleCheckBig,
-  Clock,
   Loader2,
   LockKeyhole,
 } from "lucide-react";
@@ -39,10 +38,7 @@ const LOADING_ITEMS: LoadingItem[] = [
   { id: "insurance", label: "4대보험 정보", icon: ShieldCheck },
 ];
 
-/** 각 항목 로딩 간격 (ms) */
-const ITEM_DELAY = 1200;
-
-type ItemStatus = "waiting" | "loading" | "done";
+type ItemStatus = "loading" | "done";
 
 interface MydataLoadingStepProps {
   /** 전체 로딩 완료 시 호출 */
@@ -52,8 +48,8 @@ interface MydataLoadingStepProps {
 export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
   const [statuses, setStatuses] = useState<Record<string, ItemStatus>>(() => {
     const initial: Record<string, ItemStatus> = {};
-    LOADING_ITEMS.forEach((item, idx) => {
-      initial[item.id] = idx === 0 ? "loading" : "waiting";
+    LOADING_ITEMS.forEach((item) => {
+      initial[item.id] = "loading";
     });
     return initial;
   });
@@ -61,46 +57,28 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
   const [allDone, setAllDone] = useState(false);
 
   useEffect(() => {
-    let currentIndex = 0;
-    let cleared = false;
+    // 각 항목별 랜덤 딜레이
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    let completedCount = 0;
 
-    const interval = setInterval(() => {
-      if (cleared) return;
+    LOADING_ITEMS.forEach((item) => {
+      const delay = 700 + Math.random() * 3000;
 
-      const currentItem = LOADING_ITEMS[currentIndex];
-      if (!currentItem) {
-        clearInterval(interval);
-        return;
-      }
+      const timer = setTimeout(() => {
+        setStatuses((prev) => ({ ...prev, [item.id]: "done" }));
+        completedCount++;
 
-      // 현재 항목 완료
-      setStatuses((prev) => ({
-        ...prev,
-        [currentItem.id]: "done",
-      }));
+        if (completedCount === LOADING_ITEMS.length) {
+          setAllDone(true);
+        }
+      }, delay);
 
-      currentIndex++;
-
-      const nextItem = LOADING_ITEMS[currentIndex];
-      if (nextItem) {
-        // 다음 항목 로딩 시작
-        setStatuses((prev) => ({
-          ...prev,
-          [nextItem.id]: "loading",
-        }));
-      } else {
-        // 전체 완료
-        clearInterval(interval);
-        cleared = true;
-        setAllDone(true);
-      }
-    }, ITEM_DELAY);
+      timers.push(timer);
+    });
 
     return () => {
-      cleared = true;
-      clearInterval(interval);
+      timers.forEach(clearTimeout);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -134,10 +112,9 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
               {/* 텍스트 */}
               <div className="flex-1">
                 <p className="text-sm font-medium text-text-primary">{item.label}</p>
-                <p className={`text-xs mt-0.5 ${status === "done" ? "text-success" : status === "loading" ? "text-primary" : "text-text-disabled"}`}>
+                <p className={`text-xs mt-0.5 ${status === "done" ? "text-success" : "text-primary"}`}>
                   {status === "done" && "완료"}
                   {status === "loading" && "불러오는 중"}
-                  {status === "waiting" && "대기 중"}
                 </p>
               </div>
 
@@ -145,7 +122,6 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
               <div className="shrink-0">
                 {status === "done" && <CircleCheckBig size={20} className="text-success" />}
                 {status === "loading" && <Loader2 size={20} className="text-primary animate-spin" />}
-                {status === "waiting" && <Clock size={18} className="text-text-disabled" />}
               </div>
             </li>
           );
