@@ -6,7 +6,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProducts } from "@/api/loanApi";

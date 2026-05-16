@@ -14,9 +14,14 @@ import { useLayoutStore } from "@/stores/layoutStore";
 export function StepLayout() {
   const navigate = useNavigate();
   const title = useLayoutStore((s) => s.stepTitle);
+  const onBack = useLayoutStore((s) => s.onBack);
 
   const handleBack = () => {
-    navigate(-1);
+    if (onBack) {
+      onBack();
+    } else {
+      navigate(-1);
+    }
   };
 
   return (

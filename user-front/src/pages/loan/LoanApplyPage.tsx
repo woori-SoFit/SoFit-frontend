@@ -40,7 +40,22 @@ export default function LoanApplyPage() {
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("대출 신청");
-  }, []);
+
+    // 커스텀 뒤로가기: 첫 step이면 실제 뒤로가기, 아니면 이전 step
+    useLayoutStore.getState().setOnBack(() => {
+      const current = useLoanApplyStore.getState().currentStep;
+      if (current === "TERMS") {
+        navigate(-1);
+      } else {
+        useLoanApplyStore.getState().prevStep();
+      }
+    });
+
+    return () => {
+      // 페이지 떠날 때 onBack 초기화
+      useLayoutStore.getState().setOnBack(null);
+    };
+  }, [navigate]);
 
   switch (currentStep) {
     case "TERMS":

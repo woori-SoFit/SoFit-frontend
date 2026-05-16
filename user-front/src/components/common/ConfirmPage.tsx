@@ -99,7 +99,7 @@ export function ConfirmPage({
       {!children && <div className="flex-1" />}
 
       {/* 하단 버튼 */}
-      <div className="sticky bottom-0 p-5 bg-white flex flex-col gap-3">
+      <div className="sticky bottom-0 p-5 flex flex-col gap-3">
         {secondaryButtonLabel && onSecondary && (
           <button
             type="button"

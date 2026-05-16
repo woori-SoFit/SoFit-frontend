@@ -51,23 +51,23 @@ export function LoanConditionsStep({
   const [purpose, setPurpose] = useState<string | null>(null);
   const [purposeOpen, setPurposeOpen] = useState(false);
 
-  /** 금액 입력 핸들러 (숫자만, 콤마 포맷) */
+  /** 금액 입력 핸들러 (만원 단위, 숫자만) */
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "");
     setAmount(digits);
   };
 
-  /** 금액 표시 (콤마) */
+  /** 금액 표시 (콤마) — 만원 단위 */
   const displayAmount = amount ? Number(amount).toLocaleString() : "";
 
-  /** 유효성 검사 */
-  const numericAmount = Number(amount);
-  const isAmountTooLow = amount.length > 0 && numericAmount < minAmount;
-  const isAmountTooHigh = amount.length > 0 && numericAmount > maxAmount;
+  /** 유효성 검사 — 입력값은 만원 단위, props는 원 단위이므로 변환 */
+  const amountInWon = Number(amount) * 10_000;
+  const isAmountTooLow = amount.length > 0 && amountInWon < minAmount;
+  const isAmountTooHigh = amount.length > 0 && amountInWon > maxAmount;
   const isAmountValid = amount.length > 0 && !isAmountTooLow && !isAmountTooHigh;
   const isValid = isAmountValid && term !== null && repayment !== null && purpose !== null;
 
-  /** 금액 포맷 (만원 단위) */
+  /** 금액 포맷 (원 → 만원/억원 표시) */
   const formatWon = (value: number) => {
     const man = value / 10_000;
     if (man >= 10_000) return `${(man / 10_000).toFixed(0)}억원`;
@@ -77,7 +77,7 @@ export function LoanConditionsStep({
   const handleSubmit = () => {
     if (!isValid) return;
     onSubmit({
-      desiredAmount: numericAmount,
+      desiredAmount: amountInWon,
       desiredTerm: term!,
       repaymentMethod: repayment!,
       purpose: purpose!,
@@ -117,7 +117,7 @@ export function LoanConditionsStep({
               placeholder="금액을 입력해주세요"
               className="flex-1 text-base text-text-primary placeholder:text-text-disabled outline-none bg-transparent"
             />
-            <span className="text-sm text-text-secondary ml-2">원</span>
+            <span className="text-sm text-text-secondary ml-2">만원</span>
           </div>
           {isAmountTooLow && (
             <p className="text-xs text-error mt-1.5">
