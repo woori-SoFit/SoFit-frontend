@@ -12,6 +12,7 @@ interface LoanApplyState {
   // Actions
   setStep: (step: LoanApplyStep) => void;
   nextStep: () => void;
+  prevStep: () => void;
   setProductId: (id: number) => void;
   updateFormData: (data: Partial<LoanApplyFormData>) => void;
   reset: () => void;
@@ -45,6 +46,15 @@ export const useLoanApplyStore = create<LoanApplyState>((set, get) => ({
     const nextIndex = currentIndex + 1;
     if (nextIndex < STEP_ORDER.length) {
       set({ currentStep: STEP_ORDER[nextIndex] });
+    }
+  },
+
+  prevStep: () => {
+    const { currentStep } = get();
+    const currentIndex = STEP_ORDER.indexOf(currentStep);
+    const prevIndex = currentIndex - 1;
+    if (prevIndex >= 0) {
+      set({ currentStep: STEP_ORDER[prevIndex] });
     }
   },
 
