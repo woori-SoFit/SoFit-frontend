@@ -2,11 +2,17 @@
  * 인증 도메인 API 함수
  */
 import axiosInstance from "./axiosInstance";
-import type { LoginRequest, LoginResponse, FinancialCertVerifyRequest, FinancialCertVerifyResponse } from "@/types/auth";
+import type { LoginRequest, LoginResponse, LoginUser, FinancialCertVerifyRequest, FinancialCertVerifyResponse } from "@/types/auth";
 
 /** 로그인 API 호출 */
 export async function postLogin(data: LoginRequest): Promise<LoginResponse> {
   const res = await axiosInstance.post<LoginResponse>("/auth/login", data);
+  return res.data;
+}
+
+/** 현재 로그인 사용자 정보 조회 */
+export async function fetchMe(): Promise<LoginUser> {
+  const res = await axiosInstance.get<LoginUser>("/users/me");
   return res.data;
 }
 
