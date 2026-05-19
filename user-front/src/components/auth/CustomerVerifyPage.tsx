@@ -52,6 +52,7 @@ export function CustomerVerifyPage({
   const [errorMessage, setErrorMessage] = useState("");
 
   const rrnBackRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
 
   /** 생년월일 입력 */
   const handleRrnFrontChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +67,12 @@ export function CustomerVerifyPage({
   const handleRrnBackChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 1);
     setRrnBack(digits);
+
+    if (digits.length === 1) {
+      setTimeout(() => {
+        phoneRef.current?.focus();
+      }, 0);
+    }
   };
 
   /** 휴대폰 번호 포맷팅 */
@@ -214,6 +221,7 @@ export function CustomerVerifyPage({
             </label>
             <input
               id="customer-phone"
+              ref={phoneRef}
               type="tel"
               value={phone}
               onChange={handlePhoneChange}
