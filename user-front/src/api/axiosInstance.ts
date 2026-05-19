@@ -7,7 +7,7 @@ import axios, { type AxiosError } from "axios";
  * - withCredentials: true — Session-Cookie 기반 인증 필수 설정
  */
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: "/api",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -18,8 +18,13 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
+    const requestUrl = error.config?.url ?? "";
     if (error.response?.status === 401) {
-      // 세션 만료 또는 미인증 → 로그인 페이지로 이동
+      // /members/me는 인증 확인용이므로 리다이렉트하지 않음
+      if (requestUrl.includes("/users/me")) {
+        return Promise.reject(error);
+      }
+      // 그 외 401 → 로그인 페이지로 이동
       window.location.href = "/login";
     }
     return Promise.reject(error);
