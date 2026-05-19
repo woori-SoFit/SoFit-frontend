@@ -29,6 +29,8 @@ import { MOCK_BIZ_INFO_ROWS } from "@/mocks/bizInfo";
 import { MOCK_MYDATA_TERMS } from "@/mocks/mydataTerms";
 import { MOCK_LOAN_APPLY_RESULT_ROWS } from "@/mocks/loanApplyResult";
 import { useNavigate } from "react-router-dom";
+import { verifyFinancialCertificate } from "@/api/authApi";
+import type { CustomerVerifyData } from "@/components/auth/CustomerVerifyPage";
 
 export default function LoanApplyPage() {
   const currentStep = useLoanApplyStore((s) => s.currentStep);
@@ -77,6 +79,13 @@ export default function LoanApplyPage() {
       return (
         <CustomerVerifyPage
           description="본인 확인을 위해 정보를 입력해 주세요."
+          onVerify={async (data: CustomerVerifyData) => {
+            const response = await verifyFinancialCertificate({
+              phoneNumber: data.phone,
+              pin: data.pin,
+            });
+            return response.isSuccess;
+          }}
           onSuccess={() => {
             // PIN 인증 완료 → BIZ_CONFIRM으로 이동
             setStep("BIZ_CONFIRM");
