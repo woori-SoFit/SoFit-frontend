@@ -43,3 +43,17 @@ export interface FinancialCertVerifyResponse {
   message: string;
   result: FinancialCertVerifyResult;
 }
+
+/** CustomerVerifyPage에서 수집하는 고객 정보 */
+export interface CustomerVerifyData {
+  name: string;
+  residentNumber: string;
+  phone: string;
+  pin: string;
+}
+
+/** onVerify 반환 타입 */
+export interface VerifyResult {
+  success: boolean;
+  message?: string;
+}

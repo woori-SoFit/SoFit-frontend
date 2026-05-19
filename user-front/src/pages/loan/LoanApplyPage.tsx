@@ -30,7 +30,7 @@ import { MOCK_MYDATA_TERMS } from "@/mocks/mydataTerms";
 import { MOCK_LOAN_APPLY_RESULT_ROWS } from "@/mocks/loanApplyResult";
 import { useNavigate } from "react-router-dom";
 import { verifyFinancialCertificate } from "@/api/authApi";
-import type { CustomerVerifyData } from "@/components/auth/CustomerVerifyPage";
+import type { CustomerVerifyData } from "@/types/auth";
 
 export default function LoanApplyPage() {
   const currentStep = useLoanApplyStore((s) => s.currentStep);
@@ -84,7 +84,10 @@ export default function LoanApplyPage() {
               phoneNumber: data.phone,
               pin: data.pin,
             });
-            return response.isSuccess;
+            return {
+              success: response.isSuccess,
+              message: response.message,
+            };
           }}
           onSuccess={() => {
             // PIN 인증 완료 → BIZ_CONFIRM으로 이동
