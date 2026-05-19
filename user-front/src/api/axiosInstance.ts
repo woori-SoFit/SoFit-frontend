@@ -7,7 +7,7 @@ import axios, { type AxiosError } from "axios";
  * - withCredentials: true — Session-Cookie 기반 인증 필수 설정
  */
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: "/api",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
