@@ -1,7 +1,3 @@
-/**
- * 인증 도메인 타입 정의
- */
-
 /** 로그인 요청 */
 export interface LoginRequest {
   loginId: string;
@@ -22,4 +18,42 @@ export interface LoginResponse {
   code: string;
   message: string;
   result: LoginUser;
+}
+
+/** 금융인증서 PIN 인증 요청 파라미터 */
+export interface FinancialCertVerifyRequest {
+  phoneNumber: string;
+  pin: string;
+}
+
+/** 금융인증서 PIN 인증 결과 */
+export interface FinancialCertVerifyResult {
+  certId: number;
+  certNumber: string;
+  holderName: string;
+  phoneNumber: string;
+  status: string;
+  verifiedAt: string;
+}
+
+/** 금융인증서 PIN 인증 응답 */
+export interface FinancialCertVerifyResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: FinancialCertVerifyResult;
+}
+
+/** CustomerVerifyPage에서 수집하는 고객 정보 */
+export interface CustomerVerifyData {
+  name: string;
+  residentNumber: string;
+  phone: string;
+  pin: string;
+}
+
+/** onVerify 반환 타입 */
+export interface VerifyResult {
+  success: boolean;
+  message?: string;
 }

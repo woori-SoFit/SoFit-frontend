@@ -16,22 +16,18 @@ import { useState, useRef, useCallback } from "react";
 import { CircleCheckBig } from "lucide-react";
 import { PinInput } from "./PinInput";
 import { BottomButton } from "@/components/common/BottomButton";
+import type { CustomerVerifyData, VerifyResult } from "@/types/auth";
 
-export interface CustomerVerifyData {
-  name: string;
-  residentNumber: string;
-  phone: string;
-  pin: string;
-}
+export type { CustomerVerifyData };
 
 interface CustomerVerifyPageProps {
   /** 페이지 설명 (선택) */
   description?: string;
   /**
-   * PIN 검증 함수 — 서버에 POST 후 true/false 반환
-   * API 연동 전에는 기본값으로 항상 true 반환
+   * PIN 검증 함수 — 서버에 POST 후 결과 반환
+   * API 연동 전에는 기본값으로 항상 성공 반환
    */
-  onVerify?: (data: CustomerVerifyData) => Promise<boolean>;
+  onVerify?: (data: CustomerVerifyData) => Promise<VerifyResult>;
   /** PIN 검증 성공 후 호출 (애니메이션 끝난 뒤) */
   onSuccess: () => void;
 }
@@ -52,6 +48,7 @@ export function CustomerVerifyPage({
   const [errorMessage, setErrorMessage] = useState("");
 
   const rrnBackRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
 
   /** 생년월일 입력 */
   const handleRrnFrontChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +63,12 @@ export function CustomerVerifyPage({
   const handleRrnBackChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 1);
     setRrnBack(digits);
+
+    if (digits.length === 1) {
+      setTimeout(() => {
+        phoneRef.current?.focus();
+      }, 0);
+    }
   };
 
   /** 휴대폰 번호 포맷팅 */
@@ -101,16 +104,18 @@ export function CustomerVerifyPage({
       };
 
       try {
-        // API 연동 전 기본값: 항상 true
-        const result = onVerify ? await onVerify(data) : true;
+        // API 연동 전 기본값: 항상 성공
+        const result = onVerify
+          ? await onVerify(data)
+          : { success: true };
 
-        if (result) {
+        if (result.success) {
           // 성공 → 애니메이션 화면
           setStep("SUCCESS");
           setTimeout(onSuccess, 1500);
         } else {
-          // 실패 → 에러 메시지
-          setErrorMessage("PIN이 일치하지 않습니다. 다시 입력해 주세요.");
+          // 실패 → 서버 메시지 표시
+          setErrorMessage(result.message || "PIN이 일치하지 않습니다. 다시 입력해 주세요.");
         }
       } catch {
         setErrorMessage("인증 중 오류가 발생했습니다. 다시 시도해 주세요.");
@@ -214,6 +219,7 @@ export function CustomerVerifyPage({
             </label>
             <input
               id="customer-phone"
+              ref={phoneRef}
               type="tel"
               value={phone}
               onChange={handlePhoneChange}
