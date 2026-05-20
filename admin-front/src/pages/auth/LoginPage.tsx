@@ -1,12 +1,12 @@
-import mainLogo from "@/assets/main-logo.svg";
+import mainLogo from "@/assets/mainLogo.svg";
 
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-sm p-8 bg-white rounded-xl shadow-card">
         {/* 로고 */}
-        <div className="flex justify-center mb-8">
-          <img src={mainLogo} alt="SoFit 로고" className="h-10" />
+        <div className="flex justify-center mb-4">
+          <img src={mainLogo} alt="SoFit 로고" className="h-14" />
         </div>
 
         {/* 로그인 폼 */}
