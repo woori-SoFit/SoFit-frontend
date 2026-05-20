@@ -18,13 +18,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    const requestUrl = error.config?.url ?? "";
     if (error.response?.status === 401) {
-      // /members/me는 인증 확인용이므로 리다이렉트하지 않음
-      if (requestUrl.includes("/users/me")) {
-        return Promise.reject(error);
-      }
-      // 그 외 401 → 로그인 페이지로 이동
       window.location.href = "/login";
     }
     return Promise.reject(error);
