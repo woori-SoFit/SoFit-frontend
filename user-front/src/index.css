@@ -115,7 +115,7 @@ body {
   --text-3xl: 1.875rem;    /* 30px */
 
   /* ── Spacing ── */
-  --spacing-page-x: 1.25rem;  /* 모바일 좌우 여백 20px */
+  --spacing-page-x: 1.5rem;  /* 모바일 좌우 여백 20px */
 
   /* ── Border Radius ── */
   --radius-sm: 0.375rem;   /* 6px */
