@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import {
   isValidLoginId,
   isValidPassword,
 } from "../../utils/signupValidation";
+import { checkLoginId } from "../../api/signupApi";
 import { useSignupStore } from "../../stores/signupStore";
 import { BottomButton } from "../common/BottomButton";
 
@@ -20,12 +22,40 @@ export default function CredentialsStep() {
 
   const { updateFormData, nextStep } = useSignupStore();
 
+  const checkIdMutation = useMutation({
+    mutationFn: checkLoginId,
+    onSuccess: (data) => {
+      if (data.result) {
+        setIsIdChecked(true);
+        setIsIdAvailable(true);
+        setIdCheckMessage("사용 가능한 아이디입니다");
+      } else {
+        setIsIdChecked(false);
+        setIsIdAvailable(false);
+        setIdCheckMessage(data.message || "이미 사용 중인 아이디입니다");
+      }
+    },
+    onError: (error) => {
+      setIsIdChecked(false);
+      setIsIdAvailable(false);
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        const serverMessage = axiosError.response?.data?.message;
+        if (serverMessage) {
+          setIdCheckMessage(serverMessage);
+          return;
+        }
+      }
+      setIdCheckMessage("중복확인 요청에 실패했습니다. 다시 시도해주세요.");
+    },
+  });
+
   const showLoginIdError = loginId.length > 0 && !isValidLoginId(loginId);
   const showPasswordError = password.length > 0 && !isValidPassword(password);
   const showPasswordMismatch =
     passwordConfirm.length > 0 && password !== passwordConfirm;
 
-  const isCheckButtonDisabled = !isValidLoginId(loginId);
+  const isCheckButtonDisabled = !isValidLoginId(loginId) || checkIdMutation.isPending;
 
   // 다음 버튼: 아이디 유효 + 중복확인 완료 + 비밀번호 유효 + 비밀번호 일치
   const isNextDisabled =
@@ -44,21 +74,15 @@ export default function CredentialsStep() {
     }
   };
 
-  /** 임시: API 없이 바로 중복확인 성공 처리 */
   const handleCheckId = () => {
-    if (isValidLoginId(loginId)) {
-      // TODO: API 연동 시 checkLoginId mutation으로 교체
-      setIsIdChecked(true);
-      setIsIdAvailable(true);
-      setIdCheckMessage("사용 가능한 아이디입니다");
+    if (isValidLoginId(loginId) && !checkIdMutation.isPending) {
+      checkIdMutation.mutate(loginId);
     }
   };
 
-  /** 임시: API 없이 바로 다음 스텝 이동 */
   const handleSubmit = () => {
     if (!isNextDisabled) {
       updateFormData({ loginId, password });
-      // TODO: API 연동 시 submitSignup은 ConfirmStep에서 처리
       nextStep();
     }
   };
