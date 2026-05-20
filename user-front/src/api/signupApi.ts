@@ -15,11 +15,11 @@ export type { KycVerifyRequest, KycVerifyResponse, CheckLoginIdResponse, SignupR
 
 /** KYC 사업자등록번호 진위 확인 API */
 export async function verifyKyc(
-  businessRegistrationNumber: string
+  businessNumber: string
 ): Promise<KycVerifyResponse> {
   const { data } = await axiosInstance.post<KycVerifyResponse>(
-    "/auth/kyc/verify",
-    { businessRegistrationNumber } satisfies KycVerifyRequest
+    "/auth/signup/business-verification",
+    { businessNumber } satisfies KycVerifyRequest
   );
   return data;
 }
