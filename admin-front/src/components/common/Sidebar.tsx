@@ -12,7 +12,7 @@ import { getFilteredMenuGroups } from "@/utils/menuFilter";
 import { ROLE_DISPLAY_NAMES } from "@/constants/permissions";
 
 export function Sidebar() {
-  const { data: user, isLoading, isError } = useAuthMe();
+  const { data: user, isLoading, isAuthenticated } = useAuthMe();
 
   // 로딩 중 처리
   if (isLoading) {
@@ -23,8 +23,8 @@ export function Sidebar() {
     );
   }
 
-  // 에러 시 로그인 페이지로 리다이렉트
-  if (isError || !user) {
+  // 미인증 시 로그인 페이지로 리다이렉트
+  if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
   }
 

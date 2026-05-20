@@ -18,7 +18,8 @@ export function useAuthMe() {
   return {
     data: user ?? undefined,
     isLoading: false,
-    isError: !user,
-    error: user ? null : new Error("미인증 상태"),
+    isAuthenticated: !!user,
+    isError: false,
+    error: null,
   };
 }

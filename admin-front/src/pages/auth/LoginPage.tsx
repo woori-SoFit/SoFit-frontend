@@ -4,12 +4,15 @@ import { useAuthStore } from "@/stores/authStore";
 import type { AdminRole } from "@/types";
 import mainLogo from "@/assets/main-logo.svg";
 
-/** Mock 계정 목록 — API 연동 전 테스트용 */
-const MOCK_ACCOUNTS: { loginId: string; name: string; role: AdminRole }[] = [
-  { loginId: "dev_admin", name: "개발자", role: "ADMIN_DEV" },
-  { loginId: "bank_teller", name: "김은행", role: "ADMIN_BANK_TELLER" },
-  { loginId: "bank_manager", name: "박지점장", role: "ADMIN_BANK_MANAGER" },
-];
+/** Mock 계정 목록 — API 연동 전 테스트용 (DEV 환경에서만 포함) */
+const MOCK_ACCOUNTS: { loginId: string; name: string; role: AdminRole }[] =
+  import.meta.env.DEV
+    ? [
+        { loginId: "dev_admin", name: "개발자", role: "ADMIN_DEV" },
+        { loginId: "bank_teller", name: "김은행", role: "ADMIN_BANK_TELLER" },
+        { loginId: "bank_manager", name: "박지점장", role: "ADMIN_BANK_MANAGER" },
+      ]
+    : [];
 
 export default function LoginPage() {
   const navigate = useNavigate();

@@ -16,7 +16,7 @@ interface RoleGuardProps {
  * - 역할 허용: children 렌더링
  */
 export default function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
-  const { data, isLoading, isError } = useAuthMe();
+  const { data, isLoading, isAuthenticated } = useAuthMe();
 
   // 로딩 중: 스피너 표시
   if (isLoading) {
@@ -27,8 +27,8 @@ export default function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
     );
   }
 
-  // 에러 또는 미인증: 로그인 페이지로 리다이렉트
-  if (isError || !data) {
+  // 미인증: 로그인 페이지로 리다이렉트
+  if (!isAuthenticated || !data) {
     return <Navigate to="/login" replace />;
   }
 

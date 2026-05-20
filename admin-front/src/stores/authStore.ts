@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { AdminRole } from "@/types";
 
+export const AUTH_STORE_KEY = "sofit-admin-auth";
+
 export interface MockUser {
   id: number;
   name: string;
@@ -25,7 +27,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ user: null }),
     }),
     {
-      name: "sofit-admin-auth",
+      name: AUTH_STORE_KEY,
     }
   )
 );

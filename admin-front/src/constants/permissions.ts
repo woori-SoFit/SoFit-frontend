@@ -1,5 +1,4 @@
 import type { AdminRole } from '@/types';
-import type { ComponentType } from 'react';
 
 /**
  * 라우트 항목 설정 인터페이스
@@ -11,8 +10,6 @@ export interface RouteItemConfig {
   allowedRoles: AdminRole[];
   /** 메뉴에 표시할지 여부 (기본값: true) */
   showInMenu?: boolean;
-  /** 라우트에 연결할 페이지 컴포넌트 (lazy import용) */
-  component?: ComponentType;
 }
 
 /**

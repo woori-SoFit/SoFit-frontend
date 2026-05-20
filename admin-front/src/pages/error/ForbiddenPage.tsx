@@ -4,13 +4,7 @@ export default function ForbiddenPage() {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    // SPA에서 최초 진입 시 history.length는 보통 2 (초기 엔트리 + 현재 페이지)
-    // 따라서 2보다 클 때만 이전 페이지가 존재한다고 판단
-    if (window.history.length > 2) {
-      window.history.back();
-    } else {
-      navigate('/dashboard');
-    }
+    navigate(-1);
   };
 
   return (
