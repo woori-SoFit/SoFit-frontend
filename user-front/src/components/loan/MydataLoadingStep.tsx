@@ -57,22 +57,22 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
   const [allDone, setAllDone] = useState(false);
 
   useEffect(() => {
-    // 각 항목별 랜덤 딜레이
     const timers: ReturnType<typeof setTimeout>[] = [];
     let completedCount = 0;
 
+    const markItemDone = (itemId: string) => {
+      setStatuses((prev) => ({ ...prev, [itemId]: "done" }));
+      completedCount++;
+      if (completedCount === LOADING_ITEMS.length) {
+        setAllDone(true);
+      }
+    };
+
+    // 각 항목별 랜덤 딜레이 (crypto 기반 보안 난수)
     LOADING_ITEMS.forEach((item) => {
-      const delay = 700 + Math.random() * 3000;
-
-      const timer = setTimeout(() => {
-        setStatuses((prev) => ({ ...prev, [item.id]: "done" }));
-        completedCount++;
-
-        if (completedCount === LOADING_ITEMS.length) {
-          setAllDone(true);
-        }
-      }, delay);
-
+      const randomValue = crypto.getRandomValues(new Uint32Array(1))[0];
+      const delay = 700 + (randomValue / 0xFFFFFFFF) * 3000;
+      const timer = setTimeout(() => markItemDone(item.id), delay);
       timers.push(timer);
     });
 
