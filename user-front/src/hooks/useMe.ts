@@ -7,7 +7,7 @@ import { fetchMe } from "@/api/authApi";
  * 세션이 유효하면 사용자 정보를 반환하고, 아니면 undefined
  */
 export function useMe() {
-  const { data: me, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: AUTH_KEYS.me,
     queryFn: fetchMe,
     retry: false,
@@ -15,8 +15,8 @@ export function useMe() {
   });
 
   return {
-    me,
+    me: data ?? null,
     isLoading,
-    isLoggedIn: !isLoading && !!me,
+    isLoggedIn: !isLoading && !!data,
   };
 }
