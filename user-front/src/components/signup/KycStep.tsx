@@ -1,11 +1,13 @@
 import { useRef, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { verifyKyc } from "../../api/signupApi";
 import { useSignupStore } from "../../stores/signupStore";
 import { BottomButton } from "../common/BottomButton";
 
 /**
- * KYC 스텝 — 사업자등록번호 입력 및 국세청 API 진위 확인
+ * KYC 스텝 — 사업자등록번호 입력 및 진위 확인 API 연동
  * 3자리-2자리-5자리 분할 입력, 칸이 차면 자동 포커스 이동
- * TODO: API 연동 시 useMutation + verifyKyc 복원
+ * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8
  */
 export default function KycStep() {
   const [part1, setPart1] = useState(""); // 3자리
@@ -21,7 +23,42 @@ export default function KycStep() {
 
   const businessNumber = part1 + part2 + part3;
 
-  const isButtonDisabled = businessNumber.length < 10;
+  /** 입력값 전체 초기화 */
+  const clearInputs = () => {
+    setPart1("");
+    setPart2("");
+    setPart3("");
+    ref1.current?.focus();
+  };
+
+  const kycMutation = useMutation({
+    mutationFn: verifyKyc,
+    onSuccess: (data) => {
+      if (data.result) {
+        updateFormData({ businessRegistrationNumber: businessNumber });
+        nextStep();
+      } else {
+        setErrorMessage(data.message || "유효하지 않은 사업자등록번호입니다");
+        clearInputs();
+      }
+    },
+    onError: (error) => {
+      // 400 등 서버 에러 응답에서 message 추출
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        const serverMessage = axiosError.response?.data?.message;
+        if (serverMessage) {
+          setErrorMessage(serverMessage);
+          clearInputs();
+          return;
+        }
+      }
+      setErrorMessage("인증 요청에 실패했습니다. 다시 시도해주세요.");
+      clearInputs();
+    },
+  });
+
+  const isButtonDisabled = businessNumber.length < 10 || kycMutation.isPending;
 
   /** 숫자만 필터링하는 헬퍼 */
   const filterDigits = (value: string, maxLen: number) =>
@@ -66,11 +103,9 @@ export default function KycStep() {
     }
   };
 
-  /** 임시: API 없이 바로 다음 스텝으로 이동 */
   const handleSubmit = () => {
-    if (businessNumber.length === 10) {
-      updateFormData({ businessRegistrationNumber: businessNumber });
-      nextStep();
+    if (businessNumber.length === 10 && !kycMutation.isPending) {
+      kycMutation.mutate(businessNumber);
     }
   };
 
@@ -136,7 +171,7 @@ export default function KycStep() {
       </div>
 
       <BottomButton
-        label="확인"
+        label={kycMutation.isPending ? "확인 중..." : "확인"}
         onClick={handleSubmit}
         disabled={isButtonDisabled}
       />

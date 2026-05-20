@@ -1,6 +1,6 @@
 /** KYC 사업자등록번호 진위 확인 요청 */
 export interface KycVerifyRequest {
-  businessRegistrationNumber: string;
+  businessNumber: string;
 }
 
 /** KYC 사업자등록번호 진위 확인 응답 */
@@ -8,7 +8,7 @@ export interface KycVerifyResponse {
   isSuccess: boolean;
   code: string;
   message: string;
-  result: { valid: boolean };
+  result?: unknown;
 }
 
 /** 아이디 중복 확인 응답 */
