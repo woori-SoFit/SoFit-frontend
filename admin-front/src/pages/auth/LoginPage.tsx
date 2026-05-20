@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
 import type { AdminRole } from "@/types";
-import mainLogo from "@/assets/main-logo.svg";
+import mainLogo from "@/assets/mainLogo.svg";
 
 /** Mock 계정 목록 — API 연동 전 테스트용 (DEV 환경에서만 포함) */
 const MOCK_ACCOUNTS: { loginId: string; name: string; role: AdminRole }[] =
@@ -47,8 +47,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-sm p-8 bg-white rounded-xl shadow-card">
         {/* 로고 */}
-        <div className="flex justify-center mb-8">
-          <img src={mainLogo} alt="SoFit 로고" className="h-10" />
+        <div className="flex justify-center mb-4">
+          <img src={mainLogo} alt="SoFit 로고" className="h-14" />
         </div>
 
         {/* 로그인 폼 */}

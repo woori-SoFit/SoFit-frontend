@@ -17,11 +17,11 @@ export function AppHeader() {
       <div className="flex items-center justify-between px-4 h-16">
         {/* 로고 */}
         <Link to="/" className="flex items-center">
-          <img src={mainLogo} alt="SoFit" className="h-6" />
+          <img src={mainLogo} alt="SoFit" className="h-10" />
         </Link>
 
         {/* 우측 액션 */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 pt-1">
           {isLoggedIn ? (
             <>
               {/* 알림 */}
@@ -48,7 +48,7 @@ export function AppHeader() {
               to="/login"
               className="flex items-center text-xs font-medium text-text-primary hover:text-primary"
             >
-              로그인<ChevronRight size={18} className="pb-0.5"/>
+              로그인<ChevronRight size={18} />
             </Link>
           )}
         </div>

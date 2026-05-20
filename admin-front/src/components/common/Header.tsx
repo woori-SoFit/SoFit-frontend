@@ -6,7 +6,8 @@
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
 import { useAuthMe } from "@/hooks/useAuthMe";
-import mainLogo from "@/assets/main-logo.svg";
+import mainLogo from "@/assets/mainLogo.svg";
+
 
 export function Header() {
   const navigate = useNavigate();
@@ -23,8 +24,8 @@ export function Header() {
     <header className="h-14 shrink-0 flex items-center justify-between px-6 bg-white border-b border-border-default">
       {/* 좌측 로고 */}
       <div className="flex items-center gap-2">
-        <img src={mainLogo} alt="SoFit 로고" className="h-7" />
-        <span className="text-sm font-medium text-text-secondary">Admin</span>
+        <img src={mainLogo} alt="SoFit 로고" className="h-8 mb-0.5" />
+        <span className="text-sm font-medium text-text-disabled">Admin</span>
       </div>
 
       {/* 우측: 사용자 정보 + 로그아웃 */}

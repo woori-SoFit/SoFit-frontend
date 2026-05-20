@@ -88,8 +88,8 @@ export default function LoginPage() {
   return (
     <div data-testid="login-page" className="flex flex-col min-h-screen px-page-x">
       {/* 상단 여백 + 로고 */}
-      <div className="flex flex-col items-center pt-32 pb-30">
-        <img src={mainLogo} alt="SoFit 로고" className="h-14" />
+      <div className="flex flex-col items-center pt-32 pb-5">
+        <img src={mainLogo} alt="SoFit 로고" className="h-30" />
       </div>
 
       {/* 로그인 폼 */}
