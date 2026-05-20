@@ -67,8 +67,8 @@ SoFit admin-front에 역할 기반 메뉴/접근 제어 시스템을 구현한�
     - `src/pages/placeholder/LoanDetailPage.tsx` — "대출 상세" 제목만 표시 (useParams로 id 표시)
     - _Requirements: 5.1, 5.2, 5.3_
 
-- [ ] 5. Sidebar 리팩토링 및 라우터 확장
-  - [ ] 5.1 Sidebar 리팩토링
+- [x] 5. Sidebar 리팩토링 및 라우터 확장
+  - [x] 5.1 Sidebar 리팩토링
     - `src/components/common/Sidebar.tsx` 수정
     - 하드코딩된 `MENU_GROUPS` 제거, `getFilteredMenuGroups(role)` 유틸 사용
     - `useAuthMe` 훅으로 사용자 이름/역할 조회
@@ -76,7 +76,7 @@ SoFit admin-front에 역할 기반 메뉴/접근 제어 시스템을 구현한�
     - 로딩 중 처리, 에러 시 빈 메뉴 또는 리다이렉트
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 6.1, 6.2, 6.3, 6.4, 6.5_
 
-  - [ ] 5.2 라우터 확장
+  - [x] 5.2 라우터 확장
     - `src/router/routes.tsx` 수정
     - 새 라우트 추가: `/review-history`, `/manager-approval`, `/loan/:id`
     - 모든 라우트에 `RoleGuard` 적용 (allowedRoles는 `ROUTE_PERMISSIONS`에서 참조)
