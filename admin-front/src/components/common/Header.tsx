@@ -1,12 +1,25 @@
 /**
  * Header — 최상단 고정 헤더 바
  *
- * 구조: 좌측 로고 + 우측 (로그아웃 버튼, 사용자 이메일)
+ * 구조: 좌측 로고 + 우측 (사용자 이름 + 로그아웃 버튼)
  */
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/stores/authStore";
+import { useAuthMe } from "@/hooks/useAuthMe";
 import mainLogo from "@/assets/mainLogo.svg";
 
+
 export function Header() {
-  // TODO: React Query로 /api/auth/me 조회하여 사용자 정보 표시
+  const navigate = useNavigate();
+  const logout = useAuthStore((s) => s.logout);
+  const { data: user } = useAuthMe();
+
+  const handleLogout = () => {
+    // TODO: API 연동 시 서버 세션 삭제 요청 추가
+    logout();
+    navigate("/login", { replace: true });
+  };
+
   return (
     <header className="h-14 shrink-0 flex items-center justify-between px-6 bg-white border-b border-border-default">
       {/* 좌측 로고 */}
@@ -17,10 +30,13 @@ export function Header() {
 
       {/* 우측: 사용자 정보 + 로그아웃 */}
       <div className="flex items-center gap-3">
-        <span className="text-sm text-text-secondary">admin@email.com</span>
+        {user && (
+          <span className="text-sm text-text-secondary">{user.name}</span>
+        )}
         <button
           type="button"
-          className="px-3 py-1.5 text-xs font-medium text-white bg-primary rounded-md hover:bg-primary-dark transition-colors"
+          onClick={handleLogout}
+          className="px-3 py-1.5 text-xs font-medium text-white bg-primary rounded-md hover:bg-primary-dark transition-colors cursor-pointer"
         >
           로그아웃
         </button>

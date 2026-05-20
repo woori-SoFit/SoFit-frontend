@@ -2,57 +2,49 @@
  * Sidebar — 좌측 사이드바 네비게이션
  *
  * 구조:
- * - 상단: 사용자 인사 ("관리자 님, 반가워요!")
- * - 카테고리별 메뉴 그룹
+ * - 상단: 사용자 이름 + 역할 한글 표시명
+ * - 카테고리별 메뉴 그룹 (역할 기반 필터링)
  * - 밝은 배경, 우측 border
  */
-import { NavLink } from "react-router-dom";
-
-interface MenuItem {
-  label: string;
-  path: string;
-}
-
-interface MenuGroup {
-  category: string;
-  items: MenuItem[];
-}
-
-const MENU_GROUPS: MenuGroup[] = [
-  {
-    category: "대출",
-    items: [
-      { label: "대출 신청 현황", path: "/dashboard" },
-    ],
-  },
-  {
-    category: "관리",
-    items: [
-      { label: "고객 관리", path: "/users" },
-    ],
-  },
-  {
-    category: "시스템",
-    items: [
-      { label: "API 로그", path: "/api-logs" },
-      { label: "S등급 배치 관리", path: "/batch" },
-    ],
-  },
-];
+import { NavLink, Navigate } from "react-router-dom";
+import { useAuthMe } from "@/hooks/useAuthMe";
+import { getFilteredMenuGroups } from "@/utils/menuFilter";
+import { ROLE_DISPLAY_NAMES } from "@/constants/permissions";
 
 export function Sidebar() {
+  const { data: user, isLoading, isAuthenticated } = useAuthMe();
+
+  // 로딩 중 처리
+  if (isLoading) {
+    return (
+      <aside className="w-56 shrink-0 bg-white border-r border-border-default flex flex-col items-center justify-center">
+        <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent" />
+      </aside>
+    );
+  }
+
+  // 미인증 시 로그인 페이지로 리다이렉트
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const menuGroups = getFilteredMenuGroups(user.role);
+
   return (
-    <aside className="w-52 shrink-0 bg-white border-r border-border-default flex flex-col">
-      {/* 사용자 인사 */}
+    <aside className="w-56 shrink-0 bg-white border-r border-border-default flex flex-col">
+      {/* 사용자 정보 */}
       <div className="px-5 py-4">
         <p className="text-sm text-text-primary">
-          <span className="font-semibold text-primary">관리자</span> 님, 반가워요!
+          <span className="font-semibold text-primary">{user.name}</span> 님, 반가워요!
+        </p>
+        <p className="text-xs text-text-disabled mt-1">
+          {ROLE_DISPLAY_NAMES[user.role]}
         </p>
       </div>
 
       {/* 메뉴 그룹 */}
       <nav className="flex-1 px-3">
-        {MENU_GROUPS.map((group) => (
+        {menuGroups.map((group) => (
           <div key={group.category} className="mb-6">
             <p className="px-2 mb-1 text-xs font-semibold text-text-disabled uppercase">
               {group.category}
