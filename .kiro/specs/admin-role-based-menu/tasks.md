@@ -40,18 +40,18 @@ SoFit admin-front에 역할 기반 메뉴/접근 제어 시스템을 구현한�
     - `isValidRole()` 검증 포함 — 유효하지 않은 역할이면 에러 처리
     - _Requirements: 1.1, 1.2, 1.3, 1.5_
 
-- [ ] 3. Checkpoint - 핵심 유틸/훅 검증
+- [x] 3. Checkpoint - 핵심 유틸/훅 검증
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 4. UI 컴포넌트 구현
-  - [ ] 4.1 ForbiddenPage 구현
+- [x] 4. UI 컴포넌트 구현
+  - [x] 4.1 ForbiddenPage 구현
     - `src/pages/error/ForbiddenPage.tsx` 파일 생성
     - "접근 권한이 없습니다" 메시지 표시
     - "대시보드로 이동" 버튼 (`/dashboard`로 navigate)
     - "이전 페이지" 버튼 (히스토리 존재 시 `history.back()`, 없으면 `/dashboard`)
     - _Requirements: 4.2, 4.3, 4.5_
 
-  - [ ] 4.2 RoleGuard 컴포넌트 구현
+  - [x] 4.2 RoleGuard 컴포넌트 구현
     - `src/components/common/RoleGuard.tsx` 파일 생성
     - Props: `allowedRoles: AdminRole[]`, `children: React.ReactNode`
     - `useAuthMe` 훅으로 현재 사용자 역할 조회
@@ -61,7 +61,7 @@ SoFit admin-front에 역할 기반 메뉴/접근 제어 시스템을 구현한�
     - 역할 허용: `children` 렌더링
     - _Requirements: 4.1, 4.4, 4.6, 5.5, 5.6_
 
-  - [ ] 4.3 Placeholder 페이지 3개 생성
+  - [x] 4.3 Placeholder 페이지 3개 생성
     - `src/pages/placeholder/ReviewHistoryPage.tsx` — "심사 내역 조회" 제목만 표시
     - `src/pages/placeholder/ManagerApprovalPage.tsx` — "지점장 결재" 제목만 표시
     - `src/pages/placeholder/LoanDetailPage.tsx` — "대출 상세" 제목만 표시 (useParams로 id 표시)
