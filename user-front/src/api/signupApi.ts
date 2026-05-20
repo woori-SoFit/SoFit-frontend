@@ -29,7 +29,7 @@ export async function checkLoginId(
   loginId: string
 ): Promise<CheckLoginIdResponse> {
   const { data } = await axiosInstance.get<CheckLoginIdResponse>(
-    "/auth/check-login-id",
+    "/auth/signup/check-login-id",
     { params: { loginId } }
   );
   return data;
