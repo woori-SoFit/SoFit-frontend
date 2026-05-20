@@ -32,11 +32,13 @@ pipeline {
         stage('Docker Build & Push') {
             steps {
                 sh '''
-                    docker build --no-cache -t $REGISTRY/sofit-user-front:latest -f user-front/Dockerfile .
+                    docker build -t $REGISTRY/sofit-user-front:latest -f user-front/Dockerfile .
                     docker push $REGISTRY/sofit-user-front:latest
 
-                    docker build --no-cache -t $REGISTRY/sofit-admin-front:latest -f admin-front/Dockerfile .
+                    docker build -t $REGISTRY/sofit-admin-front:latest -f admin-front/Dockerfile .
                     docker push $REGISTRY/sofit-admin-front:latest
+
+                    docker image prune -f
                 '''
             }
         }
