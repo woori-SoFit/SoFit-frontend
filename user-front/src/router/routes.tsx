@@ -49,7 +49,6 @@ export const router = createBrowserRouter([
     element: <PublicLayout />,
     children: [
       { path: "/login", element: <LoginPage /> },
-      { path: "/signup", element: <SignupPage /> },
     ],
   },
 
@@ -60,6 +59,9 @@ export const router = createBrowserRouter([
   {
     element: <StepLayout />,
     children: [
+      // 회원가입
+      { path: "/signup", element: <SignupPage /> },
+
       // 대출 신청 — /loan/apply 내부에서 step 기반 흐름
       { path: "/loan/apply", element: <LoanApplyPage /> },
 
