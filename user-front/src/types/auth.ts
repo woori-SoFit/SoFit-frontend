@@ -20,6 +20,14 @@ export interface LoginResponse {
   result: LoginUser;
 }
 
+/** /users/me 응답 */
+export interface MeResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: LoginUser | null;
+}
+
 /** 금융인증서 PIN 인증 요청 파라미터 */
 export interface FinancialCertVerifyRequest {
   phoneNumber: string;
