@@ -1,16 +1,20 @@
 import type { AdminRole } from '@/types';
-import { MENU_CONFIG } from '@/constants/permissions';
-import type { MenuGroupConfig } from '@/constants/permissions';
+import { ROUTE_CONFIG } from '@/constants/permissions';
+import type { RouteGroupConfig } from '@/constants/permissions';
 
 /**
- * 주어진 역할에 허용된 메뉴 항목만 필터링하여 반환한다.
- * items가 0개인 그룹은 결과에서 제외된다.
+ * 사이드바 메뉴용 필터링된 그룹을 반환한다.
+ * - showInMenu: false인 항목은 제외
+ * - 해당 역할에 허용된 항목만 포함
+ * - items가 0개인 그룹은 결과에서 제외
  */
-export function getFilteredMenuGroups(role: AdminRole): MenuGroupConfig[] {
-  return MENU_CONFIG
+export function getFilteredMenuGroups(role: AdminRole): RouteGroupConfig[] {
+  return ROUTE_CONFIG
     .map((group) => ({
       category: group.category,
-      items: group.items.filter((item) => item.allowedRoles.includes(role)),
+      items: group.items.filter(
+        (item) => item.showInMenu !== false && item.allowedRoles.includes(role)
+      ),
     }))
     .filter((group) => group.items.length > 0);
 }

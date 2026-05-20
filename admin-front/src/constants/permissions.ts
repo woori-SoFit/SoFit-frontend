@@ -1,27 +1,35 @@
 import type { AdminRole } from '@/types';
+import type { ComponentType } from 'react';
 
 /**
- * 메뉴 항목 설정 인터페이스
+ * 라우트 항목 설정 인터페이스
  */
-export interface MenuItemConfig {
+export interface RouteItemConfig {
   key: string;
   label: string;
   path: string;
   allowedRoles: AdminRole[];
+  /** 메뉴에 표시할지 여부 (기본값: true) */
+  showInMenu?: boolean;
+  /** 라우트에 연결할 페이지 컴포넌트 (lazy import용) */
+  component?: ComponentType;
 }
 
 /**
- * 메뉴 그룹 설정 인터페이스
+ * 라우트 그룹 설정 인터페이스
  */
-export interface MenuGroupConfig {
+export interface RouteGroupConfig {
   category: string;
-  items: MenuItemConfig[];
+  items: RouteItemConfig[];
 }
 
 /**
- * 역할별 메뉴 접근 권한 중앙 설정
+ * 역할별 메뉴 접근 권한 + 라우트 설정 (단일 소스)
+ *
+ * - 메뉴 렌더링, 라우트 생성, 권한 체크 모두 이 config에서 파생
+ * - showInMenu: false인 항목은 사이드바에 표시되지 않지만 라우트는 생성됨
  */
-export const MENU_CONFIG: MenuGroupConfig[] = [
+export const ROUTE_CONFIG: RouteGroupConfig[] = [
   {
     category: '대출',
     items: [
@@ -42,6 +50,13 @@ export const MENU_CONFIG: MenuGroupConfig[] = [
         label: '지점장 결재',
         path: '/manager-approval',
         allowedRoles: ['ADMIN_DEV', 'ADMIN_BANK_MANAGER'],
+      },
+      {
+        key: 'loan-detail',
+        label: '대출 상세',
+        path: '/loan/:id',
+        allowedRoles: ['ADMIN_DEV', 'ADMIN_BANK_TELLER', 'ADMIN_BANK_MANAGER'],
+        showInMenu: false,
       },
     ],
   },
@@ -76,17 +91,18 @@ export const MENU_CONFIG: MenuGroupConfig[] = [
 ];
 
 /**
- * 경로별 허용 역할 매핑
+ * ROUTE_CONFIG에서 모든 라우트 항목을 플랫하게 추출
  */
-export const ROUTE_PERMISSIONS: Record<string, AdminRole[]> = {
-  '/dashboard': ['ADMIN_DEV', 'ADMIN_BANK_TELLER', 'ADMIN_BANK_MANAGER'],
-  '/review-history': ['ADMIN_DEV', 'ADMIN_BANK_TELLER', 'ADMIN_BANK_MANAGER'],
-  '/manager-approval': ['ADMIN_DEV', 'ADMIN_BANK_MANAGER'],
-  '/users': ['ADMIN_DEV', 'ADMIN_BANK_TELLER', 'ADMIN_BANK_MANAGER'],
-  '/api-logs': ['ADMIN_DEV'],
-  '/batch': ['ADMIN_DEV'],
-  '/loan/:id': ['ADMIN_DEV', 'ADMIN_BANK_TELLER', 'ADMIN_BANK_MANAGER'],
-};
+export function getAllRouteItems(): RouteItemConfig[] {
+  return ROUTE_CONFIG.flatMap((group) => group.items);
+}
+
+/**
+ * 경로별 허용 역할 매핑 (ROUTE_CONFIG에서 자동 파생)
+ */
+export const ROUTE_PERMISSIONS: Record<string, AdminRole[]> = Object.fromEntries(
+  getAllRouteItems().map((item) => [item.path, item.allowedRoles])
+);
 
 /**
  * 역할 한글 표시명 매핑
