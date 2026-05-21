@@ -21,12 +21,11 @@ export interface CheckLoginIdResponse {
 
 /** 회원가입 요청 */
 export interface SignupRequest {
-  businessRegistrationNumber: string;
   name: string;
-  phone: string;
+  residentNumber: string;
+  phoneNumber: string;
   loginId: string;
   password: string;
-  agreedTermIds: number[];
 }
 
 /** 회원가입 응답 */
@@ -34,5 +33,5 @@ export interface SignupResponse {
   isSuccess: boolean;
   code: string;
   message: string;
-  result: { userId: number; loginId: string };
+  result: { userId: number; loginId: string; name: string; role: string };
 }

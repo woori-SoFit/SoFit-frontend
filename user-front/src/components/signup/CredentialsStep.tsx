@@ -25,14 +25,14 @@ export default function CredentialsStep() {
   const checkIdMutation = useMutation({
     mutationFn: checkLoginId,
     onSuccess: (data) => {
-      if (data.result) {
+      if (data.result?.available) {
         setIsIdChecked(true);
         setIsIdAvailable(true);
         setIdCheckMessage("사용 가능한 아이디입니다");
       } else {
         setIsIdChecked(false);
         setIsIdAvailable(false);
-        setIdCheckMessage(data.message || "이미 사용 중인 아이디입니다");
+        setIdCheckMessage("이미 사용 중인 아이디입니다");
       }
     },
     onError: (error) => {
@@ -88,7 +88,7 @@ export default function CredentialsStep() {
   };
 
   const inputClass =
-    "w-full h-10 px-3 border border-border-default rounded-lg text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-primary";
+    "w-full h-10 px-3 border border-border-default bg-white rounded-lg text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-primary";
 
   return (
     <div className="flex flex-col flex-1" data-testid="credentials-step">
