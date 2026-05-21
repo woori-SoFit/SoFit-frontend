@@ -32,7 +32,7 @@ export default function LoanProgressPage() {
   }, []);
 
   const handleCardClick = (app: LoanApplication) => {
-    if (app.status === "APPROVED") {
+    if (app.status === "APPROVED" || app.status === "REJECTED") {
       navigate(`/loan/result/${app.id}`);
     } else if (app.status === "IN_REVIEW" || app.status === "SUBMITTED") {
       navigate(`/loan/review/${app.id}`);

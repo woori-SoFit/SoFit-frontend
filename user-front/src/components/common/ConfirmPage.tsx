@@ -24,7 +24,7 @@ interface ConfirmPageProps {
   /** 타이틀 — ReactNode로 받아 일부 텍스트 강조 가능 */
   title: ReactNode;
   /** 타이틀 아래 설명 */
-  description?: string;
+  description?: ReactNode;
   /** 정보 테이블 데이터 (선택) */
   rows?: InfoRow[];
   /** 하단 버튼 레이블 (기본값: "확인하기") */
