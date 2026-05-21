@@ -108,34 +108,34 @@ export default function DashboardPage() {
 
       {/* 테이블 */}
       {!isLoading && !isError && data && (
-        <>
+        <div className="min-h-[540px]">
           <ApplicationTable applications={data.content} />
+        </div>
+      )}
 
-          {/* 페이지네이션 */}
-          {data.totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-4">
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-                disabled={page === 0}
-                className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                이전
-              </button>
-              <span className="text-sm text-text-secondary">
-                {page + 1} / {data.totalPages}
-              </span>
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.min(data.totalPages - 1, p + 1))}
-                disabled={page >= data.totalPages - 1}
-                className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                다음
-              </button>
-            </div>
-          )}
-        </>
+      {/* 페이지네이션 (하단 고정) */}
+      {!isLoading && !isError && data && data.totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-4">
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+            className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+          >
+            이전
+          </button>
+          <span className="text-sm text-text-secondary">
+            {page + 1} / {data.totalPages}
+          </span>
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.min(data.totalPages - 1, p + 1))}
+            disabled={page >= data.totalPages - 1}
+            className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+          >
+            다음
+          </button>
+        </div>
       )}
     </div>
   );
