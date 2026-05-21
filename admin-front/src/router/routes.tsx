@@ -11,6 +11,7 @@ import ManagerApprovalPage from "@/pages/placeholder/ManagerApprovalPage";
 import LoanDetailPage from "@/pages/placeholder/LoanDetailPage";
 import RoleGuard from "@/components/common/RoleGuard";
 import { getAllRouteItems } from "@/constants/permissions";
+import { type ComponentType } from "react";
 
 /**
  * 라우트 key → 페이지 컴포넌트 매핑
