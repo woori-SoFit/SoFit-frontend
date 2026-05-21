@@ -25,14 +25,14 @@ export default function CredentialsStep() {
   const checkIdMutation = useMutation({
     mutationFn: checkLoginId,
     onSuccess: (data) => {
-      if (data.result) {
+      if (data.result?.available) {
         setIsIdChecked(true);
         setIsIdAvailable(true);
         setIdCheckMessage("사용 가능한 아이디입니다");
       } else {
         setIsIdChecked(false);
         setIsIdAvailable(false);
-        setIdCheckMessage(data.message || "이미 사용 중인 아이디입니다");
+        setIdCheckMessage("이미 사용 중인 아이디입니다");
       }
     },
     onError: (error) => {
