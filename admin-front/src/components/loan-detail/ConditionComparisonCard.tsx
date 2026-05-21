@@ -86,7 +86,7 @@ export default function ConditionComparisonCard({
               <tr className="border-b border-border-default bg-gray-50">
                 <th className="w-[15%] px-3 py-2.5 text-center font-medium text-text-secondary">항목</th>
                 <th className="px-3 py-2.5 text-center font-medium text-text-secondary">상품 기준</th>
-                <th className="px-3 py-2.5 text-center font-medium text-text-secondary">신청 조건</th>
+                <th className="px-3 py-2.5 text-center font-medium text-text-secondary">고객 신청 정보</th>
                 <th className="px-3 py-2.5 text-center font-semibold text-primary bg-primary/5">승인 결과</th>
               </tr>
             </thead>

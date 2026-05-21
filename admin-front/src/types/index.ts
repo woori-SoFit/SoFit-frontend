@@ -88,6 +88,16 @@ export type RepaymentMethod = 'EQUAL_PRINCIPAL_INTEREST' | 'EQUAL_PRINCIPAL' | '
 /** 자금 용도 */
 export type LoanPurpose = 'FACILITY' | 'WORKING_CAPITAL';
 
+/** 약관 동의 항목 */
+export interface TermsAgreement {
+  /** 약관명 */
+  termName: string;
+  /** 동의 여부 */
+  agreed: boolean;
+  /** 동의 일시 (ISO 8601). 미동의 시 빈 문자열 */
+  agreedAt: string;
+}
+
 /** 신청 조건 */
 export interface ApplicationCondition {
   /** 희망 대출 금액 (만원) */
@@ -193,6 +203,8 @@ export interface LoanDetailData {
   businessInfo: BusinessInfo;
   applicationCondition: ApplicationCondition;
   applicantInput: ApplicantInput;
+  /** 약관 동의 목록 */
+  termsAgreements: TermsAgreement[];
   systemCollectedData: SystemCollectedData | null;
   cbScore: number | null;
   /** "S1" ~ "S10" */

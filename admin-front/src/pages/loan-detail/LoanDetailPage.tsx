@@ -7,8 +7,7 @@ import { useRecommendation } from '@/hooks/useRecommendation';
 import StatusBadge from '@/components/common/StatusBadge';
 import CustomerInfoCard from '@/components/loan-detail/CustomerInfoCard';
 import BusinessInfoCard from '@/components/loan-detail/BusinessInfoCard';
-import ApplicationConditionCard from '@/components/loan-detail/ApplicationConditionCard';
-import ApplicantInputCard from '@/components/loan-detail/ApplicantInputCard';
+import ApplicationRequestCard from '@/components/loan-detail/ApplicationRequestCard';
 import ConditionComparisonCard from '@/components/loan-detail/ConditionComparisonCard';
 import SystemCollectedCard from '@/components/loan-detail/SystemCollectedCard';
 import CBScoreCard from '@/components/loan-detail/CBScoreCard';
@@ -20,10 +19,11 @@ import RejectionModal from '@/components/loan-detail/RejectionModal';
 import EscalationDialog from '@/components/loan-detail/EscalationDialog';
 import type { ApprovalPayload, RejectionPayload, EscalationPayload } from '@/types';
 
-type TabKey = 'info' | 'sgrade' | 'review';
+type TabKey = 'info' | 'mybizdata' | 'sgrade' | 'review';
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'info', label: '정보' },
+  { key: 'mybizdata', label: 'MY BIZ DATA' },
   { key: 'sgrade', label: 'S등급 분석' },
   { key: 'review', label: '심사 결과' },
 ];
@@ -183,6 +183,9 @@ export default function LoanDetailPage() {
           <h1 className="text-xl font-bold text-text-primary">
             {data.customerInfo.name} / {data.businessInfo.businessName}
           </h1>
+          <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+            {data.productInfo.productName}
+          </span>
           <StatusBadge status={data.reviewStatus} />
         </div>
         <div className="flex items-center gap-4">
@@ -220,15 +223,26 @@ export default function LoanDetailPage() {
 
       {/* ─── 정보 탭 ─── */}
       {activeTab === 'info' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <CustomerInfoCard data={data.customerInfo} />
-            <BusinessInfoCard data={data.businessInfo} />
-            <ApplicationConditionCard data={data.applicationCondition} />
-            <ApplicantInputCard data={data.applicantInput} />
+        <div className="grid grid-cols-2 gap-4">
+          {/* 1행: 고객 기본 정보 | 사업자 정보 */}
+          <CustomerInfoCard data={data.customerInfo} />
+          <BusinessInfoCard data={data.businessInfo} />
+
+          {/* 2행: 고객 신청 정보 (2열 전체) */}
+          <div className="col-span-2">
+            <ApplicationRequestCard
+              condition={data.applicationCondition}
+              applicantInput={data.applicantInput}
+              productInfo={data.productInfo}
+              termsAgreements={data.termsAgreements}
+            />
           </div>
-          <SystemCollectedCard data={data.systemCollectedData} />
         </div>
+      )}
+
+      {/* ─── MY BIZ DATA 탭 ─── */}
+      {activeTab === 'mybizdata' && (
+        <SystemCollectedCard data={data.systemCollectedData} />
       )}
 
       {/* ─── S등급 분석 탭 ─── */}

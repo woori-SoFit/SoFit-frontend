@@ -51,6 +51,12 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       incomeType: 'BUSINESS',
       existingLoanAmount: 2000,
     },
+    termsAgreements: [
+      { termName: '대출 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-24T10:12:00' },
+      { termName: '개인정보 수집·이용 동의 (필수)', agreed: true, agreedAt: '2024-05-24T10:12:05' },
+      { termName: '마이데이터 서비스 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-24T10:12:10' },
+      { termName: '마케팅 정보 수신 동의 (선택)', agreed: false, agreedAt: '' },
+    ],
     systemCollectedData: {
       annual_income: 5200,
       existing_loan_count: 2,
@@ -135,6 +141,12 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       incomeType: 'BUSINESS',
       existingLoanAmount: 5000,
     },
+    termsAgreements: [
+      { termName: '대출 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-23T09:05:00' },
+      { termName: '개인정보 수집·이용 동의 (필수)', agreed: true, agreedAt: '2024-05-23T09:05:03' },
+      { termName: '마이데이터 서비스 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-23T09:05:07' },
+      { termName: '마케팅 정보 수신 동의 (선택)', agreed: true, agreedAt: '2024-05-23T09:05:10' },
+    ],
     systemCollectedData: {
       annual_income: 9200,
       existing_loan_count: 3,
@@ -219,6 +231,12 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       incomeType: 'BUSINESS',
       existingLoanAmount: 1000,
     },
+    termsAgreements: [
+      { termName: '대출 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-22T14:30:00' },
+      { termName: '개인정보 수집·이용 동의 (필수)', agreed: true, agreedAt: '2024-05-22T14:30:04' },
+      { termName: '마이데이터 서비스 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-22T14:30:08' },
+      { termName: '마케팅 정보 수신 동의 (선택)', agreed: false, agreedAt: '' },
+    ],
     systemCollectedData: {
       annual_income: 6500,
       existing_loan_count: 1,

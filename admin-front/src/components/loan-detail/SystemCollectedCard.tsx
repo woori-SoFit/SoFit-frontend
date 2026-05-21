@@ -73,10 +73,10 @@ export default function SystemCollectedCard({ data }: SystemCollectedCardProps) 
         </span>
       </div>
 
-      {/* 3섹션 가로 배치 (768px 미만 시 세로 배치) */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {/* 재무 현황 섹션 */}
-        <div>
+      {/* 2열 배치: 재무 현황 | 운영 신뢰도 + 시장 포지션 */}
+      <div className="grid grid-cols-2 gap-6 divide-x divide-border-default">
+        {/* 왼쪽: 재무 현황 */}
+        <div className="pr-6">
           <h4 className="mb-3 text-xs font-semibold text-text-secondary">재무 현황</h4>
           <dl className="space-y-2">
             <InfoRow label="연 소득" value={safeFormatCurrency(data.annual_income)} />
@@ -105,76 +105,81 @@ export default function SystemCollectedCard({ data }: SystemCollectedCardProps) 
           </dl>
         </div>
 
-        {/* 운영 신뢰도 섹션 */}
-        <div>
-          <h4 className="mb-3 text-xs font-semibold text-text-secondary">운영 신뢰도</h4>
-          <dl className="space-y-2">
-            <InfoRow
-              label="업력"
-              value={
-                data.business_age_months != null
-                  ? formatBusinessAge(data.business_age_months)
-                  : '-'
-              }
-            />
-            <div className="flex items-center justify-between">
-              <dt className="text-xs text-text-secondary">부가세 신고</dt>
-              <dd>
-                {data.vat_filing_status != null ? (
-                  <StatusBadge {...VAT_STATUS_CONFIG[data.vat_filing_status]} />
-                ) : (
-                  <span className="text-sm font-medium text-text-primary">-</span>
-                )}
-              </dd>
-            </div>
-            <div className="flex items-center justify-between">
-              <dt className="text-xs text-text-secondary">세금 체납</dt>
-              <dd>
-                {data.tax_overdue != null ? (
-                  data.tax_overdue ? (
-                    <StatusBadge label="체납" className="bg-red-100 text-red-700" />
+        {/* 오른쪽: 운영 신뢰도 + 시장 포지션 */}
+        <div className="pl-6 space-y-5">
+          {/* 운영 신뢰도 */}
+          <div>
+            <h4 className="mb-3 text-xs font-semibold text-text-secondary">운영 신뢰도</h4>
+            <dl className="space-y-2">
+              <InfoRow
+                label="업력"
+                value={
+                  data.business_age_months != null
+                    ? formatBusinessAge(data.business_age_months)
+                    : '-'
+                }
+              />
+              <div className="flex items-center justify-between">
+                <dt className="text-xs text-text-secondary">부가세 신고</dt>
+                <dd>
+                  {data.vat_filing_status != null ? (
+                    <StatusBadge {...VAT_STATUS_CONFIG[data.vat_filing_status]} />
                   ) : (
-                    <span className="text-sm font-medium text-text-primary">없음</span>
-                  )
-                ) : (
-                  <span className="text-sm font-medium text-text-primary">-</span>
-                )}
-              </dd>
-            </div>
-            <div className="flex items-center justify-between">
-              <dt className="text-xs text-text-secondary">4대보험 납부</dt>
-              <dd>
-                {data.insurance_payment_status != null ? (
-                  <StatusBadge {...INSURANCE_STATUS_CONFIG[data.insurance_payment_status]} />
-                ) : (
-                  <span className="text-sm font-medium text-text-primary">-</span>
-                )}
-              </dd>
-            </div>
-          </dl>
-        </div>
+                    <span className="text-sm font-medium text-text-primary">-</span>
+                  )}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-xs text-text-secondary">세금 체납</dt>
+                <dd>
+                  {data.tax_overdue != null ? (
+                    data.tax_overdue ? (
+                      <StatusBadge label="체납" className="bg-red-100 text-red-700" />
+                    ) : (
+                      <span className="text-sm font-medium text-text-primary">없음</span>
+                    )
+                  ) : (
+                    <span className="text-sm font-medium text-text-primary">-</span>
+                  )}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-xs text-text-secondary">4대보험 납부</dt>
+                <dd>
+                  {data.insurance_payment_status != null ? (
+                    <StatusBadge {...INSURANCE_STATUS_CONFIG[data.insurance_payment_status]} />
+                  ) : (
+                    <span className="text-sm font-medium text-text-primary">-</span>
+                  )}
+                </dd>
+              </div>
+            </dl>
+          </div>
 
-        {/* 시장 포지션 섹션 */}
-        <div>
-          <h4 className="mb-3 text-xs font-semibold text-text-secondary">시장 포지션</h4>
-          <dl className="space-y-2">
-            <InfoRow
-              label="업종 내 매출 순위"
-              value={
-                data.industry_sales_rank != null
-                  ? `상위 ${data.industry_sales_rank.toFixed(1)}%`
-                  : '-'
-              }
-            />
-            <InfoRow
-              label="업종 내 수익성 순위"
-              value={
-                data.industry_profit_rank != null
-                  ? `상위 ${data.industry_profit_rank.toFixed(1)}%`
-                  : '-'
-              }
-            />
-          </dl>
+          <div className="border-t border-border-default" />
+
+          {/* 시장 포지션 */}
+          <div>
+            <h4 className="mb-3 text-xs font-semibold text-text-secondary">시장 포지션</h4>
+            <dl className="space-y-2">
+              <InfoRow
+                label="업종 내 매출 순위"
+                value={
+                  data.industry_sales_rank != null
+                    ? `상위 ${data.industry_sales_rank.toFixed(1)}%`
+                    : '-'
+                }
+              />
+              <InfoRow
+                label="업종 내 수익성 순위"
+                value={
+                  data.industry_profit_rank != null
+                    ? `상위 ${data.industry_profit_rank.toFixed(1)}%`
+                    : '-'
+                }
+              />
+            </dl>
+          </div>
         </div>
       </div>
     </div>
