@@ -183,8 +183,8 @@
     - 추가 결재 요청 API 호출 + 에러 시 토스트 3초 표시
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.6_
 
-- [ ] 12. 페이지 컴포넌트 구현
-  - [ ] 12.1 `src/pages/loan-detail/LoanDetailPage.tsx` 생성 (placeholder 교체)
+- [x] 12. 페이지 컴포넌트 구현
+  - [x] 12.1 `src/pages/loan-detail/LoanDetailPage.tsx` 생성 (placeholder 교체)
     - URL 파라미터 `:id` 파싱 및 유효성 검증 (NaN/비양수 → 404)
     - 로딩/에러/404 상태 처리 (로딩 스피너, 에러 메시지 + 재시도, 404 안내 + 목록 이동)
     - 헤더: 신청일, 신청자명, 사업자명, StatusBadge, 액션 버튼
@@ -196,7 +196,7 @@
     - 반응형: 768px 미만 시 1열 전환
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 17.1, 17.2, 17.3, 17.4, 17.5, 18.1, 18.2, 18.3, 18.4, 18.5, 18.6, 19.1, 19.3, 19.4, 19.6, 19.7_
 
-  - [ ] 12.2 `src/pages/manager-approval/ManagerApprovalPage.tsx` 생성 (placeholder 교체)
+  - [x] 12.2 `src/pages/manager-approval/ManagerApprovalPage.tsx` 생성 (placeholder 교체)
     - MANAGER_REVIEW 상태 건 목록 테이블 (신청일, 신청자명, 사업자명, 요청 은행원명, 신청 금액)
     - 각 건 "상세보기" 버튼 → `/loan/:id` 이동
     - 빈 목록 시 "결재 대기 중인 건이 없습니다" 메시지
