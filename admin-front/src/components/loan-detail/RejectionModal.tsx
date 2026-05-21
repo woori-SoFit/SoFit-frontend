@@ -17,8 +17,8 @@ interface RejectionModalProps {
 
 /**
  * 대출 거절 모달 컴포넌트.
- * 거절 사유(필수)와 의견(선택)을 입력받아 거절 처리를 수행한다.
- * 거절 사유가 비어있거나 공백만일 때 확인 버튼이 비활성화된다.
+ * 거절 사유(필수, 최대 500자)를 입력받아 거절 처리를 수행한다.
+ * 사유가 비어있거나 공백만일 때 확인 버튼이 비활성화된다.
  * API 에러 시 입력값을 유지하며, 취소 시 입력값을 초기화한다.
  */
 export default function RejectionModal({
@@ -28,33 +28,28 @@ export default function RejectionModal({
   isSubmitting,
   error,
 }: RejectionModalProps) {
-  const [reason, setReason] = useState('');
   const [comment, setComment] = useState('');
 
   // 모달 닫힐 때 입력값 초기화
   useEffect(() => {
     if (!isOpen) {
-      setReason('');
       setComment('');
     }
   }, [isOpen]);
 
-  const isReasonValid = reason !== '' && !isWhitespaceOnly(reason);
-  const isFormValid = isReasonValid;
+  const isCommentValid = comment !== '' && !isWhitespaceOnly(comment);
+  const isFormValid = isCommentValid;
 
   const handleSubmit = useCallback(() => {
     if (!isFormValid) return;
 
     const payload: RejectionPayload = {
-      reason: reason.trim(),
-      comment: comment.trim() || undefined,
+      comment: comment.trim(),
     };
     onSubmit(payload);
-  }, [isFormValid, reason, comment, onSubmit]);
+  }, [isFormValid, comment, onSubmit]);
 
   const handleClose = useCallback(() => {
-    // 취소 시 입력값 초기화
-    setReason('');
     setComment('');
     onClose();
   }, [onClose]);
@@ -73,45 +68,28 @@ export default function RejectionModal({
         <div className="space-y-4">
           {/* 거절 사유 (필수) */}
           <div>
-            <label htmlFor="rejectionReason" className="mb-1 block text-xs font-medium text-text-secondary">
-              거절 사유 <span className="text-error">*</span> (최대 500자)
-            </label>
-            <textarea
-              id="rejectionReason"
-              value={reason}
-              onChange={(e) => setReason(e.target.value.slice(0, 500))}
-              maxLength={500}
-              rows={4}
-              placeholder="거절 사유를 입력해 주세요."
-              className={`w-full resize-none rounded-md border px-3 py-2 text-sm outline-none transition-colors ${
-                reason && !isReasonValid
-                  ? 'border-error focus:border-error'
-                  : 'border-border-default focus:border-border-focus'
-              }`}
-            />
-            <div className="mt-1 flex items-center justify-between">
-              {reason && !isReasonValid && (
-                <p className="text-xs text-error">공백만으로는 거절 사유를 입력할 수 없습니다.</p>
-              )}
-              <p className="ml-auto text-xs text-text-disabled">{reason.length}/500</p>
-            </div>
-          </div>
-
-          {/* 의견 (선택) */}
-          <div>
             <label htmlFor="rejectionComment" className="mb-1 block text-xs font-medium text-text-secondary">
-              의견 (선택, 최대 500자)
+              거절 사유 <span className="text-error">*</span> (최대 500자)
             </label>
             <textarea
               id="rejectionComment"
               value={comment}
               onChange={(e) => setComment(e.target.value.slice(0, 500))}
               maxLength={500}
-              rows={3}
-              placeholder="추가 의견을 입력해 주세요."
-              className="w-full resize-none rounded-md border border-border-default px-3 py-2 text-sm outline-none transition-colors focus:border-border-focus"
+              rows={5}
+              placeholder="거절 사유를 입력해 주세요."
+              className={`w-full resize-none rounded-md border px-3 py-2 text-sm outline-none transition-colors ${
+                comment && !isCommentValid
+                  ? 'border-error focus:border-error'
+                  : 'border-border-default focus:border-border-focus'
+              }`}
             />
-            <p className="mt-1 text-right text-xs text-text-disabled">{comment.length}/500</p>
+            <div className="mt-1 flex items-center justify-between">
+              {comment && !isCommentValid && (
+                <p className="text-xs text-error">공백만으로는 거절 사유를 입력할 수 없습니다.</p>
+              )}
+              <p className="ml-auto text-xs text-text-disabled">{comment.length}/500</p>
+            </div>
           </div>
         </div>
 

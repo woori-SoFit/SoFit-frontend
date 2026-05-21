@@ -59,28 +59,18 @@ export default function ShapExplanation({ loanId }: ShapExplanationProps) {
 
   return (
     <div className="rounded-lg border border-border-default bg-bg-surface p-6 shadow-card">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {/* 왼쪽 영역: 등급 + 키워드 + 바 차트 */}
-        <div className="space-y-5">
-          {/* 현재 등급 + 목표 등급 */}
-          <div className="flex items-center gap-3">
-            <span className="rounded-md bg-primary px-3 py-1 text-sm font-bold text-text-inverse">
-              {data.grade}
-            </span>
-            <span className="text-sm text-text-secondary">
-              목표: {data.targetGrade}
-            </span>
-          </div>
-
+      <div className="grid grid-cols-1 gap-0 md:grid-cols-2 md:divide-x md:divide-border-default">
+        {/* 왼쪽 영역: 키워드 + AI 분석 요약 */}
+        <div className="space-y-5 md:pr-6">
           {/* 강점 키워드 태그 */}
           {data.strengthKeywords.length > 0 && (
             <div>
-              <span className="mb-2 block text-xs font-medium text-text-secondary">강점</span>
-              <div className="flex flex-wrap gap-1.5">
+              <span className="mb-2 block text-sm font-medium text-text-secondary">강점</span>
+              <div className="flex flex-wrap gap-2">
                 {data.strengthKeywords.map((keyword) => (
                   <span
                     key={keyword}
-                    className="rounded-full bg-info/10 px-2.5 py-0.5 text-xs font-medium text-info"
+                    className="rounded-full bg-info/10 px-3 py-1 text-sm font-medium text-info"
                   >
                     {keyword}
                   </span>
@@ -92,12 +82,12 @@ export default function ShapExplanation({ loanId }: ShapExplanationProps) {
           {/* 개선 키워드 태그 */}
           {data.improvementKeywords.length > 0 && (
             <div>
-              <span className="mb-2 block text-xs font-medium text-text-secondary">개선</span>
-              <div className="flex flex-wrap gap-1.5">
+              <span className="mb-2 block text-sm font-medium text-text-secondary">개선</span>
+              <div className="flex flex-wrap gap-2">
                 {data.improvementKeywords.map((keyword) => (
                   <span
                     key={keyword}
-                    className="rounded-full bg-error/10 px-2.5 py-0.5 text-xs font-medium text-error"
+                    className="rounded-full bg-error/10 px-3 py-1 text-sm font-medium text-error"
                   >
                     {keyword}
                   </span>
@@ -106,24 +96,17 @@ export default function ShapExplanation({ loanId }: ShapExplanationProps) {
             </div>
           )}
 
-          {/* 강점 상세 바 차트 */}
-          <ShapBarChart
-            title="강점 상세"
-            details={data.strengthDetails}
-            variant="strength"
-          />
-
-          {/* 개선 상세 바 차트 */}
-          <ShapBarChart
-            title="개선 상세"
-            details={data.improvementDetails}
-            variant="improvement"
-          />
+          {/* AI 분석 요약 */}
+          <AiAdvice advice={data.advice} />
         </div>
 
-        {/* 오른쪽 영역: AI 분석 요약 */}
-        <div>
-          <AiAdvice advice={data.advice} />
+        {/* 오른쪽 영역: 특성 영향력 TOP 10 */}
+        <div className="mt-6 md:mt-0 md:pl-6">
+          <ShapBarChart
+            title="특성 영향력 TOP 10"
+            details={[...data.strengthDetails, ...data.improvementDetails]}
+            maxItems={10}
+          />
         </div>
       </div>
     </div>

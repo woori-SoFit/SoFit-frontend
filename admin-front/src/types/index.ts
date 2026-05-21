@@ -85,6 +85,9 @@ export interface BusinessInfo {
 /** 상환 방식 */
 export type RepaymentMethod = 'EQUAL_PRINCIPAL_INTEREST' | 'EQUAL_PRINCIPAL' | 'BULLET';
 
+/** 자금 용도 */
+export type LoanPurpose = 'FACILITY' | 'WORKING_CAPITAL';
+
 /** 신청 조건 */
 export interface ApplicationCondition {
   /** 희망 대출 금액 (만원) */
@@ -93,7 +96,7 @@ export interface ApplicationCondition {
   loanTermMonths: number;
   repaymentMethod: RepaymentMethod;
   /** 자금 용도 */
-  purpose: string;
+  purpose: LoanPurpose;
 }
 
 /** 소득 종류 */
@@ -157,12 +160,35 @@ export interface ShapResult {
   advice: string;
 }
 
+/** 대출 상품 정보 */
+export interface LoanProductInfo {
+  /** 상품명 */
+  productName: string;
+  /** 최소 대출 금액 (만원) */
+  minAmount: number;
+  /** 최대 대출 금액 (만원) */
+  maxAmount: number;
+  /** 최소 금리 (%) */
+  minInterestRate: number;
+  /** 최대 금리 (%) */
+  maxInterestRate: number;
+  /** 최소 대출 기간 (개월) */
+  minTermMonths: number;
+  /** 최대 대출 기간 (개월) */
+  maxTermMonths: number;
+  /** 가능한 상환 방식 */
+  availableRepaymentMethods: RepaymentMethod[];
+  /** 가능한 자금 용도 */
+  availablePurposes: LoanPurpose[];
+}
+
 /** 대출 신청 상세 전체 데이터 */
 export interface LoanDetailData {
   id: number;
   applicationDate: string;
   reviewStatus: ReviewStatus;
   assigneeName: string;
+  productInfo: LoanProductInfo;
   customerInfo: CustomerInfo;
   businessInfo: BusinessInfo;
   applicationCondition: ApplicationCondition;
@@ -199,8 +225,8 @@ export interface ApprovalPayload {
 
 /** 거절 요청 페이로드 */
 export interface RejectionPayload {
-  reason: string;
-  comment?: string;
+  /** 거절 사유 (필수) */
+  comment: string;
 }
 
 /** 추가 결재 요청 페이로드 */

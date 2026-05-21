@@ -28,10 +28,15 @@ const REPAYMENT_METHOD_OPTIONS: { value: RepaymentMethod; label: string }[] = [
   { value: 'BULLET', label: '만기일시상환' },
 ];
 
+function getMethodLabel(method: RepaymentMethod): string {
+  return REPAYMENT_METHOD_OPTIONS.find((o) => o.value === method)?.label ?? method;
+}
+
 /**
  * 대출 승인 모달 컴포넌트.
- * 시스템 추천값을 조회하여 초기값으로 설정하고,
- * 은행원이 승인 금액, 금리, 기간, 상환 방식을 수정하여 승인 처리할 수 있다.
+ * 시스템 추천값을 조회하여 자동으로 채워진 상태로 표시하고,
+ * "수정" 버튼을 눌러야 편집 모드로 전환된다.
+ * 의견만 항상 편집 가능하다.
  */
 export default function ApprovalModal({
   loanId,
@@ -44,6 +49,7 @@ export default function ApprovalModal({
   const { data: recommendation, isLoading: isLoadingRecommendation, isError: isRecommendationError } =
     useRecommendation(loanId, isOpen);
 
+  const [isEditing, setIsEditing] = useState(false);
   const [approvedAmount, setApprovedAmount] = useState('');
   const [interestRate, setInterestRate] = useState('');
   const [loanTermMonths, setLoanTermMonths] = useState('');
@@ -60,9 +66,10 @@ export default function ApprovalModal({
     }
   }, [recommendation]);
 
-  // 모달 닫힐 때 입력값 초기화
+  // 모달 닫힐 때 상태 초기화
   useEffect(() => {
     if (!isOpen) {
+      setIsEditing(false);
       setApprovedAmount('');
       setInterestRate('');
       setLoanTermMonths('');
@@ -118,111 +125,190 @@ export default function ApprovalModal({
           </p>
         )}
 
-        {/* 입력 폼 */}
-        <div className="space-y-4">
-          {/* 승인 금액 */}
-          <div>
-            <label htmlFor="approvedAmount" className="mb-1 block text-xs font-medium text-text-secondary">
-              승인 금액 (원)
-            </label>
-            <input
-              id="approvedAmount"
-              type="number"
-              value={approvedAmount}
-              onChange={(e) => setApprovedAmount(e.target.value)}
-              placeholder="100,000 ~ 1,000,000,000"
-              className={`w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors ${
-                approvedAmount && !isAmountValid
-                  ? 'border-error focus:border-error'
-                  : 'border-border-default focus:border-border-focus'
-              }`}
-            />
-            {approvedAmount && !isAmountValid && (
-              <p className="mt-1 text-xs text-error">10만 이상 10억 이하의 정수를 입력해 주세요.</p>
+        {/* 읽기 전용 모드 (추천값 로드 완료 + 편집 모드 아닐 때) */}
+        {!isLoadingRecommendation && !isRecommendationError && !isEditing && approvedAmount && (
+          <div className="space-y-4">
+            <div className="rounded-md border border-border-default bg-gray-50 p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-xs font-medium text-text-secondary">시스템 추천 승인 조건</span>
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                  className="rounded-md border border-primary px-3 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/5"
+                >
+                  수정
+                </button>
+              </div>
+              <dl className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <dt className="text-xs text-text-secondary">승인 금액</dt>
+                  <dd className="text-sm font-medium text-text-primary">
+                    {Number(approvedAmount).toLocaleString('ko-KR')}만원
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-xs text-text-secondary">확정 금리</dt>
+                  <dd className="text-sm font-medium text-text-primary">{interestRate}%</dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-xs text-text-secondary">확정 기간</dt>
+                  <dd className="text-sm font-medium text-text-primary">{loanTermMonths}개월</dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-xs text-text-secondary">상환 방식</dt>
+                  <dd className="text-sm font-medium text-text-primary">{getMethodLabel(repaymentMethod)}</dd>
+                </div>
+              </dl>
+            </div>
+
+            {/* 의견 (항상 편집 가능) */}
+            <div>
+              <label htmlFor="approvalComment" className="mb-1 block text-xs font-medium text-text-secondary">
+                의견 (선택, 최대 500자)
+              </label>
+              <textarea
+                id="approvalComment"
+                value={comment}
+                onChange={(e) => setComment(e.target.value.slice(0, 500))}
+                maxLength={500}
+                rows={3}
+                placeholder="승인 의견을 입력해 주세요."
+                className="w-full resize-none rounded-md border border-border-default px-3 py-2 text-sm outline-none transition-colors focus:border-border-focus"
+              />
+              <p className="mt-1 text-right text-xs text-text-disabled">{comment.length}/500</p>
+            </div>
+          </div>
+        )}
+
+        {/* 편집 모드 또는 추천값 실패 시 */}
+        {(isEditing || isRecommendationError) && (
+          <div className="space-y-4">
+            {isEditing && (
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-text-secondary">승인 조건 수정</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    // 추천값으로 되돌리기
+                    if (recommendation) {
+                      setApprovedAmount(String(recommendation.approvedAmount));
+                      setInterestRate(String(recommendation.interestRate));
+                      setLoanTermMonths(String(recommendation.loanTermMonths));
+                      setRepaymentMethod(recommendation.repaymentMethod);
+                    }
+                    setIsEditing(false);
+                  }}
+                  className="text-xs text-text-secondary hover:text-text-primary transition-colors"
+                >
+                  되돌리기
+                </button>
+              </div>
             )}
-          </div>
 
-          {/* 확정 금리 */}
-          <div>
-            <label htmlFor="interestRate" className="mb-1 block text-xs font-medium text-text-secondary">
-              확정 금리 (%)
-            </label>
-            <input
-              id="interestRate"
-              type="number"
-              step="0.01"
-              value={interestRate}
-              onChange={(e) => setInterestRate(e.target.value)}
-              placeholder="0.01 ~ 20.00"
-              className={`w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors ${
-                interestRate && !isRateValid
-                  ? 'border-error focus:border-error'
-                  : 'border-border-default focus:border-border-focus'
-              }`}
-            />
-            {interestRate && !isRateValid && (
-              <p className="mt-1 text-xs text-error">0.01% 이상 20.00% 이하로 입력해 주세요.</p>
-            )}
-          </div>
+            {/* 승인 금액 */}
+            <div>
+              <label htmlFor="approvedAmount" className="mb-1 block text-xs font-medium text-text-secondary">
+                승인 금액 (만원)
+              </label>
+              <input
+                id="approvedAmount"
+                type="number"
+                value={approvedAmount}
+                onChange={(e) => setApprovedAmount(e.target.value)}
+                placeholder="100,000 ~ 1,000,000,000"
+                className={`w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors ${
+                  approvedAmount && !isAmountValid
+                    ? 'border-error focus:border-error'
+                    : 'border-border-default focus:border-border-focus'
+                }`}
+              />
+              {approvedAmount && !isAmountValid && (
+                <p className="mt-1 text-xs text-error">10만 이상 10억 이하의 정수를 입력해 주세요.</p>
+              )}
+            </div>
 
-          {/* 확정 기간 */}
-          <div>
-            <label htmlFor="loanTermMonths" className="mb-1 block text-xs font-medium text-text-secondary">
-              확정 기간 (개월)
-            </label>
-            <input
-              id="loanTermMonths"
-              type="number"
-              value={loanTermMonths}
-              onChange={(e) => setLoanTermMonths(e.target.value)}
-              placeholder="1 ~ 360"
-              className={`w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors ${
-                loanTermMonths && !isTermValid
-                  ? 'border-error focus:border-error'
-                  : 'border-border-default focus:border-border-focus'
-              }`}
-            />
-            {loanTermMonths && !isTermValid && (
-              <p className="mt-1 text-xs text-error">1개월 이상 360개월 이하의 정수를 입력해 주세요.</p>
-            )}
-          </div>
+            {/* 확정 금리 */}
+            <div>
+              <label htmlFor="interestRate" className="mb-1 block text-xs font-medium text-text-secondary">
+                확정 금리 (%)
+              </label>
+              <input
+                id="interestRate"
+                type="number"
+                step="0.01"
+                value={interestRate}
+                onChange={(e) => setInterestRate(e.target.value)}
+                placeholder="0.01 ~ 20.00"
+                className={`w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors ${
+                  interestRate && !isRateValid
+                    ? 'border-error focus:border-error'
+                    : 'border-border-default focus:border-border-focus'
+                }`}
+              />
+              {interestRate && !isRateValid && (
+                <p className="mt-1 text-xs text-error">0.01% 이상 20.00% 이하로 입력해 주세요.</p>
+              )}
+            </div>
 
-          {/* 상환 방식 */}
-          <div>
-            <label htmlFor="repaymentMethod" className="mb-1 block text-xs font-medium text-text-secondary">
-              상환 방식
-            </label>
-            <select
-              id="repaymentMethod"
-              value={repaymentMethod}
-              onChange={(e) => setRepaymentMethod(e.target.value as RepaymentMethod)}
-              className="w-full rounded-md border border-border-default px-3 py-2 text-sm outline-none transition-colors focus:border-border-focus"
-            >
-              {REPAYMENT_METHOD_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
+            {/* 확정 기간 */}
+            <div>
+              <label htmlFor="loanTermMonths" className="mb-1 block text-xs font-medium text-text-secondary">
+                확정 기간 (개월)
+              </label>
+              <input
+                id="loanTermMonths"
+                type="number"
+                value={loanTermMonths}
+                onChange={(e) => setLoanTermMonths(e.target.value)}
+                placeholder="1 ~ 360"
+                className={`w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors ${
+                  loanTermMonths && !isTermValid
+                    ? 'border-error focus:border-error'
+                    : 'border-border-default focus:border-border-focus'
+                }`}
+              />
+              {loanTermMonths && !isTermValid && (
+                <p className="mt-1 text-xs text-error">1개월 이상 360개월 이하의 정수를 입력해 주세요.</p>
+              )}
+            </div>
 
-          {/* 의견 */}
-          <div>
-            <label htmlFor="approvalComment" className="mb-1 block text-xs font-medium text-text-secondary">
-              의견 (선택, 최대 500자)
-            </label>
-            <textarea
-              id="approvalComment"
-              value={comment}
-              onChange={(e) => setComment(e.target.value.slice(0, 500))}
-              maxLength={500}
-              rows={3}
-              placeholder="승인 의견을 입력해 주세요."
-              className="w-full resize-none rounded-md border border-border-default px-3 py-2 text-sm outline-none transition-colors focus:border-border-focus"
-            />
-            <p className="mt-1 text-right text-xs text-text-disabled">{comment.length}/500</p>
+            {/* 상환 방식 */}
+            <div>
+              <label htmlFor="repaymentMethod" className="mb-1 block text-xs font-medium text-text-secondary">
+                상환 방식
+              </label>
+              <select
+                id="repaymentMethod"
+                value={repaymentMethod}
+                onChange={(e) => setRepaymentMethod(e.target.value as RepaymentMethod)}
+                className="w-full rounded-md border border-border-default px-3 py-2 text-sm outline-none transition-colors focus:border-border-focus"
+              >
+                {REPAYMENT_METHOD_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 의견 */}
+            <div>
+              <label htmlFor="approvalCommentEdit" className="mb-1 block text-xs font-medium text-text-secondary">
+                의견 (선택, 최대 500자)
+              </label>
+              <textarea
+                id="approvalCommentEdit"
+                value={comment}
+                onChange={(e) => setComment(e.target.value.slice(0, 500))}
+                maxLength={500}
+                rows={3}
+                placeholder="승인 의견을 입력해 주세요."
+                className="w-full resize-none rounded-md border border-border-default px-3 py-2 text-sm outline-none transition-colors focus:border-border-focus"
+              />
+              <p className="mt-1 text-right text-xs text-text-disabled">{comment.length}/500</p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 에러 메시지 */}
         {error && (

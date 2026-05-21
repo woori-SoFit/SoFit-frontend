@@ -1,13 +1,15 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthMe } from '@/hooks/useAuthMe';
 import { useLoanDetail } from '@/hooks/useLoanDetail';
 import { useLoanMutations } from '@/hooks/useLoanMutations';
+import { useRecommendation } from '@/hooks/useRecommendation';
 import StatusBadge from '@/components/common/StatusBadge';
 import CustomerInfoCard from '@/components/loan-detail/CustomerInfoCard';
 import BusinessInfoCard from '@/components/loan-detail/BusinessInfoCard';
 import ApplicationConditionCard from '@/components/loan-detail/ApplicationConditionCard';
 import ApplicantInputCard from '@/components/loan-detail/ApplicantInputCard';
+import ConditionComparisonCard from '@/components/loan-detail/ConditionComparisonCard';
 import SystemCollectedCard from '@/components/loan-detail/SystemCollectedCard';
 import CBScoreCard from '@/components/loan-detail/CBScoreCard';
 import SGradeCard from '@/components/loan-detail/SGradeCard';
@@ -18,9 +20,14 @@ import RejectionModal from '@/components/loan-detail/RejectionModal';
 import EscalationDialog from '@/components/loan-detail/EscalationDialog';
 import type { ApprovalPayload, RejectionPayload, EscalationPayload } from '@/types';
 
-/**
- * 신청일을 "YYYY.MM.DD" 형식으로 변환한다.
- */
+type TabKey = 'info' | 'sgrade' | 'review';
+
+const TABS: { key: TabKey; label: string }[] = [
+  { key: 'info', label: '정보' },
+  { key: 'sgrade', label: 'S등급 분석' },
+  { key: 'review', label: '심사 결과' },
+];
+
 function formatDate(isoDate: string): string {
   const date = new Date(isoDate);
   if (isNaN(date.getTime())) return isoDate;
@@ -30,24 +37,18 @@ function formatDate(isoDate: string): string {
   return `${year}.${month}.${day}`;
 }
 
-/**
- * 대출 신청 상세 페이지.
- * URL 파라미터 :id로 상세 데이터를 조회하고,
- * 역할/상태에 따라 승인/거절/추가결재 액션을 제공한다.
- */
 export default function LoanDetailPage() {
   const { id: idParam } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: authUser } = useAuthMe();
 
-  // URL 파라미터 유효성 검증
   const loanId = useMemo(() => {
     const parsed = Number(idParam);
     if (isNaN(parsed) || parsed <= 0 || !Number.isInteger(parsed)) return null;
     return parsed;
   }, [idParam]);
 
-  // 모달 상태
+  const [activeTab, setActiveTab] = useState<TabKey>('info');
   const [isApprovalOpen, setIsApprovalOpen] = useState(false);
   const [isRejectionOpen, setIsRejectionOpen] = useState(false);
   const [isEscalationOpen, setIsEscalationOpen] = useState(false);
@@ -55,7 +56,25 @@ export default function LoanDetailPage() {
   const { data, isLoading, isError, refetch } = useLoanDetail(loanId ?? 0);
   const mutations = useLoanMutations(loanId ?? 0);
 
-  // 유효하지 않은 ID → 404 안내
+  // 심사 결과 탭에서 추천값 표시용 (탭이 review일 때 조회)
+  const { data: recommendation, isLoading: isRecommendationLoading } = useRecommendation(
+    loanId ?? 0,
+    activeTab === 'review',
+  );
+
+  // 모달 열릴 때 body 스크롤 방지
+  const isAnyModalOpen = isApprovalOpen || isRejectionOpen || isEscalationOpen;
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      document.body.classList.add('no-scroll');
+    } else {
+      document.body.classList.remove('no-scroll');
+    }
+    return () => {
+      document.body.classList.remove('no-scroll');
+    };
+  }, [isAnyModalOpen]);
+
   if (loanId === null) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
@@ -71,7 +90,6 @@ export default function LoanDetailPage() {
     );
   }
 
-  // 로딩 상태
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
@@ -81,7 +99,6 @@ export default function LoanDetailPage() {
     );
   }
 
-  // 에러 상태
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
@@ -97,7 +114,6 @@ export default function LoanDetailPage() {
     );
   }
 
-  // 데이터 없음 (404)
   if (!data) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
@@ -113,54 +129,35 @@ export default function LoanDetailPage() {
     );
   }
 
-  // 역할/상태 기반 버튼 표시 로직
   const userRole = authUser?.role;
   const status = data.reviewStatus;
 
-  // 은행원: UNDER_REVIEW 상태에서만 승인/거절/추가결재 가능
   const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && status === 'UNDER_REVIEW';
-  // 지점장: MANAGER_REVIEW 상태에서만 승인/거절 가능
   const canManagerAct = userRole === 'ADMIN_BANK_MANAGER' && status === 'MANAGER_REVIEW';
-  // 개발자: 모든 상태에서 버튼 표시 (UNDER_REVIEW, MANAGER_REVIEW)
   const canDevAct = userRole === 'ADMIN_DEV' && (status === 'UNDER_REVIEW' || status === 'MANAGER_REVIEW');
 
   const showApproveReject = canTellerAct || canManagerAct || canDevAct;
   const showEscalation = canTellerAct || (userRole === 'ADMIN_DEV' && status === 'UNDER_REVIEW');
-
-  // 이미 결정된 건은 버튼 비활성화
   const isDecided = status === 'APPROVED' || status === 'REJECTED';
 
-  // 승인 처리
   const handleApprove = (payload: ApprovalPayload) => {
     if (userRole === 'ADMIN_BANK_MANAGER' || (userRole === 'ADMIN_DEV' && status === 'MANAGER_REVIEW')) {
-      mutations.managerApprove.mutate(payload, {
-        onSuccess: () => setIsApprovalOpen(false),
-      });
+      mutations.managerApprove.mutate(payload, { onSuccess: () => setIsApprovalOpen(false) });
     } else {
-      mutations.approve.mutate(payload, {
-        onSuccess: () => setIsApprovalOpen(false),
-      });
+      mutations.approve.mutate(payload, { onSuccess: () => setIsApprovalOpen(false) });
     }
   };
 
-  // 거절 처리
   const handleReject = (payload: RejectionPayload) => {
     if (userRole === 'ADMIN_BANK_MANAGER' || (userRole === 'ADMIN_DEV' && status === 'MANAGER_REVIEW')) {
-      mutations.managerReject.mutate(payload, {
-        onSuccess: () => setIsRejectionOpen(false),
-      });
+      mutations.managerReject.mutate(payload, { onSuccess: () => setIsRejectionOpen(false) });
     } else {
-      mutations.reject.mutate(payload, {
-        onSuccess: () => setIsRejectionOpen(false),
-      });
+      mutations.reject.mutate(payload, { onSuccess: () => setIsRejectionOpen(false) });
     }
   };
 
-  // 추가 결재 요청
   const handleEscalate = (payload: EscalationPayload) => {
-    mutations.escalate.mutate(payload, {
-      onSuccess: () => setIsEscalationOpen(false),
-    });
+    mutations.escalate.mutate(payload, { onSuccess: () => setIsEscalationOpen(false) });
   };
 
   const isApproving = mutations.approve.isPending || mutations.managerApprove.isPending;
@@ -171,9 +168,9 @@ export default function LoanDetailPage() {
   const escalateError = mutations.escalate.error;
 
   return (
-    <div className="p-8">
+    <div className="p-8 scroll-">
       {/* 헤더 */}
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
             type="button"
@@ -183,80 +180,127 @@ export default function LoanDetailPage() {
           >
             ← 목록
           </button>
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-text-primary">
-              {data.customerInfo.name} / {data.businessInfo.businessName}
-            </h1>
-            <StatusBadge status={data.reviewStatus} />
-          </div>
+          <h1 className="text-xl font-bold text-text-primary">
+            {data.customerInfo.name} / {data.businessInfo.businessName}
+          </h1>
+          <StatusBadge status={data.reviewStatus} />
+        </div>
+        <div className="flex items-center gap-4">
           <span className="text-sm text-text-secondary">
             신청일: {formatDate(data.applicationDate)}
           </span>
+          <span className="text-sm text-text-secondary">
+            담당자: {data.assigneeName}
+          </span>
         </div>
+      </div>
 
-        {/* 액션 버튼 */}
-        {!isDecided && (showApproveReject || showEscalation) && (
-          <div className="flex items-center gap-2">
-            {showEscalation && (
-              <button
-                type="button"
-                onClick={() => setIsEscalationOpen(true)}
-                className="rounded-md border border-info px-4 py-2 text-sm font-medium text-info transition-colors hover:bg-info/5"
-              >
-                추가 결재 요청
-              </button>
-            )}
-            {showApproveReject && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setIsRejectionOpen(true)}
-                  className="rounded-md border border-error px-4 py-2 text-sm font-medium text-error transition-colors hover:bg-error/5"
-                >
-                  거절
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsApprovalOpen(true)}
-                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-text-inverse transition-colors hover:bg-primary-dark"
-                >
-                  승인
-                </button>
-              </>
-            )}
+      {/* 탭 네비게이션 */}
+      <div className="mb-6 border-b border-border-default">
+        <nav className="flex gap-0" aria-label="상세 탭">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveTab(tab.key)}
+              className={`relative px-5 py-3 text-sm font-medium transition-colors ${
+                activeTab === tab.key
+                  ? 'text-primary'
+                  : 'text-text-secondary hover:text-text-primary'
+              }`}
+            >
+              {tab.label}
+              {activeTab === tab.key && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+              )}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* ─── 정보 탭 ─── */}
+      {activeTab === 'info' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <CustomerInfoCard data={data.customerInfo} />
+            <BusinessInfoCard data={data.businessInfo} />
+            <ApplicationConditionCard data={data.applicationCondition} />
+            <ApplicantInputCard data={data.applicantInput} />
           </div>
-        )}
-      </div>
+          <SystemCollectedCard data={data.systemCollectedData} />
+        </div>
+      )}
 
-      {/* 4열 레이아웃: 고객정보, 사업자정보, 신청조건, 신청자입력 */}
-      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <CustomerInfoCard data={data.customerInfo} />
-        <BusinessInfoCard data={data.businessInfo} />
-        <ApplicationConditionCard data={data.applicationCondition} />
-        <ApplicantInputCard data={data.applicantInput} />
-      </div>
+      {/* ─── S등급 분석 탭 ─── */}
+      {activeTab === 'sgrade' && (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <CBScoreCard score={data.cbScore} />
+            <SGradeCard grade={data.sGrade} />
+            <SCBScoreCard
+              scbScore={data.scbScore}
+              cbScore={data.cbScore}
+              bonusPoints={data.bonusPoints}
+              sGrade={data.sGrade}
+            />
+          </div>
+          <ShapExplanation loanId={loanId} />
+        </div>
+      )}
 
-      {/* 전체 너비: 시스템 수집 정보 */}
-      <div className="mb-6">
-        <SystemCollectedCard data={data.systemCollectedData} />
-      </div>
+      {/* ─── 심사 결과 탭 ─── */}
+      {activeTab === 'review' && (
+        <div className="space-y-6">
+          {/* 상품 기준 | 신청 조건 | 승인 결과 3열 비교 */}
+          <ConditionComparisonCard
+            product={data.productInfo}
+            applicationCondition={data.applicationCondition}
+            recommendation={recommendation}
+            isLoading={isRecommendationLoading}
+          />
 
-      {/* 3열 레이아웃: CB점수, 성장S등급, SCB점수 */}
-      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <CBScoreCard score={data.cbScore} />
-        <SGradeCard grade={data.sGrade} />
-        <SCBScoreCard
-          scbScore={data.scbScore}
-          cbScore={data.cbScore}
-          bonusPoints={data.bonusPoints}
-          sGrade={data.sGrade}
-        />
-      </div>
+          {/* 심사 처리 버튼 */}
+          {!isDecided && (showApproveReject || showEscalation) && (
+            <div className="flex items-center justify-end gap-3 border-t border-border-default pt-6">
+              {showEscalation && (
+                <button
+                  type="button"
+                  onClick={() => setIsEscalationOpen(true)}
+                  className="rounded-md border border-info px-5 py-2.5 text-sm font-medium text-info transition-colors hover:bg-info/5"
+                >
+                  추가 결재 요청
+                </button>
+              )}
+              {showApproveReject && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setIsRejectionOpen(true)}
+                    className="rounded-md border border-error px-5 py-2.5 text-sm font-medium text-error transition-colors hover:bg-error/5"
+                  >
+                    거절
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsApprovalOpen(true)}
+                    className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-text-inverse transition-colors hover:bg-primary-dark"
+                  >
+                    승인
+                  </button>
+                </>
+              )}
+            </div>
+          )}
 
-      {/* 전체 너비: SHAP 설명 */}
-      <div className="mb-6">
-        <ShapExplanation loanId={loanId} />
-      </div>
+          {isDecided && (
+            <div className="rounded-lg border border-border-default bg-bg-surface p-6 shadow-card">
+              <p className="text-sm text-text-secondary">
+                이 건은 이미 {status === 'APPROVED' ? '승인' : '거절'} 처리되었습니다.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 모달 */}
       <ApprovalModal

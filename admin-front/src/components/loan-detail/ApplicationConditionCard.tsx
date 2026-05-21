@@ -1,4 +1,4 @@
-import type { ApplicationCondition, RepaymentMethod } from '@/types';
+import type { ApplicationCondition, RepaymentMethod, LoanPurpose } from '@/types';
 import { formatCurrency, formatMonths, displayValue } from '@/utils/formatters';
 
 interface ApplicationConditionCardProps {
@@ -10,6 +10,12 @@ const REPAYMENT_METHOD_LABELS: Record<RepaymentMethod, string> = {
   EQUAL_PRINCIPAL_INTEREST: '원리금균등',
   EQUAL_PRINCIPAL: '원금균등',
   BULLET: '만기일시',
+};
+
+/** 자금 용도 ENUM → 한글 라벨 매핑 */
+const PURPOSE_LABELS: Record<LoanPurpose, string> = {
+  FACILITY: '시설 자금',
+  WORKING_CAPITAL: '운전 자금',
 };
 
 /**
@@ -34,7 +40,7 @@ export default function ApplicationConditionCard({ data }: ApplicationConditionC
     },
     {
       label: '자금 용도',
-      value: displayValue(data.purpose),
+      value: data.purpose ? PURPOSE_LABELS[data.purpose] ?? displayValue(data.purpose) : '-',
     },
   ];
 

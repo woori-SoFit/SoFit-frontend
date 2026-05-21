@@ -61,7 +61,7 @@
     - managerRejectLoan(id, payload): 지점장 결재 거절 (mock)
     - _Requirements: 1.6, 12.2, 12.6, 13.5, 14.3, 15.1, 16.4, 16.7_
 
-- [ ] 5. Checkpoint - 타입, 유틸, Mock, API 레이어 확인
+- [x] 5. Checkpoint - 타입, 유틸, Mock, API 레이어 확인
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 6. 커스텀 훅 구현
@@ -155,7 +155,7 @@
     - SHAP 데이터 미존재 시 안내 메시지
     - _Requirements: 10.1, 10.2, 10.8, 11.4, 11.6_
 
-- [ ] 10. Checkpoint - 정보 카드, 점수 카드, SHAP 컴포넌트 확인
+- [x] 10. Checkpoint - 정보 카드, 점수 카드, SHAP 컴포넌트 확인
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 11. 모달 컴포넌트 구현
@@ -203,13 +203,13 @@
     - 로딩/에러 상태 처리
     - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 19.2_
 
-- [ ] 13. 라우팅 및 권한 연결
-  - [ ] 13.1 라우터 설정 업데이트
+- [x] 13. 라우팅 및 권한 연결
+  - [x] 13.1 라우터 설정 업데이트
     - `src/router/routes.tsx`의 PAGE_COMPONENTS에서 loan-detail과 manager-approval의 import를 새 페이지 컴포넌트로 교체
     - 기존 placeholder import 제거
     - _Requirements: 19.1, 19.2, 19.5_
 
-- [ ] 14. Final checkpoint - 전체 기능 통합 확인
+- [x] 14. Final checkpoint - 전체 기능 통합 확인
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
