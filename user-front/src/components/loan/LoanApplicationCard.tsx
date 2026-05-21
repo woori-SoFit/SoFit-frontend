@@ -24,7 +24,7 @@ const STATUS_BADGE: Record<LoanApplicationStatus, { label: string; color: string
   SUBMITTED: { label: "신청접수", color: "bg-blue-100 text-primary" },
   IN_REVIEW: { label: "심사 중", color: "bg-blue-100 text-primary" },
   APPROVED: { label: "심사 완료", color: "bg-green-100 text-green-700" },
-  REJECTED: { label: "심사 완료", color: "bg-red-100 text-red-600" },
+  REJECTED: { label: "심사 완료", color: "bg-green-100 text-green-700" },
   CONTRACTED: { label: "약정 완료", color: "bg-green-100 text-green-700" },
   EXECUTED: { label: "실행 완료", color: "bg-green-100 text-green-700" },
 };

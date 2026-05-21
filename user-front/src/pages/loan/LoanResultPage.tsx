@@ -74,13 +74,13 @@ function ApprovedView({
   const termLabel = data.term >= 12 ? `${Math.floor(data.term / 12)}년` : `${data.term}개월`;
 
   return (
-    <div className="relative h-full mt-10">
+    <div className="relative h-full pt-10">
       {/* Lottie 축하 애니메이션 오버레이 */}
       <div className="absolute inset-x-0 top-0 pointer-events-none z-10 flex justify-center">
         <Lottie
           animationData={confettiAnimation}
           loop={true}
-          className="w-full max-w-sm -translate-y-35"
+          className="w-full max-w-sm -translate-y-20"
         />
       </div>
 
@@ -112,7 +112,7 @@ function RejectedView({
   navigate: ReturnType<typeof useNavigate>;
 }) {
   return (
-    <div className="h-full mt-30">
+    <div className="h-full pt-30">
       <ConfirmPage
         icon={
           <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
