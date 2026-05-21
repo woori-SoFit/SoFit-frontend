@@ -18,9 +18,13 @@ export default function CustomerVerifyStep() {
           phoneNumber: data.phone,
           pin: data.pin,
         });
-        // 성공 시 이름/연락처를 스토어에 저장
+        // 성공 시 이름/주민번호/연락처를 스토어에 저장
         if (response.isSuccess) {
-          updateFormData({ name: data.name, phone: data.phone });
+          updateFormData({
+            name: data.name,
+            residentNumber: data.residentNumber,
+            phone: data.phone,
+          });
         }
         return {
           success: response.isSuccess,

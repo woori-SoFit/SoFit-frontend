@@ -88,7 +88,7 @@ export default function CredentialsStep() {
   };
 
   const inputClass =
-    "w-full h-10 px-3 border border-border-default rounded-lg text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-primary";
+    "w-full h-10 px-3 border border-border-default bg-white rounded-lg text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-primary";
 
   return (
     <div className="flex flex-col flex-1" data-testid="credentials-step">

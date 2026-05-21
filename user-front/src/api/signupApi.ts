@@ -40,7 +40,7 @@ export async function submitSignup(
   requestData: SignupRequest
 ): Promise<SignupResponse> {
   const { data } = await axiosInstance.post<SignupResponse>(
-    "/auth/signup",
+    "/auth/signup/complete",
     requestData
   );
   return data;

@@ -8,12 +8,13 @@ export type SignupStep =
   | "TERMS"
   | "CONFIRM";
 
-/** 회원가입 폼 데이터 인터페이스 (민감정보 제외) */
+/** 회원가입 폼 데이터 인터페이스 */
 export interface SignupFormData {
   // Step 1: KYC
   businessRegistrationNumber: string;
-  // Step 2: Customer Verify (민감정보 제외 — 주민번호, PIN은 컴포넌트 로컬 state로 관리)
+  // Step 2: Customer Verify
   name: string;
+  residentNumber: string;
   phone: string;
   // Step 3: Credentials
   loginId: string;
