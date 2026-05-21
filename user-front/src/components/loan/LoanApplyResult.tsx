@@ -1,13 +1,15 @@
 /**
  * 대출 신청 완료 화면
  *
- * ConfirmPage 공통 컴포넌트를 활용한 래퍼
+ * ConfirmPage 공통 컴포넌트 + Lottie 축하 애니메이션 오버레이
  *
  * 사용처:
  * - 대출 신청 RESULT step
  */
+import Lottie from "lottie-react";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
 import type { InfoRow } from "@/components/common/ConfirmPage";
+import confettiAnimation from "@/assets/lottie/Flex-Confetti.json";
 
 interface LoanApplyResultProps {
   /** 정보 테이블 데이터 */
@@ -24,14 +26,26 @@ export function LoanApplyResult({
   onGoHome,
 }: LoanApplyResultProps) {
   return (
-    <ConfirmPage
-      title="대출 신청이 완료되었습니다!"
-      description="신청 결과는 알림으로 안내해 드릴게요."
-      rows={rows}
-      secondaryButtonLabel="신청 내역 보기"
-      onSecondary={onViewApplications}
-      buttonLabel="홈으로 이동"
-      onConfirm={onGoHome}
-    />
+    <div className="relative h-full mt-20">
+      {/* Lottie 축하 애니메이션 */}
+      <div className="absolute inset-0 pointer-events-none z-10 flex items-start">
+        <Lottie
+          animationData={confettiAnimation}
+          loop={true}
+          className="w-full max-w-sm -translate-y-35"
+        />
+      </div>
+
+      {/* 기존 ConfirmPage */}
+      <ConfirmPage
+        title="대출 신청이 완료되었습니다!"
+        description="신청 결과는 알림으로 안내해 드릴게요."
+        rows={rows}
+        secondaryButtonLabel="신청 내역 보기"
+        onSecondary={onViewApplications}
+        buttonLabel="홈으로 이동"
+        onConfirm={onGoHome}
+      />
+    </div>
   );
 }

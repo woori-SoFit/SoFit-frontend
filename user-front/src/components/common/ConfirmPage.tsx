@@ -71,7 +71,7 @@ export function ConfirmPage({
 
       {/* 정보 테이블 */}
       {rows && rows.length > 0 && (
-        <div className="mx-5 mb-4 border border-border-default rounded-lg overflow-hidden">
+        <div className="mx-5 mb-4 border border-border-default bg-white rounded-lg overflow-hidden">
           <table className="w-full">
             <tbody>
               {rows.map((row, idx) => (
