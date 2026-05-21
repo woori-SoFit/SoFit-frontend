@@ -16,6 +16,7 @@ import { useState, useRef, useCallback } from "react";
 import Lottie from "lottie-react";
 import { CircleCheckBig, ShieldCheck, Lock } from "lucide-react";
 import { PinInput } from "./PinInput";
+import { ConfirmPage } from "@/components/common/ConfirmPage";
 import { BottomButton } from "@/components/common/BottomButton";
 import type { CustomerVerifyData, VerifyResult } from "@/types/auth";
 import documentAnimation from "@/assets/lottie/Document.json";
@@ -131,10 +132,11 @@ export function CustomerVerifyPage({
   // 성공 애니메이션 화면
   if (step === "SUCCESS") {
     return (
-      <div className="flex flex-col items-center justify-center h-full px-5 animate-fade-in">
+      <div className="flex flex-col items-center justify-center min-h-full px-5 animate-fade-in">
         <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center mb-5 animate-bounce-once">
           <CircleCheckBig size={40} className="text-white" />
         </div>
+
         <h2 className="text-xl font-bold text-text-primary text-center">
           인증이 완료되었습니다
         </h2>
@@ -156,69 +158,29 @@ export function CustomerVerifyPage({
   // 금융인증서 확인 화면
   if (step === "CERT_CONFIRM") {
     return (
-      <div className="flex flex-col min-h-full">
-        <div className="flex-1 px-5 pt-10 pb-4">
-          <h1 className="text-xl font-bold text-text-primary mb-1">본인인증</h1>
-          <p className="text-sm text-text-secondary">
-            금융인증서를 불러와 본인인증을 진행합니다.
-          </p>
-
-          {/* 인증서 아이콘 */}
-          <div className="flex justify-center">
-            <div className="w-48 h-48">
-              <Lottie animationData={documentAnimation} loop={true} />
-            </div>
+      <ConfirmPage
+        icon={<Lottie animationData={documentAnimation} loop={true} className="w-40 h-40" />}
+        title="금융인증서를 불러올게요."
+        description="아래 정보를 확인 후 인증을 진행해 주세요."
+        rows={[
+          { label: "인증서 종류", value: "금융인증서" },
+          { label: "발급기관", value: "금융결제원" },
+          { label: "사용자", value: name.trim() || "—" },
+        ]}
+        buttonLabel="PIN 입력하기"
+        onConfirm={() => setStep("PIN")}
+      >
+        <div className="flex flex-col gap-3 text-text-secondary mt-4">
+          <div className="flex items-start gap-2">
+            <ShieldCheck size={18} className="shrink-0" />
+            <p className="text-sm">본인 명의의 금융인증서만 사용 가능합니다.</p>
           </div>
-
-          {/* 안내 문구 */}
-          <div className="text-center mb-8">
-            <h2 className="text-lg font-bold text-text-primary mb-1">
-              금융인증서를 불러올게요.
-            </h2>
-            <p className="text-sm text-text-secondary">
-              아래 정보를 확인 후 인증을 진행해 주세요.
-            </p>
-          </div>
-
-          {/* 인증서 정보 테이블 */}
-          <div className="border border-border-default rounded-lg overflow-hidden mb-8">
-            <table className="w-full">
-              <tbody>
-                <tr className="border-b border-border-default">
-                  <td className="px-4 py-4 text-sm text-text-secondary">인증서 종류</td>
-                  <td className="px-4 py-4 text-sm font-medium text-text-primary text-right">금융인증서</td>
-                </tr>
-                <tr className="border-b border-border-default">
-                  <td className="px-4 py-4 text-sm text-text-secondary">발급기관</td>
-                  <td className="px-4 py-4 text-sm font-medium text-text-primary text-right">금융결제원</td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-4 text-sm text-text-secondary">사용자</td>
-                  <td className="px-4 py-4 text-sm font-medium text-text-primary text-right">{name.trim() || "—"}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* 안내 사항 */}
-          <div className="flex flex-col gap-3 text-text-secondary">
-            <div className="flex items-start gap-2">
-              <ShieldCheck size={18} className=" shrink-0" />
-              <p className="text-sm">본인 명의의 금융인증서만 사용 가능합니다.</p>
-            </div>
-            <div className="flex items-start gap-2">
-              <Lock size={18} className="shrink-0" />
-              <p className="text-sm">타인의 금융인증서를 사용하거나 대여 시 관련 법률에 따라 처벌받을 수 있습니다.</p>
-            </div>
+          <div className="flex items-start gap-2">
+            <Lock size={18} className="shrink-0" />
+            <p className="text-sm">타인의 금융인증서를 사용하거나 대여 시 관련 법률에 따라 처벌받을 수 있습니다.</p>
           </div>
         </div>
-
-        {/* PIN 입력하기 버튼 */}
-        <BottomButton
-          label="PIN 입력하기"
-          onClick={() => setStep("PIN")}
-        />
-      </div>
+      </ConfirmPage>
     );
   }
 
