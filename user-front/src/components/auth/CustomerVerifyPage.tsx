@@ -13,10 +13,12 @@
  *   4-b. false → 에러 메시지 + 재입력
  */
 import { useState, useRef, useCallback } from "react";
-import { CircleCheckBig } from "lucide-react";
+import Lottie from "lottie-react";
+import { CircleCheckBig, ShieldCheck, Lock } from "lucide-react";
 import { PinInput } from "./PinInput";
 import { BottomButton } from "@/components/common/BottomButton";
 import type { CustomerVerifyData, VerifyResult } from "@/types/auth";
+import documentAnimation from "@/assets/lottie/Document.json";
 
 export type { CustomerVerifyData };
 
@@ -32,7 +34,7 @@ interface CustomerVerifyPageProps {
   onSuccess: () => void;
 }
 
-type Step = "INFO" | "PIN" | "SUCCESS";
+type Step = "INFO" | "CERT_CONFIRM" | "PIN" | "SUCCESS";
 
 export function CustomerVerifyPage({
   description,
@@ -151,6 +153,75 @@ export function CustomerVerifyPage({
     );
   }
 
+  // 금융인증서 확인 화면
+  if (step === "CERT_CONFIRM") {
+    return (
+      <div className="flex flex-col min-h-full">
+        <div className="flex-1 px-5 pt-10 pb-4">
+          <h1 className="text-xl font-bold text-text-primary mb-1">본인인증</h1>
+          <p className="text-sm text-text-secondary">
+            금융인증서를 불러와 본인인증을 진행합니다.
+          </p>
+
+          {/* 인증서 아이콘 */}
+          <div className="flex justify-center">
+            <div className="w-48 h-48">
+              <Lottie animationData={documentAnimation} loop={true} />
+            </div>
+          </div>
+
+          {/* 안내 문구 */}
+          <div className="text-center mb-8">
+            <h2 className="text-lg font-bold text-text-primary mb-1">
+              금융인증서를 불러올게요.
+            </h2>
+            <p className="text-sm text-text-secondary">
+              아래 정보를 확인 후 인증을 진행해 주세요.
+            </p>
+          </div>
+
+          {/* 인증서 정보 테이블 */}
+          <div className="border border-border-default rounded-lg overflow-hidden mb-8">
+            <table className="w-full">
+              <tbody>
+                <tr className="border-b border-border-default">
+                  <td className="px-4 py-4 text-sm text-text-secondary">인증서 종류</td>
+                  <td className="px-4 py-4 text-sm font-medium text-text-primary text-right">금융인증서</td>
+                </tr>
+                <tr className="border-b border-border-default">
+                  <td className="px-4 py-4 text-sm text-text-secondary">발급기관</td>
+                  <td className="px-4 py-4 text-sm font-medium text-text-primary text-right">금융결제원</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-4 text-sm text-text-secondary">사용자</td>
+                  <td className="px-4 py-4 text-sm font-medium text-text-primary text-right">{name.trim() || "—"}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* 안내 사항 */}
+          <div className="flex flex-col gap-3 text-text-secondary">
+            <div className="flex items-start gap-2">
+              <ShieldCheck size={18} className=" shrink-0" />
+              <p className="text-sm">본인 명의의 금융인증서만 사용 가능합니다.</p>
+            </div>
+            <div className="flex items-start gap-2">
+              <Lock size={18} className="shrink-0" />
+              <p className="text-sm">타인의 금융인증서를 사용하거나 대여 시 관련 법률에 따라 처벌받을 수 있습니다.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* PIN 입력하기 버튼 */}
+        <BottomButton
+          label="PIN 입력하기"
+          onClick={() => setStep("PIN")}
+        />
+      </div>
+    );
+  }
+
   // 정보 입력 화면
   return (
     <div className="flex flex-col min-h-full">
@@ -233,7 +304,7 @@ export function CustomerVerifyPage({
       {/* 다음 버튼 */}
       <BottomButton
         label="다음"
-        onClick={() => setStep("PIN")}
+        onClick={() => setStep("CERT_CONFIRM")}
         disabled={!isInfoValid}
       />
     </div>
