@@ -13,6 +13,7 @@ import { ChevronRight } from "lucide-react";
 
 import { ProductCardSlider } from "@/components/home/ProductCardSlider";
 import { MOCK_PRODUCT_CARDS } from "@/mocks/productCards";
+import { useMe } from "@/hooks/useMe";
 
 import iconLoanHistory from "@/assets/icons/menu-loan-history.svg";
 import iconLoanList from "@/assets/icons/menu-loan-list.svg";
@@ -49,13 +50,19 @@ const MENU_ITEMS = [
 ];
 
 export default function HomePage() {
+  const { me } = useMe();
+  const userName = me?.name ?? "";
+
   return (
     <div className="pb-8">
       {/* ── 히어로 섹션 ── */}
-      <section className="px-5 pt-6 pb-4 text-center">
-        <h1 className="text-[22px] font-bold text-[--color-text-primary] leading-snug">
-          사장님에게 도움이 되는 모든 것!
+      <section className="px-5 pt-2 pb-4 text-center">
+        <h1 className="text-[21px] font-bold leading-snug text-[--color-text-primary]">
+          <span className="text-primary">{userName}{" "}</span>
+          사장님의 성장을 <br />
+          <span className="text-primary">SoFit</span>이 함께할게요
         </h1>
+
         <p className="mt-1 text-sm text-[--color-text-secondary]">
           개인사업자를 위한 특별한 상품을 만나보세요
         </p>
@@ -83,8 +90,8 @@ export default function HomePage() {
       </section>
 
       {/* ── 2×2 메뉴 그리드 ── */}
-      <section className="px-5 mt-4">
-        <div className="grid grid-cols-2 gap-3">
+      <section className="px-5 mt-2">
+        <div className="grid grid-cols-2 gap-2">
           {MENU_ITEMS.map((item) => (
             <Link
               key={item.id}
