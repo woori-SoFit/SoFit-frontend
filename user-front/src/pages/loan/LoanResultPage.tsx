@@ -9,8 +9,10 @@
  *
  * TODO: API 연동 시 useParams + useQuery로 실제 데이터 조회
  */
+import { useEffect } from "react";
 import Lottie from "lottie-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useLayoutStore } from "@/stores/layoutStore";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
 import { formatAmount } from "@/utils/format";
 import confettiAnimation from "@/assets/lottie/Flex-Confetti.json";
@@ -43,6 +45,10 @@ const MOCK_REJECTION = {
 export default function LoanResultPage() {
   const navigate = useNavigate();
   const { applicationId } = useParams<{ applicationId: string }>();
+
+  useEffect(() => {
+    useLayoutStore.getState().setStepTitle("심사 결과");
+  }, []);
 
   // TODO: API 연동 시 useQuery로 교체
   const allMockData = [MOCK_APPROVAL, MOCK_REJECTION];

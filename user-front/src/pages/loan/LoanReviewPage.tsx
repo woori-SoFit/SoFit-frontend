@@ -6,8 +6,10 @@
  * 심사 중인 대출 카드 클릭 시 진입
  * TODO: API 연동 시 useParams + useQuery로 실제 데이터 조회
  */
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Lottie from "lottie-react";
+import { useLayoutStore } from "@/stores/layoutStore";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
 import { MOCK_LOAN_APPLICATIONS } from "@/mocks/loanApplications";
 import { formatAmount, formatDate } from "@/utils/format";
@@ -23,6 +25,10 @@ const REPAYMENT_LABELS: Record<string, string> = {
 export default function LoanReviewPage() {
   const navigate = useNavigate();
   const { applicationId } = useParams<{ applicationId: string }>();
+
+  useEffect(() => {
+    useLayoutStore.getState().setStepTitle("심사 진행 중");
+  }, []);
 
   // TODO: API 연동 시 useQuery로 교체
   const app = MOCK_LOAN_APPLICATIONS.find((a) => a.id === Number(applicationId));

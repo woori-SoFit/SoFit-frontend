@@ -7,14 +7,19 @@
  *   1. 심사 중인 대출 — 중앙 정렬 카드 슬라이더 + 인디케이터 점
  *   2. 심사 완료된 대출 — 중앙 정렬 카드 슬라이더 + 인디케이터 점
  */
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLayoutStore } from "@/stores/layoutStore";
 import { MOCK_LOAN_APPLICATIONS } from "@/mocks/loanApplications";
 import { CardSlider } from "@/components/loan/CardSlider";
 import type { LoanApplication } from "@/types/loan";
 
 export default function LoanProgressPage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    useLayoutStore.getState().setStepTitle("대출 진행 관리");
+  }, []);
 
   const { inProgress, completed } = useMemo(() => {
     const inProgress: LoanApplication[] = [];
