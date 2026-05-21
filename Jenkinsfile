@@ -20,7 +20,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh """
-                        ${tool 'SonarScanner'}/bin/sonar-scanner \
+                        ${tool 'sonar-scanner'}/bin/sonar-scanner \
                             -Dsonar.projectKey=sofit-frontend \
                             -Dsonar.sources=user-front/src,admin-front/src \
                             -Dsonar.exclusions=**/node_modules/**,**/dist/**
