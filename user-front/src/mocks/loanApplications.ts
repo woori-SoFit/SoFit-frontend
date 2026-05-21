@@ -10,7 +10,7 @@ export const MOCK_LOAN_APPLICATIONS: LoanApplication[] = [
     requestedAmount: 100_000_000,
     requestedTerm: 36,
     purpose: "WORKING_CAPITAL",
-    repaymentMethod: "INSTALLMENT",
+    repaymentMethod: "EQUAL_PAYMENT",
     appliedAt: "2026-05-08",
   },
   {
@@ -32,7 +32,7 @@ export const MOCK_LOAN_APPLICATIONS: LoanApplication[] = [
     requestedAmount: 50_000_000,
     requestedTerm: 24,
     purpose: "WORKING_CAPITAL",
-    repaymentMethod: "INSTALLMENT",
+    repaymentMethod: "EQUAL_PAYMENT",
     appliedAt: "2026-04-15",
   },
 ];
