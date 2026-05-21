@@ -158,8 +158,8 @@
 - [ ] 10. Checkpoint - 정보 카드, 점수 카드, SHAP 컴포넌트 확인
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 11. 모달 컴포넌트 구현
-  - [ ] 11.1 `src/components/loan-detail/ApprovalModal.tsx` 생성
+- [x] 11. 모달 컴포넌트 구현
+  - [x] 11.1 `src/components/loan-detail/ApprovalModal.tsx` 생성
     - 시스템 추천값 조회 → 입력 필드 초기값 설정
     - 승인 금액, 확정 금리, 확정 기간, 상환 방식 수정 가능 필드
     - 의견 입력 필드 (최대 500자)
@@ -168,7 +168,7 @@
     - 추천값 조회 실패 시 빈 필드 + 안내 메시지
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8, 12.9, 12.10_
 
-  - [ ] 11.2 `src/components/loan-detail/RejectionModal.tsx` 생성
+  - [x] 11.2 `src/components/loan-detail/RejectionModal.tsx` 생성
     - 거절 사유 입력 필드 (최대 500자)
     - 의견 입력 필드 (최대 500자)
     - 거절 사유 비어있거나 공백만일 때 확인 버튼 비활성화
@@ -176,7 +176,7 @@
     - 취소 시 입력값 초기화
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 13.9_
 
-  - [ ] 11.3 `src/components/loan-detail/EscalationDialog.tsx` 생성
+  - [x] 11.3 `src/components/loan-detail/EscalationDialog.tsx` 생성
     - "해당 건을 지점장에게 추가 결재 요청하시겠습니까?" 안내 문구
     - 의견 입력 필드 (최대 500자)
     - "요청" / "취소" 버튼
