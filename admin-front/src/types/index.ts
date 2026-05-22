@@ -15,7 +15,7 @@ export function isValidRole(value: unknown): value is AdminRole {
   return VALID_ROLES.includes(value as AdminRole);
 }
 
-export type ReviewStatus = 'UNDER_REVIEW' | 'MANAGER_REVIEW' | 'APPROVED' | 'REJECTED';
+export type ReviewStatus = 'SYSTEM_APPROVED' | 'SYSTEM_HOLD' | 'MANAGER_REVIEW' | 'APPROVED' | 'REJECTED';
 
 /** 공통 정보 API 응답 (GET /api/admin/loan-applications/{id}) */
 export interface LoanSummary {
@@ -27,6 +27,9 @@ export interface LoanSummary {
   appliedAt: string;
   assigneeName: string;
   rejectionComment?: string;
+  approvalComment?: string;
+  /** 심사 결정 일시 (ISO 8601) */
+  decidedAt?: string;
 }
 
 export interface LoanApplication {
@@ -220,6 +223,10 @@ export interface LoanDetailData {
   shapResult: ShapResult | null;
   /** 거절 사유 (REJECTED 상태일 때만 존재) */
   rejectionComment?: string;
+  /** 승인 사유 (APPROVED 상태일 때만 존재) */
+  approvalComment?: string;
+  /** 심사 결정 일시 (APPROVED/REJECTED 상태일 때만 존재, ISO 8601) */
+  decidedAt?: string;
 }
 
 /** 시스템 추천값 */

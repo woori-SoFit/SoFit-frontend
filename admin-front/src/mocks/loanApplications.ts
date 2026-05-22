@@ -7,7 +7,7 @@ const MOCK_DATA: LoanApplication[] = [
     applicantName: '이정훈',
     businessName: '카페나무 주식회사',
     productName: '소상공인 성장 지원 대출',
-    status: 'UNDER_REVIEW',
+    status: 'SYSTEM_APPROVED',
     assigneeName: '김은행',
   },
   {
@@ -40,10 +40,10 @@ const MOCK_DATA: LoanApplication[] = [
   {
     applicationId: 5,
     appliedAt: '2024-05-22',
-    applicantName: '한민석',
-    businessName: '민석이네 커피',
-    productName: '운전자금 대출',
-    status: 'APPROVED',
+    applicantName: '한승우',
+    businessName: '승우모터스',
+    productName: '소상공인 성장 지원 대출',
+    status: 'SYSTEM_HOLD',
     assigneeName: '김은행',
   },
   {
@@ -70,7 +70,7 @@ const MOCK_DATA: LoanApplication[] = [
     applicantName: '이수빈',
     businessName: '수빈뷰티',
     productName: '운전자금 대출',
-    status: 'UNDER_REVIEW',
+    status: 'SYSTEM_APPROVED',
     assigneeName: '이담당',
   },
   {
@@ -97,7 +97,7 @@ const MOCK_DATA: LoanApplication[] = [
     applicantName: '송태민',
     businessName: '태민물류',
     productName: '시설자금 대출',
-    status: 'UNDER_REVIEW',
+    status: 'SYSTEM_HOLD',
     assigneeName: '김은행',
   },
   {
@@ -124,7 +124,7 @@ const MOCK_DATA: LoanApplication[] = [
     applicantName: '임하영',
     businessName: '하영베이커리',
     productName: '시설자금 대출',
-    status: 'UNDER_REVIEW',
+    status: 'SYSTEM_APPROVED',
     assigneeName: '이담당',
   },
   {
@@ -160,7 +160,7 @@ const MOCK_DATA: LoanApplication[] = [
     applicantName: '나영희',
     businessName: '영희네 반찬',
     productName: '사업자 신용대출',
-    status: 'UNDER_REVIEW',
+    status: 'SYSTEM_HOLD',
     assigneeName: '김은행',
   },
 ];
@@ -176,7 +176,12 @@ export function getMockLoanApplications(
 
   // 상태 필터
   if (params.status) {
-    filtered = filtered.filter((app) => app.status === params.status);
+    if (params.status === 'SYSTEM_APPROVED') {
+      // "심사 대기" 필터: SYSTEM_APPROVED + SYSTEM_HOLD 모두 포함
+      filtered = filtered.filter((app) => app.status === 'SYSTEM_APPROVED' || app.status === 'SYSTEM_HOLD');
+    } else {
+      filtered = filtered.filter((app) => app.status === params.status);
+    }
   }
 
   // 담당자 필터

@@ -6,9 +6,9 @@ import type { ReviewStatus } from '@/types';
 
 const PAGE_SIZE = 10;
 
-const STATUS_OPTIONS: { value: ReviewStatus | 'ALL'; label: string }[] = [
+const STATUS_OPTIONS: { value: ReviewStatus | 'ALL' | 'PENDING'; label: string }[] = [
   { value: 'ALL', label: '전체' },
-  { value: 'UNDER_REVIEW', label: '심사 중' },
+  { value: 'PENDING', label: '심사 대기' },
   { value: 'MANAGER_REVIEW', label: '추가 심사 중' },
   { value: 'APPROVED', label: '승인 완료' },
   { value: 'REJECTED', label: '거절 완료' },
@@ -17,7 +17,7 @@ const STATUS_OPTIONS: { value: ReviewStatus | 'ALL'; label: string }[] = [
 export default function DashboardPage() {
   const { data: authUser } = useAuthMe();
   const [page, setPage] = useState(0);
-  const [statusFilter, setStatusFilter] = useState<ReviewStatus | 'ALL'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<ReviewStatus | 'ALL' | 'PENDING'>('ALL');
   const [onlyMine, setOnlyMine] = useState(false);
 
   const currentUserName = authUser?.name ?? '';
@@ -25,12 +25,12 @@ export default function DashboardPage() {
   const { data, isLoading, isError, refetch } = useLoanApplications({
     page,
     size: PAGE_SIZE,
-    status: statusFilter === 'ALL' ? undefined : statusFilter,
+    status: statusFilter === 'ALL' ? undefined : statusFilter === 'PENDING' ? 'SYSTEM_APPROVED' : statusFilter,
     assigneeName: onlyMine ? currentUserName : undefined,
   });
 
   const handleStatusChange = (value: string) => {
-    setStatusFilter(value as ReviewStatus | 'ALL');
+    setStatusFilter(value as ReviewStatus | 'ALL' | 'PENDING');
     setPage(0);
   };
 

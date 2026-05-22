@@ -5,7 +5,7 @@ import { useLoanSummary } from '@/hooks/useLoanSummary';
 import { useLoanDetail } from '@/hooks/useLoanDetail';
 import { useLoanMutations } from '@/hooks/useLoanMutations';
 import { useRecommendation } from '@/hooks/useRecommendation';
-import { formatDate } from '@/utils/formatters';
+import { formatDate, formatDateTime } from '@/utils/formatters';
 import StatusBadge from '@/components/common/StatusBadge';
 import CustomerInfoCard from '@/components/loan-detail/CustomerInfoCard';
 import BusinessInfoCard from '@/components/loan-detail/BusinessInfoCard';
@@ -126,7 +126,7 @@ export default function LoanDetailPage() {
   const userRole = authUser?.role;
   const status = summary?.status ?? data?.reviewStatus;
 
-  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && status === 'UNDER_REVIEW';
+  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && (status === 'SYSTEM_APPROVED' || status === 'SYSTEM_HOLD');
   const canManagerAct = userRole === 'ADMIN_BANK_MANAGER' && status === 'MANAGER_REVIEW';
 
   const showApproveReject = canTellerAct || canManagerAct;
@@ -295,10 +295,36 @@ export default function LoanDetailPage() {
           {isDecided && (
             <div className="rounded-lg border border-border-default bg-bg-surface p-6 shadow-card">
               {status === 'APPROVED' ? (
-                <p className="text-sm text-text-secondary">이 건은 이미 승인 처리되었습니다.</p>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block h-2 w-2 rounded-full bg-success" />
+                    <p className="text-sm font-semibold text-success">승인 완료</p>
+                  </div>
+                  {summary?.decidedAt && (
+                    <p className="text-sm text-text-secondary">
+                      <span className="font-medium text-text-primary">승인 일시: </span>
+                      {formatDateTime(summary.decidedAt)}
+                    </p>
+                  )}
+                  {summary?.approvalComment && (
+                    <p className="text-sm text-text-secondary">
+                      <span className="font-medium text-text-primary">승인 사유: </span>
+                      {summary.approvalComment}
+                    </p>
+                  )}
+                </div>
               ) : (
-                <div>
-                  <p className="mb-2 text-sm font-medium text-error">이 건은 거절 처리되었습니다.</p>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block h-2 w-2 rounded-full bg-error" />
+                    <p className="text-sm font-semibold text-error">거절 완료</p>
+                  </div>
+                  {summary?.decidedAt && (
+                    <p className="text-sm text-text-secondary">
+                      <span className="font-medium text-text-primary">거절 일시: </span>
+                      {formatDateTime(summary.decidedAt)}
+                    </p>
+                  )}
                   {summary?.rejectionComment && (
                     <p className="text-sm text-text-secondary">
                       <span className="font-medium text-text-primary">거절 사유: </span>

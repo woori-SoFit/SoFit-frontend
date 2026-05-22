@@ -16,9 +16,11 @@ interface ConditionComparisonCardProps {
 }
 
 const SYSTEM_DECISION_CONFIG: Partial<Record<ReviewStatus, { label: string; className: string }>> = {
-  APPROVED: { label: '시스템 승인', className: 'bg-success/10 text-success' },
-  REJECTED: { label: '시스템 거절', className: 'bg-error/10 text-error' },
-  MANAGER_REVIEW: { label: '추가 심사 요청', className: 'bg-info/10 text-info' },
+  SYSTEM_APPROVED: { label: '시스템 승인', className: 'bg-success/10 text-success' },
+  SYSTEM_HOLD: { label: '시스템 보류', className: 'bg-warning/10 text-warning' },
+  MANAGER_REVIEW: { label: '추가 심사 중', className: 'bg-info/10 text-info' },
+  APPROVED: { label: '최종 승인', className: 'bg-success/10 text-success' },
+  REJECTED: { label: '최종 거절', className: 'bg-error/10 text-error' },
 };
 
 /**

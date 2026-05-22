@@ -12,7 +12,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
   {
     id: 1,
     applicationDate: '2024-05-24',
-    reviewStatus: 'UNDER_REVIEW',
+    reviewStatus: 'SYSTEM_APPROVED',
     assigneeName: '김은행',
     productInfo: {
       productName: '소상공인 성장 지원 대출',
@@ -194,6 +194,8 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     applicationDate: '2024-05-22',
     reviewStatus: 'APPROVED',
     assigneeName: '김은행',
+    approvalComment: '업력 안정성과 매출 성장률이 우수하여 승인합니다. 업종 내 상위 포지션을 유지하고 있어 상환 능력이 충분합니다.',
+    decidedAt: '2024-05-23T14:30:00',
     productInfo: {
       productName: '소상공인 운전자금 대출',
       minAmount: 300,
@@ -285,6 +287,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     reviewStatus: 'REJECTED',
     assigneeName: '김은행',
     rejectionComment: '신용등급 기준 미달 및 기존 대출 과다로 추가 대출이 어렵습니다. 부채 비율 개선 후 재신청을 권장합니다.',
+    decidedAt: '2024-05-22T09:45:00',
     productInfo: {
       productName: '시설자금 대출',
       minAmount: 500,
@@ -370,6 +373,96 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
         '• 부채 비율이 매우 높아 추가 대출 상환 능력에 우려가 있습니다.\n• 현금흐름이 낮아 월 상환금 부담이 클 수 있습니다.\n• 세금 및 보험료 체납 이력이 신용도에 부정적 영향을 미치고 있습니다.\n• 기존 대출 일부 상환 후 부채 비율을 낮추고 재신청하시길 권장합니다.',
     },
   },
+  {
+    id: 5,
+    applicationDate: '2024-05-20',
+    reviewStatus: 'SYSTEM_HOLD',
+    assigneeName: '김은행',
+    productInfo: {
+      productName: '소상공인 성장 지원 대출',
+      minAmount: 500,
+      maxAmount: 10000,
+      minInterestRate: 3.0,
+      maxInterestRate: 8.0,
+      minTermMonths: 12,
+      maxTermMonths: 60,
+      availableRepaymentMethods: ['EQUAL_PAYMENT', 'EQUAL_PRINCIPAL', 'BULLET'],
+      availablePurposes: ['FACILITY_CAPITAL', 'WORKING_CAPITAL'],
+    },
+    customerInfo: {
+      name: '한승우',
+      residentNumber: '9205121234567',
+      phoneNumber: '01077778888',
+      joinedAt: '2024-02-10T16:00:00',
+      loginId: 'seungwoo_han',
+    },
+    businessInfo: {
+      businessName: '승우모터스',
+      businessNumber: '5678901234',
+      businessCategory: '자동차 수리업',
+      businessType: '자동차 정비',
+      businessAddress: '인천광역시 남동구 논현로 88',
+      openDate: '2022-01-10',
+    },
+    applicationInfo: {
+      requestedAmount: 7000,
+      requestedTerm: 48,
+      repaymentMethod: 'EQUAL_PAYMENT',
+      purpose: 'FACILITY_CAPITAL',
+    },
+    userInputInfo: {
+      annualIncome: 'AMT_30_50M',
+      creditScore: 'CS_0_600',
+      incomeType: '02',
+      existingLoanAmount: 'LOAN_100_300M',
+    },
+    consentHistories: [
+      { title: '대출 이용 약관', isRequired: true, isConsented: true, consentedAt: '2024-05-20T09:00:00' },
+      { title: '개인정보 수집·이용 동의', isRequired: true, isConsented: true, consentedAt: '2024-05-20T09:00:03' },
+      { title: '마이데이터 서비스 이용 약관', isRequired: true, isConsented: true, consentedAt: '2024-05-20T09:00:06' },
+      { title: '마케팅 정보 수신 동의', isRequired: false, isConsented: false, consentedAt: null },
+    ],
+    myBizData: {
+      annualIncome: 3800,
+      existingLoanCount: 4,
+      monthlyRevenue: 480,
+      monthlyRevenueGrowthRate: -6.5,
+      cashFlow: 60,
+      accountBalance: 280,
+      businessAgeMonths: 28,
+      vatFilingStatus: 'PENDING',
+      taxOverdue: true,
+      insurancePaymentStatus: 'OVERDUE',
+      industrySalesRank: 72.4,
+      industryProfitRank: 78.9,
+    },
+    cbScore: 540,
+    sGrade: 'S9',
+    scbScore: 555,
+    bonusPoints: 15,
+    shapResult: {
+      grade: 'S9',
+      targetGrade: 'S8',
+      strengthKeywords: ['고정 거래처 보유', '업종 내 생존율'],
+      improvementKeywords: ['현금흐름 부족', '매출 감소 추세', '세금 체납', '부채 과다'],
+      strengthDetails: {
+        '고정 거래처 수': 0.15234,
+        '업종 내 생존율': 0.11456,
+        '월 평균 카드 결제 건수': 0.08912,
+        '사업자등록 유지 기간': 0.06234,
+        '지역 내 경쟁 밀도': 0.04123,
+      },
+      improvementDetails: {
+        '현금흐름': -0.52134,
+        '부채비율': -0.43567,
+        '매출 성장률(연간)': -0.35912,
+        '세금 납부 이력': -0.28456,
+        '보험료 납부 이력': -0.19234,
+      },
+      advice:
+        '• 현금흐름이 매우 부족하여 대출 상환 능력에 심각한 우려가 있습니다.\n• 매출이 지속적으로 감소하고 있어 사업 안정성이 낮습니다.\n• 세금 및 보험료 체납이 신용도에 큰 부정적 영향을 미치고 있습니다.\n• 기존 부채를 정리하고 매출 회복 후 재신청을 권장합니다.',
+    },
+  },
 ];
 
 // ─── Mock 추천값 데이터 ───────────────────────────────────────────
@@ -392,6 +485,12 @@ const MOCK_RECOMMENDATIONS: Record<number, RecommendationData> = {
     approvedRate: 3.8,
     approvedTerm: 24,
     repaymentMethod: 'BULLET',
+  },
+  5: {
+    approvedAmount: 0,
+    approvedRate: 0,
+    approvedTerm: 0,
+    repaymentMethod: 'EQUAL_PAYMENT',
   },
 };
 
@@ -481,5 +580,7 @@ export function getMockLoanSummary(id: number): LoanSummary | undefined {
     appliedAt: detail.applicationDate,
     assigneeName: detail.assigneeName,
     rejectionComment: detail.rejectionComment,
+    approvalComment: detail.approvalComment,
+    decidedAt: detail.decidedAt,
   };
 }

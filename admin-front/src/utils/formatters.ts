@@ -111,3 +111,20 @@ export function formatDate(isoDate: string): string {
   if (!isoPattern.test(isoDate)) return isoDate;
   return isoDate.slice(0, 10).replace(/-/g, '.');
 }
+
+/**
+ * ISO 8601 날짜+시간 문자열을 "YYYY.MM.DD HH:mm" 형식으로 변환한다.
+ * 시간 정보가 없으면 날짜만 반환한다.
+ * @param isoDateTime - ISO 8601 형식의 날짜시간 문자열
+ * @returns "YYYY.MM.DD HH:mm" 형식의 문자열
+ */
+export function formatDateTime(isoDateTime: string): string {
+  const isoPattern = /^\d{4}-\d{2}-\d{2}/;
+  if (!isoPattern.test(isoDateTime)) return isoDateTime;
+
+  const date = isoDateTime.slice(0, 10).replace(/-/g, '.');
+  const timeMatch = isoDateTime.match(/T(\d{2}):(\d{2})/);
+  if (!timeMatch) return date;
+
+  return `${date} ${timeMatch[1]}:${timeMatch[2]}`;
+}
