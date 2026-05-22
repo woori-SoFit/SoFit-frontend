@@ -1,3 +1,5 @@
+import Spinner from '@/components/common/Spinner';
+
 interface LoadingStateProps {
   /** 로딩 메시지 (기본: "데이터를 불러오는 중입니다") */
   message?: string;
@@ -10,7 +12,7 @@ interface LoadingStateProps {
 export default function LoadingState({ message = '데이터를 불러오는 중입니다' }: LoadingStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16">
-      <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      <Spinner className="mb-4" />
       <p className="text-sm text-text-secondary">{message}</p>
     </div>
   );

@@ -3,6 +3,7 @@ import ShapBarChart from './ShapBarChart';
 import AiAdvice from './AiAdvice';
 import Card from '@/components/common/Card';
 import ErrorState from '@/components/common/ErrorState';
+import Spinner from '@/components/common/Spinner';
 
 interface ShapExplanationProps {
   /** 대출 신청 건 ID */
@@ -24,7 +25,7 @@ export default function ShapExplanation({ loanId }: ShapExplanationProps) {
     return (
       <Card>
         <div className="flex items-center justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-primary" />
+          <Spinner />
         </div>
       </Card>
     );

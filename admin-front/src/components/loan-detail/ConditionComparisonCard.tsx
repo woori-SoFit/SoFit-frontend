@@ -8,6 +8,7 @@ import {
   validateLoanTerm,
 } from '@/utils/validators';
 import Card from '@/components/common/Card';
+import Spinner from '@/components/common/Spinner';
 
 /** 편집 가능한 승인 조건 값 */
 export interface EditableApprovalCondition {
@@ -246,7 +247,7 @@ export default function ConditionComparisonCard({
 
       {isLoading ? (
         <div className="flex items-center gap-2 py-4 text-sm text-text-secondary">
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <Spinner size="sm" className="h-4 w-4" />
           승인 조건을 불러오는 중...
         </div>
       ) : (
