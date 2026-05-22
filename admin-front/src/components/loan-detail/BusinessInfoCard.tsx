@@ -1,5 +1,6 @@
 import type { BusinessInfo } from '@/types';
 import { formatBusinessNumber, displayValue, formatDate } from '@/utils/formatters';
+import Card from '@/components/common/Card';
 
 interface BusinessInfoCardProps {
   data: BusinessInfo;
@@ -26,8 +27,7 @@ export default function BusinessInfoCard({ data }: BusinessInfoCardProps) {
   ];
 
   return (
-    <div className="rounded-lg border border-border-default bg-bg-surface p-5 shadow-card">
-      <h3 className="mb-4 text-sm font-semibold text-text-primary">사업자 정보</h3>
+    <Card title="사업자 정보">
       <dl className="space-y-3">
         {items.map((item) => (
           <div key={item.label} className="flex items-center justify-between">
@@ -36,6 +36,6 @@ export default function BusinessInfoCard({ data }: BusinessInfoCardProps) {
           </div>
         ))}
       </dl>
-    </div>
+    </Card>
   );
 }

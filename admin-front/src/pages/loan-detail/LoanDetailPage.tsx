@@ -16,6 +16,7 @@ import CBScoreCard from '@/components/loan-detail/CBScoreCard';
 import SGradeCard from '@/components/loan-detail/SGradeCard';
 import SCBScoreCard from '@/components/loan-detail/SCBScoreCard';
 import ShapExplanation from '@/components/loan-detail/ShapExplanation';
+import Card from '@/components/common/Card';
 import type { ApprovalPayload, RejectionPayload, EscalationPayload } from '@/types';
 import type { EditableApprovalCondition } from '@/components/loan-detail/ConditionComparisonCard';
 
@@ -312,7 +313,7 @@ export default function LoanDetailPage() {
           </ConditionComparisonCard>
 
           {isDecided && (
-            <div className="rounded-lg border border-border-default bg-bg-surface p-6 shadow-card">
+            <Card>
               {status === 'APPROVED' ? (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
@@ -352,7 +353,7 @@ export default function LoanDetailPage() {
                   )}
                 </div>
               )}
-            </div>
+            </Card>
           )}
         </div>
       )}

@@ -1,5 +1,6 @@
 import type { CustomerInfo } from '@/types';
 import { maskResidentNumber, formatPhoneNumber, displayValue, formatDateTime } from '@/utils/formatters';
+import Card from '@/components/common/Card';
 
 interface CustomerInfoCardProps {
   data: CustomerInfo;
@@ -29,8 +30,7 @@ export default function CustomerInfoCard({ data }: CustomerInfoCardProps) {
   ];
 
   return (
-    <div className="rounded-lg border border-border-default bg-bg-surface p-5 shadow-card">
-      <h3 className="mb-4 text-sm font-semibold text-text-primary">고객 기본 정보</h3>
+    <Card title="고객 기본 정보">
       <dl className="space-y-3">
         {items.map((item) => (
           <div key={item.label} className="flex items-center justify-between">
@@ -39,6 +39,6 @@ export default function CustomerInfoCard({ data }: CustomerInfoCardProps) {
           </div>
         ))}
       </dl>
-    </div>
+    </Card>
   );
 }

@@ -1,6 +1,7 @@
 import type { ApplicationInfo, UserInputInfo, LoanProductInfo, ConsentHistory } from '@/types';
 import { formatCurrency, formatMonths, displayValue } from '@/utils/formatters';
 import { REPAYMENT_METHOD_LABELS, PURPOSE_LABELS } from '@/constants/loanLabels';
+import Card from '@/components/common/Card';
 
 interface ApplicationRequestCardProps {
   applicationInfo: ApplicationInfo;
@@ -85,8 +86,7 @@ export default function ApplicationRequestCard({ applicationInfo, userInputInfo,
   ];
 
   return (
-    <div className="rounded-lg border border-border-default bg-bg-surface p-5 shadow-card min-h-56">
-      <h3 className="mb-4 text-sm font-semibold text-text-primary">고객 신청 정보</h3>
+    <Card title="고객 신청 정보" className="min-h-56">
 
       {/* 대출 상품명 */}
       <div className="mb-4 flex items-center gap-2">
@@ -153,6 +153,6 @@ export default function ApplicationRequestCard({ applicationInfo, userInputInfo,
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

@@ -1,6 +1,7 @@
 import { useShapResult } from '@/hooks/useShapResult';
 import ShapBarChart from './ShapBarChart';
 import AiAdvice from './AiAdvice';
+import Card from '@/components/common/Card';
 
 interface ShapExplanationProps {
   /** 대출 신청 건 ID */
@@ -20,18 +21,18 @@ export default function ShapExplanation({ loanId }: ShapExplanationProps) {
   // 로딩 상태
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-border-default bg-bg-surface p-6 shadow-card">
+      <Card>
         <div className="flex items-center justify-center py-12">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-primary" />
         </div>
-      </div>
+      </Card>
     );
   }
 
   // 에러 상태
   if (isError) {
     return (
-      <div className="rounded-lg border border-border-default bg-bg-surface p-6 shadow-card">
+      <Card>
         <div className="flex flex-col items-center justify-center gap-3 py-12">
           <p className="text-sm text-error">SHAP 데이터를 불러오는 중 오류가 발생했습니다.</p>
           <button
@@ -42,23 +43,23 @@ export default function ShapExplanation({ loanId }: ShapExplanationProps) {
             다시 시도
           </button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   // SHAP 데이터 미존재
   if (!data) {
     return (
-      <div className="rounded-lg border border-border-default bg-bg-surface p-6 shadow-card">
+      <Card>
         <p className="py-8 text-center text-sm text-text-secondary">
           SHAP 분석 데이터가 아직 생성되지 않았습니다.
         </p>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="rounded-lg border border-border-default bg-bg-surface p-6 shadow-card">
+    <Card>
       <div className="grid grid-cols-1 gap-0 md:grid-cols-2 md:divide-x md:divide-border-default">
         {/* 왼쪽 영역: 키워드 + AI 분석 요약 */}
         <div className="space-y-5 md:pr-6">
@@ -109,6 +110,6 @@ export default function ShapExplanation({ loanId }: ShapExplanationProps) {
           />
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

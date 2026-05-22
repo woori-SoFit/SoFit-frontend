@@ -1,4 +1,5 @@
 import { formatScore } from '@/utils/formatters';
+import Card from '@/components/common/Card';
 
 interface CBScoreCardProps {
   score: number | null;
@@ -15,9 +16,7 @@ export default function CBScoreCard({ score }: CBScoreCardProps) {
   const percentage = score !== null ? Math.round((score / MAX_SCORE) * 100) : 0;
 
   return (
-    <div className="rounded-lg border border-border-default bg-bg-surface p-5 shadow-card">
-      <h3 className="mb-4 text-sm font-semibold text-text-primary">CB 신용점수</h3>
-
+    <Card title="CB 신용점수">
       <div className="mb-3 text-center">
         {score !== null ? (
           <span className="text-lg font-bold text-primary">
@@ -35,6 +34,6 @@ export default function CBScoreCard({ score }: CBScoreCardProps) {
           style={{ width: `${percentage}%` }}
         />
       </div>
-    </div>
+    </Card>
   );
 }

@@ -1,5 +1,6 @@
 import type { MyBizData, VatFilingStatus, InsurancePaymentStatus } from '@/types';
 import { formatCurrency, formatBusinessAge, formatPercentage } from '@/utils/formatters';
+import Card from '@/components/common/Card';
 
 interface MyBizDataCardProps {
   data: MyBizData | null;
@@ -52,26 +53,23 @@ export default function MyBizDataCard({ data }: MyBizDataCardProps) {
   // 마이데이터 미연동 시 안내 메시지 표시
   if (data === null) {
     return (
-      <div className="rounded-lg border border-border-default bg-bg-surface p-5 shadow-card">
-        <div className="mb-4 flex items-center gap-2">
-          <h3 className="text-sm font-semibold text-text-primary">시스템 수집 정보</h3>
-        </div>
+      <Card title="시스템 수집 정보">
         <p className="py-8 text-center text-sm text-text-disabled">
           마이데이터 미연동
         </p>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="rounded-lg border border-border-default bg-bg-surface p-5 shadow-card">
-      {/* 헤더: 제목 + 마이데이터 연동 배지 */}
-      <div className="mb-5 flex items-center gap-2">
-        <h3 className="text-sm font-semibold text-text-primary">시스템 수집 정보</h3>
+    <Card
+      title="시스템 수집 정보"
+      titleRight={
         <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
           마이데이터 연동
         </span>
-      </div>
+      }
+    >
 
       {/* 2열 배치: 재무 현황 | 운영 신뢰도 + 시장 포지션 */}
       <div className="grid grid-cols-2 gap-6 divide-x divide-border-default">
@@ -182,7 +180,7 @@ export default function MyBizDataCard({ data }: MyBizDataCardProps) {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 

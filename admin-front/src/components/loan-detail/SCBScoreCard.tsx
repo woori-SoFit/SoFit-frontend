@@ -1,4 +1,5 @@
 import { formatScore } from '@/utils/formatters';
+import Card from '@/components/common/Card';
 
 interface SCBScoreCardProps {
   scbScore: number | null;
@@ -27,15 +28,14 @@ export default function SCBScoreCard({
     bonusPoints !== null ? Math.min((bonusPoints / MAX_SCORE) * 100, 100) : 0;
 
   return (
-    <div className="rounded-lg border border-border-default bg-bg-surface p-5 shadow-card">
-      {/* 카드 상단: 라벨 + 가산 반영 배지 */}
-      <div className="mb-4 flex items-center gap-2">
-        <h3 className="text-sm font-semibold text-text-primary">SCB 점수</h3>
+    <Card
+      title="SCB 점수"
+      titleRight={
         <span className="rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success">
           가산 반영
         </span>
-      </div>
-
+      }
+    >
       {/* 점수 표시 */}
       <div className="mb-3 text-center">
         {scbScore !== null ? (
@@ -67,6 +67,6 @@ export default function SCBScoreCard({
           {sGrade} 등급 가산 +{bonusPoints}점 반영
         </p>
       )}
-    </div>
+    </Card>
   );
 }

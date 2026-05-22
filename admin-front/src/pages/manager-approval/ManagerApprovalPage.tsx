@@ -1,18 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useManagerApprovals } from '@/hooks/useManagerApprovals';
-import { formatCurrency } from '@/utils/formatters';
-
-/**
- * 신청일을 "YYYY.MM.DD" 형식으로 변환한다.
- */
-function formatDate(isoDate: string): string {
-  const date = new Date(isoDate);
-  if (isNaN(date.getTime())) return isoDate;
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}.${month}.${day}`;
-}
+import { formatCurrency, formatDate } from '@/utils/formatters';
 
 /**
  * 지점장 결재 페이지.

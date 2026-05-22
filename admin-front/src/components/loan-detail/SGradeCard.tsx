@@ -1,3 +1,5 @@
+import Card from '@/components/common/Card';
+
 interface SGradeCardProps {
   grade: string | null;
 }
@@ -12,9 +14,7 @@ const GRADES = Array.from({ length: 10 }, (_, i) => `S${i + 1}`);
  */
 export default function SGradeCard({ grade }: SGradeCardProps) {
   return (
-    <div className="rounded-lg border border-border-default bg-bg-surface p-5 shadow-card">
-      <h3 className="mb-4 text-sm font-semibold text-text-primary">성장S등급</h3>
-
+    <Card title="성장S등급">
       {grade !== null ? (
         <>
           {/* 현재 등급 텍스트 */}
@@ -43,6 +43,6 @@ export default function SGradeCard({ grade }: SGradeCardProps) {
           성장S등급이 아직 산출되지 않았습니다
         </p>
       )}
-    </div>
+    </Card>
   );
 }

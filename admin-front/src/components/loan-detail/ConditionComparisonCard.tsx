@@ -7,6 +7,7 @@ import {
   validateInterestRate,
   validateLoanTerm,
 } from '@/utils/validators';
+import Card from '@/components/common/Card';
 
 /** 편집 가능한 승인 조건 값 */
 export interface EditableApprovalCondition {
@@ -213,7 +214,7 @@ export default function ConditionComparisonCard({
   ];
 
   return (
-    <div className="rounded-lg border border-border-default bg-bg-surface p-5 shadow-card">
+    <Card>
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-text-primary">{product.productName}</h3>
         <div className="flex items-center gap-2">
@@ -278,6 +279,6 @@ export default function ConditionComparisonCard({
       )}
 
       {children && <div className="mt-5">{children}</div>}
-    </div>
+    </Card>
   );
 }
