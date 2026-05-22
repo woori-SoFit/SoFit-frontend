@@ -14,17 +14,14 @@ const ANNUAL_INCOME_LABELS: Record<string, string> = {
   AMT_0_30M: '3천만원 미만',
   AMT_30_50M: '3천~5천만원',
   AMT_50_100M: '5천만~1억원',
-  AMT_100_200M: '1억~2억원',
-  AMT_200M_OVER: '2억원 이상',
+  AMT_100M_OVER: '1억 이상'
 };
 
 /** 신용점수 구간 코드 → 한글 라벨 */
 const CREDIT_SCORE_LABELS: Record<string, string> = {
-  CS_0_600: '600점 미만',
-  CS_600_700: '600~700점',
-  CS_700_800: '700~800점',
-  CS_800_850: '800~850점',
+  CS_0_850: '850점 미만',
   CS_850_OVER: '850점 이상',
+  CS_UNKNOWN: '모름'
 };
 
 /** 소득 종류 코드 → 한글 라벨 */
@@ -36,10 +33,9 @@ const INCOME_TYPE_LABELS: Record<string, string> = {
 
 /** 보유 대출액 구간 코드 → 한글 라벨 */
 const EXISTING_LOAN_LABELS: Record<string, string> = {
-  LOAN_0: '없음',
-  LOAN_0_100M: '1억원 미만',
-  LOAN_100_300M: '1억~3억원',
-  LOAN_300M_OVER: '3억원 이상',
+  LOAN_NONE: '없음',
+  LOAN_100M_OVER: '1억원 초과',
+  LOAN_0_100M: '1억 이하'
 };
 
 /**

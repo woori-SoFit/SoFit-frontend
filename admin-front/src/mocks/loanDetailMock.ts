@@ -22,7 +22,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       maxInterestRate: 8.0,
       minTermMonths: 12,
       maxTermMonths: 60,
-      availableRepaymentMethods: ['EQUAL_PRINCIPAL', 'EQUAL_PRINCIPAL', 'BULLET'],
+      availableRepaymentMethods: ['EQUAL_PAYMENT', 'EQUAL_PRINCIPAL', 'BULLET'],
       availablePurposes: ['FACILITY_CAPITAL', 'WORKING_CAPITAL'],
     },
     customerInfo: {
@@ -43,12 +43,12 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     applicationInfo: {
       requestedAmount: 5000,
       requestedTerm: 36,
-      repaymentMethod: 'EQUAL_PRINCIPAL',
+      repaymentMethod: 'EQUAL_PAYMENT',
       purpose: 'FACILITY_CAPITAL',
     },
     userInputInfo: {
       annualIncome: 'AMT_30_50M',
-      creditScore: 'CS_700_800',
+      creditScore: 'CS_0_850',
       incomeType: '02',
       existingLoanAmount: 'LOAN_0_100M',
     },
@@ -112,7 +112,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       maxInterestRate: 8.0,
       minTermMonths: 12,
       maxTermMonths: 60,
-      availableRepaymentMethods: ['EQUAL_PRINCIPAL', 'EQUAL_PRINCIPAL', 'BULLET'],
+      availableRepaymentMethods: ['EQUAL_PAYMENT', 'EQUAL_PRINCIPAL', 'BULLET'],
       availablePurposes: ['FACILITY_CAPITAL', 'WORKING_CAPITAL'],
     },
     customerInfo: {
@@ -138,7 +138,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     },
     userInputInfo: {
       annualIncome: 'AMT_50_100M',
-      creditScore: 'CS_600_700',
+      creditScore: 'CS_0_850',
       incomeType: '02',
       existingLoanAmount: 'LOAN_0_100M',
     },
@@ -228,7 +228,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     },
     userInputInfo: {
       annualIncome: 'AMT_50_100M',
-      creditScore: 'CS_800_850',
+      creditScore: 'CS_0_850',
       incomeType: '02',
       existingLoanAmount: 'LOAN_0_100M',
     },
@@ -293,7 +293,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       maxInterestRate: 8.5,
       minTermMonths: 12,
       maxTermMonths: 60,
-      availableRepaymentMethods: ['EQUAL_PRINCIPAL', 'EQUAL_PRINCIPAL'],
+      availableRepaymentMethods: ['EQUAL_PAYMENT', 'EQUAL_PRINCIPAL'],
       availablePurposes: ['FACILITY_CAPITAL'],
     },
     customerInfo: {
@@ -319,7 +319,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     },
     userInputInfo: {
       annualIncome: 'AMT_30_50M',
-      creditScore: 'CS_0_600',
+      creditScore: 'CS_0_850',
       incomeType: '02',
       existingLoanAmount: 'LOAN_0_100M',
     },
