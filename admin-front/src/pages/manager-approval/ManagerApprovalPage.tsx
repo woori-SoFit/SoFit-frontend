@@ -4,6 +4,9 @@ import { formatCurrency, formatDate } from '@/utils/formatters';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
 import Button from '@/components/common/Button';
+import DataTable from '@/components/common/DataTable';
+import type { Column } from '@/components/common/DataTable';
+import type { ManagerApprovalItem } from '@/types';
 
 /**
  * 지점장 결재 페이지.
@@ -13,6 +16,27 @@ import Button from '@/components/common/Button';
 export default function ManagerApprovalPage() {
   const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = useManagerApprovals();
+
+  const columns: Column<ManagerApprovalItem>[] = [
+    { header: '신청일', render: (row) => formatDate(row.applicationDate) },
+    { header: '신청자명', render: (row) => row.applicantName },
+    { header: '사업자명', render: (row) => row.businessName },
+    { header: '요청 은행원', render: (row) => row.requestedByName },
+    { header: '신청 금액', align: 'right', render: (row) => formatCurrency(row.requestedAmount) },
+    {
+      header: '상세',
+      align: 'center',
+      render: (row) => (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate(`/loan/${row.id}`)}
+        >
+          상세보기
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <div className="p-6">
@@ -33,54 +57,14 @@ export default function ManagerApprovalPage() {
       {/* 에러 상태 */}
       {isError && <ErrorState onRetry={() => refetch()} />}
 
-      {/* 빈 목록 */}
-      {!isLoading && !isError && data && data.length === 0 && (
-        <div className="flex items-center justify-center py-16">
-          <p className="text-sm text-text-secondary">결재 대기 중인 건이 없습니다.</p>
-        </div>
-      )}
-
       {/* 테이블 */}
-      {!isLoading && !isError && data && data.length > 0 && (
-        <div className="overflow-x-auto rounded-lg border border-border-default bg-bg-surface shadow-card">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-border-default bg-gray-50">
-                <th className="px-4 py-3 font-medium text-text-secondary">신청일</th>
-                <th className="px-4 py-3 font-medium text-text-secondary">신청자명</th>
-                <th className="px-4 py-3 font-medium text-text-secondary">사업자명</th>
-                <th className="px-4 py-3 font-medium text-text-secondary">요청 은행원</th>
-                <th className="px-4 py-3 font-medium text-text-secondary text-right">신청 금액</th>
-                <th className="px-4 py-3 font-medium text-text-secondary text-center">상세</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-b border-border-default last:border-b-0 hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-4 py-3 text-text-primary">{formatDate(item.applicationDate)}</td>
-                  <td className="px-4 py-3 text-text-primary">{item.applicantName}</td>
-                  <td className="px-4 py-3 text-text-primary">{item.businessName}</td>
-                  <td className="px-4 py-3 text-text-primary">{item.requestedByName}</td>
-                  <td className="px-4 py-3 text-text-primary text-right">
-                    {formatCurrency(item.requestedAmount)}
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/loan/${item.id}`)}
-                    >
-                      상세보기
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {!isLoading && !isError && data && (
+        <DataTable
+          columns={columns}
+          data={data}
+          rowKey={(row) => row.id}
+          emptyMessage="결재 대기 중인 건이 없습니다."
+        />
       )}
     </div>
   );
