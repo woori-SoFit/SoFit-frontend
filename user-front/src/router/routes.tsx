@@ -28,6 +28,7 @@ import BizDataCollectPage from "@/pages/bizData/BizDataCollectPage";
 
 // Grade Report
 import GradeReportPage from "@/pages/grade/GradeReportPage";
+import GradeReportIntroPage from "@/pages/grade/GradeReportIntroPage";
 
 // Calculate
 import CalculatePage from "@/pages/calculator/CalculatorPage";
@@ -77,6 +78,9 @@ export const router = createBrowserRouter([
 
       // 대출 약정 (약관 동의 → PIN → 계좌 설정)
       { path: "/loan/agreement/:applicationId", element: <LoanAgreementPage /> },
+
+      // S분석 리포트 진입 (공개 접근 허용)
+      { path: "/grade-report/intro", element: <GradeReportIntroPage /> },
     ],
   },
 
