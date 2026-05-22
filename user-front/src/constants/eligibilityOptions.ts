@@ -8,7 +8,6 @@ import type {
   CreditScore,
   IncomeType,
   ExistingLoanAmount,
-  EligibilityFailedField,
 } from "@/types/eligibility";
 
 /** 질문 항목 타입 */
@@ -70,11 +69,3 @@ export const PRE_APPLY_QUESTIONS: PreApplyQuestion[] = [
     options: EXISTING_LOAN_OPTIONS,
   },
 ];
-
-/** 실패 필드 → 사용자 안내 메시지 매핑 */
-export const FAILED_FIELD_MESSAGES: Record<EligibilityFailedField, string> = {
-  annualIncome: "연소득 조건을 충족하지 못했습니다.",
-  creditScore: "신용점수 조건을 충족하지 못했습니다.",
-  incomeType: "소득유형 조건을 충족하지 못했습니다.",
-  existingLoanAmount: "기존대출금액 조건을 충족하지 못했습니다.",
-};
