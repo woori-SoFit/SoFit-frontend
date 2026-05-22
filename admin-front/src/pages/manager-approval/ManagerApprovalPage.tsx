@@ -90,7 +90,7 @@ export default function ManagerApprovalPage() {
                   <td className="px-4 py-3 text-text-primary">{item.businessName}</td>
                   <td className="px-4 py-3 text-text-primary">{item.requestedByName}</td>
                   <td className="px-4 py-3 text-text-primary text-right">
-                    {formatCurrency(item.desiredAmount)}
+                    {formatCurrency(item.requestedAmount)}
                   </td>
                   <td className="px-4 py-3 text-center">
                     <button

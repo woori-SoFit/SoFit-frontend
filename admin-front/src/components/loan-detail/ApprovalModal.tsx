@@ -70,8 +70,8 @@ export default function ApprovalModal({
       // 캐시된 추천값이 이미 있으면 즉시 채움
       if (recommendation) {
         setApprovedAmount(String(recommendation.approvedAmount));
-        setInterestRate(String(recommendation.interestRate));
-        setLoanTermMonths(String(recommendation.loanTermMonths));
+        setInterestRate(String(recommendation.approvedRate));
+        setLoanTermMonths(String(recommendation.approvedTerm));
         setRepaymentMethod(recommendation.repaymentMethod);
       }
     }
@@ -82,8 +82,8 @@ export default function ApprovalModal({
   useEffect(() => {
     if (isOpen && recommendation) {
       setApprovedAmount(String(recommendation.approvedAmount));
-      setInterestRate(String(recommendation.interestRate));
-      setLoanTermMonths(String(recommendation.loanTermMonths));
+      setInterestRate(String(recommendation.approvedRate));
+      setLoanTermMonths(String(recommendation.approvedTerm));
       setRepaymentMethod(recommendation.repaymentMethod);
     }
   }, [recommendation]); // isOpen 의존성 제외: fetch 완료 시점에만 반응
@@ -204,8 +204,8 @@ export default function ApprovalModal({
                     // 추천값으로 되돌리기
                     if (recommendation) {
                       setApprovedAmount(String(recommendation.approvedAmount));
-                      setInterestRate(String(recommendation.interestRate));
-                      setLoanTermMonths(String(recommendation.loanTermMonths));
+                      setInterestRate(String(recommendation.approvedRate));
+                      setLoanTermMonths(String(recommendation.approvedTerm));
                       setRepaymentMethod(recommendation.repaymentMethod);
                     }
                     setIsEditing(false);

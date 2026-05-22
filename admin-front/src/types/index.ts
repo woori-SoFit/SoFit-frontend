@@ -17,11 +17,23 @@ export function isValidRole(value: unknown): value is AdminRole {
 
 export type ReviewStatus = 'UNDER_REVIEW' | 'MANAGER_REVIEW' | 'APPROVED' | 'REJECTED';
 
+/** 공통 정보 API 응답 (GET /api/admin/loan-applications/{id}) */
+export interface LoanSummary {
+  applicationId: number;
+  applicantName: string;
+  businessName: string;
+  productName: string;
+  status: ReviewStatus;
+  appliedAt: string;
+  assigneeName: string;
+  rejectionComment?: string;
+}
+
 export interface LoanApplication {
   /** 고유 식별자 */
-  id: number;
-  /** 신청일 (ISO 8601 형식: "2025-01-15") */
-  applicationDate: string;
+  applicationId: number;
+  /** 신청일 (ISO 8601 형식: "2024-05-24") */
+  appliedAt: string;
   /** 신청자명 */
   applicantName: string;
   /** 사업자명 */
@@ -29,17 +41,17 @@ export interface LoanApplication {
   /** 대출 상품명 */
   productName: string;
   /** 심사 상태 */
-  reviewStatus: ReviewStatus;
+  status: ReviewStatus;
   /** 담당자명 */
   assigneeName: string;
 }
 
 /** 서버 페이징 응답 */
 export interface PaginatedResponse<T> {
-  content: T[];
-  totalElements: number;
+  applications: T[];
+  totalCount: number;
   totalPages: number;
-  page: number;
+  currentPage: number;
   size: number;
 }
 
@@ -56,12 +68,12 @@ export interface LoanApplicationParams {
 /** 고객 기본 정보 */
 export interface CustomerInfo {
   name: string;
-  /** 주민번호 원본 (마스킹 전) */
+  /** 주민번호 앞 7자리 (하이픈 없음) */
   residentNumber: string;
-  /** 연락처 */
+  /** 연락처 (하이픈 없음) */
   phoneNumber: string;
   /** 가입일시 (ISO 8601) */
-  registeredAt: string;
+  joinedAt: string;
   /** 아이디 */
   loginId: string;
 }
@@ -70,58 +82,57 @@ export interface CustomerInfo {
 export interface BusinessInfo {
   /** 사업자명 */
   businessName: string;
-  /** 사업자등록번호 (10자리) */
+  /** 사업자등록번호 (10자리, 하이픈 없음) */
   businessNumber: string;
   /** 업종 */
-  industry: string;
+  businessCategory: string;
   /** 업태 */
   businessType: string;
   /** 사업장 주소 */
-  address: string;
-  /** 사업 개시일 (ISO 8601) */
-  startDate: string;
+  businessAddress: string;
+  /** 사업 개시일 (YYYY-MM-DD) */
+  openDate: string;
 }
 
 /** 상환 방식 */
-export type RepaymentMethod = 'EQUAL_PRINCIPAL_INTEREST' | 'EQUAL_PRINCIPAL' | 'BULLET';
+export type RepaymentMethod = 'EQUAL_PAYMENT' | 'EQUAL_PRINCIPAL' | 'BULLET';
 
 /** 자금 용도 */
-export type LoanPurpose = 'FACILITY' | 'WORKING_CAPITAL';
+export type LoanPurpose = 'WORKING_CAPITAL' | 'FACILITY_CAPITAL';
 
 /** 약관 동의 항목 */
-export interface TermsAgreement {
+export interface ConsentHistory {
   /** 약관명 */
-  termName: string;
+  title: string;
+  /** 필수 여부 */
+  isRequired: boolean;
   /** 동의 여부 */
-  agreed: boolean;
+  isConsented: boolean;
   /** 동의 일시 (ISO 8601). 미동의 시 null */
-  agreedAt: string | null;
+  consentedAt: string | null;
 }
 
 /** 신청 조건 */
-export interface ApplicationCondition {
-  /** 희망 대출 금액 (만원) */
-  desiredAmount: number;
+export interface ApplicationInfo {
+  /** 희망 대출 금액 (원) */
+  requestedAmount: number;
   /** 대출 기간 (개월) */
-  loanTermMonths: number;
+  requestedTerm: number;
   repaymentMethod: RepaymentMethod;
   /** 자금 용도 */
   purpose: LoanPurpose;
 }
 
-/** 소득 종류 */
-export type IncomeType = 'SALARY' | 'BUSINESS' | 'OTHER';
-
-/** 신청자 입력 정보 */
-export interface ApplicantInput {
-  /** 연 소득 (만원) */
-  annualIncome: number | null;
-  /** 신용점수 */
-  creditScore: number | null;
-  /** 소득 종류 */
-  incomeType: IncomeType | null;
-  /** 보유 대출액 (만원) */
-  existingLoanAmount: number | null;
+/** 신청자 입력 정보 (코드값 문자열) */
+export interface UserInputInfo {
+  /** 연 소득 구간 코드 */
+  annualIncome: string;
+  /** 신용점수 구간 코드 */
+  creditScore: string;
+  /** 소득 종류 코드 */
+  incomeType: string;
+  /** 보유 대출액 구간 코드 */
+  existingLoanAmount: string;
 }
 
 /** 부가세 신고 상태 */
@@ -131,7 +142,7 @@ export type VatFilingStatus = 'FILED' | 'PENDING' | 'OVERDUE';
 export type InsurancePaymentStatus = 'PAID' | 'PENDING' | 'OVERDUE';
 
 /** 시스템 수집 정보 (마이비즈데이터) */
-export interface SystemCollectedData {
+export interface MyBizData {
   annualIncome: number;
   existingLoanCount: number;
   monthlyRevenue: number;
@@ -146,12 +157,6 @@ export interface SystemCollectedData {
   industryProfitRank: number;
 }
 
-/** SHAP 상세 항목 */
-export interface ShapDetail {
-  featureName: string;
-  shapValue: number;
-}
-
 /** SHAP 분석 결과 */
 export interface ShapResult {
   /** 현재 등급 (예: "S3") */
@@ -162,10 +167,10 @@ export interface ShapResult {
   strengthKeywords: string[];
   /** 개선 키워드 */
   improvementKeywords: string[];
-  /** 강점 상세 (양수 SHAP) */
-  strengthDetails: ShapDetail[];
-  /** 개선 상세 (음수 SHAP) */
-  improvementDetails: ShapDetail[];
+  /** 강점 상세 (변수명 → SHAP 값) */
+  strengthDetails: Record<string, number>;
+  /** 개선 상세 (변수명 → SHAP 값) */
+  improvementDetails: Record<string, number>;
   /** AI 조언 텍스트 */
   advice: string;
 }
@@ -201,11 +206,11 @@ export interface LoanDetailData {
   productInfo: LoanProductInfo;
   customerInfo: CustomerInfo;
   businessInfo: BusinessInfo;
-  applicationCondition: ApplicationCondition;
-  applicantInput: ApplicantInput;
+  applicationInfo: ApplicationInfo;
+  userInputInfo: UserInputInfo;
   /** 약관 동의 목록 */
-  termsAgreements: TermsAgreement[];
-  systemCollectedData: SystemCollectedData | null;
+  consentHistories: ConsentHistory[];
+  myBizData: MyBizData | null;
   cbScore: number | null;
   /** "S1" ~ "S10" */
   sGrade: string | null;
@@ -219,12 +224,12 @@ export interface LoanDetailData {
 
 /** 시스템 추천값 */
 export interface RecommendationData {
-  /** 승인 금액 (만원) */
+  /** 승인 금액 (원) */
   approvedAmount: number;
   /** 확정 금리 (%) */
-  interestRate: number;
+  approvedRate: number;
   /** 확정 기간 (개월) */
-  loanTermMonths: number;
+  approvedTerm: number;
   repaymentMethod: RepaymentMethod;
 }
 
@@ -258,5 +263,5 @@ export interface ManagerApprovalItem {
   /** 요청 은행원명 */
   requestedByName: string;
   /** 신청 금액 (만원) */
-  desiredAmount: number;
+  requestedAmount: number;
 }

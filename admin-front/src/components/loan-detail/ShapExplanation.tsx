@@ -104,7 +104,7 @@ export default function ShapExplanation({ loanId }: ShapExplanationProps) {
         <div className="mt-6 md:mt-0 md:pl-6">
           <ShapBarChart
             title="특성 영향력 TOP 10"
-            details={[...data.strengthDetails, ...data.improvementDetails]}
+            details={{ ...data.strengthDetails, ...data.improvementDetails }}
             maxItems={10}
           />
         </div>

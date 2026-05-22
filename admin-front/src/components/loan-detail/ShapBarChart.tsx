@@ -1,10 +1,8 @@
-import type { ShapDetail } from '@/types';
-
 interface ShapBarChartProps {
   /** 차트 제목 */
   title: string;
-  /** 강점 + 개선 항목을 합친 SHAP 상세 배열 */
-  details: ShapDetail[];
+  /** 강점 + 개선 항목을 합친 SHAP 상세 (변수명 → SHAP 값) */
+  details: Record<string, number>;
   /** 표시할 최대 항목 수 (기본 10) */
   maxItems?: number;
 }
@@ -18,8 +16,9 @@ const MAX_FEATURE_NAME_LENGTH = 16;
  * 절대값 기준 내림차순 정렬하여 영향력 TOP N을 표시한다.
  */
 export default function ShapBarChart({ title, details, maxItems = 10 }: ShapBarChartProps) {
-  // 절대값 기준 내림차순 정렬 후 상위 N개
-  const sorted = [...details]
+  // Record → 배열 변환 후 절대값 기준 내림차순 정렬
+  const sorted = Object.entries(details)
+    .map(([featureName, shapValue]) => ({ featureName, shapValue }))
     .sort((a, b) => Math.abs(b.shapValue) - Math.abs(a.shapValue))
     .slice(0, maxItems);
 

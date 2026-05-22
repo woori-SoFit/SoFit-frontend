@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthMe } from '@/hooks/useAuthMe';
+import { useLoanSummary } from '@/hooks/useLoanSummary';
 import { useLoanDetail } from '@/hooks/useLoanDetail';
 import { useLoanMutations } from '@/hooks/useLoanMutations';
 import { useRecommendation } from '@/hooks/useRecommendation';
@@ -10,7 +11,7 @@ import CustomerInfoCard from '@/components/loan-detail/CustomerInfoCard';
 import BusinessInfoCard from '@/components/loan-detail/BusinessInfoCard';
 import ApplicationRequestCard from '@/components/loan-detail/ApplicationRequestCard';
 import ConditionComparisonCard from '@/components/loan-detail/ConditionComparisonCard';
-import SystemCollectedCard from '@/components/loan-detail/SystemCollectedCard';
+import MyBizDataCard from '@/components/loan-detail/MyBizDataCard';
 import CBScoreCard from '@/components/loan-detail/CBScoreCard';
 import SGradeCard from '@/components/loan-detail/SGradeCard';
 import SCBScoreCard from '@/components/loan-detail/SCBScoreCard';
@@ -46,6 +47,7 @@ export default function LoanDetailPage() {
   const [isEscalationOpen, setIsEscalationOpen] = useState(false);
 
   const { data, isLoading, isError, refetch } = useLoanDetail(loanId ?? 0);
+  const { data: summary } = useLoanSummary(loanId ?? 0);
   const mutations = useLoanMutations(loanId ?? 0);
 
   // 심사 결과 탭에서 추천값 표시용 (탭이 review일 때 조회)
@@ -122,7 +124,7 @@ export default function LoanDetailPage() {
   }
 
   const userRole = authUser?.role;
-  const status = data.reviewStatus;
+  const status = summary?.status ?? data?.reviewStatus;
 
   const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && status === 'UNDER_REVIEW';
   const canManagerAct = userRole === 'ADMIN_BANK_MANAGER' && status === 'MANAGER_REVIEW';
@@ -132,30 +134,22 @@ export default function LoanDetailPage() {
   const isDecided = status === 'APPROVED' || status === 'REJECTED';
 
   const handleApprove = (payload: ApprovalPayload) => {
-    if (userRole === 'ADMIN_BANK_MANAGER') {
-      mutations.managerApprove.mutate(payload, { onSuccess: () => setIsApprovalOpen(false) });
-    } else {
-      mutations.approve.mutate(payload, { onSuccess: () => setIsApprovalOpen(false) });
-    }
+    mutations.approve.mutate(payload, { onSuccess: () => setIsApprovalOpen(false) });
   };
 
   const handleReject = (payload: RejectionPayload) => {
-    if (userRole === 'ADMIN_BANK_MANAGER') {
-      mutations.managerReject.mutate(payload, { onSuccess: () => setIsRejectionOpen(false) });
-    } else {
-      mutations.reject.mutate(payload, { onSuccess: () => setIsRejectionOpen(false) });
-    }
+    mutations.reject.mutate(payload, { onSuccess: () => setIsRejectionOpen(false) });
   };
 
   const handleEscalate = (payload: EscalationPayload) => {
     mutations.escalate.mutate(payload, { onSuccess: () => setIsEscalationOpen(false) });
   };
 
-  const isApproving = mutations.approve.isPending || mutations.managerApprove.isPending;
-  const isRejecting = mutations.reject.isPending || mutations.managerReject.isPending;
+  const isApproving = mutations.approve.isPending;
+  const isRejecting = mutations.reject.isPending;
   const isEscalating = mutations.escalate.isPending;
-  const approveError = mutations.approve.error || mutations.managerApprove.error;
-  const rejectError = mutations.reject.error || mutations.managerReject.error;
+  const approveError = mutations.approve.error;
+  const rejectError = mutations.reject.error;
   const escalateError = mutations.escalate.error;
 
   return (
@@ -172,19 +166,19 @@ export default function LoanDetailPage() {
             ← 목록
           </button>
           <h1 className="text-xl font-bold text-text-primary">
-            {data.customerInfo.name} / {data.businessInfo.businessName}
+            {summary?.applicantName ?? '-'} / {summary?.businessName ?? '-'}
           </h1>
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-            {data.productInfo.productName}
+            {summary?.productName ?? '-'}
           </span>
-          <StatusBadge status={data.reviewStatus} />
+          {summary && <StatusBadge status={summary.status} />}
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-text-secondary">
-            신청일: {formatDate(data.applicationDate)}
+            신청일: {summary ? formatDate(summary.appliedAt) : '-'}
           </span>
           <span className="text-sm text-text-secondary">
-            담당자: {data.assigneeName}
+            담당자: {summary?.assigneeName ?? '-'}
           </span>
         </div>
       </div>
@@ -222,10 +216,10 @@ export default function LoanDetailPage() {
           {/* 2행: 고객 신청 정보 (2열 전체) */}
           <div className="col-span-2">
             <ApplicationRequestCard
-              condition={data.applicationCondition}
-              applicantInput={data.applicantInput}
+              applicationInfo={data.applicationInfo}
+              userInputInfo={data.userInputInfo}
               productInfo={data.productInfo}
-              termsAgreements={data.termsAgreements}
+              consentHistories={data.consentHistories}
             />
           </div>
         </div>
@@ -233,7 +227,7 @@ export default function LoanDetailPage() {
 
       {/* ─── MY BIZ DATA 탭 ─── */}
       {activeTab === 'mybizdata' && (
-        <SystemCollectedCard data={data.systemCollectedData} />
+        <MyBizDataCard data={data.myBizData} />
       )}
 
       {/* ─── S등급 분석 탭 ─── */}
@@ -259,10 +253,10 @@ export default function LoanDetailPage() {
           {/* 상품 기준 | 신청 조건 | 승인 결과 3열 비교 */}
           <ConditionComparisonCard
             product={data.productInfo}
-            applicationCondition={data.applicationCondition}
+            applicationInfo={data.applicationInfo}
             recommendation={recommendation}
             isLoading={isRecommendationLoading}
-            reviewStatus={data.reviewStatus}
+            reviewStatus={summary?.status ?? data.reviewStatus}
           />
 
           {/* 심사 처리 버튼 */}
@@ -305,10 +299,10 @@ export default function LoanDetailPage() {
               ) : (
                 <div>
                   <p className="mb-2 text-sm font-medium text-error">이 건은 거절 처리되었습니다.</p>
-                  {data.rejectionComment && (
+                  {summary?.rejectionComment && (
                     <p className="text-sm text-text-secondary">
                       <span className="font-medium text-text-primary">거절 사유: </span>
-                      {data.rejectionComment}
+                      {summary.rejectionComment}
                     </p>
                   )}
                 </div>

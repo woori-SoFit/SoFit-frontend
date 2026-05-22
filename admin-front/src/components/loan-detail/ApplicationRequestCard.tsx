@@ -1,18 +1,45 @@
-import type { ApplicationCondition, ApplicantInput, IncomeType, LoanProductInfo, TermsAgreement } from '@/types';
+import type { ApplicationInfo, UserInputInfo, LoanProductInfo, ConsentHistory } from '@/types';
 import { formatCurrency, formatMonths, displayValue } from '@/utils/formatters';
 import { REPAYMENT_METHOD_LABELS, PURPOSE_LABELS } from '@/constants/loanLabels';
 
 interface ApplicationRequestCardProps {
-  condition: ApplicationCondition;
-  applicantInput: ApplicantInput;
+  applicationInfo: ApplicationInfo;
+  userInputInfo: UserInputInfo;
   productInfo: LoanProductInfo;
-  termsAgreements: TermsAgreement[];
+  consentHistories: ConsentHistory[];
 }
 
-const INCOME_TYPE_LABELS: Record<IncomeType, string> = {
-  SALARY: '근로소득',
-  BUSINESS: '사업소득',
-  OTHER: '기타소득',
+/** 연 소득 구간 코드 → 한글 라벨 */
+const ANNUAL_INCOME_LABELS: Record<string, string> = {
+  AMT_0_30M: '3천만원 미만',
+  AMT_30_50M: '3천~5천만원',
+  AMT_50_100M: '5천만~1억원',
+  AMT_100_200M: '1억~2억원',
+  AMT_200M_OVER: '2억원 이상',
+};
+
+/** 신용점수 구간 코드 → 한글 라벨 */
+const CREDIT_SCORE_LABELS: Record<string, string> = {
+  CS_0_600: '600점 미만',
+  CS_600_700: '600~700점',
+  CS_700_800: '700~800점',
+  CS_800_850: '800~850점',
+  CS_850_OVER: '850점 이상',
+};
+
+/** 소득 종류 코드 → 한글 라벨 */
+const INCOME_TYPE_LABELS: Record<string, string> = {
+  '01': '근로소득',
+  '02': '사업소득',
+  '03': '기타소득',
+};
+
+/** 보유 대출액 구간 코드 → 한글 라벨 */
+const EXISTING_LOAN_LABELS: Record<string, string> = {
+  LOAN_0: '없음',
+  LOAN_0_100M: '1억원 미만',
+  LOAN_100_300M: '1억~3억원',
+  LOAN_300M_OVER: '3억원 이상',
 };
 
 /**
@@ -20,44 +47,44 @@ const INCOME_TYPE_LABELS: Record<IncomeType, string> = {
  * 신청 조건(희망 금액, 기간, 상환 방식, 자금 용도)과
  * 신청자 직접 입력 정보(연 소득, 신용점수, 소득 종류, 보유 대출액)를 하나의 카드에 표시한다.
  */
-export default function ApplicationRequestCard({ condition, applicantInput, productInfo, termsAgreements }: ApplicationRequestCardProps) {
-  const conditionItems = [
+export default function ApplicationRequestCard({ applicationInfo, userInputInfo, productInfo, consentHistories }: ApplicationRequestCardProps) {
+  const applicationInfoItems = [
     {
       label: '희망 대출 금액',
-      value: condition.desiredAmount != null ? formatCurrency(condition.desiredAmount) : '-',
+      value: applicationInfo.requestedAmount != null ? formatCurrency(applicationInfo.requestedAmount) : '-',
     },
     {
       label: '대출 기간',
-      value: condition.loanTermMonths != null ? formatMonths(condition.loanTermMonths) : '-',
+      value: applicationInfo.requestedTerm != null ? formatMonths(applicationInfo.requestedTerm) : '-',
     },
     {
       label: '상환 방식',
-      value: condition.repaymentMethod
-        ? REPAYMENT_METHOD_LABELS[condition.repaymentMethod] ?? displayValue(condition.repaymentMethod)
+      value: applicationInfo.repaymentMethod
+        ? REPAYMENT_METHOD_LABELS[applicationInfo.repaymentMethod] ?? displayValue(applicationInfo.repaymentMethod)
         : '-',
     },
     {
       label: '자금 용도',
-      value: condition.purpose ? PURPOSE_LABELS[condition.purpose] ?? displayValue(condition.purpose) : '-',
+      value: applicationInfo.purpose ? PURPOSE_LABELS[applicationInfo.purpose] ?? displayValue(applicationInfo.purpose) : '-',
     },
   ];
 
   const inputItems = [
     {
       label: '연 소득',
-      value: applicantInput.annualIncome != null ? formatCurrency(applicantInput.annualIncome) : '-',
+      value: ANNUAL_INCOME_LABELS[userInputInfo.annualIncome] ?? userInputInfo.annualIncome,
     },
     {
       label: '신용점수',
-      value: applicantInput.creditScore != null ? `${applicantInput.creditScore}점` : '-',
+      value: CREDIT_SCORE_LABELS[userInputInfo.creditScore] ?? userInputInfo.creditScore,
     },
     {
       label: '소득 종류',
-      value: applicantInput.incomeType ? (INCOME_TYPE_LABELS[applicantInput.incomeType] ?? '-') : '-',
+      value: INCOME_TYPE_LABELS[userInputInfo.incomeType] ?? userInputInfo.incomeType,
     },
     {
       label: '보유 대출액',
-      value: applicantInput.existingLoanAmount != null ? formatCurrency(applicantInput.existingLoanAmount) : '-',
+      value: EXISTING_LOAN_LABELS[userInputInfo.existingLoanAmount] ?? userInputInfo.existingLoanAmount,
     },
   ];
 
@@ -77,7 +104,7 @@ export default function ApplicationRequestCard({ condition, applicantInput, prod
         {/* 신청 정보 */}
         <div className="pr-4">
           <dl className="space-y-2">
-            {conditionItems.map((item) => (
+            {applicationInfoItems.map((item) => (
               <div key={item.label} className="flex items-center justify-between">
                 <dt className="text-xs text-text-secondary">{item.label}</dt>
                 <dd className="text-sm font-medium text-text-primary">{item.value}</dd>
@@ -100,23 +127,26 @@ export default function ApplicationRequestCard({ condition, applicantInput, prod
 
         {/* 약관 동의 */}
         <div className="pl-4">
-          {termsAgreements.length > 0 ? (
+          {consentHistories.length > 0 ? (
             <ul className="space-y-2">
-              {termsAgreements.map((term) => (
-                <li key={term.termName} className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-text-secondary">{term.termName}</span>
+              {consentHistories.map((consent) => (
+                <li key={consent.title} className="flex items-center justify-between gap-2">
+                  <span className="text-xs text-text-secondary">
+                    {consent.title}
+                    {consent.isRequired ? '' : ' (선택)'}
+                  </span>
                   <div className="flex shrink-0 items-center gap-1.5">
-                    {term.agreed && term.agreedAt && (
+                    {consent.isConsented && consent.consentedAt && (
                       <span className="text-xs text-text-disabled">
-                        {new Date(term.agreedAt).toLocaleDateString('ko-KR', {
+                        {new Date(consent.consentedAt).toLocaleDateString('ko-KR', {
                           year: 'numeric',
                           month: '2-digit',
                           day: '2-digit',
                         })}
                       </span>
                     )}
-                    <span className={`text-xs font-medium ${term.agreed ? 'text-success' : 'text-text-disabled'}`}>
-                      {term.agreed ? '동의' : '미동의'}
+                    <span className={`text-xs font-medium ${consent.isConsented ? 'text-success' : 'text-text-disabled'}`}>
+                      {consent.isConsented ? '동의' : '미동의'}
                     </span>
                   </div>
                 </li>

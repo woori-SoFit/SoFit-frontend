@@ -1,6 +1,5 @@
 import type { BusinessInfo } from '@/types';
-import { formatBusinessNumber, displayValue } from '@/utils/formatters';
-import { formatDate } from '@/utils/formatDate';
+import { formatBusinessNumber, displayValue, formatDate } from '@/utils/formatters';
 
 interface BusinessInfoCardProps {
   data: BusinessInfo;
@@ -17,12 +16,12 @@ export default function BusinessInfoCard({ data }: BusinessInfoCardProps) {
       label: '사업자등록번호',
       value: data.businessNumber ? formatBusinessNumber(data.businessNumber) : '-',
     },
-    { label: '업종', value: displayValue(data.industry) },
+    { label: '업종', value: displayValue(data.businessCategory) },
     { label: '업태', value: displayValue(data.businessType) },
-    { label: '사업장 주소', value: displayValue(data.address) },
+    { label: '사업장 주소', value: displayValue(data.businessAddress) },
     {
       label: '사업 개시일',
-      value: data.startDate ? formatDate(data.startDate) : '-',
+      value: data.openDate ? formatDate(data.openDate) : '-',
     },
   ];
 

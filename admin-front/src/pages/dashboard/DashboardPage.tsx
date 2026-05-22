@@ -49,7 +49,7 @@ export default function DashboardPage() {
           </h1>
           {!isLoading && data && (
             <span className="text-sm text-text-secondary">
-              총 {data.totalElements}건
+              총 {data.totalCount}건
             </span>
           )}
         </div>
@@ -109,7 +109,7 @@ export default function DashboardPage() {
       {/* 테이블 */}
       {!isLoading && !isError && data && (
         <div className="min-h-[540px]">
-          <ApplicationTable applications={data.content} />
+          <ApplicationTable applications={data.applications} />
         </div>
       )}
 

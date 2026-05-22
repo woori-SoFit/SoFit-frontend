@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import StatusBadge from '@/components/common/StatusBadge';
 import type { LoanApplication } from '@/types';
-import { formatDate } from '@/utils/formatDate';
+import { formatDate } from '@/utils/formatters';
 
 interface ApplicationTableProps {
   applications: LoanApplication[];
@@ -44,11 +44,11 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
           ) : (
             applications.map((application) => (
               <tr
-                key={application.id}
+                key={application.applicationId}
                 className="border-b border-border-default last:border-b-0 hover:bg-gray-50"
               >
                 <td className="px-4 py-3 text-sm text-text-primary">
-                  {formatDate(application.applicationDate)}
+                  {formatDate(application.appliedAt)}
                 </td>
                 <td className="px-4 py-3 text-sm text-text-primary">
                   {application.applicantName}
@@ -63,11 +63,11 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
                   {application.assigneeName}
                 </td>
                 <td className="px-4 py-3 text-sm">
-                  <StatusBadge status={application.reviewStatus} />
+                  <StatusBadge status={application.status} />
                 </td>
                 <td className="px-4 py-3 text-sm">
                   <Link
-                    to={`/loan/${application.id}`}
+                    to={`/loan/${application.applicationId}`}
                     aria-label={`${application.applicantName} 신청 건 상세보기`}
                     className="text-primary hover:text-primary/80 font-medium"
                   >

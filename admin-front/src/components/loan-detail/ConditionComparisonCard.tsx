@@ -1,4 +1,4 @@
-import type { LoanProductInfo, ApplicationCondition, RecommendationData, ReviewStatus } from '@/types';
+import type { LoanProductInfo, ApplicationInfo, RecommendationData, ReviewStatus } from '@/types';
 import { formatCurrency, formatMonths } from '@/utils/formatters';
 import { REPAYMENT_METHOD_LABELS, PURPOSE_LABELS } from '@/constants/loanLabels';
 
@@ -6,7 +6,7 @@ interface ConditionComparisonCardProps {
   /** 대출 상품 기준 */
   product: LoanProductInfo;
   /** 신청자가 희망한 조건 */
-  applicationCondition: ApplicationCondition;
+  applicationInfo: ApplicationInfo;
   /** 시스템 추천 승인 조건 */
   recommendation: RecommendationData | undefined;
   /** 추천값 로딩 중 */
@@ -27,7 +27,7 @@ const SYSTEM_DECISION_CONFIG: Partial<Record<ReviewStatus, { label: string; clas
  */
 export default function ConditionComparisonCard({
   product,
-  applicationCondition,
+  applicationInfo,
   recommendation,
   isLoading,
   reviewStatus,
@@ -37,32 +37,32 @@ export default function ConditionComparisonCard({
     {
       label: '대출 금액',
       productValue: `${formatCurrency(product.minAmount)} ~ ${formatCurrency(product.maxAmount)}`,
-      appliedValue: formatCurrency(applicationCondition.desiredAmount),
+      appliedValue: formatCurrency(applicationInfo.requestedAmount),
       approvedValue: recommendation ? formatCurrency(recommendation.approvedAmount) : '-',
     },
     {
       label: '금리',
       productValue: `${product.minInterestRate}% ~ ${product.maxInterestRate}%`,
       appliedValue: '-',
-      approvedValue: recommendation ? `${recommendation.interestRate}%` : '-',
+      approvedValue: recommendation ? `${recommendation.approvedRate}%` : '-',
     },
     {
       label: '대출 기간',
       productValue: `${formatMonths(product.minTermMonths)} ~ ${formatMonths(product.maxTermMonths)}`,
-      appliedValue: formatMonths(applicationCondition.loanTermMonths),
-      approvedValue: recommendation ? formatMonths(recommendation.loanTermMonths) : '-',
+      appliedValue: formatMonths(applicationInfo.requestedTerm),
+      approvedValue: recommendation ? formatMonths(recommendation.approvedTerm) : '-',
     },
     {
       label: '상환 방식',
       productValue: product.availableRepaymentMethods.map((m) => REPAYMENT_METHOD_LABELS[m]).join(', '),
-      appliedValue: REPAYMENT_METHOD_LABELS[applicationCondition.repaymentMethod],
+      appliedValue: REPAYMENT_METHOD_LABELS[applicationInfo.repaymentMethod],
       approvedValue: recommendation ? REPAYMENT_METHOD_LABELS[recommendation.repaymentMethod] : '-',
     },
     {
       label: '자금 용도',
       productValue: product.availablePurposes.map((p) => PURPOSE_LABELS[p]).join(', '),
-      appliedValue: PURPOSE_LABELS[applicationCondition.purpose],
-      approvedValue: recommendation ? PURPOSE_LABELS[applicationCondition.purpose] : '-',
+      appliedValue: PURPOSE_LABELS[applicationInfo.purpose],
+      approvedValue: recommendation ? PURPOSE_LABELS[applicationInfo.purpose] : '-',
     },
   ];
 

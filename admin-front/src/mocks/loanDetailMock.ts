@@ -1,5 +1,6 @@
 import type {
   LoanDetailData,
+  LoanSummary,
   RecommendationData,
   ManagerApprovalItem,
   ShapResult,
@@ -21,43 +22,43 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       maxInterestRate: 8.0,
       minTermMonths: 12,
       maxTermMonths: 60,
-      availableRepaymentMethods: ['EQUAL_PRINCIPAL_INTEREST', 'EQUAL_PRINCIPAL', 'BULLET'],
-      availablePurposes: ['FACILITY', 'WORKING_CAPITAL'],
+      availableRepaymentMethods: ['EQUAL_PRINCIPAL', 'EQUAL_PRINCIPAL', 'BULLET'],
+      availablePurposes: ['FACILITY_CAPITAL', 'WORKING_CAPITAL'],
     },
     customerInfo: {
       name: '이정훈',
       residentNumber: '8503151234567',
       phoneNumber: '01012345678',
-      registeredAt: '2024-01-15T09:30:00',
+      joinedAt: '2024-01-15T09:30:00',
       loginId: 'junghoon85',
     },
     businessInfo: {
       businessName: '카페나무 주식회사',
       businessNumber: '1234567890',
-      industry: '음식점업',
+      businessCategory: '음식점업',
       businessType: '커피 전문점',
-      address: '서울특별시 강남구 테헤란로 123, 1층',
-      startDate: '2019-03-15',
+      businessAddress: '서울특별시 강남구 테헤란로 123, 1층',
+      openDate: '2019-03-15',
     },
-    applicationCondition: {
-      desiredAmount: 5000,
-      loanTermMonths: 36,
-      repaymentMethod: 'EQUAL_PRINCIPAL_INTEREST',
-      purpose: 'FACILITY',
+    applicationInfo: {
+      requestedAmount: 5000,
+      requestedTerm: 36,
+      repaymentMethod: 'EQUAL_PRINCIPAL',
+      purpose: 'FACILITY_CAPITAL',
     },
-    applicantInput: {
-      annualIncome: 4800,
-      creditScore: 720,
-      incomeType: 'BUSINESS',
-      existingLoanAmount: 2000,
+    userInputInfo: {
+      annualIncome: 'AMT_30_50M',
+      creditScore: 'CS_700_800',
+      incomeType: '02',
+      existingLoanAmount: 'LOAN_0_100M',
     },
-    termsAgreements: [
-      { termName: '대출 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-24T10:12:00' },
-      { termName: '개인정보 수집·이용 동의 (필수)', agreed: true, agreedAt: '2024-05-24T10:12:05' },
-      { termName: '마이데이터 서비스 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-24T10:12:10' },
-      { termName: '마케팅 정보 수신 동의 (선택)', agreed: false, agreedAt: null },
+    consentHistories: [
+      { title: '대출 이용 약관', isRequired: true, isConsented: true, consentedAt: '2024-05-24T10:12:00' },
+      { title: '개인정보 수집·이용 동의', isRequired: true, isConsented: true, consentedAt: '2024-05-24T10:12:05' },
+      { title: '마이데이터 서비스 이용 약관', isRequired: true, isConsented: true, consentedAt: '2024-05-24T10:12:10' },
+      { title: '마케팅 정보 수신 동의', isRequired: false, isConsented: false, consentedAt: null },
     ],
-    systemCollectedData: {
+    myBizData: {
       annualIncome: 5200,
       existingLoanCount: 2,
       monthlyRevenue: 850,
@@ -80,20 +81,20 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       targetGrade: 'S2',
       strengthKeywords: ['온라인 정보 접근성 점수', '온라인 플랫폼 활동 지수', '업종 평균 대비 매출 비율'],
       improvementKeywords: ['업력 대비 매출증가율(3개월)', '직원당 매출증가율(6개월)'],
-      strengthDetails: [
-        { featureName: '연간 매출 증가율', shapValue: 0.41286 },
-        { featureName: '배달앱 평점', shapValue: 0.345518 },
-        { featureName: '온라인 리뷰 수', shapValue: 0.28934 },
-        { featureName: '월 평균 카드 결제 건수', shapValue: 0.21567 },
-        { featureName: '소셜미디어 팔로워 증가율', shapValue: 0.18423 },
-      ],
-      improvementDetails: [
-        { featureName: '업력(개월)', shapValue: -0.247369 },
-        { featureName: '직원 1인당 매출액', shapValue: -0.18234 },
-        { featureName: '최근 3개월 매출 변동성', shapValue: -0.12456 },
-        { featureName: '전통시장 여부', shapValue: -0.050283 },
-        { featureName: '임대료 대비 매출 비율', shapValue: -0.03891 },
-      ],
+      strengthDetails: {
+        '연간 매출 증가율': 0.41286,
+        '배달앱 평점': 0.345518,
+        '온라인 리뷰 수': 0.28934,
+        '월 평균 카드 결제 건수': 0.21567,
+        '소셜미디어 팔로워 증가율': 0.18423,
+      },
+      improvementDetails: {
+        '업력(개월)': -0.247369,
+        '직원 1인당 매출액': -0.18234,
+        '최근 3개월 매출 변동성': -0.12456,
+        '전통시장 여부': -0.050283,
+        '임대료 대비 매출 비율': -0.03891,
+      },
       advice:
         '• 온라인에서 고객과 활발하게 소통하며 높은 평점을 유지하고 있어 디지털 경쟁력이 우수합니다.\n• 연간 매출 증가율이 업종 평균을 크게 상회하여 성장세가 뚜렷합니다.\n• 최근 매출이 조금 주춤한 상황이니 계절적 요인을 고려한 프로모션 전략을 검토해보세요.\n• 직원 생산성 향상을 위한 업무 프로세스 개선을 권장합니다.',
     },
@@ -111,43 +112,43 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       maxInterestRate: 8.0,
       minTermMonths: 12,
       maxTermMonths: 60,
-      availableRepaymentMethods: ['EQUAL_PRINCIPAL_INTEREST', 'EQUAL_PRINCIPAL', 'BULLET'],
-      availablePurposes: ['FACILITY', 'WORKING_CAPITAL'],
+      availableRepaymentMethods: ['EQUAL_PRINCIPAL', 'EQUAL_PRINCIPAL', 'BULLET'],
+      availablePurposes: ['FACILITY_CAPITAL', 'WORKING_CAPITAL'],
     },
     customerInfo: {
       name: '박지은',
       residentNumber: '9012252345678',
       phoneNumber: '01098765432',
-      registeredAt: '2023-11-20T14:15:00',
+      joinedAt: '2023-11-20T14:15:00',
       loginId: 'jieun_park90',
     },
     businessInfo: {
       businessName: '지은테크',
       businessNumber: '2345678901',
-      industry: '정보통신업',
+      businessCategory: '정보통신업',
       businessType: '소프트웨어 개발',
-      address: '경기도 성남시 분당구 판교로 256, 5층',
-      startDate: '2021-07-01',
+      businessAddress: '경기도 성남시 분당구 판교로 256, 5층',
+      openDate: '2021-07-01',
     },
-    applicationCondition: {
-      desiredAmount: 10000,
-      loanTermMonths: 60,
+    applicationInfo: {
+      requestedAmount: 10000,
+      requestedTerm: 60,
       repaymentMethod: 'EQUAL_PRINCIPAL',
       purpose: 'WORKING_CAPITAL',
     },
-    applicantInput: {
-      annualIncome: 8500,
-      creditScore: 680,
-      incomeType: 'BUSINESS',
-      existingLoanAmount: 5000,
+    userInputInfo: {
+      annualIncome: 'AMT_50_100M',
+      creditScore: 'CS_600_700',
+      incomeType: '02',
+      existingLoanAmount: 'LOAN_0_100M',
     },
-    termsAgreements: [
-      { termName: '대출 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-23T09:05:00' },
-      { termName: '개인정보 수집·이용 동의 (필수)', agreed: true, agreedAt: '2024-05-23T09:05:03' },
-      { termName: '마이데이터 서비스 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-23T09:05:07' },
-      { termName: '마케팅 정보 수신 동의 (선택)', agreed: true, agreedAt: '2024-05-23T09:05:10' },
+    consentHistories: [
+      { title: '대출 이용 약관', isRequired: true, isConsented: true, consentedAt: '2024-05-23T09:05:00' },
+      { title: '개인정보 수집·이용 동의', isRequired: true, isConsented: true, consentedAt: '2024-05-23T09:05:03' },
+      { title: '마이데이터 서비스 이용 약관', isRequired: true, isConsented: true, consentedAt: '2024-05-23T09:05:07' },
+      { title: '마케팅 정보 수신 동의', isRequired: false, isConsented: true, consentedAt: '2024-05-23T09:05:10' },
     ],
-    systemCollectedData: {
+    myBizData: {
       annualIncome: 9200,
       existingLoanCount: 3,
       monthlyRevenue: 1200,
@@ -170,20 +171,20 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       targetGrade: 'S4',
       strengthKeywords: ['기술 인력 비율', '특허 보유 건수', 'R&D 투자 비율'],
       improvementKeywords: ['업력 대비 매출 안정성', '현금흐름 변동성'],
-      strengthDetails: [
-        { featureName: '기술 인력 비율', shapValue: 0.38921 },
-        { featureName: '특허 보유 건수', shapValue: 0.31245 },
-        { featureName: 'R&D 투자 비율', shapValue: 0.27834 },
-        { featureName: '정부 과제 수행 이력', shapValue: 0.19567 },
-        { featureName: '고객사 다변화 지수', shapValue: 0.15234 },
-      ],
-      improvementDetails: [
-        { featureName: '현금흐름 변동성', shapValue: -0.31245 },
-        { featureName: '업력(개월)', shapValue: -0.22134 },
-        { featureName: '매출 집중도(상위 고객 비율)', shapValue: -0.15678 },
-        { featureName: '부채비율', shapValue: -0.09823 },
-        { featureName: '인건비 대비 매출 비율', shapValue: -0.07456 },
-      ],
+      strengthDetails: {
+        '기술 인력 비율': 0.38921,
+        '특허 보유 건수': 0.31245,
+        'R&D 투자 비율': 0.27834,
+        '정부 과제 수행 이력': 0.19567,
+        '고객사 다변화 지수': 0.15234,
+      },
+      improvementDetails: {
+        '현금흐름 변동성': -0.31245,
+        '업력(개월)': -0.22134,
+        '매출 집중도(상위 고객 비율)': -0.15678,
+        '부채비율': -0.09823,
+        '인건비 대비 매출 비율': -0.07456,
+      },
       advice:
         '• 기술 인력 비율과 R&D 투자가 높아 기술 경쟁력이 우수한 기업입니다.\n• 특허 보유와 정부 과제 수행 이력이 사업 안정성을 뒷받침합니다.\n• 현금흐름 변동성이 높으니 매출 수금 주기를 단축하는 방안을 검토해보세요.\n• 매출 집중도를 낮추기 위해 신규 고객 확보 전략을 수립하시길 권장합니다.',
     },
@@ -201,43 +202,43 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       maxInterestRate: 9.0,
       minTermMonths: 6,
       maxTermMonths: 36,
-      availableRepaymentMethods: ['EQUAL_PRINCIPAL_INTEREST', 'BULLET'],
+      availableRepaymentMethods: ['EQUAL_PRINCIPAL', 'BULLET'],
       availablePurposes: ['WORKING_CAPITAL'],
     },
     customerInfo: {
       name: '최상호',
       residentNumber: '7808083456789',
       phoneNumber: '01055556666',
-      registeredAt: '2023-06-10T11:00:00',
+      joinedAt: '2023-06-10T11:00:00',
       loginId: 'sangho_choi',
     },
     businessInfo: {
       businessName: '상호푸드',
       businessNumber: '3456789012',
-      industry: '음식점업',
+      businessCategory: '음식점업',
       businessType: '한식 전문점',
-      address: '부산광역시 해운대구 해운대로 789',
-      startDate: '2015-09-20',
+      businessAddress: '부산광역시 해운대구 해운대로 789',
+      openDate: '2015-09-20',
     },
-    applicationCondition: {
-      desiredAmount: 3000,
-      loanTermMonths: 24,
+    applicationInfo: {
+      requestedAmount: 3000,
+      requestedTerm: 24,
       repaymentMethod: 'BULLET',
       purpose: 'WORKING_CAPITAL',
     },
-    applicantInput: {
-      annualIncome: 6000,
-      creditScore: 810,
-      incomeType: 'BUSINESS',
-      existingLoanAmount: 1000,
+    userInputInfo: {
+      annualIncome: 'AMT_50_100M',
+      creditScore: 'CS_800_850',
+      incomeType: '02',
+      existingLoanAmount: 'LOAN_0_100M',
     },
-    termsAgreements: [
-      { termName: '대출 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-22T14:30:00' },
-      { termName: '개인정보 수집·이용 동의 (필수)', agreed: true, agreedAt: '2024-05-22T14:30:04' },
-      { termName: '마이데이터 서비스 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-22T14:30:08' },
-      { termName: '마케팅 정보 수신 동의 (선택)', agreed: false, agreedAt: null },
+    consentHistories: [
+      { title: '대출 이용 약관', isRequired: true, isConsented: true, consentedAt: '2024-05-22T14:30:00' },
+      { title: '개인정보 수집·이용 동의', isRequired: true, isConsented: true, consentedAt: '2024-05-22T14:30:04' },
+      { title: '마이데이터 서비스 이용 약관', isRequired: true, isConsented: true, consentedAt: '2024-05-22T14:30:08' },
+      { title: '마케팅 정보 수신 동의', isRequired: false, isConsented: false, consentedAt: null },
     ],
-    systemCollectedData: {
+    myBizData: {
       annualIncome: 6500,
       existingLoanCount: 1,
       monthlyRevenue: 980,
@@ -260,20 +261,20 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       targetGrade: 'S1',
       strengthKeywords: ['업력 안정성', '매출 성장률', '업종 내 상위 포지션'],
       improvementKeywords: ['디지털 전환 지수', '온라인 채널 활용도'],
-      strengthDetails: [
-        { featureName: '업력(개월)', shapValue: 0.52134 },
-        { featureName: '매출 성장률(연간)', shapValue: 0.43567 },
-        { featureName: '업종 내 매출 순위', shapValue: 0.38912 },
-        { featureName: '현금흐름 안정성', shapValue: 0.31245 },
-        { featureName: '세금 납부 이력', shapValue: 0.24567 },
-      ],
-      improvementDetails: [
-        { featureName: '온라인 채널 매출 비율', shapValue: -0.18923 },
-        { featureName: '디지털 마케팅 활동 지수', shapValue: -0.14567 },
-        { featureName: '배달앱 등록 여부', shapValue: -0.09234 },
-        { featureName: '홈페이지 운영 여부', shapValue: -0.06789 },
-        { featureName: 'SNS 활동 빈도', shapValue: -0.04123 },
-      ],
+      strengthDetails: {
+        '업력(개월)': 0.52134,
+        '매출 성장률(연간)': 0.43567,
+        '업종 내 매출 순위': 0.38912,
+        '현금흐름 안정성': 0.31245,
+        '세금 납부 이력': 0.24567,
+      },
+      improvementDetails: {
+        '온라인 채널 매출 비율': -0.18923,
+        '디지털 마케팅 활동 지수': -0.14567,
+        '배달앱 등록 여부': -0.09234,
+        '홈페이지 운영 여부': -0.06789,
+        'SNS 활동 빈도': -0.04123,
+      },
       advice:
         '• 9년 가까운 업력과 안정적인 매출 성장으로 사업 안정성이 매우 높습니다.\n• 업종 내 매출 상위 8.5%에 위치하여 시장 경쟁력이 뛰어납니다.\n• 온라인 채널 활용도를 높이면 추가 매출 성장이 기대됩니다.\n• 배달앱 입점이나 자체 홈페이지 구축을 통해 디지털 전환을 추진해보세요.',
     },
@@ -292,43 +293,43 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       maxInterestRate: 8.5,
       minTermMonths: 12,
       maxTermMonths: 60,
-      availableRepaymentMethods: ['EQUAL_PRINCIPAL_INTEREST', 'EQUAL_PRINCIPAL'],
-      availablePurposes: ['FACILITY'],
+      availableRepaymentMethods: ['EQUAL_PRINCIPAL', 'EQUAL_PRINCIPAL'],
+      availablePurposes: ['FACILITY_CAPITAL'],
     },
     customerInfo: {
       name: '김도현',
       residentNumber: '8811154567890',
       phoneNumber: '01033334444',
-      registeredAt: '2023-09-05T10:00:00',
+      joinedAt: '2023-09-05T10:00:00',
       loginId: 'dohyun_kim88',
     },
     businessInfo: {
       businessName: '도현건설',
       businessNumber: '4567890123',
-      industry: '건설업',
+      businessCategory: '건설업',
       businessType: '인테리어 시공',
-      address: '서울특별시 마포구 홍익로 45, 3층',
-      startDate: '2020-04-10',
+      businessAddress: '서울특별시 마포구 홍익로 45, 3층',
+      openDate: '2020-04-10',
     },
-    applicationCondition: {
-      desiredAmount: 6000,
-      loanTermMonths: 48,
-      repaymentMethod: 'EQUAL_PRINCIPAL_INTEREST',
-      purpose: 'FACILITY',
+    applicationInfo: {
+      requestedAmount: 6000,
+      requestedTerm: 48,
+      repaymentMethod: 'EQUAL_PRINCIPAL',
+      purpose: 'FACILITY_CAPITAL',
     },
-    applicantInput: {
-      annualIncome: 3800,
-      creditScore: 580,
-      incomeType: 'BUSINESS',
-      existingLoanAmount: 8500,
+    userInputInfo: {
+      annualIncome: 'AMT_30_50M',
+      creditScore: 'CS_0_600',
+      incomeType: '02',
+      existingLoanAmount: 'LOAN_0_100M',
     },
-    termsAgreements: [
-      { termName: '대출 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-21T11:20:00' },
-      { termName: '개인정보 수집·이용 동의 (필수)', agreed: true, agreedAt: '2024-05-21T11:20:04' },
-      { termName: '마이데이터 서비스 이용 약관 (필수)', agreed: true, agreedAt: '2024-05-21T11:20:08' },
-      { termName: '마케팅 정보 수신 동의 (선택)', agreed: false, agreedAt: null },
+    consentHistories: [
+      { title: '대출 이용 약관', isRequired: true, isConsented: true, consentedAt: '2024-05-21T11:20:00' },
+      { title: '개인정보 수집·이용 동의', isRequired: true, isConsented: true, consentedAt: '2024-05-21T11:20:04' },
+      { title: '마이데이터 서비스 이용 약관', isRequired: true, isConsented: true, consentedAt: '2024-05-21T11:20:08' },
+      { title: '마케팅 정보 수신 동의', isRequired: false, isConsented: false, consentedAt: null },
     ],
-    systemCollectedData: {
+    myBizData: {
       annualIncome: 4100,
       existingLoanCount: 5,
       monthlyRevenue: 620,
@@ -351,20 +352,20 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       targetGrade: 'S7',
       strengthKeywords: ['사업 지속성', '고정 거래처 보유'],
       improvementKeywords: ['현금흐름 부족', '부채 비율 과다', '세금 체납'],
-      strengthDetails: [
-        { featureName: '업력(개월)', shapValue: 0.18234 },
-        { featureName: '고정 거래처 수', shapValue: 0.12456 },
-        { featureName: '사업자등록 유지 기간', shapValue: 0.09123 },
-        { featureName: '월 평균 카드 결제 건수', shapValue: 0.07234 },
-        { featureName: '업종 내 생존율', shapValue: 0.05678 },
-      ],
-      improvementDetails: [
-        { featureName: '부채비율', shapValue: -0.48923 },
-        { featureName: '현금흐름', shapValue: -0.38456 },
-        { featureName: '세금 납부 이력', shapValue: -0.29134 },
-        { featureName: '매출 성장률(연간)', shapValue: -0.21567 },
-        { featureName: '보험료 납부 이력', shapValue: -0.15234 },
-      ],
+      strengthDetails: {
+        '업력(개월)': 0.18234,
+        '고정 거래처 수': 0.12456,
+        '사업자등록 유지 기간': 0.09123,
+        '월 평균 카드 결제 건수': 0.07234,
+        '업종 내 생존율': 0.05678,
+      },
+      improvementDetails: {
+        '부채비율': -0.48923,
+        '현금흐름': -0.38456,
+        '세금 납부 이력': -0.29134,
+        '매출 성장률(연간)': -0.21567,
+        '보험료 납부 이력': -0.15234,
+      },
       advice:
         '• 부채 비율이 매우 높아 추가 대출 상환 능력에 우려가 있습니다.\n• 현금흐름이 낮아 월 상환금 부담이 클 수 있습니다.\n• 세금 및 보험료 체납 이력이 신용도에 부정적 영향을 미치고 있습니다.\n• 기존 대출 일부 상환 후 부채 비율을 낮추고 재신청하시길 권장합니다.',
     },
@@ -376,20 +377,20 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
 const MOCK_RECOMMENDATIONS: Record<number, RecommendationData> = {
   1: {
     approvedAmount: 4500,
-    interestRate: 4.5,
-    loanTermMonths: 36,
-    repaymentMethod: 'EQUAL_PRINCIPAL_INTEREST',
+    approvedRate: 4.5,
+    approvedTerm: 36,
+    repaymentMethod: 'EQUAL_PRINCIPAL',
   },
   2: {
     approvedAmount: 8000,
-    interestRate: 5.2,
-    loanTermMonths: 48,
+    approvedRate: 5.2,
+    approvedTerm: 48,
     repaymentMethod: 'EQUAL_PRINCIPAL',
   },
   3: {
     approvedAmount: 3000,
-    interestRate: 3.8,
-    loanTermMonths: 24,
+    approvedRate: 3.8,
+    approvedTerm: 24,
     repaymentMethod: 'BULLET',
   },
 };
@@ -403,7 +404,7 @@ const MOCK_MANAGER_APPROVALS: ManagerApprovalItem[] = [
     applicantName: '박지은',
     businessName: '지은테크',
     requestedByName: '이담당',
-    desiredAmount: 10000,
+    requestedAmount: 10000,
   },
   {
     id: 4,
@@ -411,7 +412,7 @@ const MOCK_MANAGER_APPROVALS: ManagerApprovalItem[] = [
     applicantName: '장유진',
     businessName: '유진상사',
     requestedByName: '김은행',
-    desiredAmount: 7000,
+    requestedAmount: 7000,
   },
   {
     id: 10,
@@ -419,7 +420,7 @@ const MOCK_MANAGER_APPROVALS: ManagerApprovalItem[] = [
     applicantName: '장미영',
     businessName: '미영식품',
     requestedByName: '김은행',
-    desiredAmount: 4500,
+    requestedAmount: 4500,
   },
 ];
 
@@ -440,9 +441,9 @@ export function getMockRecommendation(id: number): RecommendationData {
   return (
     MOCK_RECOMMENDATIONS[id] ?? {
       approvedAmount: 0,
-      interestRate: 0,
-      loanTermMonths: 0,
-      repaymentMethod: 'EQUAL_PRINCIPAL_INTEREST',
+      approvedRate: 0,
+      approvedTerm: 0,
+      repaymentMethod: 'EQUAL_PRINCIPAL',
     }
   );
 }
@@ -461,4 +462,24 @@ export function getMockManagerApprovals(): ManagerApprovalItem[] {
 export function getMockShapResult(id: number): ShapResult | undefined {
   const detail = MOCK_LOAN_DETAILS.find((item) => item.id === id);
   return detail?.shapResult ?? undefined;
+}
+
+/**
+ * 신청 건 ID로 공통 정보(헤더용)를 반환합니다.
+ * GET /api/admin/loan-applications/{id} 응답을 시뮬레이션합니다.
+ */
+export function getMockLoanSummary(id: number): LoanSummary | undefined {
+  const detail = MOCK_LOAN_DETAILS.find((item) => item.id === id);
+  if (!detail) return undefined;
+
+  return {
+    applicationId: detail.id,
+    applicantName: detail.customerInfo.name,
+    businessName: detail.businessInfo.businessName,
+    productName: detail.productInfo.productName,
+    status: detail.reviewStatus,
+    appliedAt: detail.applicationDate,
+    assigneeName: detail.assigneeName,
+    rejectionComment: detail.rejectionComment,
+  };
 }

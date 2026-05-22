@@ -39,7 +39,7 @@ export default function CustomerInfoCard({ data }: CustomerInfoCardProps) {
     },
     {
       label: '가입일시',
-      value: data.registeredAt ? formatDateTime(data.registeredAt) : '-',
+      value: data.joinedAt ? formatDateTime(data.joinedAt) : '-',
     },
     { label: '아이디', value: displayValue(data.loginId) },
   ];

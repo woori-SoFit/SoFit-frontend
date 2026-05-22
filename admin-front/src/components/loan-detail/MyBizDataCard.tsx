@@ -1,8 +1,8 @@
-import type { SystemCollectedData, VatFilingStatus, InsurancePaymentStatus } from '@/types';
+import type { MyBizData, VatFilingStatus, InsurancePaymentStatus } from '@/types';
 import { formatCurrency, formatBusinessAge, formatPercentage } from '@/utils/formatters';
 
-interface SystemCollectedCardProps {
-  data: SystemCollectedData | null;
+interface MyBizDataCardProps {
+  data: MyBizData | null;
 }
 
 /** 부가세 신고 상태 라벨 및 색상 */
@@ -48,7 +48,7 @@ function StatusBadge({ label, className }: { label: string; className: string })
  * - 상태 뱃지: FILED/PAID=초록, PENDING=노란, OVERDUE=빨간
  * - 반응형: 768px 미만 시 섹션 세로 배치
  */
-export default function SystemCollectedCard({ data }: SystemCollectedCardProps) {
+export default function MyBizDataCard({ data }: MyBizDataCardProps) {
   // 마이데이터 미연동 시 안내 메시지 표시
   if (data === null) {
     return (
