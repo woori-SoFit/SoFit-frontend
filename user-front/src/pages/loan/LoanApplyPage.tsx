@@ -28,7 +28,7 @@ import { MOCK_LOAN_TERMS } from "@/mocks/loanTerms";
 import { MOCK_BIZ_INFO_ROWS } from "@/mocks/bizInfo";
 import { MOCK_MYDATA_TERMS } from "@/mocks/mydataTerms";
 import { MOCK_LOAN_APPLY_RESULT_ROWS } from "@/mocks/loanApplyResult";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { verifyFinancialCertificate } from "@/api/authApi";
 import type { CustomerVerifyData } from "@/types/auth";
 
@@ -38,7 +38,18 @@ export default function LoanApplyPage() {
   const setStep = useLoanApplyStore((s) => s.setStep);
   const updateFormData = useLoanApplyStore((s) => s.updateFormData);
   const reset = useLoanApplyStore((s) => s.reset);
+  const productId = useLoanApplyStore((s) => s.productId);
+  const setProductId = useLoanApplyStore((s) => s.setProductId);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // navigation state에서 productId 수신 및 스토어 저장
+  useEffect(() => {
+    const stateProductId = (location.state as { productId?: number } | null)?.productId;
+    if (stateProductId) {
+      setProductId(stateProductId);
+    }
+  }, [location.state, setProductId]);
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("대출 신청");
@@ -127,6 +138,7 @@ export default function LoanApplyPage() {
     case "LOAN_CONDITIONS":
       return (
         <LoanConditionsStep
+          productId={productId ?? 0}
           onSubmit={(data) => {
             updateFormData({
               desiredAmount: data.desiredAmount,
