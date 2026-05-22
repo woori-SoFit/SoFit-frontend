@@ -102,3 +102,24 @@ export interface LoanApplyFormData {
   purpose: string;
   repaymentMethod: string;
 }
+
+/** 대출 상품 옵션 (자금용도 + 상환방식 + 최대기간 조합) */
+export interface LoanOption {
+  purpose: "WORKING_CAPITAL" | "FACILITY";
+  repaymentType: "BULLET" | "EQUAL_PAYMENT" | "EQUAL_PRINCIPAL";
+  maxTermMonths: number;
+}
+
+/** 대출 상품 옵션 조회 API 응답 */
+export interface LoanProductOptionsResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    productId: number;
+    productName: string;
+    maxLimit: number;
+    minLimit: number;
+    loanOptions: LoanOption[];
+  };
+}

@@ -19,12 +19,12 @@ export interface InfoRow {
 }
 
 interface ConfirmPageProps {
-  /** 상단 아이콘 — 이미지 경로(string) 또는 커스텀 ReactNode */
-  icon?: string | ReactNode;
+  /** 상단 아이콘 — 이미지 경로(string) 또는 커스텀 ReactNode. null이면 숨김 */
+  icon?: string | ReactNode | null;
   /** 타이틀 — ReactNode로 받아 일부 텍스트 강조 가능 */
   title: ReactNode;
   /** 타이틀 아래 설명 */
-  description?: string;
+  description?: ReactNode;
   /** 정보 테이블 데이터 (선택) */
   rows?: InfoRow[];
   /** 하단 버튼 레이블 (기본값: "확인하기") */
@@ -55,9 +55,11 @@ export function ConfirmPage({
       {/* 상단 안내 */}
       <div className="flex flex-col items-center pb-6 px-5">
         {/* 아이콘 */}
-        <div className="w-52 flex items-center justify-center mb-3">
-          {typeof icon === 'string' ? <img src={icon} /> : icon}
-        </div>
+        {icon && (
+          <div className="w-52 flex items-center justify-center mb-3">
+            {typeof icon === 'string' ? <img src={icon} /> : icon}
+          </div>
+        )}
 
         <h1 className="text-xl font-bold text-text-primary mb-2 text-center">
           {title}
@@ -71,7 +73,7 @@ export function ConfirmPage({
 
       {/* 정보 테이블 */}
       {rows && rows.length > 0 && (
-        <div className="mx-5 mb-4 border border-border-default rounded-lg overflow-hidden">
+        <div className="mx-5 mb-4 border border-border-default bg-white rounded-lg overflow-hidden">
           <table className="w-full">
             <tbody>
               {rows.map((row, idx) => (

@@ -77,6 +77,12 @@ export const router = createBrowserRouter([
 
       // 대출 약정 (약관 동의 → PIN → 계좌 설정)
       { path: "/loan/agreement/:applicationId", element: <LoanAgreementPage /> },
+
+      // 심사 이후 — route 기반 분리
+      { path: "/loan-applications", element: <LoanProgressPage />},
+      { path: "/loan/review/:applicationId", element: <LoanReviewPage /> },
+      { path: "/loan/result/:applicationId", element: <LoanResultPage /> },
+      { path: "/loan/execution/:applicationId", element: <LoanExecutionPage /> },
     ],
   },
 
@@ -88,12 +94,6 @@ export const router = createBrowserRouter([
     children: [
       // 홈
       { path: "/", element: <HomePage /> },
-
-      // 심사 이후 — route 기반 분리
-      { path: "/loan-applications", element: <LoanProgressPage />},
-      { path: "/loan/review/:applicationId", element: <LoanReviewPage /> },
-      { path: "/loan/result/:applicationId", element: <LoanResultPage /> },
-      { path: "/loan/execution/:applicationId", element: <LoanExecutionPage /> },
 
       // My Biz Data 대시보드
       { path: "/biz-data", element: <BizDataPage /> },
