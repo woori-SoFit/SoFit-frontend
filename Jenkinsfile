@@ -50,7 +50,8 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no ubuntu@$FRONTEND_SERVER "
                             docker pull $REGISTRY/sofit-user-front:latest &&
                             docker pull $REGISTRY/sofit-admin-front:latest &&
-                            docker-compose -f /home/ubuntu/docker-compose.yml up -d --force-recreate
+                            docker-compose -f /home/ubuntu/docker-compose.yml down &&
+                            docker-compose -f /home/ubuntu/docker-compose.yml up -d
                         "
                     '''
                 }
