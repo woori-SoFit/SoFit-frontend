@@ -412,9 +412,9 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     },
     userInputInfo: {
       annualIncome: 'AMT_30_50M',
-      creditScore: 'CS_0_600',
+      creditScore: 'CS_0_850',
       incomeType: '02',
-      existingLoanAmount: 'LOAN_100_300M',
+      existingLoanAmount: 'LOAN_100M_OVER',
     },
     consentHistories: [
       { title: '대출 이용 약관', isRequired: true, isConsented: true, consentedAt: '2024-05-20T09:00:00' },
