@@ -17,15 +17,15 @@ export default function BizDataCheckPage() {
 
   // StepLayout 헤더 타이틀 설정
   useEffect(() => {
-    useLayoutStore.getState().setStepTitle("성장 S등급 분석 리포트");
+    useLayoutStore.getState().setStepTitle("마이 비즈 데이터 확인");
   }, []);
 
   const handleFetch = () => {
-    navigate("/biz-data/collect");
+    navigate("/grade-report/loading");
   };
 
   return (
-    <div className="flex flex-col items-center px-5 pt-16 pb-28 min-h-full">
+    <div className="flex flex-col items-center px-5 pt-32 pb-28 min-h-full">
       {/* 아이콘 영역 */}
       <div className="flex items-center justify-center w-24 h-24 rounded-full bg-blue-50 mb-8">
         <FileInput size={48} className="text-primary" />

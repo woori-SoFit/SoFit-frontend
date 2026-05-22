@@ -42,6 +42,7 @@ import NotificationsPage from "@/pages/mypage/NotificationsPage";
 // Error
 import NotFoundPage from "@/pages/error/NotFoundPage";
 import BizDataCheckPage from "@/pages/grade/BizDataCheckPage";
+import GradeReportLoadingPage from "@/pages/grade/GradeReportLoadingPage";
 
 export const router = createBrowserRouter([
   /**
@@ -82,7 +83,8 @@ export const router = createBrowserRouter([
 
       // S분석 리포트 진입 (공개 접근 허용)
       { path: "/grade-report/intro", element: <GradeReportIntroPage /> },
-            { path: "/grade-report/biz-check", element: <BizDataCheckPage /> },
+      { path: "/grade-report/biz-check", element: <BizDataCheckPage /> },
+      { path: "/grade-report/loading", element: <GradeReportLoadingPage /> },
     ],
   },
 
