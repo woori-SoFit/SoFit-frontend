@@ -16,12 +16,18 @@ export function CardSlider({ items, onCardClick }: CardSliderProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleScroll = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const cardWidth = el.scrollWidth / items.length;
-    const index = Math.round(el.scrollLeft / cardWidth);
-    setActiveIndex(index);
-  };
+  const el = scrollRef.current;
+  if (!el) return;
+
+  const firstCard = el.children[0] as HTMLElement | undefined;
+  if (!firstCard) return;
+
+  const gap = 16;
+  const cardWidth = firstCard.offsetWidth + gap;
+  const index = Math.round(el.scrollLeft / cardWidth);
+
+  setActiveIndex(index);
+};
 
   return (
     <div>

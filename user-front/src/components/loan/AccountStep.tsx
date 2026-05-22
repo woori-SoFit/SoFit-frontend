@@ -6,7 +6,7 @@ import { useState } from "react";
 import { BottomButton } from "@/components/common/BottomButton";
 
 interface AccountStepProps {
-  onSubmit: () => void;
+  onSubmit: () => void; // 계좌번호 전달
 }
 
 export function AccountStep({ onSubmit }: AccountStepProps) {

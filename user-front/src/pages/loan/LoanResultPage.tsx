@@ -102,7 +102,7 @@ function ApprovedView({
         ]}
         buttonLabel="약정 체결하기"
         onConfirm={() => navigate(`/loan/agreement/${data.applicationId}`)}
-        secondaryButtonLabel="SCB 분석 리포트 보기"
+        secondaryButtonLabel="성장 S등급 분석 리포트 보기"
         onSecondary={() => navigate("/grade-report")}
       />
     </div>
@@ -140,7 +140,7 @@ function RejectedView({
         ]}
         buttonLabel="홈으로 가기"
         onConfirm={() => navigate("/")}
-        secondaryButtonLabel="S등급 분석 리포트 보기"
+        secondaryButtonLabel="성장 S등급 분석 리포트 보기"
         onSecondary={() => navigate("/grade-report")}
       />
     </div>

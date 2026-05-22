@@ -159,7 +159,7 @@ export function CustomerVerifyPage({
   if (step === "CERT_CONFIRM") {
     return (
       <ConfirmPage
-        icon={<Lottie animationData={documentAnimation} loop={true} className="w-40 h-40" />}
+        icon={<Lottie animationData={documentAnimation} loop={3} className="w-40 h-40" />}
         title="금융인증서를 불러올게요."
         description="아래 정보를 확인 후 인증을 진행해 주세요."
         rows={[

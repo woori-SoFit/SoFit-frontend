@@ -45,7 +45,7 @@ export default function LoanReviewPage() {
     <div className="mt-20">
       <ConfirmPage
         icon={
-          <Lottie animationData={clockAnimation} loop={true} className="w-24 h-24" />
+          <Lottie animationData={clockAnimation} loop={3} className="w-24 h-24" />
         }
         title="심사가 진행 중이에요"
         rows={[

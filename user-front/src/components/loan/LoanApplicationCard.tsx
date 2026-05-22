@@ -23,8 +23,8 @@ const STATUS_STEP_INDEX: Record<LoanApplicationStatus, number> = {
 const STATUS_BADGE: Record<LoanApplicationStatus, { label: string; color: string }> = {
   SUBMITTED: { label: "신청접수", color: "bg-blue-100 text-primary" },
   IN_REVIEW: { label: "심사 중", color: "bg-blue-100 text-primary" },
-  APPROVED: { label: "심사 완료", color: "bg-green-100 text-green-700" },
-  REJECTED: { label: "심사 완료", color: "bg-green-100 text-green-700" },
+  APPROVED: { label: "대출 승인", color: "bg-green-100 text-green-700" },
+  REJECTED: { label: "대출 거절", color: "bg-red-100 text-red-700" },
   CONTRACTED: { label: "약정 완료", color: "bg-green-100 text-green-700" },
   EXECUTED: { label: "실행 완료", color: "bg-green-100 text-green-700" },
 };
@@ -113,18 +113,16 @@ export function LoanApplicationCard({ app, onClick }: LoanApplicationCardProps) 
       </div>
 
       {/* 하단 안내 메시지 */}
-      <div className={`flex items-center gap-2 px-3 py-2.5 rounded-lg ${
-        isCompleted ? "bg-green-50" : "bg-gray-50"
-      }`}>
+      <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-gray-50 text-text-secondary text-xs">
         {isCompleted ? (
           <>
-            <CircleCheckBig size={16} className="text-green-600 shrink-0" />
-            <p className="text-xs text-green-700 flex-1">심사가 완료되었어요.</p>
+            <CircleCheckBig size={16} />
+            <p>심사가 완료되었어요.</p>
           </>
         ) : (
           <>
-            <Info size={16} className="text-text-secondary shrink-0" />
-            <p className="text-xs text-text-secondary">심사 진행 중이에요. 조금만 기다려주세요!</p>
+            <Info size={16} />
+            <p>심사 진행 중이에요. 조금만 기다려주세요!</p>
           </>
         )}
       </div>
