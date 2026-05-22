@@ -115,7 +115,7 @@ export default function LoanAgreementPage() {
           <div className="absolute inset-0 pointer-events-none z-10 flex items-start justify-center">
             <Lottie
               animationData={confettiAnimation}
-              loop={true}
+              loop={3}
               className="w-full max-w-sm -translate-y-25"
             />
           </div>

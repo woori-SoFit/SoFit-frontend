@@ -41,6 +41,18 @@ export interface LoanProductListResponse {
   };
 }
 
+/** 상품별 적격 필터 조건 */
+export interface ProductFilterConditions {
+  /** 연소득 하한 (원 단위, 이 금액 이상이어야 적격) */
+  annualIncomeLimit: number;
+  /** 신용점수 하한 (이 점수 이상이어야 적격) */
+  creditScoreLimit: number;
+  /** 기존대출금액 상한 (원 단위, 이 금액 이하여야 적격) */
+  existingLoanAmtLimit: number;
+  /** 소득유형 제한 (이 유형만 허용, null이면 제한 없음) */
+  incomeTypeCodeLimit: string | null;
+}
+
 /** API 응답 기준 대출 상품 상세 */
 export interface LoanProductDetail {
   productId: number;
@@ -51,10 +63,11 @@ export interface LoanProductDetail {
   maxLimit: number;
   maxTerm: number;
   targetDescription: string;
-  interest_rate: {
+  interestRate: {
     minRate: number;
     maxRate: number;
   };
+  filterConditions: ProductFilterConditions;
 }
 
 /** 대출 상품 상세 API 응답 구조 */

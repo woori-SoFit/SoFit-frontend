@@ -11,19 +11,8 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { BottomButton } from "@/components/common/BottomButton";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProduct } from "@/api/loanApi";
+import { formatMaxAmount, formatMaxTerm } from "@/utils/format";
 import loanProductIcon from "@/assets/icons/loan-product.svg";
-
-/** 금액 포맷 */
-function formatMaxAmount(amount: number) {
-  const man = amount / 10_000;
-  if (man >= 10_000) return `최대 ${(man / 10_000).toFixed(0)}억원`;
-  return `최대 ${man.toLocaleString()}만원`;
-}
-
-/** 기간 포맷 (년 단위) */
-function formatMaxTerm(maxTerm: number) {
-  return `${maxTerm}개월 이내`;
-}
 
 export default function LoanDetailPage() {
   const { productId } = useParams<{ productId: string }>();
@@ -130,7 +119,11 @@ export default function LoanDetailPage() {
       {/* 대출 신청 버튼 */}
       <BottomButton
         label="대출 신청"
-        onClick={() => navigate(`/loan/pre-apply/${product.productId}`)}
+        onClick={() => {
+          navigate(`/loan/pre-apply/${product.productId}`, {
+            state: { filterConditions: product.filterConditions },
+          });
+        }}
       />
     </div>
   );
