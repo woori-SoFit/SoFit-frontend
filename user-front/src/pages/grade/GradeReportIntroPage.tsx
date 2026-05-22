@@ -12,20 +12,24 @@
  *   - 로그인 + My Biz Data 연결 → /grade-report
  */
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { BarChart3, Trophy } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
-import { useCtaNavigation } from "@/hooks/useCtaNavigation";
 import { FeatureCard } from "@/components/grade/FeatureCard";
 import { CtaButton } from "@/components/grade/CtaButton";
 import gradeReportIntroImg from "@/assets/icons/S-Report.svg";
 
 export default function GradeReportIntroPage() {
-  const { handleCtaClick, isNavigating, isStatusLoading } = useCtaNavigation();
+  const navigate = useNavigate();
 
   // StepLayout 헤더 타이틀 설정
   useEffect(() => {
-    useLayoutStore.getState().setStepTitle("S분석 리포트");
+    useLayoutStore.getState().setStepTitle("성장 S등급 분석 리포트");
   }, []);
+
+  const handleCtaClick = () => {
+    navigate("/grade-report/biz-check");
+  };
 
   return (
     <div className="flex flex-col items-center px-5 pt-8 pb-28">
@@ -78,7 +82,7 @@ export default function GradeReportIntroPage() {
         label="S분석 리포트 시작하기"
         onClick={handleCtaClick}
         isLoading={false}
-        disabled={isNavigating}
+        disabled={false}
       />
     </div>
   );
