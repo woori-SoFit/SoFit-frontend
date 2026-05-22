@@ -109,6 +109,25 @@ export interface LoanApplicationsInProgressResponse {
   };
 }
 
+/** 대출 신청 상세 조회 API 응답 아이템 */
+export interface LoanApplicationDetail {
+  applicationId: number;
+  productName: string;
+  requestedAmount: number;
+  requestedTerm: number;
+  repaymentMethod: string;
+  status: LoanApplicationStatus;
+  appliedAt: string;
+}
+
+/** 대출 신청 상세 조회 API 응답 */
+export interface LoanApplicationDetailResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: LoanApplicationDetail;
+}
+
 export interface LoanApprovalDetail {
   applicationId: number;
   approvedAmount: number;

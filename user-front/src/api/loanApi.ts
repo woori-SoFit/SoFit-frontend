@@ -10,6 +10,8 @@ import type {
   LoanProductOptionsResponse,
   LoanApplication,
   LoanApplicationsInProgressResponse,
+  LoanApplicationDetail,
+  LoanApplicationDetailResponse,
 } from "@/types/loan";
 import type {
   CreateLoanApplicationRequest,
@@ -63,4 +65,14 @@ export async function fetchLoanApplicationsInProgress(): Promise<LoanApplication
     status: item.status,
     appliedAt: item.appliedAt,
   }));
+}
+
+/** 대출 신청 상세 조회 */
+export async function fetchLoanApplicationDetail(
+  applicationId: number
+): Promise<LoanApplicationDetail> {
+  const res = await axiosInstance.get<LoanApplicationDetailResponse>(
+    `/loan-applications/${applicationId}`
+  );
+  return res.data.result;
 }
