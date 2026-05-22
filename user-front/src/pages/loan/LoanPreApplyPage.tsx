@@ -4,71 +4,181 @@
  * Layout: StepLayout
  *
  * 간단한 질문을 통해 신청 가능 여부를 사전 확인
- * 확인하기 버튼 클릭 시 승인/거절 분기 처리
- *
- * TODO: API 연동 시 사전 심사 API 호출로 교체
+ * 확인하기 버튼 클릭 시 적격/부적격 분기 처리
  */
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { useParams, useNavigate, useLocation, Navigate } from "react-router-dom";
+import { ChevronRight, XCircle } from "lucide-react";
+import { AxiosError } from "axios";
 import { useLayoutStore } from "@/stores/layoutStore";
+import { useEligibilityStore } from "@/stores/eligibilityStore";
+import { useCreateLoanApplication } from "@/hooks/useCreateLoanApplication";
+import { checkLoanAvailable } from "@/utils/checkLoanAvailable";
 import { BottomButton } from "@/components/common/BottomButton";
+import { PRE_APPLY_QUESTIONS, FAILED_FIELD_MESSAGES } from "@/constants/eligibilityOptions";
 import preApplyIcon from "@/assets/icons/loan-pre-apply.svg";
+import type {
+  LoanEligibilityFilter,
+  LoanEligibilityInput,
+  AnnualIncome,
+  CreditScore,
+  IncomeType,
+  ExistingLoanAmount,
+  EligibilityFailedField,
+} from "@/types/eligibility";
 
-/** 질문 항목 타입 */
-interface PreApplyQuestion {
-  id: string;
-  label: string;
-  options: string[];
-}
-
-/** 사전 입력 질문 목록 */
-const QUESTIONS: PreApplyQuestion[] = [
-  {
-    id: "income",
-    label: "연 소득은 얼마인가요?",
-    options: ["3천만원 이하", "3천만원 초과 ~ 5천만원 이하", "5천만원 초과 ~ 1억 이하", "1억 초과"],
-  },
-  {
-    id: "creditScore",
-    label: "신용점수는 몇 점인가요?",
-    options: ["850점 이하", "850점 초과", "모름"],
-  },
-  {
-    id: "incomeType",
-    label: "어떤 소득으로 갚을 예정인가요?",
-    options: ["급여 소득", "사업 소득", "기타 소득"],
-  },
-  {
-    id: "existingLoan",
-    label: "가지고 있는 대출이 있나요?",
-    options: ["1억 이하", "1억 초과", "없음"],
-  },
-];
+/** 페이지 상태 */
+type PageState = "INPUT" | "REJECTED";
 
 export default function LoanPreApplyPage() {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const location = useLocation();
 
+  // navigation state에서 filterConditions 수신
+  const filterConditions = (location.state as { filterConditions?: LoanEligibilityFilter } | null)
+    ?.filterConditions;
+
+  // 페이지 상태 관리
+  const [pageState, setPageState] = useState<PageState>("INPUT");
+  const [failedFields, setFailedFields] = useState<EligibilityFailedField[]>([]);
+
+  // Zustand 스토어
+  const {
+    userInput,
+    setFilterConditions,
+    setAnnualIncome,
+    setCreditScore,
+    setIncomeType,
+    setExistingLoanAmount,
+    reset,
+  } = useEligibilityStore();
+
+  // 대출 신청 생성 mutation
+  const createMutation = useCreateLoanApplication({
+    onSuccess: () => {
+      navigate("/loan/apply", { state: { productId: Number(productId) } });
+    },
+    onError: (error: AxiosError) => {
+      const responseData = error.response?.data as { message?: string } | undefined;
+      const message = responseData?.message || "네트워크 오류가 발생했습니다. 다시 시도해 주세요.";
+      alert(message);
+    },
+  });
+
+  // 마운트 시 filterConditions 스토어에 저장
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("신청 가능 확인");
+
+    if (filterConditions) {
+      setFilterConditions(filterConditions);
+    }
+
+    return () => {
+      reset();
+    };
   }, []);
 
-  const handleSelect = (questionId: string, option: string) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: option }));
+  // filterConditions 미전달 시 상품 목록으로 리다이렉트
+  if (!filterConditions) {
+    return <Navigate to="/loan" replace />;
+  }
+
+  // 4개 항목 모두 선택되었는지 확인
+  const allAnswered =
+    userInput.annualIncome !== undefined &&
+    userInput.creditScore !== undefined &&
+    userInput.incomeType !== undefined &&
+    userInput.existingLoanAmount !== undefined;
+
+  /** 필드별 선택 핸들러 */
+  const handleSelect = (fieldId: keyof LoanEligibilityInput, value: string) => {
+    switch (fieldId) {
+      case "annualIncome":
+        setAnnualIncome(value as AnnualIncome);
+        break;
+      case "creditScore":
+        setCreditScore(value as CreditScore);
+        break;
+      case "incomeType":
+        setIncomeType(value as IncomeType);
+        break;
+      case "existingLoanAmount":
+        setExistingLoanAmount(value as ExistingLoanAmount);
+        break;
+    }
   };
 
-  const allAnswered = QUESTIONS.every((q) => answers[q.id]);
-
+  /** 확인하기 버튼 클릭 핸들러 */
   const handleSubmit = () => {
-    if (!allAnswered) return;
+    if (!allAnswered || createMutation.isPending) return;
 
-    // TODO: API 연동 시 사전 심사 API 호출
-    // 임시로 항상 승인 → 대출 신청 페이지로 이동
-    navigate("/loan/apply", { state: { productId: Number(productId) } });
+    const input: LoanEligibilityInput = {
+      annualIncome: userInput.annualIncome!,
+      creditScore: userInput.creditScore!,
+      incomeType: userInput.incomeType!,
+      existingLoanAmount: userInput.existingLoanAmount!,
+    };
+
+    // 적격 검증
+    const result = checkLoanAvailable(input, filterConditions);
+
+    if (result.eligible === false) {
+      setFailedFields(result.failedFields);
+      setPageState("REJECTED");
+      return;
+    }
+
+    // 적격: 대출 신청 생성 API 호출
+    createMutation.mutate({
+      productId: Number(productId),
+      annualIncome: input.annualIncome,
+      creditScore: input.creditScore,
+      incomeType: input.incomeType,
+      existingLoanAmt: input.existingLoanAmount,
+    });
   };
 
+  // 부적격 거절 안내 UI
+  if (pageState === "REJECTED") {
+    return (
+      <div className="flex flex-col min-h-full">
+        <div className="flex-1 px-5 pt-10">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 flex items-center justify-center">
+              <XCircle size={32} className="text-red-500" />
+            </div>
+            <h2 className="text-xl font-bold text-text-primary mb-2">
+              신청 조건을 충족하지 못했어요
+            </h2>
+            <p className="text-sm text-text-secondary">
+              아래 조건이 맞지 않아 이 상품은 신청이 어려워요.
+            </p>
+          </div>
+
+          <div className="bg-red-50 rounded-xl p-5">
+            <ul className="flex flex-col gap-3">
+              {failedFields.map((field) => (
+                <li key={field} className="flex items-start gap-2">
+                  <span className="text-red-500 mt-0.5">•</span>
+                  <span className="text-sm text-text-primary">
+                    {FAILED_FIELD_MESSAGES[field]}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <BottomButton
+          label="돌아가기"
+          onClick={() => navigate(`/loan/${productId}`)}
+        />
+      </div>
+    );
+  }
+
+  // 입력 화면
   return (
     <div className="flex flex-col min-h-full">
       {/* 상단 안내 배너 */}
@@ -87,15 +197,15 @@ export default function LoanPreApplyPage() {
       {/* 질문 목록 */}
       <div className="flex-1 px-5 pt-6 pb-4">
         <ul className="flex flex-col gap-8">
-          {QUESTIONS.map((question) => (
+          {PRE_APPLY_QUESTIONS.map((question) => (
             <li key={question.id}>
               <p className="text-base font-semibold text-text-primary mb-3">
                 {question.label}
               </p>
               <SelectButton
                 options={question.options}
-                selected={answers[question.id] || null}
-                onSelect={(option) => handleSelect(question.id, option)}
+                selectedValue={userInput[question.id] ?? null}
+                onSelect={(value) => handleSelect(question.id, value)}
               />
             </li>
           ))}
@@ -104,9 +214,9 @@ export default function LoanPreApplyPage() {
 
       {/* 확인하기 버튼 */}
       <BottomButton
-        label="확인하기"
+        label={createMutation.isPending ? "확인 중..." : "확인하기"}
         onClick={handleSubmit}
-        disabled={!allAnswered}
+        disabled={!allAnswered || createMutation.isPending}
       />
     </div>
   );
@@ -115,51 +225,49 @@ export default function LoanPreApplyPage() {
 /** 선택 버튼 컴포넌트 — 드롭다운이 다른 요소 위에 열림 */
 function SelectButton({
   options,
-  selected,
+  selectedValue,
   onSelect,
 }: {
-  options: string[];
-  selected: string | null;
-  onSelect: (option: string) => void;
+  options: { label: string; value: string }[];
+  selectedValue: string | null;
+  onSelect: (value: string) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const selectedLabel = options.find((opt) => opt.value === selectedValue)?.label ?? null;
+
   return (
     <div className="relative">
-      {/* 트리거 버튼 */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border border-border-default bg-white text-left transition-colors hover:border-primary"
       >
-        <span className={`text-sm ${selected ? "font-medium" : "text-text-disabled"}`}>
-          {selected || "선택해 주세요"}
+        <span className={`text-sm ${selectedLabel ? "font-medium" : "text-text-disabled"}`}>
+          {selectedLabel || "선택해 주세요"}
         </span>
         <ChevronRight size={18} className={`transition-transform ${isOpen ? "rotate-90" : ""}`} />
       </button>
 
-      {/* 드롭다운 옵션 — absolute로 다른 요소 위에 표시 */}
       {isOpen && (
         <>
-          {/* 배경 클릭 시 닫기 */}
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-
           <div className="absolute top-full left-0 right-0 mt-2 z-50 flex flex-col gap-2 bg-white rounded-xl shadow-modal p-2">
             {options.map((option) => (
               <button
-                key={option}
+                key={option.value}
                 type="button"
                 onClick={() => {
-                  onSelect(option);
+                  onSelect(option.value);
                   setIsOpen(false);
                 }}
                 className={`w-full flex items-center px-4 py-3 rounded-lg text-left text-sm transition-colors ${
-                  selected === option
+                  selectedValue === option.value
                     ? "bg-blue-50 text-primary font-medium"
                     : "text-text-primary hover:bg-gray-50"
                 }`}
               >
-                {option}
+                {option.label}
               </button>
             ))}
           </div>

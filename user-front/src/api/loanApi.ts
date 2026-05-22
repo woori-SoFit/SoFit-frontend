@@ -9,6 +9,10 @@ import type {
   LoanProductDetailResponse,
   LoanProductOptionsResponse
 } from "@/types/loan";
+import type {
+  CreateLoanApplicationRequest,
+  CreateLoanApplicationResponse,
+} from "@/types/eligibility";
 
 /** 대출 상품 목록 조회 */
 export async function fetchLoanProducts(): Promise<LoanProductListItem[]> {
@@ -30,4 +34,16 @@ export async function fetchLoanProductOptions(
     `/loan-products/${productId}/options`
   );
   return res.data.result;
+}
+
+/** 대출 신청 생성 */
+export async function createLoanApplication(
+  request: CreateLoanApplicationRequest
+): Promise<CreateLoanApplicationResponse> {
+  const { productId, ...body } = request;
+  const res = await axiosInstance.post<CreateLoanApplicationResponse>(
+    `/loan-products/${productId}/applications`,
+    body
+  );
+  return res.data;
 }

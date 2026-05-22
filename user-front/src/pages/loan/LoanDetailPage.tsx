@@ -11,19 +11,9 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { BottomButton } from "@/components/common/BottomButton";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProduct } from "@/api/loanApi";
+import { formatMaxAmount, formatMaxTerm } from "@/utils/format";
 import loanProductIcon from "@/assets/icons/loan-product.svg";
-
-/** 금액 포맷 */
-function formatMaxAmount(amount: number) {
-  const man = amount / 10_000;
-  if (man >= 10_000) return `최대 ${(man / 10_000).toFixed(0)}억원`;
-  return `최대 ${man.toLocaleString()}만원`;
-}
-
-/** 기간 포맷 (년 단위) */
-function formatMaxTerm(maxTerm: number) {
-  return `${maxTerm}개월 이내`;
-}
+import type { LoanEligibilityFilter } from "@/types/eligibility";
 
 export default function LoanDetailPage() {
   const { productId } = useParams<{ productId: string }>();
@@ -130,7 +120,26 @@ export default function LoanDetailPage() {
       {/* 대출 신청 버튼 */}
       <BottomButton
         label="대출 신청"
-        onClick={() => navigate(`/loan/pre-apply/${product.productId}`)}
+        onClick={() => {
+          // 상품 API에서 filterConditions를 내려주면 사용, 없으면 기본값(모든 값 허용)
+          const filterConditions: LoanEligibilityFilter = product.filterConditions
+            ? {
+                allowedAnnualIncomes: product.filterConditions.allowedAnnualIncomes as LoanEligibilityFilter["allowedAnnualIncomes"],
+                allowedCreditScores: product.filterConditions.allowedCreditScores as LoanEligibilityFilter["allowedCreditScores"],
+                allowedIncomeTypes: product.filterConditions.allowedIncomeTypes as LoanEligibilityFilter["allowedIncomeTypes"],
+                allowedExistingLoanAmounts: product.filterConditions.allowedExistingLoanAmounts as LoanEligibilityFilter["allowedExistingLoanAmounts"],
+              }
+            : {
+                allowedAnnualIncomes: ["AMT_0_30M", "AMT_30_50M", "AMT_50_100M", "AMT_100M_OVER"],
+                allowedCreditScores: ["CS_0_850", "CS_850_OVER", "CS_UNKNOWN"],
+                allowedIncomeTypes: ["SALARY", "BUSINESS", "OTHER"],
+                allowedExistingLoanAmounts: ["LOAN_100M_OVER", "LOAN_0_100M", "LOAN_NONE"],
+              };
+
+          navigate(`/loan/pre-apply/${product.productId}`, {
+            state: { filterConditions },
+          });
+        }}
       />
     </div>
   );

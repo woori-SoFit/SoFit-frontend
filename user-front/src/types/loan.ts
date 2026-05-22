@@ -55,6 +55,13 @@ export interface LoanProductDetail {
     minRate: number;
     maxRate: number;
   };
+  /** 대출 신청 가능 조건 필터 (사전 입력 페이지에서 사용) */
+  filterConditions?: {
+    allowedAnnualIncomes: string[];
+    allowedCreditScores: string[];
+    allowedIncomeTypes: string[];
+    allowedExistingLoanAmounts: string[];
+  };
 }
 
 /** 대출 상품 상세 API 응답 구조 */
