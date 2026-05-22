@@ -2,6 +2,7 @@ import { useShapResult } from '@/hooks/useShapResult';
 import ShapBarChart from './ShapBarChart';
 import AiAdvice from './AiAdvice';
 import Card from '@/components/common/Card';
+import ErrorState from '@/components/common/ErrorState';
 
 interface ShapExplanationProps {
   /** 대출 신청 건 ID */
@@ -33,16 +34,10 @@ export default function ShapExplanation({ loanId }: ShapExplanationProps) {
   if (isError) {
     return (
       <Card>
-        <div className="flex flex-col items-center justify-center gap-3 py-12">
-          <p className="text-sm text-error">SHAP 데이터를 불러오는 중 오류가 발생했습니다.</p>
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-text-inverse hover:bg-primary-dark transition-colors"
-          >
-            다시 시도
-          </button>
-        </div>
+        <ErrorState
+          message="SHAP 데이터를 불러오는 중 오류가 발생했습니다."
+          onRetry={() => refetch()}
+        />
       </Card>
     );
   }

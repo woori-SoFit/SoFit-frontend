@@ -7,6 +7,8 @@ import { useLoanMutations } from '@/hooks/useLoanMutations';
 import { useRecommendation } from '@/hooks/useRecommendation';
 import { formatDate, formatDateTime } from '@/utils/formatters';
 import StatusBadge from '@/components/common/StatusBadge';
+import LoadingState from '@/components/common/LoadingState';
+import ErrorState from '@/components/common/ErrorState';
 import CustomerInfoCard from '@/components/loan-detail/CustomerInfoCard';
 import BusinessInfoCard from '@/components/loan-detail/BusinessInfoCard';
 import ApplicationRequestCard from '@/components/loan-detail/ApplicationRequestCard';
@@ -42,6 +44,7 @@ export default function LoanDetailPage() {
 
   const [activeTab, setActiveTab] = useState<TabKey>('info');
   const [approvalCondition, setApprovalCondition] = useState<EditableApprovalCondition | null>(null);
+  const [pendingAction, setPendingAction] = useState<'approve' | 'reject' | 'escalate' | null>(null);
   const [comment, setComment] = useState('');
 
   const { data, isLoading, isError, refetch } = useLoanDetail(loanId ?? 0);
@@ -70,27 +73,11 @@ export default function LoanDetailPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24">
-        <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        <p className="text-sm text-text-secondary">데이터를 불러오는 중입니다</p>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24">
-        <p className="mb-4 text-sm text-text-secondary">데이터를 불러오는 중 오류가 발생했습니다.</p>
-        <button
-          type="button"
-          onClick={() => refetch()}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-text-inverse hover:bg-primary-dark transition-colors"
-        >
-          다시 시도
-        </button>
-      </div>
-    );
+    return <ErrorState onRetry={() => refetch()} />;
   }
 
   if (!data) {
@@ -118,28 +105,41 @@ export default function LoanDetailPage() {
   const showEscalation = canTellerAct;
   const isDecided = status === 'APPROVED' || status === 'REJECTED';
 
-  const handleApprove = () => {
-    if (!approvalCondition || !comment.trim()) return;
-    const payload: ApprovalPayload = {
-      approvedAmount: approvalCondition.approvedAmount,
-      interestRate: approvalCondition.approvedRate,
-      loanTermMonths: approvalCondition.approvedTerm,
-      repaymentMethod: approvalCondition.repaymentMethod,
-      comment: comment.trim(),
+  const handleSelectAction = (action: 'approve' | 'reject' | 'escalate') => {
+    setPendingAction(action);
+    setComment('');
+  };
+
+  const handleSubmit = () => {
+    if (!comment.trim() || !pendingAction) return;
+
+    const onSuccess = () => {
+      setComment('');
+      setPendingAction(null);
     };
-    mutations.approve.mutate(payload, { onSuccess: () => setComment('') });
+
+    if (pendingAction === 'approve') {
+      if (!approvalCondition) return;
+      const payload: ApprovalPayload = {
+        approvedAmount: approvalCondition.approvedAmount,
+        interestRate: approvalCondition.approvedRate,
+        loanTermMonths: approvalCondition.approvedTerm,
+        repaymentMethod: approvalCondition.repaymentMethod,
+        comment: comment.trim(),
+      };
+      mutations.approve.mutate(payload, { onSuccess });
+    } else if (pendingAction === 'reject') {
+      const payload: RejectionPayload = { comment: comment.trim() };
+      mutations.reject.mutate(payload, { onSuccess });
+    } else if (pendingAction === 'escalate') {
+      const payload: EscalationPayload = { comment: comment.trim() };
+      mutations.escalate.mutate(payload, { onSuccess });
+    }
   };
 
-  const handleReject = () => {
-    if (!comment.trim()) return;
-    const payload: RejectionPayload = { comment: comment.trim() };
-    mutations.reject.mutate(payload, { onSuccess: () => setComment('') });
-  };
-
-  const handleEscalate = () => {
-    if (!comment.trim()) return;
-    const payload: EscalationPayload = { comment: comment.trim() };
-    mutations.escalate.mutate(payload, { onSuccess: () => setComment('') });
+  const handleCancelAction = () => {
+    setPendingAction(null);
+    setComment('');
   };
 
   const isApproving = mutations.approve.isPending;
@@ -258,56 +258,104 @@ export default function LoanDetailPage() {
           >
             {!isDecided && (showApproveReject || showEscalation) && (
               <>
-                <textarea
-                  id="reviewComment"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value.slice(0, 500))}
-                  maxLength={500}
-                  rows={6}
-                  placeholder="심사 의견을 입력해 주세요."
-                  disabled={isProcessing}
-                  className="w-full resize-none rounded-md border border-border-default px-3 py-2 text-sm outline-none transition-colors focus:border-border-focus disabled:opacity-50"
-                />
-
-                {mutationError && (
-                  <p className="mt-2 text-sm text-error">처리에 실패했습니다. 다시 시도해 주세요.</p>
-                )}
-
-                <div className="mt-3 flex items-center justify-between">
-                  <p className="text-xs text-text-disabled">{comment.length}/500</p>
-                  <div className="flex items-center gap-2">
+                {/* 액션 선택 버튼 */}
+                {!pendingAction && (
+                  <div className="flex items-center justify-end gap-2">
                     {showEscalation && (
                       <button
                         type="button"
-                        onClick={handleEscalate}
-                        disabled={!comment.trim() || isProcessing}
-                        className="rounded-md border border-info px-4 py-2 text-sm font-medium text-info transition-colors hover:bg-info/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => handleSelectAction('escalate')}
+                        className="rounded-md border border-info px-4 py-2 text-sm font-medium text-info transition-colors hover:bg-info/5"
                       >
-                        {isEscalating ? '요청 중...' : '추가 결재'}
+                        추가 결재
                       </button>
                     )}
                     {showApproveReject && (
                       <>
                         <button
                           type="button"
-                          onClick={handleReject}
-                          disabled={!comment.trim() || isProcessing}
-                          className="rounded-md border border-error px-4 py-2 text-sm font-medium text-error transition-colors hover:bg-error/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={() => handleSelectAction('reject')}
+                          className="rounded-md border border-error px-4 py-2 text-sm font-medium text-error transition-colors hover:bg-error/5"
                         >
-                          {isRejecting ? '처리 중...' : '거절'}
+                          거절
                         </button>
                         <button
                           type="button"
-                          onClick={handleApprove}
-                          disabled={!approvalCondition || !comment.trim() || isProcessing}
+                          onClick={() => handleSelectAction('approve')}
+                          disabled={!approvalCondition}
                           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-text-inverse transition-colors hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isApproving ? '처리 중...' : '승인'}
+                          승인
                         </button>
                       </>
                     )}
                   </div>
-                </div>
+                )}
+
+                {/* 의견 입력 영역 (액션 선택 후 표시) */}
+                {pendingAction && (
+                  <div className="space-y-3">
+                    <label htmlFor="reviewComment" className="block text-sm font-medium text-text-primary">
+                      {pendingAction === 'approve' && '승인 의견 (필수)'}
+                      {pendingAction === 'reject' && '거절 사유 (필수)'}
+                      {pendingAction === 'escalate' && '전달 의견 (필수)'}
+                    </label>
+                    <textarea
+                      id="reviewComment"
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value.slice(0, 500))}
+                      maxLength={500}
+                      rows={6}
+                      placeholder={
+                        pendingAction === 'approve'
+                          ? '승인 의견을 입력해 주세요.'
+                          : pendingAction === 'reject'
+                            ? '거절 사유를 입력해 주세요.'
+                            : '전달 의견을 입력해 주세요.'
+                      }
+                      disabled={isProcessing}
+                      className="w-full resize-none rounded-md border border-border-default px-3 py-2 text-sm outline-none transition-colors focus:border-border-focus disabled:opacity-50"
+                    />
+
+                    {mutationError && (
+                      <p className="text-sm text-error">처리에 실패했습니다. 다시 시도해 주세요.</p>
+                    )}
+
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-text-disabled">{comment.length}/500</p>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleCancelAction}
+                          disabled={isProcessing}
+                          className="rounded-md border border-border-default px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-gray-50 disabled:opacity-50"
+                        >
+                          취소
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleSubmit}
+                          disabled={!comment.trim() || isProcessing || (pendingAction === 'approve' && !approvalCondition)}
+                          className={`rounded-md px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                            pendingAction === 'reject'
+                              ? 'border border-error text-error hover:bg-error/5'
+                              : pendingAction === 'escalate'
+                                ? 'border border-info text-info hover:bg-info/5'
+                                : 'bg-primary text-text-inverse hover:bg-primary-dark'
+                          }`}
+                        >
+                          {isProcessing
+                            ? '처리 중...'
+                            : pendingAction === 'approve'
+                              ? '승인 확인'
+                              : pendingAction === 'reject'
+                                ? '거절 확인'
+                                : '결재 요청'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </ConditionComparisonCard>

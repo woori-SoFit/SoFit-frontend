@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useManagerApprovals } from '@/hooks/useManagerApprovals';
 import { formatCurrency, formatDate } from '@/utils/formatters';
+import LoadingState from '@/components/common/LoadingState';
+import ErrorState from '@/components/common/ErrorState';
 
 /**
  * 지점장 결재 페이지.
@@ -25,26 +27,10 @@ export default function ManagerApprovalPage() {
       </div>
 
       {/* 로딩 상태 */}
-      {isLoading && (
-        <div className="flex flex-col items-center justify-center py-16">
-          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm text-text-secondary">데이터를 불러오는 중입니다</p>
-        </div>
-      )}
+      {isLoading && <LoadingState />}
 
       {/* 에러 상태 */}
-      {isError && (
-        <div className="flex flex-col items-center justify-center py-16">
-          <p className="mb-4 text-sm text-text-secondary">데이터를 불러오는 중 오류가 발생했습니다.</p>
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-text-inverse hover:bg-primary-dark transition-colors"
-          >
-            다시 시도
-          </button>
-        </div>
-      )}
+      {isError && <ErrorState onRetry={() => refetch()} />}
 
       {/* 빈 목록 */}
       {!isLoading && !isError && data && data.length === 0 && (

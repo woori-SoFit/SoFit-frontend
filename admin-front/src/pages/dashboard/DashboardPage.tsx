@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useLoanApplications } from '@/hooks/useLoanApplications';
 import { useAuthMe } from '@/hooks/useAuthMe';
 import { ApplicationTable } from '@/components/dashboard/ApplicationTable';
+import LoadingState from '@/components/common/LoadingState';
+import ErrorState from '@/components/common/ErrorState';
 import type { ReviewStatus } from '@/types';
 
 const PAGE_SIZE = 10;
@@ -81,30 +83,10 @@ export default function DashboardPage() {
       </div>
 
       {/* 로딩 상태 */}
-      {isLoading && (
-        <div className="flex flex-col items-center justify-center py-16">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="text-sm text-text-secondary">
-            데이터를 불러오는 중입니다
-          </p>
-        </div>
-      )}
+      {isLoading && <LoadingState />}
 
       {/* 에러 상태 */}
-      {isError && (
-        <div className="flex flex-col items-center justify-center py-16">
-          <p className="text-sm text-text-secondary mb-4">
-            데이터를 불러오는 중 오류가 발생했습니다.
-          </p>
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
-          >
-            다시 시도
-          </button>
-        </div>
-      )}
+      {isError && <ErrorState onRetry={() => refetch()} />}
 
       {/* 테이블 */}
       {!isLoading && !isError && data && (
