@@ -2,6 +2,7 @@ import type { ApplicationInfo, UserInputInfo, LoanProductInfo, ConsentHistory } 
 import { formatCurrency, formatMonths, displayValue } from '@/utils/formatters';
 import { REPAYMENT_METHOD_LABELS, PURPOSE_LABELS } from '@/constants/loanLabels';
 import Card from '@/components/common/Card';
+import InfoRow from '@/components/common/InfoRow';
 
 interface ApplicationRequestCardProps {
   applicationInfo: ApplicationInfo;
@@ -101,10 +102,7 @@ export default function ApplicationRequestCard({ applicationInfo, userInputInfo,
         <div className="pr-4">
           <dl className="space-y-2">
             {applicationInfoItems.map((item) => (
-              <div key={item.label} className="flex items-center justify-between">
-                <dt className="text-xs text-text-secondary">{item.label}</dt>
-                <dd className="text-sm font-medium text-text-primary">{item.value}</dd>
-              </div>
+              <InfoRow key={item.label} label={item.label} value={item.value} />
             ))}
           </dl>
         </div>
@@ -113,10 +111,7 @@ export default function ApplicationRequestCard({ applicationInfo, userInputInfo,
         <div className="px-4">
           <dl className="space-y-2">
             {inputItems.map((item) => (
-              <div key={item.label} className="flex items-center justify-between">
-                <dt className="text-xs text-text-secondary">{item.label}</dt>
-                <dd className="text-sm font-medium text-text-primary">{item.value}</dd>
-              </div>
+              <InfoRow key={item.label} label={item.label} value={item.value} />
             ))}
           </dl>
         </div>

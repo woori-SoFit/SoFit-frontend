@@ -1,6 +1,7 @@
 import type { MyBizData, VatFilingStatus, InsurancePaymentStatus } from '@/types';
 import { formatCurrency, formatBusinessAge, formatPercentage } from '@/utils/formatters';
 import Card from '@/components/common/Card';
+import InfoRow from '@/components/common/InfoRow';
 
 interface MyBizDataCardProps {
   data: MyBizData | null;
@@ -181,23 +182,5 @@ export default function MyBizDataCard({ data }: MyBizDataCardProps) {
         </div>
       </div>
     </Card>
-  );
-}
-
-/** 라벨-값 행 컴포넌트 */
-function InfoRow({
-  label,
-  value,
-  valueClassName = 'text-text-primary',
-}: {
-  label: string;
-  value: string;
-  valueClassName?: string;
-}) {
-  return (
-    <div className="flex items-center justify-between">
-      <dt className="text-xs text-text-secondary">{label}</dt>
-      <dd className={`text-sm font-medium ${valueClassName}`}>{value}</dd>
-    </div>
   );
 }
