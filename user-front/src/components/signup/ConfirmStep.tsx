@@ -28,7 +28,7 @@ export default function ConfirmStep() {
       <div className="absolute inset-0 pointer-events-none z-10 flex items-start">
         <Lottie
           animationData={confettiAnimation}
-          loop={true}
+          loop={3}
           className="w-full max-w-sm -translate-y-35"
         />
       </div>

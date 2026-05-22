@@ -85,7 +85,7 @@ function ApprovedView({
       <div className="absolute inset-x-0 top-0 pointer-events-none z-10 flex justify-center">
         <Lottie
           animationData={confettiAnimation}
-          loop={true}
+          loop={3}
           className="w-full max-w-sm -translate-y-20"
         />
       </div>
