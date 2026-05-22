@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthMe } from '@/hooks/useAuthMe';
 import { useLoanSummary } from '@/hooks/useLoanSummary';
@@ -16,10 +16,8 @@ import CBScoreCard from '@/components/loan-detail/CBScoreCard';
 import SGradeCard from '@/components/loan-detail/SGradeCard';
 import SCBScoreCard from '@/components/loan-detail/SCBScoreCard';
 import ShapExplanation from '@/components/loan-detail/ShapExplanation';
-import ApprovalModal from '@/components/loan-detail/ApprovalModal';
-import RejectionModal from '@/components/loan-detail/RejectionModal';
-import EscalationDialog from '@/components/loan-detail/EscalationDialog';
 import type { ApprovalPayload, RejectionPayload, EscalationPayload } from '@/types';
+import type { EditableApprovalCondition } from '@/components/loan-detail/ConditionComparisonCard';
 
 type TabKey = 'info' | 'mybizdata' | 'sgrade' | 'review';
 
@@ -42,9 +40,8 @@ export default function LoanDetailPage() {
   }, [idParam]);
 
   const [activeTab, setActiveTab] = useState<TabKey>('info');
-  const [isApprovalOpen, setIsApprovalOpen] = useState(false);
-  const [isRejectionOpen, setIsRejectionOpen] = useState(false);
-  const [isEscalationOpen, setIsEscalationOpen] = useState(false);
+  const [approvalCondition, setApprovalCondition] = useState<EditableApprovalCondition | null>(null);
+  const [comment, setComment] = useState('');
 
   const { data, isLoading, isError, refetch } = useLoanDetail(loanId ?? 0);
   const { data: summary } = useLoanSummary(loanId ?? 0);
@@ -55,19 +52,6 @@ export default function LoanDetailPage() {
     loanId ?? 0,
     activeTab === 'review',
   );
-
-  // 모달 열릴 때 body 스크롤 방지
-  const isAnyModalOpen = isApprovalOpen || isRejectionOpen || isEscalationOpen;
-  useEffect(() => {
-    if (isAnyModalOpen) {
-      document.body.classList.add('no-scroll');
-    } else {
-      document.body.classList.remove('no-scroll');
-    }
-    return () => {
-      document.body.classList.remove('no-scroll');
-    };
-  }, [isAnyModalOpen]);
 
   if (loanId === null) {
     return (
@@ -133,24 +117,35 @@ export default function LoanDetailPage() {
   const showEscalation = canTellerAct;
   const isDecided = status === 'APPROVED' || status === 'REJECTED';
 
-  const handleApprove = (payload: ApprovalPayload) => {
-    mutations.approve.mutate(payload, { onSuccess: () => setIsApprovalOpen(false) });
+  const handleApprove = () => {
+    if (!approvalCondition || !comment.trim()) return;
+    const payload: ApprovalPayload = {
+      approvedAmount: approvalCondition.approvedAmount,
+      interestRate: approvalCondition.approvedRate,
+      loanTermMonths: approvalCondition.approvedTerm,
+      repaymentMethod: approvalCondition.repaymentMethod,
+      comment: comment.trim(),
+    };
+    mutations.approve.mutate(payload, { onSuccess: () => setComment('') });
   };
 
-  const handleReject = (payload: RejectionPayload) => {
-    mutations.reject.mutate(payload, { onSuccess: () => setIsRejectionOpen(false) });
+  const handleReject = () => {
+    if (!comment.trim()) return;
+    const payload: RejectionPayload = { comment: comment.trim() };
+    mutations.reject.mutate(payload, { onSuccess: () => setComment('') });
   };
 
-  const handleEscalate = (payload: EscalationPayload) => {
-    mutations.escalate.mutate(payload, { onSuccess: () => setIsEscalationOpen(false) });
+  const handleEscalate = () => {
+    if (!comment.trim()) return;
+    const payload: EscalationPayload = { comment: comment.trim() };
+    mutations.escalate.mutate(payload, { onSuccess: () => setComment('') });
   };
 
   const isApproving = mutations.approve.isPending;
   const isRejecting = mutations.reject.isPending;
   const isEscalating = mutations.escalate.isPending;
-  const approveError = mutations.approve.error;
-  const rejectError = mutations.reject.error;
-  const escalateError = mutations.escalate.error;
+  const isProcessing = isApproving || isRejecting || isEscalating;
+  const mutationError = mutations.approve.error || mutations.reject.error || mutations.escalate.error;
 
   return (
     <div className="p-6">
@@ -250,47 +245,71 @@ export default function LoanDetailPage() {
       {/* ─── 심사 결과 탭 ─── */}
       {activeTab === 'review' && (
         <div className="space-y-6">
-          {/* 상품 기준 | 신청 조건 | 승인 결과 3열 비교 */}
+          {/* 상품 기준 | 신청 조건 | 승인 결과 3열 비교 + 심사 처리 */}
           <ConditionComparisonCard
             product={data.productInfo}
             applicationInfo={data.applicationInfo}
             recommendation={recommendation}
             isLoading={isRecommendationLoading}
             reviewStatus={summary?.status ?? data.reviewStatus}
-          />
+            editable={showApproveReject}
+            onConditionChange={setApprovalCondition}
+          >
+            {!isDecided && (showApproveReject || showEscalation) && (
+              <>
+                <textarea
+                  id="reviewComment"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value.slice(0, 500))}
+                  maxLength={500}
+                  rows={6}
+                  placeholder="심사 의견을 입력해 주세요."
+                  disabled={isProcessing}
+                  className="w-full resize-none rounded-md border border-border-default px-3 py-2 text-sm outline-none transition-colors focus:border-border-focus disabled:opacity-50"
+                />
 
-          {/* 심사 처리 버튼 */}
-          {!isDecided && (showApproveReject || showEscalation) && (
-            <div className="flex items-center justify-end gap-3">
-              {showEscalation && (
-                <button
-                  type="button"
-                  onClick={() => setIsEscalationOpen(true)}
-                  className="rounded-md border border-info px-5 py-2.5 text-sm font-medium text-info transition-colors hover:bg-info/5"
-                >
-                  추가 결재 요청
-                </button>
-              )}
-              {showApproveReject && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setIsRejectionOpen(true)}
-                    className="rounded-md border border-error px-5 py-2.5 text-sm font-medium text-error transition-colors hover:bg-error/5"
-                  >
-                    거절
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsApprovalOpen(true)}
-                    className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-text-inverse transition-colors hover:bg-primary-dark"
-                  >
-                    승인
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+                {mutationError && (
+                  <p className="mt-2 text-sm text-error">처리에 실패했습니다. 다시 시도해 주세요.</p>
+                )}
+
+                <div className="mt-3 flex items-center justify-between">
+                  <p className="text-xs text-text-disabled">{comment.length}/500</p>
+                  <div className="flex items-center gap-2">
+                    {showEscalation && (
+                      <button
+                        type="button"
+                        onClick={handleEscalate}
+                        disabled={!comment.trim() || isProcessing}
+                        className="rounded-md border border-info px-4 py-2 text-sm font-medium text-info transition-colors hover:bg-info/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isEscalating ? '요청 중...' : '추가 결재'}
+                      </button>
+                    )}
+                    {showApproveReject && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={handleReject}
+                          disabled={!comment.trim() || isProcessing}
+                          className="rounded-md border border-error px-4 py-2 text-sm font-medium text-error transition-colors hover:bg-error/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isRejecting ? '처리 중...' : '거절'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleApprove}
+                          disabled={!approvalCondition || !comment.trim() || isProcessing}
+                          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-text-inverse transition-colors hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isApproving ? '처리 중...' : '승인'}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+          </ConditionComparisonCard>
 
           {isDecided && (
             <div className="rounded-lg border border-border-default bg-bg-surface p-6 shadow-card">
@@ -338,31 +357,6 @@ export default function LoanDetailPage() {
         </div>
       )}
 
-      {/* 모달 */}
-      <ApprovalModal
-        loanId={loanId}
-        isOpen={isApprovalOpen}
-        onClose={() => setIsApprovalOpen(false)}
-        onSubmit={handleApprove}
-        isSubmitting={isApproving}
-        error={approveError}
-      />
-
-      <RejectionModal
-        isOpen={isRejectionOpen}
-        onClose={() => setIsRejectionOpen(false)}
-        onSubmit={handleReject}
-        isSubmitting={isRejecting}
-        error={rejectError}
-      />
-
-      <EscalationDialog
-        isOpen={isEscalationOpen}
-        onClose={() => setIsEscalationOpen(false)}
-        onSubmit={handleEscalate}
-        isSubmitting={isEscalating}
-        error={escalateError}
-      />
     </div>
   );
 }
