@@ -13,7 +13,6 @@ import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProduct } from "@/api/loanApi";
 import { formatMaxAmount, formatMaxTerm } from "@/utils/format";
 import loanProductIcon from "@/assets/icons/loan-product.svg";
-import type { LoanEligibilityFilter } from "@/types/eligibility";
 
 export default function LoanDetailPage() {
   const { productId } = useParams<{ productId: string }>();
@@ -121,23 +120,8 @@ export default function LoanDetailPage() {
       <BottomButton
         label="대출 신청"
         onClick={() => {
-          // 상품 API에서 filterConditions를 내려주면 사용, 없으면 기본값(모든 값 허용)
-          const filterConditions: LoanEligibilityFilter = product.filterConditions
-            ? {
-                allowedAnnualIncomes: product.filterConditions.allowedAnnualIncomes as LoanEligibilityFilter["allowedAnnualIncomes"],
-                allowedCreditScores: product.filterConditions.allowedCreditScores as LoanEligibilityFilter["allowedCreditScores"],
-                allowedIncomeTypes: product.filterConditions.allowedIncomeTypes as LoanEligibilityFilter["allowedIncomeTypes"],
-                allowedExistingLoanAmounts: product.filterConditions.allowedExistingLoanAmounts as LoanEligibilityFilter["allowedExistingLoanAmounts"],
-              }
-            : {
-                allowedAnnualIncomes: ["AMT_0_30M", "AMT_30_50M", "AMT_50_100M", "AMT_100M_OVER"],
-                allowedCreditScores: ["CS_0_850", "CS_850_OVER", "CS_UNKNOWN"],
-                allowedIncomeTypes: ["SALARY", "BUSINESS", "OTHER"],
-                allowedExistingLoanAmounts: ["LOAN_100M_OVER", "LOAN_0_100M", "LOAN_NONE"],
-              };
-
           navigate(`/loan/pre-apply/${product.productId}`, {
-            state: { filterConditions },
+            state: { filterConditions: product.filterConditions },
           });
         }}
       />

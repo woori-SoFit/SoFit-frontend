@@ -1,6 +1,6 @@
 import { create } from "zustand";
+import type { ProductFilterConditions } from "@/types/loan";
 import type {
-  LoanEligibilityFilter,
   LoanEligibilityInput,
   AnnualIncome,
   CreditScore,
@@ -10,12 +10,12 @@ import type {
 
 interface EligibilityState {
   /** 상품 필터 조건 (상세 페이지에서 전달받음) */
-  filterConditions: LoanEligibilityFilter | null;
+  filterConditions: ProductFilterConditions | null;
   /** 사용자 입력값 */
   userInput: Partial<LoanEligibilityInput>;
 
   // Actions
-  setFilterConditions: (filter: LoanEligibilityFilter) => void;
+  setFilterConditions: (filter: ProductFilterConditions) => void;
   setAnnualIncome: (value: AnnualIncome) => void;
   setCreditScore: (value: CreditScore) => void;
   setIncomeType: (value: IncomeType) => void;
@@ -24,7 +24,7 @@ interface EligibilityState {
 }
 
 const initialState = {
-  filterConditions: null as LoanEligibilityFilter | null,
+  filterConditions: null as ProductFilterConditions | null,
   userInput: {} as Partial<LoanEligibilityInput>,
 };
 

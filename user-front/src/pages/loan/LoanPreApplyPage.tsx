@@ -15,16 +15,15 @@ import { useEligibilityStore } from "@/stores/eligibilityStore";
 import { useCreateLoanApplication } from "@/hooks/useCreateLoanApplication";
 import { checkLoanAvailable } from "@/utils/checkLoanAvailable";
 import { BottomButton } from "@/components/common/BottomButton";
-import { PRE_APPLY_QUESTIONS, FAILED_FIELD_MESSAGES } from "@/constants/eligibilityOptions";
+import { PRE_APPLY_QUESTIONS } from "@/constants/eligibilityOptions";
 import preApplyIcon from "@/assets/icons/loan-pre-apply.svg";
+import type { ProductFilterConditions } from "@/types/loan";
 import type {
-  LoanEligibilityFilter,
   LoanEligibilityInput,
   AnnualIncome,
   CreditScore,
   IncomeType,
   ExistingLoanAmount,
-  EligibilityFailedField,
 } from "@/types/eligibility";
 
 /** 페이지 상태 */
@@ -36,12 +35,11 @@ export default function LoanPreApplyPage() {
   const location = useLocation();
 
   // navigation state에서 filterConditions 수신
-  const filterConditions = (location.state as { filterConditions?: LoanEligibilityFilter } | null)
+  const filterConditions = (location.state as { filterConditions?: ProductFilterConditions } | null)
     ?.filterConditions;
 
   // 페이지 상태 관리
   const [pageState, setPageState] = useState<PageState>("INPUT");
-  const [failedFields, setFailedFields] = useState<EligibilityFailedField[]>([]);
 
   // Zustand 스토어
   const {
@@ -124,7 +122,6 @@ export default function LoanPreApplyPage() {
     const result = checkLoanAvailable(input, filterConditions);
 
     if (result.eligible === false) {
-      setFailedFields(result.failedFields);
       setPageState("REJECTED");
       return;
     }
@@ -143,36 +140,24 @@ export default function LoanPreApplyPage() {
   if (pageState === "REJECTED") {
     return (
       <div className="flex flex-col min-h-full">
-        <div className="flex-1 px-5 pt-10">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 flex items-center justify-center">
-              <XCircle size={32} className="text-red-500" />
+        <div className="flex-1 px-5 pt-20">
+          <div className="text-center">
+            <div className="w-20 h-20 mx-auto mb-10 rounded-full bg-red-50 flex items-center justify-center">
+              <XCircle size={40} className="text-red-500" />
             </div>
-            <h2 className="text-xl font-bold text-text-primary mb-2">
-              신청 조건을 충족하지 못했어요
+            <h2 className="text-xl font-bold text-text-primary mb-3">
+              대출 신청이 어려워요
             </h2>
             <p className="text-sm text-text-secondary">
-              아래 조건이 맞지 않아 이 상품은 신청이 어려워요.
+              내부 대출 신청 기준에 부합하지 않습니다.<br />
+              다른 상품을 확인해 보세요.
             </p>
-          </div>
-
-          <div className="bg-red-50 rounded-xl p-5">
-            <ul className="flex flex-col gap-3">
-              {failedFields.map((field) => (
-                <li key={field} className="flex items-start gap-2">
-                  <span className="text-red-500 mt-0.5">•</span>
-                  <span className="text-sm text-text-primary">
-                    {FAILED_FIELD_MESSAGES[field]}
-                  </span>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
 
         <BottomButton
           label="돌아가기"
-          onClick={() => navigate(`/loan/${productId}`)}
+          onClick={() => navigate(`/loan`)}
         />
       </div>
     );
