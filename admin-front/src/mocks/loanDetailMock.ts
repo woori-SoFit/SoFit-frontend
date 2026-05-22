@@ -523,7 +523,7 @@ const MOCK_MANAGER_APPROVALS: ManagerApprovalItem[] = [
   },
 ];
 
-// ─── 공개 함수 ───────────────────────────────────────────────────
+// ─── 공개 함수 (조회) ────────────────────────────────────────────
 
 /**
  * 신청 건 ID로 대출 상세 데이터를 반환합니다.
@@ -583,4 +583,67 @@ export function getMockLoanSummary(id: number): LoanSummary | undefined {
     approvalComment: detail.approvalComment,
     decidedAt: detail.decidedAt,
   };
+}
+
+// ─── 공개 함수 (뮤테이션) ────────────────────────────────────────
+
+import type { ApprovalPayload, RejectionPayload, EscalationPayload } from '@/types';
+
+/**
+ * Mock 승인 처리: 상태를 APPROVED로 변경하고 승인 정보를 기록합니다.
+ */
+export function mockApproveLoan(id: number, payload: ApprovalPayload): void {
+  const detail = MOCK_LOAN_DETAILS.find((item) => item.id === id);
+  if (!detail) return;
+
+  detail.reviewStatus = 'APPROVED';
+  detail.approvalComment = payload.comment ?? '';
+  detail.decidedAt = new Date().toISOString();
+
+  // 지점장 결재 목록에서 제거
+  const approvalIdx = MOCK_MANAGER_APPROVALS.findIndex((item) => item.id === id);
+  if (approvalIdx !== -1) {
+    MOCK_MANAGER_APPROVALS.splice(approvalIdx, 1);
+  }
+}
+
+/**
+ * Mock 거절 처리: 상태를 REJECTED로 변경하고 거절 사유를 기록합니다.
+ */
+export function mockRejectLoan(id: number, payload: RejectionPayload): void {
+  const detail = MOCK_LOAN_DETAILS.find((item) => item.id === id);
+  if (!detail) return;
+
+  detail.reviewStatus = 'REJECTED';
+  detail.rejectionComment = payload.comment;
+  detail.decidedAt = new Date().toISOString();
+
+  // 지점장 결재 목록에서 제거
+  const approvalIdx = MOCK_MANAGER_APPROVALS.findIndex((item) => item.id === id);
+  if (approvalIdx !== -1) {
+    MOCK_MANAGER_APPROVALS.splice(approvalIdx, 1);
+  }
+}
+
+/**
+ * Mock 에스컬레이션 처리: 상태를 MANAGER_REVIEW로 변경하고 결재 목록에 추가합니다.
+ */
+export function mockEscalateLoan(id: number, _payload: EscalationPayload): void {
+  const detail = MOCK_LOAN_DETAILS.find((item) => item.id === id);
+  if (!detail) return;
+
+  detail.reviewStatus = 'MANAGER_REVIEW';
+
+  // 이미 결재 목록에 있으면 중복 추가하지 않음
+  const alreadyExists = MOCK_MANAGER_APPROVALS.some((item) => item.id === id);
+  if (!alreadyExists) {
+    MOCK_MANAGER_APPROVALS.push({
+      id: detail.id,
+      applicationDate: detail.applicationDate,
+      applicantName: detail.customerInfo.name,
+      businessName: detail.businessInfo.businessName,
+      requestedByName: detail.assigneeName,
+      requestedAmount: detail.applicationInfo.requestedAmount,
+    });
+  }
 }

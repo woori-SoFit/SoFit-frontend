@@ -14,6 +14,9 @@ import {
   getMockRecommendation,
   getMockManagerApprovals,
   getMockLoanSummary,
+  mockApproveLoan,
+  mockRejectLoan,
+  mockEscalateLoan,
 } from '@/mocks/loanDetailMock';
 
 // ─── 조회 API ───────────────────────────────────────────────────
@@ -67,6 +70,7 @@ export async function fetchManagerApprovals(): Promise<ManagerApprovalItem[]> {
  */
 export async function approveLoan(id: number, payload: ApprovalPayload): Promise<void> {
   if (import.meta.env.DEV) console.log(`[Mock] approveLoan id=${id}`, payload);
+  mockApproveLoan(id, payload);
   return Promise.resolve();
 }
 
@@ -77,6 +81,7 @@ export async function approveLoan(id: number, payload: ApprovalPayload): Promise
  */
 export async function rejectLoan(id: number, payload: RejectionPayload): Promise<void> {
   if (import.meta.env.DEV) console.log(`[Mock] rejectLoan id=${id}`, payload);
+  mockRejectLoan(id, payload);
   return Promise.resolve();
 }
 
@@ -86,5 +91,6 @@ export async function rejectLoan(id: number, payload: RejectionPayload): Promise
  */
 export async function requestEscalation(id: number, payload: EscalationPayload): Promise<void> {
   if (import.meta.env.DEV) console.log(`[Mock] requestEscalation id=${id}`, payload);
+  mockEscalateLoan(id, payload);
   return Promise.resolve();
 }
