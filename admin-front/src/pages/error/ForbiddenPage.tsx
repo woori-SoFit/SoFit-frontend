@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import Button from '@/components/common/Button';
 
 export default function ForbiddenPage() {
   const navigate = useNavigate();
@@ -17,20 +18,12 @@ export default function ForbiddenPage() {
         이 페이지에 접근할 수 있는 권한이 없습니다.
       </p>
       <div className="flex gap-3">
-        <button
-          type="button"
-          onClick={() => navigate('/dashboard')}
-          className="px-4 py-2 bg-primary text-text-inverse rounded-md text-sm font-medium hover:bg-primary-dark transition-colors cursor-pointer"
-        >
+        <Button onClick={() => navigate('/dashboard')}>
           대시보드로 이동
-        </button>
-        <button
-          type="button"
-          onClick={handleGoBack}
-          className="px-4 py-2 bg-bg-surface text-text-primary border border-border-default rounded-md text-sm font-medium hover:bg-gray-50 transition-colors cursor-pointer"
-        >
+        </Button>
+        <Button variant="ghost" onClick={handleGoBack}>
           이전 페이지
-        </button>
+        </Button>
       </div>
     </div>
   );

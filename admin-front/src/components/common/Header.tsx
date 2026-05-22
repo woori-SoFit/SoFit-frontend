@@ -6,6 +6,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
 import { useAuthMe } from "@/hooks/useAuthMe";
+import Button from "@/components/common/Button";
 import mainLogo from "@/assets/mainLogo.svg";
 
 
@@ -33,13 +34,9 @@ export function Header() {
         {user && (
           <span className="text-sm text-text-secondary">{user.name}</span>
         )}
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="px-3 py-1.5 text-xs font-medium text-white bg-primary rounded-md hover:bg-primary-dark transition-colors cursor-pointer"
-        >
+        <Button size="sm" onClick={handleLogout}>
           로그아웃
-        </button>
+        </Button>
       </div>
     </header>
   );

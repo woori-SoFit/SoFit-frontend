@@ -9,6 +9,7 @@ import { formatDate, formatDateTime } from '@/utils/formatters';
 import StatusBadge from '@/components/common/StatusBadge';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
+import Button from '@/components/common/Button';
 import CustomerInfoCard from '@/components/loan-detail/CustomerInfoCard';
 import BusinessInfoCard from '@/components/loan-detail/BusinessInfoCard';
 import ApplicationRequestCard from '@/components/loan-detail/ApplicationRequestCard';
@@ -61,13 +62,7 @@ export default function LoanDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center py-24">
         <p className="mb-4 text-lg font-medium text-text-primary">존재하지 않는 페이지입니다.</p>
-        <button
-          type="button"
-          onClick={() => navigate('/dashboard')}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-text-inverse hover:bg-primary-dark transition-colors"
-        >
-          목록으로 이동
-        </button>
+        <Button onClick={() => navigate('/dashboard')}>목록으로 이동</Button>
       </div>
     );
   }
@@ -84,13 +79,7 @@ export default function LoanDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center py-24">
         <p className="mb-4 text-lg font-medium text-text-primary">해당 대출 신청 건을 찾을 수 없습니다.</p>
-        <button
-          type="button"
-          onClick={() => navigate('/dashboard')}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-text-inverse hover:bg-primary-dark transition-colors"
-        >
-          목록으로 이동
-        </button>
+        <Button onClick={() => navigate('/dashboard')}>목록으로 이동</Button>
       </div>
     );
   }
@@ -262,31 +251,27 @@ export default function LoanDetailPage() {
                 {!pendingAction && (
                   <div className="flex items-center justify-end gap-2">
                     {showEscalation && (
-                      <button
-                        type="button"
+                      <Button
+                        variant="outline-info"
                         onClick={() => handleSelectAction('escalate')}
-                        className="rounded-md border border-info px-4 py-2 text-sm font-medium text-info transition-colors hover:bg-info/5"
                       >
                         추가 결재
-                      </button>
+                      </Button>
                     )}
                     {showApproveReject && (
                       <>
-                        <button
-                          type="button"
+                        <Button
+                          variant="outline-error"
                           onClick={() => handleSelectAction('reject')}
-                          className="rounded-md border border-error px-4 py-2 text-sm font-medium text-error transition-colors hover:bg-error/5"
                         >
                           거절
-                        </button>
-                        <button
-                          type="button"
+                        </Button>
+                        <Button
                           onClick={() => handleSelectAction('approve')}
                           disabled={!approvalCondition}
-                          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-text-inverse transition-colors hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           승인
-                        </button>
+                        </Button>
                       </>
                     )}
                   </div>
@@ -324,25 +309,23 @@ export default function LoanDetailPage() {
                     <div className="flex items-center justify-between">
                       <p className="text-xs text-text-disabled">{comment.length}/500</p>
                       <div className="flex items-center gap-2">
-                        <button
-                          type="button"
+                        <Button
+                          variant="ghost"
                           onClick={handleCancelAction}
                           disabled={isProcessing}
-                          className="rounded-md border border-border-default px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-gray-50 disabled:opacity-50"
                         >
                           취소
-                        </button>
-                        <button
-                          type="button"
+                        </Button>
+                        <Button
+                          variant={
+                            pendingAction === 'reject'
+                              ? 'outline-error'
+                              : pendingAction === 'escalate'
+                                ? 'outline-info'
+                                : 'primary'
+                          }
                           onClick={handleSubmit}
                           disabled={!comment.trim() || isProcessing || (pendingAction === 'approve' && !approvalCondition)}
-                          className={`rounded-md px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                            pendingAction === 'reject'
-                              ? 'border border-error text-error hover:bg-error/5'
-                              : pendingAction === 'escalate'
-                                ? 'border border-info text-info hover:bg-info/5'
-                                : 'bg-primary text-text-inverse hover:bg-primary-dark'
-                          }`}
                         >
                           {isProcessing
                             ? '처리 중...'
@@ -351,7 +334,7 @@ export default function LoanDetailPage() {
                               : pendingAction === 'reject'
                                 ? '거절 확인'
                                 : '결재 요청'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>

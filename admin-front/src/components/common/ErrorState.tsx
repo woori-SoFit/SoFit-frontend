@@ -1,3 +1,5 @@
+import Button from '@/components/common/Button';
+
 interface ErrorStateProps {
   /** 에러 메시지 (기본: "데이터를 불러오는 중 오류가 발생했습니다.") */
   message?: string;
@@ -19,13 +21,7 @@ export default function ErrorState({
   return (
     <div className="flex flex-col items-center justify-center py-16">
       <p className="mb-4 text-sm text-text-secondary">{message}</p>
-      <button
-        type="button"
-        onClick={onRetry}
-        className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-text-inverse hover:bg-primary-dark transition-colors"
-      >
-        {retryLabel}
-      </button>
+      <Button onClick={onRetry}>{retryLabel}</Button>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useManagerApprovals } from '@/hooks/useManagerApprovals';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
+import Button from '@/components/common/Button';
 
 /**
  * 지점장 결재 페이지.
@@ -67,13 +68,13 @@ export default function ManagerApprovalPage() {
                     {formatCurrency(item.requestedAmount)}
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <button
-                      type="button"
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => navigate(`/loan/${item.id}`)}
-                      className="rounded-md border border-primary px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/5"
                     >
                       상세보기
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}
