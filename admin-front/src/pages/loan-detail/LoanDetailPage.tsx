@@ -4,8 +4,8 @@ import { useAuthMe } from '@/hooks/useAuthMe';
 import { useLoanSummary } from '@/hooks/useLoanSummary';
 import { useLoanDetail } from '@/hooks/useLoanDetail';
 import { useLoanMutations } from '@/hooks/useLoanMutations';
-import { useRecommendation } from '@/hooks/useRecommendation';
-import { formatDate, formatDateTime } from '@/utils/formatters';
+import { useReviewTab } from '@/hooks/useReviewTab';
+import { formatDate } from '@/utils/formatters';
 import StatusBadge from '@/components/common/StatusBadge';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
@@ -19,7 +19,6 @@ import CBScoreCard from '@/components/loan-detail/CBScoreCard';
 import SGradeCard from '@/components/loan-detail/SGradeCard';
 import SCBScoreCard from '@/components/loan-detail/SCBScoreCard';
 import ShapExplanation from '@/components/loan-detail/ShapExplanation';
-import Card from '@/components/common/Card';
 import type { ApprovalPayload, RejectionPayload, EscalationPayload } from '@/types';
 import type { EditableApprovalCondition } from '@/components/loan-detail/ConditionComparisonCard';
 
@@ -52,8 +51,8 @@ export default function LoanDetailPage() {
   const { data: summary } = useLoanSummary(loanId ?? 0);
   const mutations = useLoanMutations(loanId ?? 0);
 
-  // 심사 결과 탭에서 추천값 표시용 (탭이 review일 때 조회)
-  const { data: recommendation, isLoading: isRecommendationLoading } = useRecommendation(
+  // 심사 결과 탭 전용 데이터 (탭이 review일 때 조회)
+  const { data: reviewTab, isLoading: isReviewTabLoading } = useReviewTab(
     loanId ?? 0,
     activeTab === 'review',
   );
@@ -237,13 +236,13 @@ export default function LoanDetailPage() {
         <div className="space-y-6">
           {/* 상품 기준 | 신청 조건 | 승인 결과 3열 비교 + 심사 처리 */}
           <ConditionComparisonCard
-            product={data.productInfo}
-            applicationInfo={data.applicationInfo}
-            recommendation={recommendation}
-            isLoading={isRecommendationLoading}
-            reviewStatus={summary?.status ?? data.reviewStatus}
+            product={reviewTab?.productInfo ?? data.productInfo}
+            applicationInfo={reviewTab?.applicationInfo ?? data.applicationInfo}
+            recommendation={reviewTab?.recommendation}
+            isLoading={isReviewTabLoading}
             editable={showApproveReject}
             onConditionChange={setApprovalCondition}
+            decisions={reviewTab?.decisions ?? []}
           >
             {!isDecided && (showApproveReject || showEscalation) && (
               <>
@@ -342,50 +341,6 @@ export default function LoanDetailPage() {
               </>
             )}
           </ConditionComparisonCard>
-
-          {isDecided && (
-            <Card>
-              {status === 'APPROVED' ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block h-2 w-2 rounded-full bg-success" />
-                    <p className="text-sm font-semibold text-success">승인 완료</p>
-                  </div>
-                  {summary?.decidedAt && (
-                    <p className="text-sm text-text-secondary">
-                      <span className="font-medium text-text-primary">승인 일시: </span>
-                      {formatDateTime(summary.decidedAt)}
-                    </p>
-                  )}
-                  {summary?.approvalComment && (
-                    <p className="text-sm text-text-secondary">
-                      <span className="font-medium text-text-primary">승인 사유: </span>
-                      {summary.approvalComment}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block h-2 w-2 rounded-full bg-error" />
-                    <p className="text-sm font-semibold text-error">거절 완료</p>
-                  </div>
-                  {summary?.decidedAt && (
-                    <p className="text-sm text-text-secondary">
-                      <span className="font-medium text-text-primary">거절 일시: </span>
-                      {formatDateTime(summary.decidedAt)}
-                    </p>
-                  )}
-                  {summary?.rejectionComment && (
-                    <p className="text-sm text-text-secondary">
-                      <span className="font-medium text-text-primary">거절 사유: </span>
-                      {summary.rejectionComment}
-                    </p>
-                  )}
-                </div>
-              )}
-            </Card>
-          )}
         </div>
       )}
 

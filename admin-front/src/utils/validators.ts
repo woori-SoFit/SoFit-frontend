@@ -3,14 +3,14 @@
  */
 
 /**
- * 승인 금액 유효성 검증 (만원 단위)
- * 10만원(10) 이상 10억원(100,000) 이하의 정수만 유효
+ * 승인 금액 유효성 검증 (원 단위)
+ * 100만원(1,000,000) 이상 10억원(1,000,000,000) 이하의 정수만 유효
  */
 export function validateApprovalAmount(value: number): boolean {
   if (!Number.isInteger(value)) {
     return false;
   }
-  return value >= 10 && value <= 100_000;
+  return value >= 1_000_000 && value <= 1_000_000_000;
 }
 
 /**

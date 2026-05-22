@@ -29,6 +29,7 @@ export function useLoanMutations(id: number): UseLoanMutationsReturn {
   const invalidateRelatedQueries = () => {
     queryClient.invalidateQueries({ queryKey: LOAN_KEYS.summary(id) });
     queryClient.invalidateQueries({ queryKey: LOAN_KEYS.detail(id) });
+    queryClient.invalidateQueries({ queryKey: LOAN_KEYS.reviewTab(id) });
     queryClient.invalidateQueries({ queryKey: LOAN_KEYS.managerApprovals() });
     queryClient.invalidateQueries({ queryKey: LOAN_KEYS.applications() });
   };

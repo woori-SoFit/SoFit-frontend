@@ -3,6 +3,7 @@ import type {
   LoanSummary,
   ShapResult,
   RecommendationData,
+  ReviewTabData,
   ApprovalPayload,
   RejectionPayload,
   EscalationPayload,
@@ -12,6 +13,7 @@ import {
   getMockLoanDetail,
   getMockShapResult,
   getMockRecommendation,
+  getMockReviewTabData,
   getMockManagerApprovals,
   getMockLoanSummary,
   mockApproveLoan,
@@ -51,6 +53,15 @@ export async function fetchShapResult(id: number): Promise<ShapResult | undefine
  */
 export async function fetchRecommendation(id: number): Promise<RecommendationData> {
   return Promise.resolve(getMockRecommendation(id));
+}
+
+/**
+ * 심사 결과 탭 전용 데이터를 조회합니다.
+ * productInfo + applicationInfo + recommendation + decision 을 포함합니다.
+ * 향후 실제 API 연동 시 axiosInstance.get(`/api/admin/loan-applications/${id}/review`)로 교체합니다.
+ */
+export async function fetchReviewTabData(id: number): Promise<ReviewTabData | undefined> {
+  return Promise.resolve(getMockReviewTabData(id));
 }
 
 /**

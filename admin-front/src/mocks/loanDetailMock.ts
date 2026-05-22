@@ -4,6 +4,8 @@ import type {
   RecommendationData,
   ManagerApprovalItem,
   ShapResult,
+  ReviewTabData,
+  ReviewDecision,
 } from '@/types';
 
 // ─── Mock 상세 데이터 ───────────────────────────────────────────
@@ -16,8 +18,8 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     assigneeName: '김은행',
     productInfo: {
       productName: '소상공인 성장 지원 대출',
-      minAmount: 500,
-      maxAmount: 10000,
+      minAmount: 5_000_000,
+      maxAmount: 100_000_000,
       minInterestRate: 3.0,
       maxInterestRate: 8.0,
       minTermMonths: 12,
@@ -41,7 +43,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       openDate: '2019-03-15',
     },
     applicationInfo: {
-      requestedAmount: 5000,
+      requestedAmount: 50_000_000,
       requestedTerm: 36,
       repaymentMethod: 'EQUAL_PAYMENT',
       purpose: 'FACILITY_CAPITAL',
@@ -106,8 +108,8 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     assigneeName: '이담당',
     productInfo: {
       productName: '소상공인 성장 지원 대출',
-      minAmount: 500,
-      maxAmount: 10000,
+      minAmount: 5_000_000,
+      maxAmount: 100_000_000,
       minInterestRate: 3.0,
       maxInterestRate: 8.0,
       minTermMonths: 12,
@@ -131,7 +133,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       openDate: '2021-07-01',
     },
     applicationInfo: {
-      requestedAmount: 10000,
+      requestedAmount: 100_000_000,
       requestedTerm: 60,
       repaymentMethod: 'EQUAL_PRINCIPAL',
       purpose: 'WORKING_CAPITAL',
@@ -198,8 +200,8 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     decidedAt: '2024-05-23T14:30:00',
     productInfo: {
       productName: '소상공인 운전자금 대출',
-      minAmount: 300,
-      maxAmount: 5000,
+      minAmount: 3_000_000,
+      maxAmount: 50_000_000,
       minInterestRate: 4.0,
       maxInterestRate: 9.0,
       minTermMonths: 6,
@@ -223,7 +225,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       openDate: '2015-09-20',
     },
     applicationInfo: {
-      requestedAmount: 3000,
+      requestedAmount: 30_000_000,
       requestedTerm: 24,
       repaymentMethod: 'BULLET',
       purpose: 'WORKING_CAPITAL',
@@ -290,8 +292,8 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     decidedAt: '2024-05-22T09:45:00',
     productInfo: {
       productName: '시설자금 대출',
-      minAmount: 500,
-      maxAmount: 8000,
+      minAmount: 5_000_000,
+      maxAmount: 80_000_000,
       minInterestRate: 3.5,
       maxInterestRate: 8.5,
       minTermMonths: 12,
@@ -315,7 +317,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       openDate: '2020-04-10',
     },
     applicationInfo: {
-      requestedAmount: 6000,
+      requestedAmount: 60_000_000,
       requestedTerm: 48,
       repaymentMethod: 'EQUAL_PRINCIPAL',
       purpose: 'FACILITY_CAPITAL',
@@ -380,8 +382,8 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
     assigneeName: '김은행',
     productInfo: {
       productName: '소상공인 성장 지원 대출',
-      minAmount: 500,
-      maxAmount: 10000,
+      minAmount: 5_000_000,
+      maxAmount: 100_000_000,
       minInterestRate: 3.0,
       maxInterestRate: 8.0,
       minTermMonths: 12,
@@ -405,7 +407,7 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
       openDate: '2022-01-10',
     },
     applicationInfo: {
-      requestedAmount: 7000,
+      requestedAmount: 70_000_000,
       requestedTerm: 48,
       repaymentMethod: 'EQUAL_PAYMENT',
       purpose: 'FACILITY_CAPITAL',
@@ -469,19 +471,19 @@ const MOCK_LOAN_DETAILS: LoanDetailData[] = [
 
 const MOCK_RECOMMENDATIONS: Record<number, RecommendationData> = {
   1: {
-    approvedAmount: 4500,
+    approvedAmount: 45_000_000,
     approvedRate: 4.5,
     approvedTerm: 36,
     repaymentMethod: 'EQUAL_PRINCIPAL',
   },
   2: {
-    approvedAmount: 8000,
+    approvedAmount: 80_000_000,
     approvedRate: 5.2,
     approvedTerm: 48,
     repaymentMethod: 'EQUAL_PRINCIPAL',
   },
   3: {
-    approvedAmount: 3000,
+    approvedAmount: 30_000_000,
     approvedRate: 3.8,
     approvedTerm: 24,
     repaymentMethod: 'BULLET',
@@ -503,7 +505,7 @@ const MOCK_MANAGER_APPROVALS: ManagerApprovalItem[] = [
     applicantName: '박지은',
     businessName: '지은테크',
     requestedByName: '이담당',
-    requestedAmount: 10000,
+    requestedAmount: 100_000_000,
   },
   {
     id: 4,
@@ -511,7 +513,7 @@ const MOCK_MANAGER_APPROVALS: ManagerApprovalItem[] = [
     applicantName: '장유진',
     businessName: '유진상사',
     requestedByName: '김은행',
-    requestedAmount: 7000,
+    requestedAmount: 70_000_000,
   },
   {
     id: 10,
@@ -519,9 +521,80 @@ const MOCK_MANAGER_APPROVALS: ManagerApprovalItem[] = [
     applicantName: '장미영',
     businessName: '미영식품',
     requestedByName: '김은행',
-    requestedAmount: 4500,
+    requestedAmount: 45_000_000,
   },
 ];
+
+// ─── Mock 심사 이력 저장소 ───────────────────────────────────────
+
+const MOCK_DECISIONS: Record<number, ReviewDecision[]> = {
+  1: [
+    {
+      status: 'SYSTEM_APPROVED',
+      comment: 'CB 점수 및 성장S등급 기준 충족. 자동 승인 처리되었습니다.',
+      reviewerName: '시스템',
+      reviewerRole: 'SYSTEM',
+      decidedAt: '2024-05-24T10:15:00',
+    },
+  ],
+  2: [
+    {
+      status: 'SYSTEM_APPROVED',
+      comment: 'CB 점수 및 성장S등급 기준 충족. 자동 승인 처리되었습니다.',
+      reviewerName: '시스템',
+      reviewerRole: 'SYSTEM',
+      decidedAt: '2024-05-23T09:10:00',
+    },
+    {
+      status: 'MANAGER_REVIEW',
+      comment: '신청 금액이 한도 상한에 근접하여 지점장 결재를 요청합니다.',
+      reviewerName: '이담당',
+      reviewerRole: 'BANK_TELLER',
+      decidedAt: '2024-05-23T11:30:00',
+    },
+  ],
+  3: [
+    {
+      status: 'SYSTEM_APPROVED',
+      comment: 'CB 점수 및 성장S등급 기준 충족. 자동 승인 처리되었습니다.',
+      reviewerName: '시스템',
+      reviewerRole: 'SYSTEM',
+      decidedAt: '2024-05-22T15:00:00',
+    },
+    {
+      status: 'APPROVED',
+      comment: '업력 안정성과 매출 성장률이 우수하여 승인합니다. 업종 내 상위 포지션을 유지하고 있어 상환 능력이 충분합니다.',
+      reviewerName: '김은행',
+      reviewerRole: 'BANK_TELLER',
+      decidedAt: '2024-05-23T14:30:00',
+    },
+  ],
+  5: [
+    {
+      status: 'SYSTEM_HOLD',
+      comment: '현금흐름 부족 및 세금 체납 이력으로 자동 승인 기준 미달. 담당자 수동 심사가 필요합니다.',
+      reviewerName: '시스템',
+      reviewerRole: 'SYSTEM',
+      decidedAt: '2024-05-20T09:05:00',
+    },
+  ],
+  7: [
+    {
+      status: 'SYSTEM_HOLD',
+      comment: '부채비율 과다 및 매출 감소 추세로 자동 승인 기준 미달. 담당자 수동 심사가 필요합니다.',
+      reviewerName: '시스템',
+      reviewerRole: 'SYSTEM',
+      decidedAt: '2024-05-21T11:25:00',
+    },
+    {
+      status: 'REJECTED',
+      comment: '신용등급 기준 미달 및 기존 대출 과다로 추가 대출이 어렵습니다. 부채 비율 개선 후 재신청을 권장합니다.',
+      reviewerName: '김은행',
+      reviewerRole: 'BANK_TELLER',
+      decidedAt: '2024-05-22T09:45:00',
+    },
+  ],
+};
 
 // ─── 공개 함수 (조회) ────────────────────────────────────────────
 
@@ -545,6 +618,25 @@ export function getMockRecommendation(id: number): RecommendationData {
       repaymentMethod: 'EQUAL_PRINCIPAL',
     }
   );
+}
+
+/**
+ * 심사 결과 탭 전용 데이터를 반환합니다.
+ * productInfo + applicationInfo + recommendation + decisions 을 포함합니다.
+ */
+export function getMockReviewTabData(id: number): ReviewTabData | undefined {
+  const detail = MOCK_LOAN_DETAILS.find((item) => item.id === id);
+  if (!detail) return undefined;
+
+  const recommendation = getMockRecommendation(id);
+  const decisions = MOCK_DECISIONS[id] ?? [];
+
+  return {
+    productInfo: detail.productInfo,
+    applicationInfo: detail.applicationInfo,
+    recommendation,
+    decisions,
+  };
 }
 
 /**
@@ -590,15 +682,26 @@ export function getMockLoanSummary(id: number): LoanSummary | undefined {
 import type { ApprovalPayload, RejectionPayload, EscalationPayload } from '@/types';
 
 /**
- * Mock 승인 처리: 상태를 APPROVED로 변경하고 승인 정보를 기록합니다.
+ * Mock 승인 처리: 상태를 APPROVED로 변경하고 심사 이력을 기록합니다.
  */
 export function mockApproveLoan(id: number, payload: ApprovalPayload): void {
   const detail = MOCK_LOAN_DETAILS.find((item) => item.id === id);
   if (!detail) return;
 
+  const prevStatus = detail.reviewStatus;
   detail.reviewStatus = 'APPROVED';
   detail.approvalComment = payload.comment ?? '';
   detail.decidedAt = new Date().toISOString();
+
+  // 심사 이력 추가
+  if (!MOCK_DECISIONS[id]) MOCK_DECISIONS[id] = [];
+  MOCK_DECISIONS[id].push({
+    status: 'APPROVED',
+    comment: payload.comment ?? '',
+    reviewerName: detail.assigneeName,
+    reviewerRole: prevStatus === 'MANAGER_REVIEW' ? 'BANK_MANAGER' : 'BANK_TELLER',
+    decidedAt: detail.decidedAt,
+  });
 
   // 지점장 결재 목록에서 제거
   const approvalIdx = MOCK_MANAGER_APPROVALS.findIndex((item) => item.id === id);
@@ -608,15 +711,26 @@ export function mockApproveLoan(id: number, payload: ApprovalPayload): void {
 }
 
 /**
- * Mock 거절 처리: 상태를 REJECTED로 변경하고 거절 사유를 기록합니다.
+ * Mock 거절 처리: 상태를 REJECTED로 변경하고 심사 이력을 기록합니다.
  */
 export function mockRejectLoan(id: number, payload: RejectionPayload): void {
   const detail = MOCK_LOAN_DETAILS.find((item) => item.id === id);
   if (!detail) return;
 
+  const prevStatus = detail.reviewStatus;
   detail.reviewStatus = 'REJECTED';
   detail.rejectionComment = payload.comment;
   detail.decidedAt = new Date().toISOString();
+
+  // 심사 이력 추가
+  if (!MOCK_DECISIONS[id]) MOCK_DECISIONS[id] = [];
+  MOCK_DECISIONS[id].push({
+    status: 'REJECTED',
+    comment: payload.comment,
+    reviewerName: detail.assigneeName,
+    reviewerRole: prevStatus === 'MANAGER_REVIEW' ? 'BANK_MANAGER' : 'BANK_TELLER',
+    decidedAt: detail.decidedAt,
+  });
 
   // 지점장 결재 목록에서 제거
   const approvalIdx = MOCK_MANAGER_APPROVALS.findIndex((item) => item.id === id);
@@ -626,13 +740,23 @@ export function mockRejectLoan(id: number, payload: RejectionPayload): void {
 }
 
 /**
- * Mock 에스컬레이션 처리: 상태를 MANAGER_REVIEW로 변경하고 결재 목록에 추가합니다.
+ * Mock 에스컬레이션 처리: 상태를 MANAGER_REVIEW로 변경하고 심사 이력을 기록합니다.
  */
 export function mockEscalateLoan(id: number, _payload: EscalationPayload): void {
   const detail = MOCK_LOAN_DETAILS.find((item) => item.id === id);
   if (!detail) return;
 
   detail.reviewStatus = 'MANAGER_REVIEW';
+
+  // 심사 이력 추가
+  if (!MOCK_DECISIONS[id]) MOCK_DECISIONS[id] = [];
+  MOCK_DECISIONS[id].push({
+    status: 'MANAGER_REVIEW',
+    comment: _payload.comment,
+    reviewerName: detail.assigneeName,
+    reviewerRole: 'BANK_TELLER',
+    decidedAt: new Date().toISOString(),
+  });
 
   // 이미 결재 목록에 있으면 중복 추가하지 않음
   const alreadyExists = MOCK_MANAGER_APPROVALS.some((item) => item.id === id);

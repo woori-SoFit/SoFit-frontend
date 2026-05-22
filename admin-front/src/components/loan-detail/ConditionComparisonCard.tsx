@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { LoanProductInfo, ApplicationInfo, RecommendationData, ReviewStatus, RepaymentMethod } from '@/types';
-import { formatCurrency, formatMonths } from '@/utils/formatters';
+import type { LoanProductInfo, ApplicationInfo, RecommendationData, RepaymentMethod, ReviewDecision } from '@/types';
+import { formatCurrency, formatMonths, formatDateTime } from '@/utils/formatters';
 import { REPAYMENT_METHOD_LABELS, PURPOSE_LABELS } from '@/constants/loanLabels';
 import {
   validateApprovalAmount,
@@ -27,23 +27,15 @@ interface ConditionComparisonCardProps {
   recommendation: RecommendationData | undefined;
   /** 추천값 로딩 중 */
   isLoading: boolean;
-  /** 현재 심사 상태 */
-  reviewStatus: ReviewStatus;
   /** 편집 가능 여부 (심사 처리 가능한 상태일 때만 true) */
   editable?: boolean;
   /** 편집된 승인 조건 변경 콜백 (유효한 값일 때만 호출) */
   onConditionChange?: (condition: EditableApprovalCondition | null) => void;
+  /** 심사 이력 (은행원 → 지점장 순서) */
+  decisions?: ReviewDecision[];
   /** 카드 하단에 렌더링할 추가 콘텐츠 (의견 입력 + 버튼 등) */
   children?: React.ReactNode;
 }
-
-const SYSTEM_DECISION_CONFIG: Partial<Record<ReviewStatus, { label: string; className: string }>> = {
-  SYSTEM_APPROVED: { label: '시스템 승인', className: 'bg-success/10 text-success' },
-  SYSTEM_HOLD: { label: '시스템 보류', className: 'bg-warning/10 text-warning' },
-  MANAGER_REVIEW: { label: '추가 심사 중', className: 'bg-info/10 text-info' },
-  APPROVED: { label: '최종 승인', className: 'bg-success/10 text-success' },
-  REJECTED: { label: '최종 거절', className: 'bg-error/10 text-error' },
-};
 
 const REPAYMENT_METHOD_OPTIONS: { value: RepaymentMethod; label: string }[] = [
   { value: 'EQUAL_PAYMENT', label: '원리금균등상환' },
@@ -60,13 +52,11 @@ export default function ConditionComparisonCard({
   applicationInfo,
   recommendation,
   isLoading,
-  reviewStatus,
   editable = false,
   onConditionChange,
+  decisions = [],
   children,
 }: ConditionComparisonCardProps) {
-  const decisionBadge = SYSTEM_DECISION_CONFIG[reviewStatus];
-
   const [isEditing, setIsEditing] = useState(false);
   const [amount, setAmount] = useState('');
   const [rate, setRate] = useState('');
@@ -138,7 +128,7 @@ export default function ConditionComparisonCard({
             }`}
           />
           {amount && !isAmountValid && (
-            <p className="mt-0.5 text-[10px] text-error">10~100,000</p>
+            <p className="mt-0.5 text-[10px] text-error">100만~10억</p>
           )}
         </div>
       ),
@@ -237,11 +227,6 @@ export default function ConditionComparisonCard({
               되돌리기
             </button>
           )}
-          {decisionBadge && (
-            <span className={`rounded-full px-3 py-1 text-xs font-medium ${decisionBadge.className}`}>
-              {decisionBadge.label}
-            </span>
-          )}
         </div>
       </div>
 
@@ -280,6 +265,77 @@ export default function ConditionComparisonCard({
       )}
 
       {children && <div className="mt-5">{children}</div>}
+
+      {/* 심사 이력 (최신순 스택) */}
+      {decisions.length > 0 && (
+        <div className="mt-5 border-t border-border-default pt-5">
+          <h4 className="mb-3 text-sm font-semibold text-text-primary">심사 이력</h4>
+          <div className="space-y-3">
+            {[...decisions].reverse().map((decision, idx) => {
+              const isApproved = decision.status === 'APPROVED';
+              const isRejected = decision.status === 'REJECTED';
+              const isHold = decision.status === 'SYSTEM_HOLD';
+
+              const dotColor = isApproved || decision.status === 'SYSTEM_APPROVED'
+                ? 'bg-success'
+                : isRejected
+                  ? 'bg-error'
+                  : isHold
+                    ? 'bg-warning'
+                    : 'bg-info';
+
+              const roleLabel =
+                decision.reviewerRole === 'SYSTEM'
+                  ? '시스템'
+                  : decision.reviewerRole === 'BANK_TELLER'
+                    ? '은행원'
+                    : '지점장';
+
+              const statusLabel =
+                decision.status === 'SYSTEM_APPROVED'
+                  ? '자동 승인'
+                  : decision.status === 'SYSTEM_HOLD'
+                    ? '자동 보류'
+                    : isApproved
+                      ? '승인'
+                      : isRejected
+                        ? '거절'
+                        : '추가 결재 요청';
+
+              return (
+                <div key={idx} className="flex gap-3">
+                  <span className={`mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full ${dotColor}`} />
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-text-primary">
+                        {decision.reviewerName}
+                      </span>
+                      <span className="text-xs text-text-disabled">({roleLabel})</span>
+                      <span className={`text-xs font-medium ${
+                        isApproved || decision.status === 'SYSTEM_APPROVED'
+                          ? 'text-success'
+                          : isRejected
+                            ? 'text-error'
+                            : isHold
+                              ? 'text-warning'
+                              : 'text-info'
+                      }`}>
+                        {statusLabel}
+                      </span>
+                      <span className="text-xs text-text-disabled">
+                        {formatDateTime(decision.decidedAt)}
+                      </span>
+                    </div>
+                    {decision.comment && (
+                      <p className="text-sm text-text-secondary">{decision.comment}</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </Card>
   );
 }

@@ -5,6 +5,7 @@ export {
   fetchLoanDetail,
   fetchShapResult,
   fetchRecommendation,
+  fetchReviewTabData,
   approveLoan,
   rejectLoan,
   requestEscalation,

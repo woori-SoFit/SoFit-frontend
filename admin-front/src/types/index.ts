@@ -182,9 +182,9 @@ export interface ShapResult {
 export interface LoanProductInfo {
   /** 상품명 */
   productName: string;
-  /** 최소 대출 금액 (만원) */
+  /** 최소 대출 금액 (원) */
   minAmount: number;
-  /** 최대 대출 금액 (만원) */
+  /** 최대 대출 금액 (원) */
   maxAmount: number;
   /** 최소 금리 (%) */
   minInterestRate: number;
@@ -240,6 +240,29 @@ export interface RecommendationData {
   repaymentMethod: RepaymentMethod;
 }
 
+/** 심사 결정 정보 */
+export interface ReviewDecision {
+  /** 심사 결정 상태 */
+  status: ReviewStatus;
+  /** 심사 의견 */
+  comment: string;
+  /** 심사자명 */
+  reviewerName: string;
+  /** 심사자 역할 */
+  reviewerRole: 'SYSTEM' | 'BANK_TELLER' | 'BANK_MANAGER';
+  /** 심사 일시 (ISO 8601) */
+  decidedAt: string;
+}
+
+/** 심사 결과 탭 전용 API 응답 */
+export interface ReviewTabData {
+  productInfo: LoanProductInfo;
+  applicationInfo: ApplicationInfo;
+  recommendation: RecommendationData;
+  /** 심사 이력 (은행원 → 지점장 순서, 비어있으면 미결정) */
+  decisions: ReviewDecision[];
+}
+
 /** 승인 요청 페이로드 */
 export interface ApprovalPayload {
   approvedAmount: number;
@@ -269,6 +292,6 @@ export interface ManagerApprovalItem {
   businessName: string;
   /** 요청 은행원명 */
   requestedByName: string;
-  /** 신청 금액 (만원) */
+  /** 신청 금액 (원) */
   requestedAmount: number;
 }

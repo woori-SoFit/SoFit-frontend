@@ -29,13 +29,22 @@ export function formatPhoneNumber(value: string): string {
 }
 
 /**
- * 통화 포맷팅 (만원 단위)
- * @param value - 양의 정수 (만원 단위)
- * @returns "N,NNN만원" 형식의 통화 문자열
+ * 통화 포맷팅 (원 단위)
+ * @param value - 양의 정수 (원 단위)
+ * @returns "N,NNN만원" 또는 "N,NNN억원" 등 읽기 쉬운 형식
  */
 export function formatCurrency(value: number): string {
-  const formatted = value.toLocaleString('ko-KR');
-  return `${formatted}만원`;
+  if (value >= 100_000_000) {
+    const eok = value / 100_000_000;
+    return Number.isInteger(eok) ? `${eok}억원` : `${eok.toFixed(1)}억원`;
+  }
+  if (value >= 10_000) {
+    const man = value / 10_000;
+    return Number.isInteger(man)
+      ? `${man.toLocaleString('ko-KR')}만원`
+      : `${man.toLocaleString('ko-KR', { maximumFractionDigits: 1 })}만원`;
+  }
+  return `${value.toLocaleString('ko-KR')}원`;
 }
 
 /**
