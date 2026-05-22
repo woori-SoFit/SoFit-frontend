@@ -80,14 +80,33 @@ export interface LoanProductDetailResponse {
 
 export interface LoanApplication {
   id: number;
-  productId: number;
+  productId?: number;
   productName: string;
   status: LoanApplicationStatus;
   requestedAmount: number;
-  requestedTerm: number;
-  purpose: string;
-  repaymentMethod: string;
+  requestedTerm?: number;
+  purpose?: string;
+  repaymentMethod?: string;
   appliedAt: string;
+}
+
+/** 심사 중인 대출 목록 API 응답 아이템 */
+export interface LoanApplicationInProgressItem {
+  applicationId: number;
+  productName: string;
+  requestedAmount: number;
+  status: LoanApplicationStatus;
+  appliedAt: string;
+}
+
+/** 심사 중인 대출 목록 API 응답 */
+export interface LoanApplicationsInProgressResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    loanApplications: LoanApplicationInProgressItem[];
+  };
 }
 
 export interface LoanApprovalDetail {

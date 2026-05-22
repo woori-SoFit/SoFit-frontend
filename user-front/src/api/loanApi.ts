@@ -7,7 +7,9 @@ import type {
   LoanProductListResponse,
   LoanProductDetail,
   LoanProductDetailResponse,
-  LoanProductOptionsResponse
+  LoanProductOptionsResponse,
+  LoanApplication,
+  LoanApplicationsInProgressResponse,
 } from "@/types/loan";
 import type {
   CreateLoanApplicationRequest,
@@ -46,4 +48,19 @@ export async function createLoanApplication(
     body
   );
   return res.data;
+}
+
+/** 심사 중인 대출 목록 조회 */
+export async function fetchLoanApplicationsInProgress(): Promise<LoanApplication[]> {
+  const res = await axiosInstance.get<LoanApplicationsInProgressResponse>(
+    "/loan-applications"
+  );
+  // applicationId → id 매핑
+  return (res.data?.result?.loanApplications ?? []).map((item) => ({
+    id: item.applicationId,
+    productName: item.productName,
+    requestedAmount: item.requestedAmount,
+    status: item.status,
+    appliedAt: item.appliedAt,
+  }));
 }
