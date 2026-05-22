@@ -1,24 +1,8 @@
 import type { CustomerInfo } from '@/types';
-import { maskResidentNumber, formatPhoneNumber, displayValue } from '@/utils/formatters';
+import { maskResidentNumber, formatPhoneNumber, displayValue, formatDateTime } from '@/utils/formatters';
 
 interface CustomerInfoCardProps {
   data: CustomerInfo;
-}
-
-/**
- * 가입일시를 "YYYY.MM.DD HH:mm" 형식으로 변환한다.
- */
-function formatDateTime(isoDateTime: string): string {
-  const date = new Date(isoDateTime);
-  if (isNaN(date.getTime())) return isoDateTime;
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-
-  return `${year}.${month}.${day} ${hours}:${minutes}`;
 }
 
 /**

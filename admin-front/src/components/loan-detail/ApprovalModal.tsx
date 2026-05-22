@@ -23,7 +23,7 @@ interface ApprovalModalProps {
 }
 
 const REPAYMENT_METHOD_OPTIONS: { value: RepaymentMethod; label: string }[] = [
-  { value: 'EQUAL_PRINCIPAL_INTEREST', label: '원리금균등상환' },
+  { value: 'EQUAL_PRINCIPAL', label: '원리금균등상환' },
   { value: 'EQUAL_PRINCIPAL', label: '원금균등상환' },
   { value: 'BULLET', label: '만기일시상환' },
 ];
@@ -53,7 +53,7 @@ export default function ApprovalModal({
   const [approvedAmount, setApprovedAmount] = useState('');
   const [interestRate, setInterestRate] = useState('');
   const [loanTermMonths, setLoanTermMonths] = useState('');
-  const [repaymentMethod, setRepaymentMethod] = useState<RepaymentMethod>('EQUAL_PRINCIPAL_INTEREST');
+  const [repaymentMethod, setRepaymentMethod] = useState<RepaymentMethod>('EQUAL_PRINCIPAL');
   const [comment, setComment] = useState('');
 
   // 모달 열릴 때 상태 초기화 → 추천값 로드 후 채우기
@@ -64,7 +64,7 @@ export default function ApprovalModal({
       setApprovedAmount('');
       setInterestRate('');
       setLoanTermMonths('');
-      setRepaymentMethod('EQUAL_PRINCIPAL_INTEREST');
+      setRepaymentMethod('EQUAL_PRINCIPAL');
       setComment('');
 
       // 캐시된 추천값이 이미 있으면 즉시 채움
