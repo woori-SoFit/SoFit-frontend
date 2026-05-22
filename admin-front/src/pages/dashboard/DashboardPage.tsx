@@ -40,7 +40,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-6">
       {/* 헤더: 제목 + 건수 (왼쪽) / 필터 (오른쪽) */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">

@@ -24,7 +24,7 @@ export default function ManagerApprovalPage() {
   const { data, isLoading, isError, refetch } = useManagerApprovals();
 
   return (
-    <div className="p-8">
+    <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-text-primary">지점장 결재</h1>

@@ -56,8 +56,7 @@ export async function fetchManagerApprovals(): Promise<ManagerApprovalItem[]> {
  * 향후 실제 API 연동 시 axiosInstance.post(`/api/loans/${id}/approve`, payload)로 교체합니다.
  */
 export async function approveLoan(id: number, payload: ApprovalPayload): Promise<void> {
-  // mock: 성공 시뮬레이션 (약간의 지연)
-  console.log(`[Mock] approveLoan id=${id}`, payload);
+  if (import.meta.env.DEV) console.log(`[Mock] approveLoan id=${id}`, payload);
   return Promise.resolve();
 }
 
@@ -66,7 +65,7 @@ export async function approveLoan(id: number, payload: ApprovalPayload): Promise
  * 향후 실제 API 연동 시 axiosInstance.post(`/api/loans/${id}/reject`, payload)로 교체합니다.
  */
 export async function rejectLoan(id: number, payload: RejectionPayload): Promise<void> {
-  console.log(`[Mock] rejectLoan id=${id}`, payload);
+  if (import.meta.env.DEV) console.log(`[Mock] rejectLoan id=${id}`, payload);
   return Promise.resolve();
 }
 
@@ -75,7 +74,7 @@ export async function rejectLoan(id: number, payload: RejectionPayload): Promise
  * 향후 실제 API 연동 시 axiosInstance.post(`/api/loans/${id}/escalate`, payload)로 교체합니다.
  */
 export async function requestEscalation(id: number, payload: EscalationPayload): Promise<void> {
-  console.log(`[Mock] requestEscalation id=${id}`, payload);
+  if (import.meta.env.DEV) console.log(`[Mock] requestEscalation id=${id}`, payload);
   return Promise.resolve();
 }
 
@@ -86,7 +85,7 @@ export async function requestEscalation(id: number, payload: EscalationPayload):
  * 향후 실제 API 연동 시 axiosInstance.post(`/api/loans/${id}/manager-approve`, payload)로 교체합니다.
  */
 export async function managerApproveLoan(id: number, payload: ApprovalPayload): Promise<void> {
-  console.log(`[Mock] managerApproveLoan id=${id}`, payload);
+  if (import.meta.env.DEV) console.log(`[Mock] managerApproveLoan id=${id}`, payload);
   return Promise.resolve();
 }
 
@@ -95,6 +94,6 @@ export async function managerApproveLoan(id: number, payload: ApprovalPayload): 
  * 향후 실제 API 연동 시 axiosInstance.post(`/api/loans/${id}/manager-reject`, payload)로 교체합니다.
  */
 export async function managerRejectLoan(id: number, payload: RejectionPayload): Promise<void> {
-  console.log(`[Mock] managerRejectLoan id=${id}`, payload);
+  if (import.meta.env.DEV) console.log(`[Mock] managerRejectLoan id=${id}`, payload);
   return Promise.resolve();
 }

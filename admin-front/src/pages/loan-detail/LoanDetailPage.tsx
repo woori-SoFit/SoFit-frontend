@@ -4,6 +4,7 @@ import { useAuthMe } from '@/hooks/useAuthMe';
 import { useLoanDetail } from '@/hooks/useLoanDetail';
 import { useLoanMutations } from '@/hooks/useLoanMutations';
 import { useRecommendation } from '@/hooks/useRecommendation';
+import { formatDate } from '@/utils/formatters';
 import StatusBadge from '@/components/common/StatusBadge';
 import CustomerInfoCard from '@/components/loan-detail/CustomerInfoCard';
 import BusinessInfoCard from '@/components/loan-detail/BusinessInfoCard';
@@ -27,15 +28,6 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'sgrade', label: 'S등급 분석' },
   { key: 'review', label: '심사 결과' },
 ];
-
-function formatDate(isoDate: string): string {
-  const date = new Date(isoDate);
-  if (isNaN(date.getTime())) return isoDate;
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}.${month}.${day}`;
-}
 
 export default function LoanDetailPage() {
   const { id: idParam } = useParams<{ id: string }>();
@@ -134,14 +126,13 @@ export default function LoanDetailPage() {
 
   const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && status === 'UNDER_REVIEW';
   const canManagerAct = userRole === 'ADMIN_BANK_MANAGER' && status === 'MANAGER_REVIEW';
-  const canDevAct = userRole === 'ADMIN_DEV' && (status === 'UNDER_REVIEW' || status === 'MANAGER_REVIEW');
 
-  const showApproveReject = canTellerAct || canManagerAct || canDevAct;
-  const showEscalation = canTellerAct || (userRole === 'ADMIN_DEV' && status === 'UNDER_REVIEW');
+  const showApproveReject = canTellerAct || canManagerAct;
+  const showEscalation = canTellerAct;
   const isDecided = status === 'APPROVED' || status === 'REJECTED';
 
   const handleApprove = (payload: ApprovalPayload) => {
-    if (userRole === 'ADMIN_BANK_MANAGER' || (userRole === 'ADMIN_DEV' && status === 'MANAGER_REVIEW')) {
+    if (userRole === 'ADMIN_BANK_MANAGER') {
       mutations.managerApprove.mutate(payload, { onSuccess: () => setIsApprovalOpen(false) });
     } else {
       mutations.approve.mutate(payload, { onSuccess: () => setIsApprovalOpen(false) });
@@ -149,7 +140,7 @@ export default function LoanDetailPage() {
   };
 
   const handleReject = (payload: RejectionPayload) => {
-    if (userRole === 'ADMIN_BANK_MANAGER' || (userRole === 'ADMIN_DEV' && status === 'MANAGER_REVIEW')) {
+    if (userRole === 'ADMIN_BANK_MANAGER') {
       mutations.managerReject.mutate(payload, { onSuccess: () => setIsRejectionOpen(false) });
     } else {
       mutations.reject.mutate(payload, { onSuccess: () => setIsRejectionOpen(false) });
@@ -168,7 +159,7 @@ export default function LoanDetailPage() {
   const escalateError = mutations.escalate.error;
 
   return (
-    <div className="p-8 scroll-">
+    <div className="p-6">
       {/* 헤더 */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -271,11 +262,12 @@ export default function LoanDetailPage() {
             applicationCondition={data.applicationCondition}
             recommendation={recommendation}
             isLoading={isRecommendationLoading}
+            reviewStatus={data.reviewStatus}
           />
 
           {/* 심사 처리 버튼 */}
           {!isDecided && (showApproveReject || showEscalation) && (
-            <div className="flex items-center justify-end gap-3 border-t border-border-default pt-6">
+            <div className="flex items-center justify-end gap-3">
               {showEscalation && (
                 <button
                   type="button"
@@ -308,9 +300,19 @@ export default function LoanDetailPage() {
 
           {isDecided && (
             <div className="rounded-lg border border-border-default bg-bg-surface p-6 shadow-card">
-              <p className="text-sm text-text-secondary">
-                이 건은 이미 {status === 'APPROVED' ? '승인' : '거절'} 처리되었습니다.
-              </p>
+              {status === 'APPROVED' ? (
+                <p className="text-sm text-text-secondary">이 건은 이미 승인 처리되었습니다.</p>
+              ) : (
+                <div>
+                  <p className="mb-2 text-sm font-medium text-error">이 건은 거절 처리되었습니다.</p>
+                  {data.rejectionComment && (
+                    <p className="text-sm text-text-secondary">
+                      <span className="font-medium text-text-primary">거절 사유: </span>
+                      {data.rejectionComment}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

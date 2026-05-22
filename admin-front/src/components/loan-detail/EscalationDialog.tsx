@@ -49,12 +49,15 @@ export default function EscalationDialog({
     }
   }, [error]);
 
+  const isCommentValid = comment.trim().length > 0;
+
   const handleSubmit = useCallback(() => {
+    if (!isCommentValid) return;
     const payload: EscalationPayload = {
-      comment: comment.trim() || undefined,
+      comment: comment.trim(),
     };
     onSubmit(payload);
-  }, [comment, onSubmit]);
+  }, [comment, isCommentValid, onSubmit]);
 
   if (!isOpen) return null;
 
@@ -76,7 +79,7 @@ export default function EscalationDialog({
         {/* 의견 입력 */}
         <div className="mb-5">
           <label htmlFor="escalationComment" className="mb-1 block text-xs font-medium text-text-secondary">
-            의견 (선택, 최대 500자)
+            의견 (필수, 최대 500자)
           </label>
           <textarea
             id="escalationComment"
@@ -103,7 +106,7 @@ export default function EscalationDialog({
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={isSubmitting}
+            disabled={!isCommentValid || isSubmitting}
             className="rounded-md bg-info px-4 py-2 text-sm font-medium text-text-inverse transition-colors hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? '요청 중...' : '요청'}

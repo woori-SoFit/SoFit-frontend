@@ -56,32 +56,43 @@ export default function ApprovalModal({
   const [repaymentMethod, setRepaymentMethod] = useState<RepaymentMethod>('EQUAL_PRINCIPAL_INTEREST');
   const [comment, setComment] = useState('');
 
-  // 추천값 로드 시 초기값 설정
+  // 모달 열릴 때 상태 초기화 → 추천값 로드 후 채우기
   useEffect(() => {
-    if (recommendation) {
-      setApprovedAmount(String(recommendation.approvedAmount));
-      setInterestRate(String(recommendation.interestRate));
-      setLoanTermMonths(String(recommendation.loanTermMonths));
-      setRepaymentMethod(recommendation.repaymentMethod);
-    }
-  }, [recommendation]);
-
-  // 모달 닫힐 때 상태 초기화
-  useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      // 모달이 열릴 때마다 초기화 먼저
       setIsEditing(false);
       setApprovedAmount('');
       setInterestRate('');
       setLoanTermMonths('');
       setRepaymentMethod('EQUAL_PRINCIPAL_INTEREST');
       setComment('');
+
+      // 캐시된 추천값이 이미 있으면 즉시 채움
+      if (recommendation) {
+        setApprovedAmount(String(recommendation.approvedAmount));
+        setInterestRate(String(recommendation.interestRate));
+        setLoanTermMonths(String(recommendation.loanTermMonths));
+        setRepaymentMethod(recommendation.repaymentMethod);
+      }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  // 추천값 fetch 완료 시 초기값 설정 (모달 열린 상태에서만)
+  useEffect(() => {
+    if (isOpen && recommendation) {
+      setApprovedAmount(String(recommendation.approvedAmount));
+      setInterestRate(String(recommendation.interestRate));
+      setLoanTermMonths(String(recommendation.loanTermMonths));
+      setRepaymentMethod(recommendation.repaymentMethod);
+    }
+  }, [recommendation]); // isOpen 의존성 제외: fetch 완료 시점에만 반응
 
   const isAmountValid = approvedAmount !== '' && validateApprovalAmount(Number(approvedAmount));
   const isRateValid = interestRate !== '' && validateInterestRate(Number(interestRate));
   const isTermValid = loanTermMonths !== '' && validateLoanTerm(Number(loanTermMonths));
-  const isFormValid = isAmountValid && isRateValid && isTermValid;
+  const isCommentValid = comment.trim().length > 0;
+  const isFormValid = isAmountValid && isRateValid && isTermValid && isCommentValid;
 
   const handleSubmit = useCallback(() => {
     if (!isFormValid) return;
@@ -91,7 +102,7 @@ export default function ApprovalModal({
       interestRate: Number(interestRate),
       loanTermMonths: Number(loanTermMonths),
       repaymentMethod,
-      comment: comment.trim() || undefined,
+      comment: comment.trim(),
     };
     onSubmit(payload);
   }, [isFormValid, approvedAmount, interestRate, loanTermMonths, repaymentMethod, comment, onSubmit]);
@@ -104,7 +115,8 @@ export default function ApprovalModal({
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
       {/* 모달 본체 */}
-      <div className="relative w-full max-w-lg rounded-xl bg-bg-surface p-6 shadow-lg">
+      <div className="relative w-full max-w-lg rounded-xl bg-bg-surface shadow-lg overflow-hidden">
+        <div className="p-6 overflow-y-auto max-h-[80vh]">
         <h2 className="mb-5 text-lg font-semibold text-text-primary">대출 승인</h2>
 
         {/* 추천값 로딩 상태 */}
@@ -164,7 +176,7 @@ export default function ApprovalModal({
             {/* 의견 (항상 편집 가능) */}
             <div>
               <label htmlFor="approvalComment" className="mb-1 block text-xs font-medium text-text-secondary">
-                의견 (선택, 최대 500자)
+                의견 (필수, 최대 500자)
               </label>
               <textarea
                 id="approvalComment"
@@ -215,7 +227,7 @@ export default function ApprovalModal({
                 type="number"
                 value={approvedAmount}
                 onChange={(e) => setApprovedAmount(e.target.value)}
-                placeholder="100,000 ~ 1,000,000,000"
+                placeholder="10 ~ 100,000"
                 className={`w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors ${
                   approvedAmount && !isAmountValid
                     ? 'border-error focus:border-error'
@@ -223,7 +235,7 @@ export default function ApprovalModal({
                 }`}
               />
               {approvedAmount && !isAmountValid && (
-                <p className="mt-1 text-xs text-error">10만 이상 10억 이하의 정수를 입력해 주세요.</p>
+                <p className="mt-1 text-xs text-error">10만원(10) 이상 10억원(100,000) 이하의 정수를 입력해 주세요.</p>
               )}
             </div>
 
@@ -294,7 +306,7 @@ export default function ApprovalModal({
             {/* 의견 */}
             <div>
               <label htmlFor="approvalCommentEdit" className="mb-1 block text-xs font-medium text-text-secondary">
-                의견 (선택, 최대 500자)
+                의견 (필수, 최대 500자)
               </label>
               <textarea
                 id="approvalCommentEdit"
@@ -314,9 +326,10 @@ export default function ApprovalModal({
         {error && (
           <p className="mt-3 text-sm text-error">승인 처리에 실패했습니다. 다시 시도해 주세요.</p>
         )}
+        </div>
 
         {/* 버튼 영역 */}
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="flex justify-end gap-3 px-6 py-4">
           <button
             type="button"
             onClick={onClose}

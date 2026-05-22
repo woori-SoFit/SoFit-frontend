@@ -1,5 +1,6 @@
-import type { ApplicationCondition, ApplicantInput, RepaymentMethod, LoanPurpose, IncomeType, LoanProductInfo, TermsAgreement } from '@/types';
+import type { ApplicationCondition, ApplicantInput, IncomeType, LoanProductInfo, TermsAgreement } from '@/types';
 import { formatCurrency, formatMonths, displayValue } from '@/utils/formatters';
+import { REPAYMENT_METHOD_LABELS, PURPOSE_LABELS } from '@/constants/loanLabels';
 
 interface ApplicationRequestCardProps {
   condition: ApplicationCondition;
@@ -7,17 +8,6 @@ interface ApplicationRequestCardProps {
   productInfo: LoanProductInfo;
   termsAgreements: TermsAgreement[];
 }
-
-const REPAYMENT_METHOD_LABELS: Record<RepaymentMethod, string> = {
-  EQUAL_PRINCIPAL_INTEREST: '원리금균등',
-  EQUAL_PRINCIPAL: '원금균등',
-  BULLET: '만기일시',
-};
-
-const PURPOSE_LABELS: Record<LoanPurpose, string> = {
-  FACILITY: '시설 자금',
-  WORKING_CAPITAL: '운전 자금',
-};
 
 const INCOME_TYPE_LABELS: Record<IncomeType, string> = {
   SALARY: '근로소득',

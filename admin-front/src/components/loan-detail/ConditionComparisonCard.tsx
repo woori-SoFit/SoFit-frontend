@@ -1,5 +1,6 @@
-import type { LoanProductInfo, ApplicationCondition, RecommendationData, RepaymentMethod, LoanPurpose } from '@/types';
+import type { LoanProductInfo, ApplicationCondition, RecommendationData, ReviewStatus } from '@/types';
 import { formatCurrency, formatMonths } from '@/utils/formatters';
+import { REPAYMENT_METHOD_LABELS, PURPOSE_LABELS } from '@/constants/loanLabels';
 
 interface ConditionComparisonCardProps {
   /** 대출 상품 기준 */
@@ -10,19 +11,14 @@ interface ConditionComparisonCardProps {
   recommendation: RecommendationData | undefined;
   /** 추천값 로딩 중 */
   isLoading: boolean;
+  /** 현재 심사 상태 */
+  reviewStatus: ReviewStatus;
 }
 
-/** 상환 방식 ENUM → 한글 라벨 매핑 */
-const REPAYMENT_METHOD_LABELS: Record<RepaymentMethod, string> = {
-  EQUAL_PRINCIPAL_INTEREST: '원리금균등상환',
-  EQUAL_PRINCIPAL: '원금균등상환',
-  BULLET: '만기일시상환',
-};
-
-/** 자금 용도 ENUM → 한글 라벨 매핑 */
-const PURPOSE_LABELS: Record<LoanPurpose, string> = {
-  FACILITY: '시설 자금',
-  WORKING_CAPITAL: '운전 자금',
+const SYSTEM_DECISION_CONFIG: Partial<Record<ReviewStatus, { label: string; className: string }>> = {
+  APPROVED: { label: '시스템 승인', className: 'bg-success/10 text-success' },
+  REJECTED: { label: '시스템 거절', className: 'bg-error/10 text-error' },
+  MANAGER_REVIEW: { label: '추가 심사 요청', className: 'bg-info/10 text-info' },
 };
 
 /**
@@ -34,7 +30,9 @@ export default function ConditionComparisonCard({
   applicationCondition,
   recommendation,
   isLoading,
+  reviewStatus,
 }: ConditionComparisonCardProps) {
+  const decisionBadge = SYSTEM_DECISION_CONFIG[reviewStatus];
   const rows = [
     {
       label: '대출 금액',
@@ -72,6 +70,11 @@ export default function ConditionComparisonCard({
     <div className="rounded-lg border border-border-default bg-bg-surface p-5 shadow-card">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-text-primary">{product.productName}</h3>
+        {decisionBadge && (
+          <span className={`rounded-full px-3 py-1 text-xs font-medium ${decisionBadge.className}`}>
+            {decisionBadge.label}
+          </span>
+        )}
       </div>
 
       {isLoading ? (

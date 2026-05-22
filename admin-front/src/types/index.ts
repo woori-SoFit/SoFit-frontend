@@ -94,8 +94,8 @@ export interface TermsAgreement {
   termName: string;
   /** 동의 여부 */
   agreed: boolean;
-  /** 동의 일시 (ISO 8601). 미동의 시 빈 문자열 */
-  agreedAt: string;
+  /** 동의 일시 (ISO 8601). 미동의 시 null */
+  agreedAt: string | null;
 }
 
 /** 신청 조건 */
@@ -132,18 +132,18 @@ export type InsurancePaymentStatus = 'PAID' | 'PENDING' | 'OVERDUE';
 
 /** 시스템 수집 정보 (마이비즈데이터) */
 export interface SystemCollectedData {
-  annual_income: number;
-  existing_loan_count: number;
-  monthly_revenue: number;
-  monthly_revenue_growth_rate: number;
-  cash_flow: number;
-  account_balance: number;
-  business_age_months: number;
-  vat_filing_status: VatFilingStatus;
-  tax_overdue: boolean;
-  insurance_payment_status: InsurancePaymentStatus;
-  industry_sales_rank: number;
-  industry_profit_rank: number;
+  annualIncome: number;
+  existingLoanCount: number;
+  monthlyRevenue: number;
+  monthlyRevenueGrowthRate: number;
+  cashFlow: number;
+  accountBalance: number;
+  businessAgeMonths: number;
+  vatFilingStatus: VatFilingStatus;
+  taxOverdue: boolean;
+  insurancePaymentStatus: InsurancePaymentStatus;
+  industrySalesRank: number;
+  industryProfitRank: number;
 }
 
 /** SHAP 상세 항목 */
@@ -213,6 +213,8 @@ export interface LoanDetailData {
   /** 가산점 */
   bonusPoints: number | null;
   shapResult: ShapResult | null;
+  /** 거절 사유 (REJECTED 상태일 때만 존재) */
+  rejectionComment?: string;
 }
 
 /** 시스템 추천값 */
@@ -243,7 +245,8 @@ export interface RejectionPayload {
 
 /** 추가 결재 요청 페이로드 */
 export interface EscalationPayload {
-  comment?: string;
+  /** 요청 의견 (필수) */
+  comment: string;
 }
 
 /** 지점장 결재 목록 항목 */

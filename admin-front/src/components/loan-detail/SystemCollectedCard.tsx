@@ -79,29 +79,29 @@ export default function SystemCollectedCard({ data }: SystemCollectedCardProps) 
         <div className="pr-6">
           <h4 className="mb-3 text-xs font-semibold text-text-secondary">재무 현황</h4>
           <dl className="space-y-2">
-            <InfoRow label="연 소득" value={safeFormatCurrency(data.annual_income)} />
+            <InfoRow label="연 소득" value={safeFormatCurrency(data.annualIncome)} />
             <InfoRow
               label="보유 대출 건수"
-              value={data.existing_loan_count != null ? `${data.existing_loan_count}건` : '-'}
+              value={data.existingLoanCount != null ? `${data.existingLoanCount}건` : '-'}
             />
-            <InfoRow label="월 매출액" value={safeFormatCurrency(data.monthly_revenue)} />
+            <InfoRow label="월 매출액" value={safeFormatCurrency(data.monthlyRevenue)} />
             <InfoRow
               label="전월 대비 증감률"
               value={
-                data.monthly_revenue_growth_rate != null
-                  ? formatPercentage(data.monthly_revenue_growth_rate)
+                data.monthlyRevenueGrowthRate != null
+                  ? formatPercentage(data.monthlyRevenueGrowthRate)
                   : '-'
               }
               valueClassName={
-                data.monthly_revenue_growth_rate != null
-                  ? data.monthly_revenue_growth_rate >= 0
+                data.monthlyRevenueGrowthRate != null
+                  ? data.monthlyRevenueGrowthRate >= 0
                     ? 'text-blue-600'
                     : 'text-red-600'
                   : 'text-text-primary'
               }
             />
-            <InfoRow label="현금흐름" value={safeFormatCurrency(data.cash_flow)} />
-            <InfoRow label="계좌 잔액" value={safeFormatCurrency(data.account_balance)} />
+            <InfoRow label="현금흐름" value={safeFormatCurrency(data.cashFlow)} />
+            <InfoRow label="계좌 잔액" value={safeFormatCurrency(data.accountBalance)} />
           </dl>
         </div>
 
@@ -114,16 +114,16 @@ export default function SystemCollectedCard({ data }: SystemCollectedCardProps) 
               <InfoRow
                 label="업력"
                 value={
-                  data.business_age_months != null
-                    ? formatBusinessAge(data.business_age_months)
+                  data.businessAgeMonths != null
+                    ? formatBusinessAge(data.businessAgeMonths)
                     : '-'
                 }
               />
               <div className="flex items-center justify-between">
                 <dt className="text-xs text-text-secondary">부가세 신고</dt>
                 <dd>
-                  {data.vat_filing_status != null ? (
-                    <StatusBadge {...VAT_STATUS_CONFIG[data.vat_filing_status]} />
+                  {data.vatFilingStatus != null ? (
+                    <StatusBadge {...VAT_STATUS_CONFIG[data.vatFilingStatus]} />
                   ) : (
                     <span className="text-sm font-medium text-text-primary">-</span>
                   )}
@@ -132,8 +132,8 @@ export default function SystemCollectedCard({ data }: SystemCollectedCardProps) 
               <div className="flex items-center justify-between">
                 <dt className="text-xs text-text-secondary">세금 체납</dt>
                 <dd>
-                  {data.tax_overdue != null ? (
-                    data.tax_overdue ? (
+                  {data.taxOverdue != null ? (
+                    data.taxOverdue ? (
                       <StatusBadge label="체납" className="bg-red-100 text-red-700" />
                     ) : (
                       <span className="text-sm font-medium text-text-primary">없음</span>
@@ -146,8 +146,8 @@ export default function SystemCollectedCard({ data }: SystemCollectedCardProps) 
               <div className="flex items-center justify-between">
                 <dt className="text-xs text-text-secondary">4대보험 납부</dt>
                 <dd>
-                  {data.insurance_payment_status != null ? (
-                    <StatusBadge {...INSURANCE_STATUS_CONFIG[data.insurance_payment_status]} />
+                  {data.insurancePaymentStatus != null ? (
+                    <StatusBadge {...INSURANCE_STATUS_CONFIG[data.insurancePaymentStatus]} />
                   ) : (
                     <span className="text-sm font-medium text-text-primary">-</span>
                   )}
@@ -165,16 +165,16 @@ export default function SystemCollectedCard({ data }: SystemCollectedCardProps) 
               <InfoRow
                 label="업종 내 매출 순위"
                 value={
-                  data.industry_sales_rank != null
-                    ? `상위 ${data.industry_sales_rank.toFixed(1)}%`
+                  data.industrySalesRank != null
+                    ? `상위 ${data.industrySalesRank.toFixed(1)}%`
                     : '-'
                 }
               />
               <InfoRow
                 label="업종 내 수익성 순위"
                 value={
-                  data.industry_profit_rank != null
-                    ? `상위 ${data.industry_profit_rank.toFixed(1)}%`
+                  data.industryProfitRank != null
+                    ? `상위 ${data.industryProfitRank.toFixed(1)}%`
                     : '-'
                 }
               />

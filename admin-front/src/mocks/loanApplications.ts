@@ -16,7 +16,7 @@ const MOCK_DATA: LoanApplication[] = [
     applicantName: '박지은',
     businessName: '지은테크',
     productName: '소상공인 성장 지원 대출',
-    reviewStatus: 'UNDER_REVIEW',
+    reviewStatus: 'MANAGER_REVIEW',
     assigneeName: '이담당',
   },
   {
@@ -25,7 +25,7 @@ const MOCK_DATA: LoanApplication[] = [
     applicantName: '최상호',
     businessName: '상호푸드',
     productName: '소상공인 운전자금 대출',
-    reviewStatus: 'UNDER_REVIEW',
+    reviewStatus: 'APPROVED',
     assigneeName: '김은행',
   },
   {
