@@ -26,3 +26,10 @@ export const BIZ_DATA_KEYS = {
   all: ["bizData"] as const,
   dashboard: () => [...BIZ_DATA_KEYS.all, "dashboard"] as const,
 } as const;
+
+export const MYPAGE_KEYS = {
+  all: ["mypage"] as const,
+  profile: () => [...MYPAGE_KEYS.all, "profile"] as const,
+  business: () => [...MYPAGE_KEYS.all, "business"] as const,
+  notifications: () => [...MYPAGE_KEYS.all, "notifications"] as const,
+} as const;
