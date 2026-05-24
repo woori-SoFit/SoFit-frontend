@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 interface PageHeaderProps {
   title: string;
@@ -7,8 +7,9 @@ interface PageHeaderProps {
 }
 
 /**
- * PageHeader — 뒤로가기 버튼 + 타이틀을 표시하는 재사용 가능한 헤더
+ * PageHeader — 뒤로가기 버튼 + 타이틀(중앙 배치)을 표시하는 재사용 가능한 헤더
  *
+ * StepLayout과 동일한 패턴 (ChevronLeft + 타이틀 중앙 고정)
  * onBack 미지정 시 navigate(-1) 호출
  */
 export function PageHeader({ title, onBack }: PageHeaderProps) {
@@ -23,16 +24,23 @@ export function PageHeader({ title, onBack }: PageHeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-40 flex items-center gap-3 bg-white px-4 h-14 border-b border-gray-200">
-      <button
-        type="button"
-        onClick={handleBack}
-        aria-label="뒤로가기"
-        className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors"
-      >
-        <ArrowLeft size={20} className="text-text-primary" />
-      </button>
-      <h1 className="text-lg font-semibold text-text-primary">{title}</h1>
+    <header className="sticky top-0 z-40 bg-white px-2 h-14">
+      <div className="flex items-center h-full relative">
+        {/* 뒤로가기 */}
+        <button
+          type="button"
+          onClick={handleBack}
+          aria-label="뒤로가기"
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors z-10"
+        >
+          <ChevronLeft size={26} className="text-gray-700" />
+        </button>
+
+        {/* 타이틀 — 중앙 고정 */}
+        <h1 className="absolute inset-0 flex items-center justify-center text-base font-semibold text-text-primary pointer-events-none">
+          {title}
+        </h1>
+      </div>
     </header>
   );
 }

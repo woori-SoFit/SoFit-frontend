@@ -96,8 +96,8 @@ SoFit 고객용 앱(user-front)의 마이페이지 UI를 구현한다. 기존 pl
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 2.1, 2.2, 2.3, 3.1, 3.2, 3.3, 4.1, 4.2, 4.3, 4.4, 5.1, 5.2, 5.3, 5.4, 5.5_
   - 빌드 검증: `tsc -b` 통과 확인
 
-- [ ] 7. ProfilePage 구현
-  - [~] 7.1 `src/pages/mypage/ProfilePage.tsx` 완성
+- [x] 7. ProfilePage 구현
+  - [x] 7.1 `src/pages/mypage/ProfilePage.tsx` 완성
     - PageHeader (title: "내 정보 확인")
     - useMe 훅으로 사용자 정보 조회 (name, loginId)
     - 연락처 정보 표시 (useMe 또는 별도 프로필 API)
@@ -106,8 +106,8 @@ SoFit 고객용 앱(user-front)의 마이페이지 UI를 구현한다. 기존 pl
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
   - 빌드 검증: `tsc -b` 통과 확인
 
-- [ ] 8. BusinessInfoPage 구현
-  - [~] 8.1 `src/pages/mypage/BusinessInfoPage.tsx` 완성
+- [x] 8. BusinessInfoPage 구현
+  - [x] 8.1 `src/pages/mypage/BusinessInfoPage.tsx` 완성
     - PageHeader (title: "사업자 정보 확인")
     - useBusinessInfo 훅으로 사업자 정보 조회
     - 표시 항목: 사업자등록번호, 상호명, 업종, 개업일, 대표자명
