@@ -8,7 +8,7 @@ import type { BizDashboardData, CollectStep } from "@/types/bizData";
 import { Home, CreditCard, Landmark, MapPin, Star, FileText } from "lucide-react";
 
 /** 마이 비즈 데이터 연결 상태 플래그 — TODO: API 연동 시 useQuery로 대체 */
-export const MOCK_IS_CONNECTED: boolean = true;
+export const MOCK_IS_CONNECTED: boolean = false;
 
 /** 마이 비즈니스 데이터 약관 (필수 3개 + 선택 1개) */
 export const MOCK_BIZ_DATA_TERMS: TermsItem[] = [

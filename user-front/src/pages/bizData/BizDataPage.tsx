@@ -32,10 +32,15 @@ export default function BizDataPage() {
     return (
       <div data-testid="biz-data-page">
         <IntroSection />
-        <BottomButton
-          label="데이터 연결 시작하기"
-          onClick={() => navigate("/biz-data/collect")}
-        />
+        <div className="sticky bottom-0 px-5 py-5 bg-bg-base">
+          <button
+            type="button"
+            onClick={() => navigate("/biz-data/collect")}
+            className="w-full h-12 rounded-lg text-base font-semibold bg-primary text-white hover:bg-primary-dark active:bg-primary-dark transition-colors"
+          >
+            데이터 연결 시작하기
+          </button>
+        </div>
       </div>
     );
   }

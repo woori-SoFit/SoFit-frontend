@@ -32,7 +32,7 @@ function StarRating({ rating }: { rating: number }) {
 
 export function DashboardDetail({ data }: DashboardDetailProps) {
   return (
-    <section className="px-5 pb-26 flex flex-col gap-5">
+    <section className="px-5 pb-8 flex flex-col gap-5">
       {/* 월별 매출 추이 */}
       <div className="bg-bg-surface rounded-xl shadow-card p-4">
         <RevenueLineChart data={data.revenueTrend} />

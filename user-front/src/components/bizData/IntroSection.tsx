@@ -1,5 +1,5 @@
 import { Link2, BarChart3, ShieldCheck } from "lucide-react";
-import bizDataIllust from "@/assets/icons/menu-mybiz-data.svg";
+import bizDataIllust from "@/assets/icons/myBizData.svg";
 
 const BENEFIT_ITEMS = [
   {
@@ -27,7 +27,7 @@ const BENEFIT_ITEMS = [
 
 export function IntroSection() {
   return (
-    <section className="px-5 pt-6 pb-28">
+    <section className="px-5 pt-6 h-full">
       {/* 타이틀 */}
       <h1 className="text-2xl font-bold text-text-primary leading-tight mb-2">
         내 사업의 모든 데이터를<br />한눈에 관리하세요
