@@ -10,19 +10,6 @@ export type LoanApplicationStatus =
   | "CONTRACTED"
   | "EXECUTED";
 
-export interface LoanProduct {
-  id: number;
-  name: string;
-  title: string;
-  minAmount: number;
-  maxAmount: number;
-  minRate: number;
-  maxRate: number;
-  minTerm: number;
-  maxTerm: number;
-  description: string;
-}
-
 /** API 응답 기준 대출 상품 목록 아이템 */
 export interface LoanProductListItem {
   productId: number;
