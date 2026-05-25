@@ -36,8 +36,10 @@ import CalculatePage from "@/pages/calculator/CalculatorPage";
 import MyPage from "@/pages/mypage/MyPage";
 import ProfilePage from "@/pages/mypage/ProfilePage";
 import BusinessInfoPage from "@/pages/mypage/BusinessInfoPage";
-import NotificationsPage from "@/pages/mypage/NotificationsPage";
 import WithdrawPage from "@/pages/mypage/WithdrawPage";
+
+// Notification
+import NotificationsPage from "@/pages/notification/NotificationsPage";
 
 // Error
 import NotFoundPage from "@/pages/error/NotFoundPage";
