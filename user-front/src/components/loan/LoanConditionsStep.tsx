@@ -133,7 +133,11 @@ export function LoanConditionsStep({ productId, onSubmit }: LoanConditionsStepPr
   }
 
   if (!options) {
-    return null;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-sm text-text-secondary">대출 옵션을 불러올 수 없습니다.</p>
+      </div>
+    );
   }
 
   return (

@@ -2,6 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuthMe } from '@/hooks/useAuthMe';
 import type { AdminRole } from '@/types';
 import ForbiddenPage from '@/pages/error/ForbiddenPage';
+import Spinner from '@/components/common/Spinner';
 
 interface RoleGuardProps {
   allowedRoles: AdminRole[];
@@ -22,7 +23,7 @@ export default function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
+        <Spinner />
       </div>
     );
   }

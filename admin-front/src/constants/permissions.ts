@@ -58,7 +58,7 @@ export const ROUTE_CONFIG: RouteGroupConfig[] = [
     ],
   },
   {
-    category: '관리',
+    category: '고객',
     items: [
       {
         key: 'users',
