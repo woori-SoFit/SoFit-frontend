@@ -189,8 +189,8 @@ export interface LoanApplyFormData {
 
 /** 대출 상품 옵션 (자금용도 + 상환방식 + 최대기간 조합) */
 export interface LoanOption {
-  purpose: "WORKING_CAPITAL" | "FACILITY";
-  repaymentType: "BULLET" | "EQUAL_PAYMENT" | "EQUAL_PRINCIPAL";
+  purpose: "WORKING_CAPITAL" | "FACILITY_CAPITAL";
+  repaymentMethod: "BULLET" | "EQUAL_PAYMENT" | "EQUAL_PRINCIPAL";
   maxTermMonths: number;
 }
 

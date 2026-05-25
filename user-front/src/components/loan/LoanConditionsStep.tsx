@@ -9,8 +9,10 @@
  *   4. 희망 대출금액 입력 (서버 minLimit ~ maxLimit)
  */
 import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { BottomButton } from "@/components/common/BottomButton";
-import { MOCK_LOAN_PRODUCT_OPTIONS } from "@/mocks/loanProductOptions";
+import { fetchLoanProductOptions } from "@/api/loanApi";
+import { LOAN_KEYS } from "@/constants/queryKeys";
 import { REPAYMENT_LABELS, PURPOSE_LABELS } from "@/constants/loanLabels";
 import loanCondIcon from "@/assets/icons/loan-pre-apply.svg";
 import type { LoanOption } from "@/types/loan";
@@ -23,12 +25,17 @@ interface LoanConditionsData {
 }
 
 interface LoanConditionsStepProps {
+  productId: number;
   onSubmit: (data: LoanConditionsData) => void;
 }
 
-export function LoanConditionsStep({ onSubmit }: LoanConditionsStepProps) {
-  // TODO: API 연동 시 useQuery + fetchLoanProductOptions로 교체
-  const options = MOCK_LOAN_PRODUCT_OPTIONS;
+export function LoanConditionsStep({ productId, onSubmit }: LoanConditionsStepProps) {
+  // API 연동: 상품별 옵션 조회
+  const { data: options, isLoading } = useQuery({
+    queryKey: LOAN_KEYS.productOptions(productId),
+    queryFn: () => fetchLoanProductOptions(productId),
+    enabled: !!productId,
+  });
 
   const [purpose, setPurpose] = useState<string | null>(null);
   const [repayment, setRepayment] = useState<string | null>(null);
@@ -46,7 +53,7 @@ export function LoanConditionsStep({ onSubmit }: LoanConditionsStepProps) {
   const repaymentList = useMemo(() => {
     if (!options || !purpose) return [];
     const filtered = options.loanOptions.filter((o) => o.purpose === purpose);
-    const set = new Set(filtered.map((o) => o.repaymentType));
+    const set = new Set(filtered.map((o) => o.repaymentMethod));
     return Array.from(set);
   }, [options, purpose]);
 
@@ -54,7 +61,7 @@ export function LoanConditionsStep({ onSubmit }: LoanConditionsStepProps) {
   const selectedOption: LoanOption | undefined = useMemo(() => {
     if (!options || !purpose || !repayment) return undefined;
     return options.loanOptions.find(
-      (o) => o.purpose === purpose && o.repaymentType === repayment
+      (o) => o.purpose === purpose && o.repaymentMethod === repayment
     );
   }, [options, purpose, repayment]);
 
@@ -116,6 +123,14 @@ export function LoanConditionsStep({ onSubmit }: LoanConditionsStepProps) {
       purpose: purpose!,
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-sm text-text-secondary">대출 옵션을 불러오는 중...</p>
+      </div>
+    );
+  }
 
   if (!options) {
     return null;
