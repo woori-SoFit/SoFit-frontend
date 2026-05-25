@@ -34,7 +34,7 @@ export default function GradeReportResultPage() {
 
   const handleDetailReport = () => {
     // TODO: 상세 리포트 페이지로 이동 (추후 구현)
-    navigate("/grade-report");
+    navigate("/grade-report/detail");
   };
 
   return (

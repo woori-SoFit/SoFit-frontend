@@ -44,6 +44,7 @@ import NotFoundPage from "@/pages/error/NotFoundPage";
 import BizDataCheckPage from "@/pages/grade/BizDataCheckPage";
 import GradeReportLoadingPage from "@/pages/grade/GradeReportLoadingPage";
 import GradeReportResultPage from "@/pages/grade/GradeReportResultPage";
+import GradeReportDetailPage from "@/pages/grade/GradeReportDetailPage";
 
 export const router = createBrowserRouter([
   /**
@@ -87,6 +88,7 @@ export const router = createBrowserRouter([
       { path: "/grade-report/biz-check", element: <BizDataCheckPage /> },
       { path: "/grade-report/loading", element: <GradeReportLoadingPage /> },
       { path: "/grade-report/result", element: <GradeReportResultPage /> },
+      { path: "/grade-report/detail", element: <GradeReportDetailPage /> },
     ],
   },
 
