@@ -14,14 +14,8 @@ import { ConfirmPage } from "@/components/common/ConfirmPage";
 import { fetchLoanApplicationDetail } from "@/api/loanApi";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { formatAmount, formatDate } from "@/utils/format";
+import { REPAYMENT_LABELS } from "@/constants/loanLabels";
 import clockAnimation from "@/assets/lottie/Clock.json";
-
-/** 상환방식 한글 매핑 */
-const REPAYMENT_LABELS: Record<string, string> = {
-  EQUAL_PRINCIPAL: "원금균등",
-  EQUAL_PAYMENT: "원리금균등",
-  BULLET: "만기일시",
-};
 
 export default function LoanReviewPage() {
   const navigate = useNavigate();

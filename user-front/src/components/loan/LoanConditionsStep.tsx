@@ -13,21 +13,9 @@ import { useQuery } from "@tanstack/react-query";
 import { BottomButton } from "@/components/common/BottomButton";
 import { fetchLoanProductOptions } from "@/api/loanApi";
 import { LOAN_KEYS } from "@/constants/queryKeys";
+import { REPAYMENT_LABELS, PURPOSE_LABELS } from "@/constants/loanLabels";
 import loanCondIcon from "@/assets/icons/loan-pre-apply.svg";
 import type { LoanOption } from "@/types/loan";
-
-/** 자금용도 한글 매핑 */
-const PURPOSE_LABELS: Record<string, string> = {
-  WORKING_CAPITAL: "운전자금",
-  FACILITY_CAPITAL: "시설자금",
-};
-
-/** 상환방식 한글 매핑 */
-const REPAYMENT_LABELS: Record<string, string> = {
-  BULLET: "만기일시",
-  EQUAL_PAYMENT: "원리금균등",
-  EQUAL_PRINCIPAL: "원금균등",
-};
 
 interface LoanConditionsData {
   desiredAmount: number;
