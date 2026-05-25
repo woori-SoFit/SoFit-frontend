@@ -24,7 +24,7 @@ export default function GradeReportLoadingPage() {
 
   // StepLayout 헤더 타이틀 설정
   useEffect(() => {
-    useLayoutStore.getState().setStepTitle("S분석 리포트 생성 중");
+    useLayoutStore.getState().setStepTitle("성장 S등급 분석 리포트 생성 중");
   }, []);
 
   useEffect(() => {
