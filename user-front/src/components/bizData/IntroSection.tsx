@@ -27,36 +27,36 @@ const BENEFIT_ITEMS = [
 
 export function IntroSection() {
   return (
-    <section className="px-5 pt-6 h-full">
+    <section className="px-5 pt-6 flex flex-col flex-1">
       {/* 타이틀 */}
-      <h1 className="text-2xl font-bold text-text-primary leading-tight mb-2">
+      <h1 className="text-2xl font-bold text-text-primary leading-tight mb-3 text-center">
         내 사업의 모든 데이터를<br />한눈에 관리하세요
       </h1>
-      <p className="text-sm text-text-secondary mb-8">
+      <p className="text-sm text-text-secondary mb-0 text-center">
         흩어진 정보를 연결하면 사업 분석과 금융 활용이 수월합니다.
       </p>
 
-      {/* 일러스트레이션 */}
-      <div className="flex items-center justify-center mb-10">
+      {/* 일러스트레이션 — 남은 공간을 채움 */}
+      <div className="flex-1 flex items-center justify-center">
         <img
           src={bizDataIllust}
           alt="마이 비즈 데이터 일러스트"
-          className="w-full max-w-xs"
+          className="w-full max-w-[280px]"
         />
       </div>
 
-      {/* 혜택 항목 목록 (borderless) */}
-      <div className="flex flex-col gap-6">
+      {/* 혜택 항목 목록 */}
+      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm divide-y divide-gray-100 mb-4">
         {BENEFIT_ITEMS.map((item) => {
           const Icon = item.icon;
           return (
-            <div key={item.title} className="flex items-start gap-4">
-              <div className={`w-12 h-12 rounded-2xl ${item.bg} flex items-center justify-center shrink-0`}>
-                <Icon size={22} className={item.color} />
+            <div key={item.title} className="flex items-center gap-3 px-4 py-3">
+              <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center shrink-0`}>
+                <Icon size={18} className={item.color} />
               </div>
-              <div className="flex-1 pt-1">
-                <h3 className="text-base font-bold text-text-primary mb-1">{item.title}</h3>
-                <p className="text-sm text-text-secondary leading-relaxed">{item.description}</p>
+              <div className="flex-1">
+                <h3 className="text-sm font-bold text-text-primary mb-0.5">{item.title}</h3>
+                <p className="text-xs text-text-secondary leading-relaxed">{item.description}</p>
               </div>
             </div>
           );

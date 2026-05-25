@@ -30,9 +30,9 @@ export default function BizDataPage() {
 
   if (!isConnected) {
     return (
-      <div data-testid="biz-data-page">
+      <div data-testid="biz-data-page" className="flex flex-col h-[calc(100dvh-64px)]">
         <IntroSection />
-        <div className="sticky bottom-0 px-5 py-5 bg-bg-base">
+        <div className="px-5 pb-6 pt-3 bg-bg-base">
           <button
             type="button"
             onClick={() => navigate("/biz-data/collect")}
