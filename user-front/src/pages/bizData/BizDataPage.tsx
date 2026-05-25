@@ -70,7 +70,12 @@ function BizDashboard() {
 
   const changeRate = formatChangeRate(data.monthOverMonthChange);
   const revenueLabel = selectedMonth === MOCK_CURRENT_MONTH ? "이번 달 매출" : `${selectedMonth} 매출`;
-  const changeColor = changeRate.isPositive ? "text-success" : "text-warning";
+  const changeColor =
+    changeRate.isPositive === null
+      ? "text-text-secondary"
+      : changeRate.isPositive
+        ? "text-success"
+        : "text-warning";
 
   // 드롭다운 외부 클릭 닫기
   useEffect(() => {

@@ -13,7 +13,10 @@ export function formatCurrency(amount: number): string {
   return amount.toLocaleString("ko-KR");
 }
 
-export function formatChangeRate(rate: number): { text: string; isPositive: boolean } {
+export function formatChangeRate(rate: number | null): { text: string; isPositive: boolean | null } {
+  if (rate === null || rate === undefined) {
+    return { text: "—", isPositive: null };
+  }
   const isPositive = rate >= 0;
   return { text: `${isPositive ? "+" : ""}${rate.toFixed(1)}%`, isPositive };
 }
@@ -21,7 +24,12 @@ export function formatChangeRate(rate: number): { text: string; isPositive: bool
 export function DashboardSummary({ data, selectedMonth, currentMonth, fullCardRef }: DashboardSummaryProps) {
   const changeRate = formatChangeRate(data.monthOverMonthChange);
   const revenueLabel = selectedMonth === currentMonth ? "이번 달 매출" : `${selectedMonth} 매출`;
-  const changeColor = changeRate.isPositive ? "text-success" : "text-warning";
+  const changeColor =
+    changeRate.isPositive === null
+      ? "text-text-secondary"
+      : changeRate.isPositive
+        ? "text-success"
+        : "text-warning";
 
   return (
     <section className="px-5 pt-4 pb-4">
@@ -29,7 +37,9 @@ export function DashboardSummary({ data, selectedMonth, currentMonth, fullCardRe
       <div ref={fullCardRef} className="bg-bg-surface rounded-xl shadow-card p-5 mb-3">
         <div className="flex items-start justify-between mb-2">
           <p className="text-sm text-text-secondary">{revenueLabel}</p>
-          <p className="text-sm text-text-secondary">전월 대비</p>
+          <p className="text-sm text-text-secondary">
+            {changeRate.isPositive === null ? "전월 데이터 없음" : "전월 대비"}
+          </p>
         </div>
         <div className="flex items-end justify-between">
           <p className="text-2xl font-bold text-text-primary">

@@ -12,7 +12,13 @@ interface RatingLineChartProps {
 }
 
 export function RatingLineChart({ data }: RatingLineChartProps) {
-  if (data.length === 0) return null;
+  if (data.length < 2) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[80px] gap-1">
+        <p className="text-xs text-text-secondary text-center">추이를 수집하는 중이에요</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

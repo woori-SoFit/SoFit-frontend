@@ -10,7 +10,7 @@ export type BizDataCollectStep = "CERT_INFO" | "TERMS" | "LOADING";
 export interface BizDashboardData {
   currentMonth: string;
   monthlyRevenue: number;
-  monthOverMonthChange: number;
+  monthOverMonthChange: number | null;
   cashFlow: number;
   netProfit: number;
   industryComparison: {
