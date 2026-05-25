@@ -7,6 +7,7 @@
  *
  * Validates: Requirements 1.2, 1.3
  */
+import wibeeIcon from "@/assets/icons/wibee.svg";
 
 interface ProfileCardProps {
   name: string;
@@ -19,7 +20,7 @@ export function ProfileCard({ name, loginId }: ProfileCardProps) {
       {/* SoFit 캐릭터 아바타 */}
       <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary/10">
         <img
-          src="/favicon.svg"
+          src={wibeeIcon}
           alt="SoFit 캐릭터"
           className="h-9 w-9"
         />
