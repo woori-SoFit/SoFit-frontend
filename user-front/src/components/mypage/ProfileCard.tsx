@@ -16,13 +16,13 @@ interface ProfileCardProps {
 
 export function ProfileCard({ name, loginId }: ProfileCardProps) {
   return (
-    <div className="flex items-center gap-4 rounded-xl bg-bg-surface p-4 shadow-card">
+    <div className="flex items-center gap-2 rounded-xl bg-bg-surface p-4 shadow-card">
       {/* SoFit 캐릭터 아바타 */}
-      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary/10">
+      <div className="flex h-16 w-16 shrink-0 items-center justify-center">
         <img
           src={wibeeIcon}
           alt="SoFit 캐릭터"
-          className="h-9 w-9"
+          className="h-14 w-14"
         />
       </div>
 
