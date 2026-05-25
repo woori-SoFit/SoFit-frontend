@@ -50,7 +50,7 @@ export default function LoanProgressPage() {
   return (
     <div className="pb-8" data-testid="loan-progress-page">
       {/* 심사 중인 대출 */}
-      <section className="pt-10">
+      <section className="pt-5">
         <div className="px-5 flex items-center gap-2 mb-4">
           <h2 className="text-lg font-bold text-text-primary">심사 중인 대출</h2>
           <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center font-medium">
@@ -66,7 +66,7 @@ export default function LoanProgressPage() {
       </section>
 
       {/* 심사 완료된 대출 */}
-      <section className="mt-12">
+      <section className="mt-14">
         <div className="px-5 flex items-center gap-2 mb-4">
           <h2 className="text-lg font-bold text-text-primary">심사 완료된 대출</h2>
           <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center font-medium">

@@ -135,6 +135,32 @@ export interface LoanApplicationDetailResponse {
   result: LoanApplicationDetail;
 }
 
+/** 심사 완료 상세 조회 — 심사 결정 정보 */
+export interface DecisionInfo {
+  decision: "APPROVED" | "REJECTED";
+  approvedAmount: number | null;
+  approvedRate: number | null;
+  approvedTerm: number | null;
+  rejectionReason: string | null;
+}
+
+/** 심사 완료 상세 조회 API 응답 아이템 */
+export interface LoanApplicationCompletedDetail {
+  applicationId: number;
+  productName: string;
+  requestedAmount: number;
+  repaymentMethod: string;
+  decisionInfo: DecisionInfo;
+}
+
+/** 심사 완료 상세 조회 API 응답 */
+export interface LoanApplicationCompletedDetailResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: LoanApplicationCompletedDetail;
+}
+
 export interface LoanApprovalDetail {
   applicationId: number;
   approvedAmount: number;

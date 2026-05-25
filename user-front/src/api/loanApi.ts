@@ -13,6 +13,8 @@ import type {
   LoanApplicationsCompletedResponse,
   LoanApplicationDetail,
   LoanApplicationDetailResponse,
+  LoanApplicationCompletedDetail,
+  LoanApplicationCompletedDetailResponse,
 } from "@/types/loan";
 import type {
   CreateLoanApplicationRequest,
@@ -90,4 +92,14 @@ export async function fetchLoanApplicationsCompleted(): Promise<LoanApplication[
     status: item.status,
     appliedAt: item.appliedAt,
   }));
+}
+
+/** 심사 완료 대출 상세 조회 */
+export async function fetchLoanApplicationCompletedDetail(
+  applicationId: number
+): Promise<LoanApplicationCompletedDetail> {
+  const res = await axiosInstance.get<LoanApplicationCompletedDetailResponse>(
+    `/loan-applications/completed/${applicationId}`
+  );
+  return res.data.result;
 }
