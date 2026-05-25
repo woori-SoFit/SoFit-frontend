@@ -11,7 +11,7 @@ const REVIEW_STEPS = ["신청접수", "서류확인", "심사 중", "심사 완�
 
 /** 상태별 현재 단계 인덱스 */
 const STATUS_STEP_INDEX: Record<LoanApplicationStatus, number> = {
-  SUBMITTED: 0,
+  SUBMITTED: 2,
   IN_REVIEW: 2,
   APPROVED: 3,
   REJECTED: 3,
@@ -21,7 +21,7 @@ const STATUS_STEP_INDEX: Record<LoanApplicationStatus, number> = {
 
 /** 상태 배지 */
 const STATUS_BADGE: Record<LoanApplicationStatus, { label: string; color: string }> = {
-  SUBMITTED: { label: "신청접수", color: "bg-blue-100 text-primary" },
+  SUBMITTED: { label: "심사 중", color: "bg-blue-100 text-primary" },
   IN_REVIEW: { label: "심사 중", color: "bg-blue-100 text-primary" },
   APPROVED: { label: "대출 승인", color: "bg-green-100 text-green-700" },
   REJECTED: { label: "대출 거절", color: "bg-red-100 text-red-700" },

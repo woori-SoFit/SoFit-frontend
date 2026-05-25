@@ -1,16 +1,16 @@
 /**
  * 대출 진행 관리 페이지
  * Route: /loan-applications
- * Layout: MainLayout
+ * Layout: StepLayout
  *
- * 구성:
- *   1. 심사 중인 대출 — 중앙 정렬 카드 슬라이더 + 인디케이터 점
- *   2. 심사 완료된 대출 — 중앙 정렬 카드 슬라이더 + 인디케이터 점
+ * 심사 중인 대출 목록을 API에서 조회하여 카드 슬라이더로 표시
  */
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useLayoutStore } from "@/stores/layoutStore";
-import { MOCK_LOAN_APPLICATIONS } from "@/mocks/loanApplications";
+import { fetchLoanApplicationsInProgress } from "@/api/loanApi";
+import { LOAN_KEYS } from "@/constants/queryKeys";
 import { CardSlider } from "@/components/loan/CardSlider";
 import type { LoanApplication } from "@/types/loan";
 
@@ -21,20 +21,11 @@ export default function LoanProgressPage() {
     useLayoutStore.getState().setStepTitle("대출 진행 관리");
   }, []);
 
-  const { inProgress, completed } = useMemo(() => {
-    const inProgress: LoanApplication[] = [];
-    const completed: LoanApplication[] = [];
-
-    MOCK_LOAN_APPLICATIONS.forEach((app) => {
-      if (app.status === "SUBMITTED" || app.status === "IN_REVIEW") {
-        inProgress.push(app);
-      } else {
-        completed.push(app);
-      }
-    });
-
-    return { inProgress, completed };
-  }, []);
+  // 심사 중인 대출 목록 조회
+  const { data: inProgress = [], isLoading } = useQuery({
+    queryKey: LOAN_KEYS.applicationsInProgress(),
+    queryFn: fetchLoanApplicationsInProgress,
+  });
 
   const handleCardClick = (app: LoanApplication) => {
     if (app.status === "APPROVED" || app.status === "REJECTED") {
@@ -43,6 +34,14 @@ export default function LoanProgressPage() {
       navigate(`/loan/review/${app.id}`);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-sm text-text-secondary">대출 현황을 불러오는 중...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pb-8" data-testid="loan-progress-page">
@@ -59,22 +58,6 @@ export default function LoanProgressPage() {
           <p className="px-5 text-sm text-text-secondary">심사 중인 대출이 없습니다.</p>
         ) : (
           <CardSlider items={inProgress} onCardClick={handleCardClick} />
-        )}
-      </section>
-
-      {/* 심사 완료된 대출 */}
-      <section className="mt-12">
-        <div className="px-5 flex items-center gap-2 mb-4">
-          <h2 className="text-lg font-bold text-text-primary">심사 완료된 대출</h2>
-          <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center font-medium">
-            {completed.length}
-          </span>
-        </div>
-
-        {completed.length === 0 ? (
-          <p className="px-5 text-sm text-text-secondary">심사 완료된 대출이 없습니다.</p>
-        ) : (
-          <CardSlider items={completed} onCardClick={handleCardClick} />
         )}
       </section>
     </div>

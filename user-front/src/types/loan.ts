@@ -10,19 +10,6 @@ export type LoanApplicationStatus =
   | "CONTRACTED"
   | "EXECUTED";
 
-export interface LoanProduct {
-  id: number;
-  name: string;
-  title: string;
-  minAmount: number;
-  maxAmount: number;
-  minRate: number;
-  maxRate: number;
-  minTerm: number;
-  maxTerm: number;
-  description: string;
-}
-
 /** API 응답 기준 대출 상품 목록 아이템 */
 export interface LoanProductListItem {
   productId: number;
@@ -80,14 +67,52 @@ export interface LoanProductDetailResponse {
 
 export interface LoanApplication {
   id: number;
-  productId: number;
+  productId?: number;
   productName: string;
   status: LoanApplicationStatus;
   requestedAmount: number;
-  requestedTerm: number;
-  purpose: string;
-  repaymentMethod: string;
+  requestedTerm?: number;
+  purpose?: string;
+  repaymentMethod?: string;
   appliedAt: string;
+}
+
+/** 심사 중인 대출 목록 API 응답 아이템 */
+export interface LoanApplicationInProgressItem {
+  applicationId: number;
+  productName: string;
+  requestedAmount: number;
+  status: LoanApplicationStatus;
+  appliedAt: string;
+}
+
+/** 심사 중인 대출 목록 API 응답 */
+export interface LoanApplicationsInProgressResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    loanApplications: LoanApplicationInProgressItem[];
+  };
+}
+
+/** 대출 신청 상세 조회 API 응답 아이템 */
+export interface LoanApplicationDetail {
+  applicationId: number;
+  productName: string;
+  requestedAmount: number;
+  requestedTerm: number;
+  repaymentMethod: string;
+  status: LoanApplicationStatus;
+  appliedAt: string;
+}
+
+/** 대출 신청 상세 조회 API 응답 */
+export interface LoanApplicationDetailResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: LoanApplicationDetail;
 }
 
 export interface LoanApprovalDetail {
