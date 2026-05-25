@@ -43,7 +43,7 @@ export default function WithdrawPage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-base">
       {/* 콘텐츠 */}
       <div className="flex-1 px-6 pt-4 overflow-y-auto">
         {/* 경고 아이콘 */}

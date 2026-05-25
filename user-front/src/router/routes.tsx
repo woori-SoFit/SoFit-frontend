@@ -89,8 +89,11 @@ export const router = createBrowserRouter([
       { path: "/mypage", element: <MyPage /> },
       { path: "/mypage/profile", element: <ProfilePage /> },
       { path: "/mypage/business", element: <BusinessInfoPage /> },
-      { path: "/mypage/notifications", element: <NotificationsPage /> },
       { path: "/mypage/withdraw", element: <WithdrawPage /> },
+
+      // 알림
+      { path: "/notifications", element: <NotificationsPage /> },
+
     ],
   },
 
