@@ -17,9 +17,11 @@ interface FeatureCardProps {
   title: string;
   /** 카드 설명 텍스트 */
   description: string;
+  /** 제목에 추가할 CSS 클래스 (선택) */
+  titleClassName?: string;
 }
 
-export function FeatureCard({ icon, iconAlt, title, description }: FeatureCardProps) {
+export function FeatureCard({ icon, iconAlt, title, description, titleClassName }: FeatureCardProps) {
   return (
     <div className="flex items-center rounded-xl bg-bg-surface p-6 shadow-card gap-6">
       {/* 아이콘 영역 */}
@@ -30,7 +32,7 @@ export function FeatureCard({ icon, iconAlt, title, description }: FeatureCardPr
       {/* 텍스트 영역 */}
       <div className="text-left">
         {/* 제목 */}
-        <h3 className="mb-1 text-base font-semibold text-text-primary">
+        <h3 className={`mb-1 text-base font-semibold whitespace-pre-line ${titleClassName ?? "text-text-primary"}`}>
           {title}
         </h3>
 

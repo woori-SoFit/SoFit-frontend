@@ -39,7 +39,7 @@ export default function GradeReportLoadingPage() {
       if (!hasNavigated.current) {
         hasNavigated.current = true;
         // TODO: S등급 분석 결과 페이지로 이동 (추후 구현)
-        navigate("/grade-report", { replace: true });
+        navigate("/grade-report/result", { replace: true });
       }
     }, MIN_WAIT_MS);
 
