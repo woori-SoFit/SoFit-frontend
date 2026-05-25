@@ -10,6 +10,7 @@ import type {
   LoanProductOptionsResponse,
   LoanApplication,
   LoanApplicationsInProgressResponse,
+  LoanApplicationsCompletedResponse,
   LoanApplicationDetail,
   LoanApplicationDetailResponse,
 } from "@/types/loan";
@@ -75,4 +76,18 @@ export async function fetchLoanApplicationDetail(
     `/loan-applications/${applicationId}`
   );
   return res.data.result;
+}
+
+/** 심사 완료 대출 목록 조회 */
+export async function fetchLoanApplicationsCompleted(): Promise<LoanApplication[]> {
+  const res = await axiosInstance.get<LoanApplicationsCompletedResponse>(
+    "/loan-applications/completed"
+  );
+  return (res.data?.result?.loanApplications ?? []).map((item) => ({
+    id: item.applicationId,
+    productName: item.productName,
+    requestedAmount: item.requestedAmount,
+    status: item.status,
+    appliedAt: item.appliedAt,
+  }));
 }

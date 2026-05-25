@@ -96,6 +96,26 @@ export interface LoanApplicationsInProgressResponse {
   };
 }
 
+/** 심사 완료 대출 목록 API 응답 아이템 */
+export interface LoanApplicationCompletedItem {
+  applicationId: number;
+  productName: string;
+  status: LoanApplicationStatus;
+  requestedAmount: number;
+  appliedAt: string;
+  updatedAt: string;
+}
+
+/** 심사 완료 대출 목록 API 응답 */
+export interface LoanApplicationsCompletedResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    loanApplications: LoanApplicationCompletedItem[];
+  };
+}
+
 /** 대출 신청 상세 조회 API 응답 아이템 */
 export interface LoanApplicationDetail {
   applicationId: number;
