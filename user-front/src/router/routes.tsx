@@ -37,6 +37,7 @@ import MyPage from "@/pages/mypage/MyPage";
 import ProfilePage from "@/pages/mypage/ProfilePage";
 import BusinessInfoPage from "@/pages/mypage/BusinessInfoPage";
 import NotificationsPage from "@/pages/mypage/NotificationsPage";
+import WithdrawPage from "@/pages/mypage/WithdrawPage";
 
 // Error
 import NotFoundPage from "@/pages/error/NotFoundPage";
@@ -83,6 +84,13 @@ export const router = createBrowserRouter([
       { path: "/loan/review/:applicationId", element: <LoanReviewPage /> },
       { path: "/loan/result/:applicationId", element: <LoanResultPage /> },
       { path: "/loan/execution/:applicationId", element: <LoanExecutionPage /> },
+
+      // 마이페이지
+      { path: "/mypage", element: <MyPage /> },
+      { path: "/mypage/profile", element: <ProfilePage /> },
+      { path: "/mypage/business", element: <BusinessInfoPage /> },
+      { path: "/mypage/notifications", element: <NotificationsPage /> },
+      { path: "/mypage/withdraw", element: <WithdrawPage /> },
     ],
   },
 
@@ -103,12 +111,6 @@ export const router = createBrowserRouter([
 
       // 사전계산기
       { path: "/calculate", element: <CalculatePage />},
-
-      // 마이페이지
-      { path: "/mypage", element: <MyPage /> },
-      { path: "/mypage/profile", element: <ProfilePage /> },
-      { path: "/mypage/business", element: <BusinessInfoPage /> },
-      { path: "/mypage/notifications", element: <NotificationsPage /> },
     ],
   },
 

@@ -29,7 +29,7 @@ export function PushToggle({ enabled, onToggle }: PushToggleProps) {
         aria-label="푸시 알림 설정"
         onClick={() => onToggle(!enabled)}
         className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ${
-          enabled ? "bg-blue-500" : "bg-gray-300"
+          enabled ? "bg-primary" : "bg-gray-300"
         }`}
       >
         <span

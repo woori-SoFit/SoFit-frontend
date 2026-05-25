@@ -1,15 +1,16 @@
 /**
  * 내 정보 확인 페이지
  * Route: /mypage/profile
- * Layout: MainLayout
+ * Layout: StepLayout (타이틀은 layoutStore로 설정)
  *
  * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5
  */
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { PageHeader } from "@/components/mypage/PageHeader";
 import { useMe } from "@/hooks/useMe";
 import { fetchUserProfile } from "@/api/mypageApi";
 import { MYPAGE_KEYS } from "@/constants/queryKeys";
+import { useLayoutStore } from "@/stores/layoutStore";
 
 /** 프로필 정보 행 */
 interface InfoRowProps {
@@ -20,7 +21,7 @@ interface InfoRowProps {
 function InfoRow({ label, value }: InfoRowProps) {
   return (
     <div className="flex justify-between items-center py-4 px-5">
-      <span className="text-gray-600 font-medium">{label}</span>
+      <span className="text-gray-600 font-bold">{label}</span>
       <span className="text-gray-900 text-right">{value}</span>
     </div>
   );
@@ -43,6 +44,11 @@ function ProfileSkeleton() {
 export default function ProfilePage() {
   const { me, isLoading: isMeLoading } = useMe();
 
+  useEffect(() => {
+    useLayoutStore.getState().setStepTitle("내 정보 확인");
+    useLayoutStore.getState().setOnBack(null);
+  }, []);
+
   const { data: profileData, isLoading: isProfileLoading } = useQuery({
     queryKey: MYPAGE_KEYS.profile(),
     queryFn: fetchUserProfile,
@@ -60,9 +66,7 @@ export default function ProfilePage() {
   const residentNumber = "******-*******";
 
   return (
-    <div className="min-h-screen bg-gray-50" data-testid="profile-page">
-      <PageHeader title="내 정보 확인" />
-
+    <div className="bg-gray-50" data-testid="profile-page">
       {isLoading ? (
         <ProfileSkeleton />
       ) : (

@@ -1,23 +1,23 @@
 /**
  * 마이페이지 메인
  * Route: /mypage
- * Layout: MainLayout
+ * Layout: StepLayout (타이틀은 layoutStore로 설정)
  *
  * Requirements: 1.1~1.8, 2.1~2.3, 3.1~3.3, 4.1~4.4, 5.1~5.5
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { PageHeader } from "@/components/mypage/PageHeader";
 import { ProfileCard } from "@/components/mypage/ProfileCard";
 import { MenuItem } from "@/components/mypage/MenuItem";
 import { PushToggle } from "@/components/mypage/PushToggle";
-import ConfirmDialog from "@/components/mypage/ConfirmDialog";
+import { LogoutSheet } from "@/components/mypage/LogoutSheet";
 
 import { useMe } from "@/hooks/useMe";
 import { usePushToggle } from "@/hooks/usePushToggle";
-import { postLogout, deleteAccount } from "@/api/mypageApi";
+import { postLogout } from "@/api/mypageApi";
+import { useLayoutStore } from "@/stores/layoutStore";
 
 export default function MyPage() {
   const navigate = useNavigate();
@@ -26,7 +26,11 @@ export default function MyPage() {
   const { enabled, toggle } = usePushToggle();
 
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  useEffect(() => {
+    useLayoutStore.getState().setStepTitle("마이페이지");
+    useLayoutStore.getState().setOnBack(null);
+  }, []);
 
   /** 로그아웃 확인 핸들러 */
   const handleLogoutConfirm = async () => {
@@ -38,21 +42,8 @@ export default function MyPage() {
     }
   };
 
-  /** 회원 탈퇴 확인 핸들러 */
-  const handleDeleteConfirm = async () => {
-    try {
-      await deleteAccount();
-    } finally {
-      queryClient.clear();
-      navigate("/login");
-    }
-  };
-
   return (
-    <div data-testid="my-page" className="min-h-screen bg-gray-50">
-      {/* 헤더 */}
-      <PageHeader title="마이페이지" />
-
+    <div data-testid="my-page" className="bg-gray-50">
       {/* 콘텐츠 영역 */}
       <div className="flex flex-col gap-3 p-4">
         {/* 프로필 카드 */}
@@ -76,32 +67,16 @@ export default function MyPage() {
           <MenuItem
             label="회원 탈퇴"
             variant="danger"
-            onClick={() => setDeleteDialogOpen(true)}
+            to="/mypage/withdraw"
           />
         </div>
       </div>
 
-      {/* 로그아웃 확인 다이얼로그 */}
-      <ConfirmDialog
+      {/* 로그아웃 확인 바텀시트 */}
+      <LogoutSheet
         open={logoutDialogOpen}
-        title="로그아웃"
-        description="정말 로그아웃 하시겠습니까?"
-        confirmLabel="로그아웃"
-        cancelLabel="취소"
         onConfirm={handleLogoutConfirm}
         onCancel={() => setLogoutDialogOpen(false)}
-      />
-
-      {/* 회원 탈퇴 확인 다이얼로그 */}
-      <ConfirmDialog
-        open={deleteDialogOpen}
-        title="회원 탈퇴"
-        description="탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다. 정말 탈퇴하시겠습니까?"
-        confirmLabel="탈퇴"
-        cancelLabel="취소"
-        variant="danger"
-        onConfirm={handleDeleteConfirm}
-        onCancel={() => setDeleteDialogOpen(false)}
       />
     </div>
   );
