@@ -9,6 +9,7 @@ export type BizDataCollectStep = "CERT_INFO" | "TERMS" | "LOADING";
 /** 대시보드 데이터 */
 export interface BizDashboardData {
   currentMonth: string;
+  availableMonths: string[];
   monthlyRevenue: number;
   monthOverMonthChange: number | null;
   cashFlow: number;
