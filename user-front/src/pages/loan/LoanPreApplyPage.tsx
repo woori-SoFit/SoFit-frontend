@@ -15,6 +15,7 @@ import { useEligibilityStore } from "@/stores/eligibilityStore";
 import { useCreateLoanApplication } from "@/hooks/useCreateLoanApplication";
 import { checkLoanAvailable } from "@/utils/checkLoanAvailable";
 import { BottomButton } from "@/components/common/BottomButton";
+import { AlertModal } from "@/components/common/AlertModal";
 import { PRE_APPLY_QUESTIONS } from "@/constants/eligibilityOptions";
 import preApplyIcon from "@/assets/icons/loan-pre-apply.svg";
 import type { ProductFilterConditions } from "@/types/loan";
@@ -40,6 +41,10 @@ export default function LoanPreApplyPage() {
 
   // 페이지 상태 관리
   const [pageState, setPageState] = useState<PageState>("INPUT");
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: "",
+  });
 
   // Zustand 스토어
   const {
@@ -65,7 +70,7 @@ export default function LoanPreApplyPage() {
     onError: (error: AxiosError) => {
       const responseData = error.response?.data as { message?: string } | undefined;
       const message = responseData?.message || "네트워크 오류가 발생했습니다. 다시 시도해 주세요.";
-      alert(message);
+      setErrorModal({ isOpen: true, message });
     },
   });
 
@@ -207,6 +212,17 @@ export default function LoanPreApplyPage() {
         label={createMutation.isPending ? "확인 중..." : "확인하기"}
         onClick={handleSubmit}
         disabled={!allAnswered || createMutation.isPending}
+      />
+
+      {/* 에러 모달 */}
+      <AlertModal
+        isOpen={errorModal.isOpen}
+        message={errorModal.message}
+        buttonLabel="홈으로 이동"
+        onConfirm={() => {
+          setErrorModal({ isOpen: false, message: "" });
+          navigate("/");
+        }}
       />
     </div>
   );
