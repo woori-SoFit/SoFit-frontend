@@ -41,18 +41,23 @@ export default function LoanApplyPage() {
   const productId = useLoanApplyStore((s) => s.productId);
   const applicationId = useLoanApplyStore((s) => s.applicationId);
   const submitResult = useLoanApplyStore((s) => s.submitResult);
-  const setProductId = useLoanApplyStore((s) => s.setProductId);
   const navigate = useNavigate();
   const location = useLocation();
   const { rows: bizInfoRows } = useBusinessInfo();
 
-  // navigation state에서 productId 수신 및 스토어 저장
+  // navigation state에서 productId, applicationId 수신 및 스토어 초기화
   useEffect(() => {
-    const stateProductId = (location.state as { productId?: number } | null)?.productId;
-    if (stateProductId) {
-      setProductId(stateProductId);
+    reset();
+
+    const state = location.state as { productId?: number; applicationId?: number } | null;
+    if (state?.productId) {
+      useLoanApplyStore.getState().setProductId(state.productId);
     }
-  }, [location.state, setProductId]);
+    if (state?.applicationId) {
+      useLoanApplyStore.getState().setApplicationId(state.applicationId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("대출 신청");

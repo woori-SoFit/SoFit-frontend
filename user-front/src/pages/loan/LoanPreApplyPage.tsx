@@ -12,7 +12,6 @@ import { ChevronRight, XCircle } from "lucide-react";
 import { AxiosError } from "axios";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useEligibilityStore } from "@/stores/eligibilityStore";
-import { useLoanApplyStore } from "@/stores/loanApplyStore";
 import { useCreateLoanApplication } from "@/hooks/useCreateLoanApplication";
 import { checkLoanAvailable } from "@/utils/checkLoanAvailable";
 import { BottomButton } from "@/components/common/BottomButton";
@@ -56,8 +55,12 @@ export default function LoanPreApplyPage() {
   // 대출 신청 생성 mutation
   const createMutation = useCreateLoanApplication({
     onSuccess: (data) => {
-      useLoanApplyStore.getState().setApplicationId(data.result.applicationId);
-      navigate("/loan/apply", { state: { productId: Number(productId) } });
+      navigate("/loan/apply", {
+        state: {
+          productId: Number(productId),
+          applicationId: data.result.applicationId,
+        },
+      });
     },
     onError: (error: AxiosError) => {
       const responseData = error.response?.data as { message?: string } | undefined;
