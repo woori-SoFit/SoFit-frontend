@@ -1,3 +1,5 @@
+export * from './user';
+
 export interface MenuItem {
   label: string;
   path: string;

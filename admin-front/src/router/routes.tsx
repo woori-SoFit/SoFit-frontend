@@ -3,7 +3,7 @@ import type { RouteObject } from "react-router-dom";
 import { AdminLayout } from "@/components/common/AdminLayout";
 import LoginPage from "@/pages/auth/LoginPage";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
-import UsersPage from "@/pages/placeholder/UsersPage";
+import UserManagementPage from "@/pages/user-management/UserManagementPage";
 import ApiLogsPage from "@/pages/placeholder/ApiLogsPage";
 import BatchPage from "@/pages/placeholder/BatchPage";
 import ManagerApprovalPage from "@/pages/manager-approval/ManagerApprovalPage";
@@ -22,7 +22,7 @@ const PAGE_COMPONENTS: Record<string, ComponentType> = {
   "loan-applications": DashboardPage,
   "manager-approval": ManagerApprovalPage,
   "loan-detail": LoanDetailPage,
-  users: UsersPage,
+  users: UserManagementPage,
   "api-logs": ApiLogsPage,
   batch: BatchPage,
 };

@@ -14,3 +14,9 @@ export const LOAN_KEYS = {
   reviewTab: (id: number) => [...LOAN_KEYS.all, "review-tab", id] as const,
   managerApprovals: () => [...LOAN_KEYS.all, "manager-approvals"] as const,
 } as const;
+
+export const USER_KEYS = {
+  all: ["users"] as const,
+  list: () => [...USER_KEYS.all, "list"] as const,
+  statistics: () => [...USER_KEYS.all, "statistics"] as const,
+} as const;
