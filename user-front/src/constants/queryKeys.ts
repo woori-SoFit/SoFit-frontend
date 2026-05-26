@@ -27,4 +27,5 @@ export const GRADE_KEYS = {
 export const BIZ_DATA_KEYS = {
   all: ["bizData"] as const,
   dashboard: () => [...BIZ_DATA_KEYS.all, "dashboard"] as const,
+  status: () => [...BIZ_DATA_KEYS.all, "status"] as const,
 } as const;
