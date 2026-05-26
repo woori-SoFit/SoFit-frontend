@@ -26,10 +26,10 @@ import { LoanConditionsStep } from "@/components/loan/LoanConditionsStep";
 import { LoanApplyResult } from "@/components/loan/LoanApplyResult";
 import { MOCK_LOAN_TERMS } from "@/mocks/loanTerms";
 import { MOCK_MYDATA_TERMS } from "@/mocks/mydataTerms";
-import { MOCK_LOAN_APPLY_RESULT_ROWS } from "@/mocks/loanApplyResult";
 import { useNavigate, useLocation } from "react-router-dom";
 import { verifyFinancialCertificate } from "@/api/authApi";
 import { useBusinessInfo } from "@/hooks/useBusinessInfo";
+import { REPAYMENT_LABELS } from "@/constants/loanLabels";
 import type { CustomerVerifyData } from "@/types/auth";
 
 export default function LoanApplyPage() {
@@ -39,6 +39,8 @@ export default function LoanApplyPage() {
   const updateFormData = useLoanApplyStore((s) => s.updateFormData);
   const reset = useLoanApplyStore((s) => s.reset);
   const productId = useLoanApplyStore((s) => s.productId);
+  const applicationId = useLoanApplyStore((s) => s.applicationId);
+  const submitResult = useLoanApplyStore((s) => s.submitResult);
   const setProductId = useLoanApplyStore((s) => s.setProductId);
   const navigate = useNavigate();
   const location = useLocation();
@@ -140,6 +142,7 @@ export default function LoanApplyPage() {
       return (
         <LoanConditionsStep
           productId={productId ?? 0}
+          applicationId={applicationId ?? 0}
           onSubmit={(data) => {
             updateFormData({
               desiredAmount: data.desiredAmount,
@@ -153,9 +156,33 @@ export default function LoanApplyPage() {
       );
 
     case "RESULT": {
+      const resultRows = submitResult
+        ? [
+            { label: "신청 상품", value: submitResult.productName },
+            {
+              label: "신청 금액",
+              value: `${(submitResult.requestedAmount / 10_000).toLocaleString()}만원`,
+            },
+            {
+              label: "신청 일시",
+              value: new Date(submitResult.appliedAt).toLocaleString("ko-KR", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            },
+            {
+              label: "상환 방식",
+              value: REPAYMENT_LABELS[submitResult.repaymentMethod] ?? submitResult.repaymentMethod,
+            },
+          ]
+        : [];
+
       return (
         <LoanApplyResult
-          rows={MOCK_LOAN_APPLY_RESULT_ROWS}
+          rows={resultRows}
           onViewApplications={() => {
             reset();
             navigate("/loan-applications");

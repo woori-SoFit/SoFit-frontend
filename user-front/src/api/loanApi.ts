@@ -15,6 +15,8 @@ import type {
   LoanApplicationDetailResponse,
   LoanApplicationCompletedDetail,
   LoanApplicationCompletedDetailResponse,
+  SubmitLoanApplicationRequest,
+  SubmitLoanApplicationResponse,
 } from "@/types/loan";
 import type {
   CreateLoanApplicationRequest,
@@ -102,4 +104,16 @@ export async function fetchLoanApplicationCompletedDetail(
     `/loan-applications/completed/${applicationId}`
   );
   return res.data.result;
+}
+
+/** 대출 심사 요청 (조건 입력 후 제출) */
+export async function submitLoanApplication(
+  applicationId: number,
+  body: SubmitLoanApplicationRequest
+): Promise<SubmitLoanApplicationResponse> {
+  const res = await axiosInstance.post<SubmitLoanApplicationResponse>(
+    `/loan-applications/${applicationId}/submit`,
+    body
+  );
+  return res.data;
 }
