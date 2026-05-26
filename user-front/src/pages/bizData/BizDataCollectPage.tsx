@@ -19,6 +19,7 @@ import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { TermsPage } from "@/components/terms/TermsPage";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { MOCK_BIZ_DATA_TERMS, MOCK_BIZ_DATA_COLLECT_STEPS } from "@/mocks/bizData";
+import { connectMyBiz } from "@/api/mybizApi";
 
 export default function BizDataCollectPage() {
   const currentStep = useBizDataCollectStore((s) => s.currentStep);
@@ -71,7 +72,12 @@ export default function BizDataCollectPage() {
           title="사업 데이터를 분석하고 있어요"
           description="AI가 다양한 데이터를 안전하게 수집 분석합니다."
           steps={MOCK_BIZ_DATA_COLLECT_STEPS}
-          onComplete={() => { reset(); navigate("/biz-data"); }}
+          onComplete={() => {
+            connectMyBiz().finally(() => {
+              reset();
+              navigate("/biz-data");
+            });
+          }}
         />
       );
 
