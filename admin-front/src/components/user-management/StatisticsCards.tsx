@@ -1,5 +1,6 @@
 import type { UserStatistics } from '@/types/user';
 import { calculatePercentage } from '@/utils/userUtils';
+import Card from '@/components/common/Card';
 
 interface StatisticsCardsProps {
   data?: UserStatistics;
@@ -19,11 +20,9 @@ interface CardInfo {
 
 /**
  * 통계 데이터를 기반으로 4개 카드 정보를 생성한다.
- * 은행원 = 개발자(adminCount) + 은행원(bankerCount) 합산
  */
 function buildCards(data: UserStatistics): CardInfo[] {
-  const { totalCount, activeCount, adminCount, bankerCount, customerCount, inactiveCount } = data;
-  const allBankerCount = adminCount + bankerCount;
+  const { totalCount, activeCount, bankerCount, userCount, inactiveCount } = data;
 
   return [
     {
@@ -37,15 +36,15 @@ function buildCards(data: UserStatistics): CardInfo[] {
       icon: '🏦',
       iconBg: 'bg-green-100',
       title: '은행원',
-      count: allBankerCount,
-      subtitle: `전체의 ${calculatePercentage(allBankerCount, totalCount)}`,
+      count: bankerCount,
+      subtitle: `전체의 ${calculatePercentage(bankerCount, totalCount)}`,
     },
     {
       icon: '👤',
       iconBg: 'bg-orange-100',
       title: '고객',
-      count: customerCount,
-      subtitle: `전체의 ${calculatePercentage(customerCount, totalCount)}`,
+      count: userCount,
+      subtitle: `전체의 ${calculatePercentage(userCount, totalCount)}`,
     },
     {
       icon: '🚫',
@@ -60,7 +59,7 @@ function buildCards(data: UserStatistics): CardInfo[] {
 /** 로딩 스켈레톤 카드 */
 function SkeletonCard() {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <Card>
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 animate-pulse rounded-full bg-gray-200" />
         <div className="flex-1 space-y-2">
@@ -69,7 +68,7 @@ function SkeletonCard() {
           <div className="h-3 w-24 animate-pulse rounded bg-gray-200" />
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -116,7 +115,7 @@ export default function StatisticsCards({ data, isLoading, isError, onRetry }: S
   return (
     <div className="grid grid-cols-4 gap-4">
       {cards.map((card) => (
-        <div key={card.title} className="rounded-lg border border-gray-200 bg-white p-4">
+        <Card key={card.title}>
           <div className="flex items-center gap-3">
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full ${card.iconBg}`}
@@ -129,7 +128,7 @@ export default function StatisticsCards({ data, isLoading, isError, onRetry }: S
               <p className="text-xs text-gray-400">{card.subtitle}</p>
             </div>
           </div>
-        </div>
+        </Card>
       ))}
     </div>
   );

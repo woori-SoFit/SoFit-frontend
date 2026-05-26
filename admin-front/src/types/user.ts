@@ -22,7 +22,7 @@ export interface UserListItem {
   id: number;
   loginId: string;
   name: string;
-  email: string;
+  phone: string;
   role: UserRole;
   status: UserStatus;
   createdAt: string;
@@ -41,9 +41,8 @@ export interface PaginatedUserResponse {
 export interface UserStatistics {
   totalCount: number;
   activeCount: number;
-  adminCount: number;
   bankerCount: number;
-  customerCount: number;
+  userCount: number;
   inactiveCount: number;
 }
 

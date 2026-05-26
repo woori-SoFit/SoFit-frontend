@@ -63,7 +63,7 @@ export default function SearchFilter({ filters, onFiltersChange }: SearchFilterP
         type="text"
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
-        placeholder="이름, 아이디, 이메일 검색"
+        placeholder="이름, 아이디 검색"
         maxLength={100}
         className="px-3 py-2 text-sm border border-border-default rounded-md bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-border-focus"
       />

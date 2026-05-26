@@ -4,6 +4,22 @@ import type { UserTab, UserFilters, UserListParams, UserRole, UserStatus } from 
  * 사용자 관리 페이지에서 사용하는 유틸리티 함수 모음
  */
 
+/**
+ * 연락처 마스킹 함수
+ * "01012345678" → "010-****-5678"
+ * "010-1234-5678" → "010-****-5678"
+ */
+export function maskPhone(phone: string): string {
+  const digits = phone.replace(/-/g, '');
+  if (digits.length === 11) {
+    return `${digits.slice(0, 3)}-****-${digits.slice(7)}`;
+  }
+  if (digits.length === 10) {
+    return `${digits.slice(0, 3)}-***-${digits.slice(6)}`;
+  }
+  return phone;
+}
+
 /** 뱃지/인디케이터 설정 타입 */
 export interface BadgeConfig {
   label: string;

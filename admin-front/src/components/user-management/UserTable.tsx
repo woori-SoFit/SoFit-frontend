@@ -1,5 +1,5 @@
 import type { UserListItem } from '@/types/user';
-import { calculateRowNumber, formatLastLogin, getRoleBadgeConfig, getStatusIndicatorConfig } from '@/utils/userUtils';
+import { calculateRowNumber, formatLastLogin, getRoleBadgeConfig, getStatusIndicatorConfig, maskPhone } from '@/utils/userUtils';
 
 interface UserTableProps {
   data: UserListItem[];
@@ -21,11 +21,11 @@ export default function UserTable({
           <tr className="border-b border-gray-200 bg-gray-50">
             <th className="w-14 px-4 py-3 text-center text-xs font-semibold text-gray-500">번호</th>
             <th className="w-28 px-4 py-3 text-center text-xs font-semibold text-gray-500">아이디</th>
-            <th className="w-20 px-4 py-3 text-center text-xs font-semibold text-gray-500">이름</th>
-            <th className="w-48 px-4 py-3 text-center text-xs font-semibold text-gray-500">이메일</th>
-            <th className="w-20 px-4 py-3 text-center text-xs font-semibold text-gray-500">권한</th>
-            <th className="w-16 px-4 py-3 text-center text-xs font-semibold text-gray-500">상태</th>
-            <th className="w-36 px-4 py-3 text-center text-xs font-semibold text-gray-500">가입 일시</th>
+            <th className="w-24 px-4 py-3 text-center text-xs font-semibold text-gray-500">이름</th>
+            <th className="w-36 px-4 py-3 text-center text-xs font-semibold text-gray-500">연락처</th>
+            <th className="w-24 px-4 py-3 text-center text-xs font-semibold text-gray-500">권한</th>
+            <th className="w-20 px-4 py-3 text-center text-xs font-semibold text-gray-500">상태</th>
+            <th className="w-40 px-4 py-3 text-center text-xs font-semibold text-gray-500">가입 일시</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -41,7 +41,7 @@ export default function UserTable({
                 <td className="px-4 py-3 text-center text-sm">{calculateRowNumber(totalCount, currentPage, pageSize, index)}</td>
                 <td className="px-4 py-3 text-center text-sm">{user.loginId}</td>
                 <td className="px-4 py-3 text-center text-sm">{user.name}</td>
-                <td className="px-4 py-3 text-center text-sm truncate">{user.email}</td>
+                <td className="px-4 py-3 text-center text-sm">{maskPhone(user.phone)}</td>
                 <td className="px-4 py-3 text-center text-sm">{getRoleBadgeConfig(user.role).label}</td>
                 <td className="px-4 py-3 text-center text-sm">{getStatusIndicatorConfig(user.status).label}</td>
                 <td className="px-4 py-3 text-center text-sm">{formatLastLogin(user.createdAt)}</td>
