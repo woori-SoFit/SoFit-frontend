@@ -22,6 +22,27 @@ export interface BizDataStatus {
 /** 마이 비즈 데이터 수집 step */
 export type BizDataCollectStep = "CERT_INFO" | "TERMS" | "LOADING";
 
+/** 사업자 정보 응답 */
+export interface BusinessInfoResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: BusinessInfo | null;
+}
+
+/** 사업자 정보 */
+export interface BusinessInfo {
+  businessNumber: string;
+  businessName: string;
+  representativeName: string;
+  residentNumber: string;
+  openDate: string;
+  businessCategory: string;
+  businessType: string;
+  businessAddress: string;
+  isMybizConnected: boolean;
+}
+
 /** 대시보드 데이터 */
 export interface BizDashboardData {
   currentMonth: string;

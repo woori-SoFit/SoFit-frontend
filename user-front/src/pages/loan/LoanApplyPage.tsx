@@ -25,11 +25,11 @@ import { MydataLoadingStep } from "@/components/loan/MydataLoadingStep";
 import { LoanConditionsStep } from "@/components/loan/LoanConditionsStep";
 import { LoanApplyResult } from "@/components/loan/LoanApplyResult";
 import { MOCK_LOAN_TERMS } from "@/mocks/loanTerms";
-import { MOCK_BIZ_INFO_ROWS } from "@/mocks/bizInfo";
 import { MOCK_MYDATA_TERMS } from "@/mocks/mydataTerms";
 import { MOCK_LOAN_APPLY_RESULT_ROWS } from "@/mocks/loanApplyResult";
 import { useNavigate, useLocation } from "react-router-dom";
 import { verifyFinancialCertificate } from "@/api/authApi";
+import { useBusinessInfo } from "@/hooks/useBusinessInfo";
 import type { CustomerVerifyData } from "@/types/auth";
 
 export default function LoanApplyPage() {
@@ -42,6 +42,7 @@ export default function LoanApplyPage() {
   const setProductId = useLoanApplyStore((s) => s.setProductId);
   const navigate = useNavigate();
   const location = useLocation();
+  const { rows: bizInfoRows } = useBusinessInfo();
 
   // navigation state에서 productId 수신 및 스토어 저장
   useEffect(() => {
@@ -112,7 +113,7 @@ export default function LoanApplyPage() {
         <BizInfoConfirm
           title={<><span className="text-primary">사업자 정보</span>를 불러왔어요</>}
           description="아래 정보가 맞는지 확인해주세요."
-          rows={MOCK_BIZ_INFO_ROWS}
+          rows={bizInfoRows}
           onConfirm={() => nextStep()}
         />
       );
