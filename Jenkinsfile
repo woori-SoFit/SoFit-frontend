@@ -1,12 +1,17 @@
 pipeline {
     agent any
+
+    options {
+        disableConcurrentBuilds()
+    }
+    
     triggers {
         githubPush()
     }
 
     environment {
         REGISTRY = '172.21.33.225:5000'
-        APP_SERVER = '172.21.33.238'
+        FRONTEND_SERVER = '172.21.33.214'
     }
 
     stages {
@@ -31,15 +36,23 @@ pipeline {
 
         stage('Docker Build & Push') {
             steps {
-                sh '''
-                    docker build -t $REGISTRY/sofit-user-front:latest -f user-front/Dockerfile .
-                    docker push $REGISTRY/sofit-user-front:latest
+                withCredentials([
+                    string(credentialsId: 'VITE_USER_API_URL', variable: 'USER_API_URL'),
+                    string(credentialsId: 'VITE_ADMIN_API_URL', variable: 'ADMIN_API_URL')
+                ]) {
+                    sh '''
+                        echo "VITE_API_BASE_URL=${USER_API_URL}" > user-front/.env
+                        echo "VITE_API_BASE_URL=${ADMIN_API_URL}" > admin-front/.env
 
-                    docker build -t $REGISTRY/sofit-admin-front:latest -f admin-front/Dockerfile .
-                    docker push $REGISTRY/sofit-admin-front:latest
+                        docker build -t $REGISTRY/sofit-user-front:latest -f user-front/Dockerfile .
+                        docker push $REGISTRY/sofit-user-front:latest
 
-                    docker image prune -f
-                '''
+                        docker build -t $REGISTRY/sofit-admin-front:latest -f admin-front/Dockerfile .
+                        docker push $REGISTRY/sofit-admin-front:latest
+
+                        docker image prune -f || true
+                    '''
+                }
             }
         }
 
@@ -47,9 +60,10 @@ pipeline {
             steps {
                 sshagent(['sofit-app-ssh']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@$APP_SERVER "
+                        ssh -o StrictHostKeyChecking=no ubuntu@$FRONTEND_SERVER "
                             docker pull $REGISTRY/sofit-user-front:latest &&
                             docker pull $REGISTRY/sofit-admin-front:latest &&
+                            docker-compose -f /home/ubuntu/docker-compose.yml down &&
                             docker-compose -f /home/ubuntu/docker-compose.yml up -d
                         "
                     '''

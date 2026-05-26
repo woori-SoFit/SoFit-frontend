@@ -10,19 +10,6 @@ export type LoanApplicationStatus =
   | "CONTRACTED"
   | "EXECUTED";
 
-export interface LoanProduct {
-  id: number;
-  name: string;
-  title: string;
-  minAmount: number;
-  maxAmount: number;
-  minRate: number;
-  maxRate: number;
-  minTerm: number;
-  maxTerm: number;
-  description: string;
-}
-
 /** API 응답 기준 대출 상품 목록 아이템 */
 export interface LoanProductListItem {
   productId: number;
@@ -41,6 +28,18 @@ export interface LoanProductListResponse {
   };
 }
 
+/** 상품별 적격 필터 조건 */
+export interface ProductFilterConditions {
+  /** 연소득 하한 (원 단위, 이 금액 이상이어야 적격) */
+  annualIncomeLimit: number;
+  /** 신용점수 하한 (이 점수 이상이어야 적격) */
+  creditScoreLimit: number;
+  /** 기존대출금액 상한 (원 단위, 이 금액 이하여야 적격) */
+  existingLoanAmtLimit: number;
+  /** 소득유형 제한 (이 유형만 허용, null이면 제한 없음) */
+  incomeTypeCodeLimit: string | null;
+}
+
 /** API 응답 기준 대출 상품 상세 */
 export interface LoanProductDetail {
   productId: number;
@@ -51,10 +50,11 @@ export interface LoanProductDetail {
   maxLimit: number;
   maxTerm: number;
   targetDescription: string;
-  interest_rate: {
+  interestRate: {
     minRate: number;
     maxRate: number;
   };
+  filterConditions: ProductFilterConditions;
 }
 
 /** 대출 상품 상세 API 응답 구조 */
@@ -67,14 +67,98 @@ export interface LoanProductDetailResponse {
 
 export interface LoanApplication {
   id: number;
-  productId: number;
+  productId?: number;
   productName: string;
   status: LoanApplicationStatus;
   requestedAmount: number;
-  requestedTerm: number;
-  purpose: string;
-  repaymentMethod: string;
+  requestedTerm?: number;
+  purpose?: string;
+  repaymentMethod?: string;
   appliedAt: string;
+}
+
+/** 심사 중인 대출 목록 API 응답 아이템 */
+export interface LoanApplicationInProgressItem {
+  applicationId: number;
+  productName: string;
+  requestedAmount: number;
+  status: LoanApplicationStatus;
+  appliedAt: string;
+}
+
+/** 심사 중인 대출 목록 API 응답 */
+export interface LoanApplicationsInProgressResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    loanApplications: LoanApplicationInProgressItem[];
+  };
+}
+
+/** 심사 완료 대출 목록 API 응답 아이템 */
+export interface LoanApplicationCompletedItem {
+  applicationId: number;
+  productName: string;
+  status: LoanApplicationStatus;
+  requestedAmount: number;
+  appliedAt: string;
+  updatedAt: string;
+}
+
+/** 심사 완료 대출 목록 API 응답 */
+export interface LoanApplicationsCompletedResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    loanApplications: LoanApplicationCompletedItem[];
+  };
+}
+
+/** 대출 신청 상세 조회 API 응답 아이템 */
+export interface LoanApplicationDetail {
+  applicationId: number;
+  productName: string;
+  requestedAmount: number;
+  requestedTerm: number;
+  repaymentMethod: string;
+  status: LoanApplicationStatus;
+  appliedAt: string;
+}
+
+/** 대출 신청 상세 조회 API 응답 */
+export interface LoanApplicationDetailResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: LoanApplicationDetail;
+}
+
+/** 심사 완료 상세 조회 — 심사 결정 정보 */
+export interface DecisionInfo {
+  decision: "APPROVED" | "REJECTED";
+  approvedAmount: number | null;
+  approvedRate: number | null;
+  approvedTerm: number | null;
+  rejectionReason: string | null;
+}
+
+/** 심사 완료 상세 조회 API 응답 아이템 */
+export interface LoanApplicationCompletedDetail {
+  applicationId: number;
+  productName: string;
+  requestedAmount: number;
+  repaymentMethod: string;
+  decisionInfo: DecisionInfo;
+}
+
+/** 심사 완료 상세 조회 API 응답 */
+export interface LoanApplicationCompletedDetailResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: LoanApplicationCompletedDetail;
 }
 
 export interface LoanApprovalDetail {
@@ -101,4 +185,25 @@ export interface LoanApplyFormData {
   desiredTerm: number;
   purpose: string;
   repaymentMethod: string;
+}
+
+/** 대출 상품 옵션 (자금용도 + 상환방식 + 최대기간 조합) */
+export interface LoanOption {
+  purpose: "WORKING_CAPITAL" | "FACILITY_CAPITAL";
+  repaymentMethod: "BULLET" | "EQUAL_PAYMENT" | "EQUAL_PRINCIPAL";
+  maxTermMonths: number;
+}
+
+/** 대출 상품 옵션 조회 API 응답 */
+export interface LoanProductOptionsResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    productId: number;
+    productName: string;
+    maxLimit: number;
+    minLimit: number;
+    loanOptions: LoanOption[];
+  };
 }

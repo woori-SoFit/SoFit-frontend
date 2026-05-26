@@ -10,6 +10,7 @@ import { NavLink, Navigate } from "react-router-dom";
 import { useAuthMe } from "@/hooks/useAuthMe";
 import { getFilteredMenuGroups } from "@/utils/menuFilter";
 import { ROLE_DISPLAY_NAMES } from "@/constants/permissions";
+import Spinner from "@/components/common/Spinner";
 
 export function Sidebar() {
   const { data: user, isLoading, isAuthenticated } = useAuthMe();
@@ -18,7 +19,7 @@ export function Sidebar() {
   if (isLoading) {
     return (
       <aside className="w-56 shrink-0 bg-white border-r border-border-default flex flex-col items-center justify-center">
-        <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent" />
+        <Spinner size="sm" />
       </aside>
     );
   }

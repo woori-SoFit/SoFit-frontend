@@ -15,6 +15,7 @@ RUN npm run build:user
 FROM nginx:alpine
 
 COPY --from=builder /app/user-front/dist /usr/share/nginx/html
+COPY user-front/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

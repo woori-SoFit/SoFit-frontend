@@ -14,6 +14,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── 스크롤 방지 유틸리티 ── */
+.no-scroll {
+  overflow: hidden;
+}
+
 @theme {
   /* ── Brand Colors ── */
   --color-primary: #0067ac;
