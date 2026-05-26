@@ -72,6 +72,12 @@ export const ROUTE_CONFIG: RouteGroupConfig[] = [
         allowedRoles: ['ADMIN_DEV'],
       },
       {
+        key: 'error-logs',
+        label: '에러 로그',
+        path: '/error-logs',
+        allowedRoles: ['ADMIN_DEV'],
+      },
+      {
         key: 'batch',
         label: 'S등급 배치 관리',
         path: '/batch',
