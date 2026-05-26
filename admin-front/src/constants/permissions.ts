@@ -63,12 +63,12 @@ export const ROUTE_CONFIG: RouteGroupConfig[] = [
     ],
   },
   {
-    category: '시스템',
+    category: '모니터링',
     items: [
       {
-        key: 'api-logs',
-        label: 'API 로그',
-        path: '/api-logs',
+        key: 'server-status',
+        label: '서버 상태 확인',
+        path: '/server-status',
         allowedRoles: ['ADMIN_DEV'],
       },
       {

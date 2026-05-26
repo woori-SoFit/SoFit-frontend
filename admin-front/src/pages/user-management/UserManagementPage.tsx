@@ -9,6 +9,7 @@ import SearchFilter from '@/components/user-management/SearchFilter';
 import UserTable from '@/components/user-management/UserTable';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
+import Pagination from '@/components/common/Pagination';
 
 const PAGE_SIZE = 8;
 
@@ -87,28 +88,13 @@ export default function UserManagementPage() {
       )}
 
       {/* 페이지네이션 (하단 고정) */}
-      {!isLoading && !isError && userData && userData.totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-4 mt-auto">
-          <button
-            type="button"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            이전
-          </button>
-          <span className="text-sm text-text-secondary">
-            {page} / {userData.totalPages}
-          </span>
-          <button
-            type="button"
-            onClick={() => setPage((p) => Math.min(userData.totalPages, p + 1))}
-            disabled={page >= userData.totalPages}
-            className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            다음
-          </button>
-        </div>
+      {!isLoading && !isError && userData && (
+        <Pagination
+          currentPage={page}
+          totalPages={userData.totalPages}
+          onPageChange={setPage}
+          className="mt-auto"
+        />
       )}
     </div>
   );
