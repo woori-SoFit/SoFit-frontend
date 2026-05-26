@@ -47,6 +47,7 @@ export default function SearchFilter({ filters, onFiltersChange }: SearchFilterP
       }
     }, 300);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keyword]);
 
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
