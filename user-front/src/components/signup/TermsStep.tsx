@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { TermsPage } from "../terms/TermsPage";
 import { useSignupStore } from "../../stores/signupStore";
 import { submitSignup } from "../../api/signupApi";
-import type { SignupRequest } from "@/types/signup";
+import type { SignupRequest, ConsentItem } from "@/types/signup";
 import { MOCK_SIGNUP_TERMS } from "@/mocks/signupTerms";
 
 /** 약관 동의 스텝 — 약관 동의 후 회원가입 API 호출 */
@@ -29,12 +29,19 @@ export default function TermsStep() {
     updateFormData({ agreedTermIds: agreedIds });
     setIsSubmitting(true);
 
+    // 전체 약관 목록 기준으로 consents 배열 생성
+    const consents: ConsentItem[] = MOCK_SIGNUP_TERMS.map((term) => ({
+      termId: term.id,
+      isConsented: agreedIds.includes(term.id),
+    }));
+
     const request: SignupRequest = {
       name: formData.name ?? "",
       residentNumber: formData.residentNumber ?? "",
       phoneNumber: formData.phone ?? "",
       loginId: formData.loginId ?? "",
       password: formData.password ?? "",
+      consents,
     };
 
     signupMutation.mutate(request);
