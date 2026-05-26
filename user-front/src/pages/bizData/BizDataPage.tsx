@@ -163,6 +163,8 @@ function BizDashboard() {
   }
 
   const currentMonth = availableMonths[0] ?? selectedMonth ?? "";
+  // availableMonths가 비어있어도 현재 선택된 달은 최소 1개 보여줌
+  const displayMonths = availableMonths.length > 0 ? availableMonths : (selectedMonth ? [selectedMonth] : []);
   const changeRate = formatChangeRate(data.monthOverMonthChange);
   const revenueLabel = selectedMonth === currentMonth ? "이번 달 매출" : `${selectedMonth} 매출`;
   const changeColor =
@@ -215,7 +217,7 @@ function BizDashboard() {
 
           {open && (
             <ul className="absolute top-full right-0 mt-1 z-30 bg-bg-surface border border-border-default rounded-lg shadow-card overflow-hidden min-w-[140px]">
-              {availableMonths.map((month) => (
+              {displayMonths.map((month) => (
                 <li key={month}>
                   <button
                     type="button"
