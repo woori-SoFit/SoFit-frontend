@@ -142,7 +142,9 @@ function BizDashboard() {
   }, []);
 
   // 풀 카드 상단이 뷰포트 위로 사라지면 compact 활성
+  // data 로드 후 DOM이 실제로 렌더된 시점에 scroll parent를 찾아야 함
   useEffect(() => {
+    if (!data) return;
     const scrollEl = findScrollParent(rootRef.current);
     const handleScroll = () => {
       if (!fullCardRef.current) return;
@@ -150,7 +152,7 @@ function BizDashboard() {
     };
     scrollEl.addEventListener("scroll", handleScroll, { passive: true });
     return () => scrollEl.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [data]);
 
   if (!data) {
     return (
