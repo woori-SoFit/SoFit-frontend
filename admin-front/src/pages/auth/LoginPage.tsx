@@ -1,35 +1,48 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { loginAdmin } from "@/api/authApi";
 import { useAuthStore } from "@/stores/authStore";
+import { AUTH_KEYS } from "@/constants/queryKeys";
 import type { AdminRole } from "@/types";
 import mainLogo from "@/assets/mainLogo.svg";
-
-/** Mock 계정 목록 — API 연동 전 테스트용 (DEV 환경에서만 포함) */
-const MOCK_ACCOUNTS: { loginId: string; name: string; role: AdminRole }[] =
-  import.meta.env.DEV
-    ? [
-        { loginId: "dev_admin", name: "개발자", role: "ADMIN_DEV" },
-        { loginId: "bank_teller", name: "김은행", role: "ADMIN_BANK_TELLER" },
-        { loginId: "bank_manager", name: "박지점장", role: "ADMIN_BANK_MANAGER" },
-      ]
-    : [];
+import type { AxiosError } from "axios";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const login = useAuthStore((s) => s.login);
+  const queryClient = useQueryClient();
 
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+
+  const loginMutation = useMutation({
+    mutationFn: loginAdmin,
+    onSuccess: (data) => {
+      const role = data.role as AdminRole;
+      const user = { userId: data.userId, name: data.name, role };
+      login(user);
+
+      // auth/me 쿼리 캐시에 직접 설정 (불필요한 /auth/me 호출 방지)
+      queryClient.setQueryData(AUTH_KEYS.me, user);
+
+      navigate("/dashboard", { replace: true });
+    },
+    onError: (err: AxiosError<{ message?: string }>) => {
+      const message =
+        err.response?.data?.message ?? "로그인에 실패했습니다. 다시 시도해주세요.";
+      setError(message);
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    // Mock 인증: loginId만 매칭 (비밀번호 검증 생략)
-    const account = MOCK_ACCOUNTS.find((a) => a.loginId === loginId);
-    if (!account) {
-      setError("존재하지 않는 계정입니다. (dev_admin / bank_teller / bank_manager)");
+    if (!loginId.trim()) {
+      setError("아이디를 입력하세요.");
       return;
     }
 
@@ -38,9 +51,7 @@ export default function LoginPage() {
       return;
     }
 
-    // Zustand에 사용자 정보 저장
-    login({ id: MOCK_ACCOUNTS.indexOf(account) + 1, name: account.name, role: account.role });
-    navigate("/dashboard", { replace: true });
+    loginMutation.mutate({ loginId: loginId.trim(), password });
   };
 
   return (
@@ -62,7 +73,7 @@ export default function LoginPage() {
               type="text"
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
-              placeholder="dev_admin / bank_teller / bank_manager"
+              placeholder="아이디를 입력하세요"
               className="w-full px-4 py-3 border border-border-default rounded-lg text-sm focus:outline-none focus:border-primary"
             />
           </div>
@@ -71,37 +82,49 @@ export default function LoginPage() {
             <label htmlFor="password" className="block text-sm font-medium text-text-secondary mb-1">
               비밀번호
             </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="아무 값이나 입력"
-              className="w-full px-4 py-3 border border-border-default rounded-lg text-sm focus:outline-none focus:border-primary"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="비밀번호를 입력하세요"
+                className="w-full px-4 py-3 border border-border-default rounded-lg text-sm focus:outline-none focus:border-primary pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled hover:text-text-secondary"
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+              >
+                {showPassword ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
 
           {error && (
-            <p className="text-sm text-red-500">{error}</p>
+            <p className="text-sm text-red-500 text-center">{error}</p>
           )}
 
           <button
             type="submit"
-            className="w-full py-3 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary-dark transition-colors"
+            disabled={loginMutation.isPending}
+            className="w-full py-3 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            로그인
+            {loginMutation.isPending ? "로그인 중..." : "로그인"}
           </button>
         </form>
-
-        {/* 테스트 계정 안내 */}
-        <div className="mt-6 p-3 bg-gray-50 rounded-lg">
-          <p className="text-xs font-medium text-text-secondary mb-2">테스트 계정</p>
-          <ul className="text-xs text-text-disabled space-y-1">
-            <li><span className="font-mono">dev_admin</span> — 개발 관리자 (전체 메뉴)</li>
-            <li><span className="font-mono">bank_teller</span> — 은행원 (대출+관리)</li>
-            <li><span className="font-mono">bank_manager</span> — 지점장 (대출+관리+결재)</li>
-          </ul>
-        </div>
       </div>
     </div>
   );
