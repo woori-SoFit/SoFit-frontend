@@ -38,7 +38,7 @@ const MENU_ITEMS = [
   {
     id: "grade-report",
     label: "S 분석 리포트",
-    to: "/grade-report/intro",
+    to: "/grade-report",
     icon: iconSReport,
   },
   {

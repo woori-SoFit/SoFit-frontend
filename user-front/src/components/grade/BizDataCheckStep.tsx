@@ -1,29 +1,16 @@
 /**
- * 마이 비즈 데이터 확인 페이지
- * Route: /grade-report/biz-check
- * Layout: StepLayout
+ * 마이 비즈 데이터 확인 스텝
  *
- * S분석 리포트 진입 화면에서 CTA 클릭 시,
- * 로그인 상태이나 My Biz Data가 미연결인 경우 이 페이지로 이동.
- * "불러오기" 버튼을 통해 My Biz Data 수집 플로우로 진입.
+ * My Biz Data가 미연결인 경우 불러오기를 유도하는 화면.
+ * "불러오기" 버튼 클릭 시 다음 스텝(로딩)으로 진행.
  */
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { FileInput } from "lucide-react";
-import { useLayoutStore } from "@/stores/layoutStore";
 
-export default function BizDataCheckPage() {
-  const navigate = useNavigate();
+interface BizDataCheckStepProps {
+  onNext: () => void;
+}
 
-  // StepLayout 헤더 타이틀 설정
-  useEffect(() => {
-    useLayoutStore.getState().setStepTitle("마이 비즈 데이터 확인");
-  }, []);
-
-  const handleFetch = () => {
-    navigate("/grade-report/loading");
-  };
-
+export function BizDataCheckStep({ onNext }: BizDataCheckStepProps) {
   return (
     <div className="flex flex-col items-center px-5 pt-32 pb-28 min-h-full">
       {/* 아이콘 영역 */}
@@ -53,7 +40,7 @@ export default function BizDataCheckPage() {
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-5 bg-bg-base">
         <button
           type="button"
-          onClick={handleFetch}
+          onClick={onNext}
           className="w-full h-12 rounded-lg text-base font-semibold bg-primary text-white hover:bg-primary-dark active:bg-primary-dark transition-colors cursor-pointer"
         >
           불러오기

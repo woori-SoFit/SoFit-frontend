@@ -28,7 +28,6 @@ import BizDataCollectPage from "@/pages/bizData/BizDataCollectPage";
 
 // Grade Report
 import GradeReportPage from "@/pages/grade/GradeReportPage";
-import GradeReportIntroPage from "@/pages/grade/GradeReportIntroPage";
 
 // Calculate
 import CalculatePage from "@/pages/calculator/CalculatorPage";
@@ -41,9 +40,6 @@ import NotificationsPage from "@/pages/mypage/NotificationsPage";
 
 // Error
 import NotFoundPage from "@/pages/error/NotFoundPage";
-import BizDataCheckPage from "@/pages/grade/BizDataCheckPage";
-import GradeReportLoadingPage from "@/pages/grade/GradeReportLoadingPage";
-import GradeReportResultPage from "@/pages/grade/GradeReportResultPage";
 import GradeReportDetailPage from "@/pages/grade/GradeReportDetailPage";
 
 export const router = createBrowserRouter([
@@ -83,11 +79,8 @@ export const router = createBrowserRouter([
       // 대출 약정 (약관 동의 → PIN → 계좌 설정)
       { path: "/loan/agreement/:applicationId", element: <LoanAgreementPage /> },
 
-      // S분석 리포트 진입 (공개 접근 허용)
-      { path: "/grade-report/intro", element: <GradeReportIntroPage /> },
-      { path: "/grade-report/biz-check", element: <BizDataCheckPage /> },
-      { path: "/grade-report/loading", element: <GradeReportLoadingPage /> },
-      { path: "/grade-report/result", element: <GradeReportResultPage /> },
+      // S분석 리포트 — step 기반 흐름
+      { path: "/grade-report", element: <GradeReportPage /> },
       { path: "/grade-report/detail", element: <GradeReportDetailPage /> },
     ],
   },
@@ -109,9 +102,6 @@ export const router = createBrowserRouter([
 
       // My Biz Data 대시보드
       { path: "/biz-data", element: <BizDataPage /> },
-
-      // 성장 S등급 분석 리포트
-      { path: "/grade-report", element: <GradeReportPage /> },
 
       // 사전계산기
       { path: "/calculate", element: <CalculatePage />},

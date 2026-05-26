@@ -1,17 +1,13 @@
 /**
- * S등급 분석 결과 페이지
- * Route: /grade-report/result
- * Layout: StepLayout
+ * S등급 분석 결과 스텝
  *
- * GradeReportLoadingPage에서 3초 대기 후 이동하는 페이지.
- * 사용자의 S등급 분석 결과를 표시합니다.
+ * 사용자의 S등급 분석 결과를 표시.
+ * "상세 리포트 보기" 클릭 시 GradeReportDetailPage로 이동.
  *
  * TODO: API 연동 시 실제 유저 이름, S등급 데이터로 교체
  */
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sprout } from "lucide-react";
-import { useLayoutStore } from "@/stores/layoutStore";
 import { FeatureCard } from "@/components/grade/FeatureCard";
 
 // TODO: API 연동 시 실제 데이터로 교체
@@ -24,22 +20,16 @@ const MOCK_DATA = {
 
 const ALL_GRADES = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10"];
 
-export default function GradeReportResultPage() {
+export function GradeResultStep() {
   const navigate = useNavigate();
 
-  // StepLayout 헤더 타이틀 설정
-  useEffect(() => {
-    useLayoutStore.getState().setStepTitle("성장 S등급 분석 결과");
-  }, []);
-
   const handleDetailReport = () => {
-    // TODO: 상세 리포트 페이지로 이동 (추후 구현)
     navigate("/grade-report/detail");
   };
 
   return (
     <div className="flex flex-col items-center px-5 pt-8 pb-28">
-      {/* 사용자 이름 + SCB 등급 안내 */}
+      {/* 사용자 이름 + S등급 안내 */}
       <h2 className="text-xl font-bold text-text-primary text-center leading-snug">
         {MOCK_DATA.userName} 사장님의
         <br />

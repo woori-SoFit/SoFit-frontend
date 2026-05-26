@@ -23,7 +23,7 @@ interface FeatureCardProps {
 
 export function FeatureCard({ icon, iconAlt, title, description, titleClassName }: FeatureCardProps) {
   return (
-    <div className="flex items-center rounded-xl bg-bg-surface p-6 shadow-card gap-6">
+    <div className="flex items-center rounded-lg bg-bg-surface px-6 py-4 shadow-card gap-6">
       {/* 아이콘 영역 */}
       <div className="shrink-0" role="img" aria-label={iconAlt}>
         {icon}

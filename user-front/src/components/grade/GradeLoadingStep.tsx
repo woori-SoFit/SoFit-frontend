@@ -1,50 +1,40 @@
 /**
- * S분석 리포트 생성 중 (로딩) 페이지
- * Route: /grade-report/loading
- * Layout: StepLayout
+ * S등급 산출 로딩 스텝
  *
- * BizDataCheckPage에서 '불러오기' 버튼 클릭 후 진입.
  * 마이 비즈 데이터를 기반으로 S등급을 계산하는 동안 대기하는 화면.
+ * 최소 3초 대기 후 다음 스텝(결과)으로 자동 진행.
  *
- * 로직:
- *   - 최소 3초 대기
- *   - API 응답이 오면 (+ 최소 대기 충족 시) 다음 페이지로 이동
- *   - TODO: 실제 API 연동 후 폴링/응답 대기 로직 추가
+ * TODO: 실제 API 연동 후 폴링/응답 대기 로직 추가
  */
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import Lottie from "lottie-react";
 import { ChartColumnIncreasing } from "lucide-react";
-import { useLayoutStore } from "@/stores/layoutStore";
 import bizDataLoadingAnimation from "@/assets/lottie/Biz-Data-Loading.json";
 
-export default function GradeReportLoadingPage() {
-  const navigate = useNavigate();
-  const hasNavigated = useRef(false);
+interface GradeLoadingStepProps {
+  onComplete: () => void;
+}
 
-  // StepLayout 헤더 타이틀 설정
-  useEffect(() => {
-    useLayoutStore.getState().setStepTitle("성장 S등급 분석 리포트 생성 중");
-  }, []);
+export function GradeLoadingStep({ onComplete }: GradeLoadingStepProps) {
+  const hasCompleted = useRef(false);
 
   useEffect(() => {
     // TODO: 실제 API 연동 시 아래 로직을 교체
     // 1. API 호출 시작 (S등급 산출 요청 또는 폴링)
     // 2. API 응답 완료 플래그 관리
-    // 3. 최소 대기 시간 + API 응답 모두 충족 시 navigate
+    // 3. 최소 대기 시간 + API 응답 모두 충족 시 onComplete
 
     const MIN_WAIT_MS = 3000;
 
     const timer = setTimeout(() => {
-      if (!hasNavigated.current) {
-        hasNavigated.current = true;
-        // TODO: S등급 분석 결과 페이지로 이동 (추후 구현)
-        navigate("/grade-report/result", { replace: true });
+      if (!hasCompleted.current) {
+        hasCompleted.current = true;
+        onComplete();
       }
     }, MIN_WAIT_MS);
 
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [onComplete]);
 
   return (
     <div className="flex flex-col items-center px-5 pt-20 min-h-full">
