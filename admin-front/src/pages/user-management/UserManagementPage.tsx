@@ -43,7 +43,7 @@ export default function UserManagementPage() {
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-text-primary">고객 관리</h1>
+          <h1 className="text-2xl font-bold text-text-primary">계정 관리</h1>
           {!isLoading && userData && (
             <span className="text-sm text-text-secondary">
               총 {userData.totalCount}명

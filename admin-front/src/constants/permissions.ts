@@ -52,11 +52,11 @@ export const ROUTE_CONFIG: RouteGroupConfig[] = [
     ],
   },
   {
-    category: '고객',
+    category: '계정',
     items: [
       {
         key: 'users',
-        label: '고객 관리',
+        label: '계정 관리',
         path: '/users',
         allowedRoles: ['ADMIN_DEV', 'ADMIN_BANK_TELLER', 'ADMIN_BANK_MANAGER'],
       },
