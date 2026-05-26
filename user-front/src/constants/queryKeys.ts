@@ -13,6 +13,8 @@ export const LOAN_KEYS = {
   detail: (id: number) => [...LOAN_KEYS.all, "detail", id] as const,
   productOptions: (id: number) => [...LOAN_KEYS.all, "productOptions", id] as const,
   applications: () => [...LOAN_KEYS.all, "applications"] as const,
+  applicationsInProgress: () => [...LOAN_KEYS.all, "applications", "in-progress"] as const,
+  applicationsCompleted: () => [...LOAN_KEYS.all, "applications", "completed"] as const,
   application: (id: number) =>
     [...LOAN_KEYS.all, "application", id] as const,
 } as const;
@@ -25,6 +27,7 @@ export const GRADE_KEYS = {
 export const BIZ_DATA_KEYS = {
   all: ["bizData"] as const,
   dashboard: () => [...BIZ_DATA_KEYS.all, "dashboard"] as const,
+  status: () => [...BIZ_DATA_KEYS.all, "status"] as const,
 } as const;
 
 export const MYPAGE_KEYS = {

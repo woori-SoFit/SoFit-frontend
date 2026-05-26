@@ -1,5 +1,10 @@
 pipeline {
     agent any
+
+    options {
+        disableConcurrentBuilds()
+    }
+    
     triggers {
         githubPush()
     }
@@ -31,15 +36,23 @@ pipeline {
 
         stage('Docker Build & Push') {
             steps {
-                sh '''
-                    docker build -t $REGISTRY/sofit-user-front:latest -f user-front/Dockerfile .
-                    docker push $REGISTRY/sofit-user-front:latest
+                withCredentials([
+                    string(credentialsId: 'VITE_USER_API_URL', variable: 'USER_API_URL'),
+                    string(credentialsId: 'VITE_ADMIN_API_URL', variable: 'ADMIN_API_URL')
+                ]) {
+                    sh '''
+                        echo "VITE_API_BASE_URL=${USER_API_URL}" > user-front/.env
+                        echo "VITE_API_BASE_URL=${ADMIN_API_URL}" > admin-front/.env
 
-                    docker build -t $REGISTRY/sofit-admin-front:latest -f admin-front/Dockerfile .
-                    docker push $REGISTRY/sofit-admin-front:latest
+                        docker build -t $REGISTRY/sofit-user-front:latest -f user-front/Dockerfile .
+                        docker push $REGISTRY/sofit-user-front:latest
 
-                    docker image prune -f
-                '''
+                        docker build -t $REGISTRY/sofit-admin-front:latest -f admin-front/Dockerfile .
+                        docker push $REGISTRY/sofit-admin-front:latest
+
+                        docker image prune -f || true
+                    '''
+                }
             }
         }
 

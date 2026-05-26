@@ -1,26 +1,21 @@
 /**
  * 심사 진행 중 페이지
  * Route: /loan/review/:applicationId
- * Layout: MainLayout
+ * Layout: StepLayout
  *
  * 심사 중인 대출 카드 클릭 시 진입
- * TODO: API 연동 시 useParams + useQuery로 실제 데이터 조회
  */
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import Lottie from "lottie-react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
-import { MOCK_LOAN_APPLICATIONS } from "@/mocks/loanApplications";
+import { fetchLoanApplicationDetail } from "@/api/loanApi";
+import { LOAN_KEYS } from "@/constants/queryKeys";
 import { formatAmount, formatDate } from "@/utils/format";
+import { REPAYMENT_LABELS } from "@/constants/loanLabels";
 import clockAnimation from "@/assets/lottie/Clock.json";
-
-/** 상환방식 한글 매핑 */
-const REPAYMENT_LABELS: Record<string, string> = {
-  EQUAL_PRINCIPAL: "원금균등",
-  EQUAL_PAYMENT: "원리금균등",
-  BULLET: "만기일시",
-};
 
 export default function LoanReviewPage() {
   const navigate = useNavigate();
@@ -30,8 +25,19 @@ export default function LoanReviewPage() {
     useLayoutStore.getState().setStepTitle("심사 진행 중");
   }, []);
 
-  // TODO: API 연동 시 useQuery로 교체
-  const app = MOCK_LOAN_APPLICATIONS.find((a) => a.id === Number(applicationId));
+  const { data: app, isLoading } = useQuery({
+    queryKey: LOAN_KEYS.application(Number(applicationId)),
+    queryFn: () => fetchLoanApplicationDetail(Number(applicationId)),
+    enabled: !!applicationId,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-sm text-text-secondary">신청 정보를 불러오는 중...</p>
+      </div>
+    );
+  }
 
   if (!app) {
     return (
@@ -42,15 +48,16 @@ export default function LoanReviewPage() {
   }
 
   return (
-    <div className="mt-20">
+    <div className="h-full pt-10">
       <ConfirmPage
         icon={
-          <Lottie animationData={clockAnimation} loop={3} className="w-24 h-24" />
+          <Lottie animationData={clockAnimation} loop={7} className="w-36 h-36" />
         }
         title="심사가 진행 중이에요"
         rows={[
           { label: "신청 상품", value: app.productName },
           { label: "신청 금액", value: formatAmount(app.requestedAmount) },
+          { label: "대출 기간", value: `${app.requestedTerm}개월` },
           { label: "상환방식", value: REPAYMENT_LABELS[app.repaymentMethod] ?? app.repaymentMethod },
           { label: "신청 일시", value: formatDate(app.appliedAt) },
         ]}

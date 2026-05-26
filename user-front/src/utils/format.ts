@@ -21,7 +21,8 @@ export function formatMaxTerm(maxTerm: number): string {
   return `${maxTerm}개월 이내`;
 }
 
-/** 날짜 포맷 (YYYY-MM-DD → YYYY.MM.DD) */
+/** 날짜 포맷 (YYYY-MM-DD 또는 ISO datetime → YYYY.MM.DD) */
 export function formatDate(dateStr: string): string {
-  return dateStr.replace(/-/g, ".");
+  const dateOnly = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
+  return dateOnly.replace(/-/g, ".");
 }

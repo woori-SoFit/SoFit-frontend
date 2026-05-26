@@ -43,6 +43,7 @@ import NotificationsPage from "@/pages/notification/NotificationsPage";
 
 // Error
 import NotFoundPage from "@/pages/error/NotFoundPage";
+import GradeReportDetailPage from "@/pages/grade/GradeReportDetailPage";
 
 export const router = createBrowserRouter([
   /**
@@ -96,6 +97,9 @@ export const router = createBrowserRouter([
       // 알림
       { path: "/notifications", element: <NotificationsPage /> },
 
+      // S분석 리포트 — step 기반 흐름
+      { path: "/grade-report", element: <GradeReportPage /> },
+      { path: "/grade-report/detail", element: <GradeReportDetailPage /> },
     ],
   },
 
@@ -110,9 +114,6 @@ export const router = createBrowserRouter([
 
       // My Biz Data 대시보드
       { path: "/biz-data", element: <BizDataPage /> },
-
-      // 성장 S등급 분석 리포트
-      { path: "/grade-report", element: <GradeReportPage /> },
 
       // 사전계산기
       { path: "/calculate", element: <CalculatePage />},
