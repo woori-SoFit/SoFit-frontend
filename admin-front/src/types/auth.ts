@@ -10,7 +10,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   userId: number;
   name: string;
-  role: string;
+  role: AdminRole;
 }
 
 /** /auth/me 응답 */
@@ -18,7 +18,7 @@ export interface AuthMeResponse {
   name: string;
   loginId: string;
   phoneNumber: string;
-  role: string;
+  role: AdminRole;
 }
 
 /** Zustand 스토어 및 앱 내부에서 사용하는 인증 사용자 타입 */

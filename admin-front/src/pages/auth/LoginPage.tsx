@@ -4,8 +4,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { loginAdmin } from "@/api/authApi";
 import { useAuthStore } from "@/stores/authStore";
 import { AUTH_KEYS } from "@/constants/queryKeys";
-import type { AdminRole } from "@/types";
+import type { AuthUser } from "@/types";
 import mainLogo from "@/assets/mainLogo.svg";
+import { EyeIcon, EyeOffIcon } from "@/components/icons";
 import type { AxiosError } from "axios";
 
 export default function LoginPage() {
@@ -21,18 +22,18 @@ export default function LoginPage() {
   const loginMutation = useMutation({
     mutationFn: loginAdmin,
     onSuccess: (data) => {
-      const role = data.role as AdminRole;
-      const user = { userId: data.userId, name: data.name, role };
+      const user: AuthUser = { userId: data.userId, name: data.name, role: data.role };
       login(user);
 
       // auth/me 쿼리 캐시에 직접 설정 (불필요한 /auth/me 호출 방지)
-      queryClient.setQueryData(AUTH_KEYS.me, user);
+      queryClient.setQueryData<AuthUser>(AUTH_KEYS.me, user);
 
       navigate("/dashboard", { replace: true });
     },
     onError: (err: AxiosError<{ message?: string }>) => {
       const message =
         err.response?.data?.message ?? "로그인에 실패했습니다. 다시 시도해주세요.";
+      setPassword("");
       setError(message);
     },
   });
@@ -97,18 +98,7 @@ export default function LoginPage() {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled hover:text-text-secondary"
                 aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
               >
-                {showPassword ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-                    <line x1="1" y1="1" x2="23" y2="23" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                )}
+                {showPassword ? <EyeIcon /> : <EyeOffIcon />}
               </button>
             </div>
           </div>
