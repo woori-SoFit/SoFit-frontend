@@ -12,7 +12,7 @@ interface PushToggleProps {
 
 export function PushToggle({ enabled, onToggle }: PushToggleProps) {
   return (
-    <div className="flex items-center justify-between rounded-xl bg-white p-4">
+    <div className="flex items-center justify-between rounded-xl bg-white px-5 py-4">
       {/* 좌측: 제목 + 설명 */}
       <div className="flex flex-col gap-1">
         <span className="text-base font-semibold text-gray-900">푸시 알림</span>

@@ -16,7 +16,7 @@ interface ProfileCardProps {
 
 export function ProfileCard({ name, loginId }: ProfileCardProps) {
   return (
-    <div className="flex items-center gap-2 rounded-xl bg-bg-surface p-4 shadow-card">
+    <div className="flex items-center gap-2 rounded-xl bg-white p-4">
       {/* SoFit 캐릭터 아바타 */}
       <div className="flex h-16 w-16 shrink-0 items-center justify-center">
         <img

@@ -18,7 +18,7 @@ interface LogoutSheetProps {
 export function LogoutSheet({ open, onConfirm, onCancel }: LogoutSheetProps) {
   return (
     <BottomSheet open={open} onClose={onCancel}>
-      <div className="flex flex-col items-center px-6 pt-8 pb-6">
+      <div className="flex flex-col items-center px-6 py-10">
         {/* 아이콘 */}
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
           <LogOut size={28} className="text-primary" />
@@ -41,14 +41,14 @@ export function LogoutSheet({ open, onConfirm, onCancel }: LogoutSheetProps) {
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 rounded-xl border border-gray-200 bg-white py-3.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            className="flex-1 rounded-lg border border-gray-200 bg-white py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
           >
             취소
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="flex-1 rounded-xl bg-primary py-3.5 text-sm font-semibold text-white hover:bg-primary-dark transition-colors"
+            className="flex-1 rounded-lg bg-primary py-3 text-sm font-semibold text-white hover:bg-primary-dark transition-colors"
           >
             로그아웃
           </button>

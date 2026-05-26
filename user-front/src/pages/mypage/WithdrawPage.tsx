@@ -45,10 +45,10 @@ export default function WithdrawPage() {
   return (
     <div className="flex flex-col h-full bg-base">
       {/* 콘텐츠 */}
-      <div className="flex-1 px-6 pt-4 overflow-y-auto">
+      <div className="flex-1 px-6 pt-10 overflow-y-auto">
         {/* 경고 아이콘 */}
         <div className="flex justify-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-50">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
             <TriangleAlert size={28} className="text-red-500" />
           </div>
         </div>
@@ -66,7 +66,7 @@ export default function WithdrawPage() {
         </p>
 
         {/* 삭제되는 정보 카드 */}
-        <div className="mt-6 rounded-xl bg-red-50 p-5">
+        <div className="mt-8 rounded-xl bg-red-50 p-5">
           <p className="text-sm font-bold text-red-500 mb-3">삭제되는 정보</p>
           <ul className="space-y-1.5">
             {DELETED_INFO.map((item) => (
@@ -78,8 +78,8 @@ export default function WithdrawPage() {
         </div>
 
         {/* 확인 입력 */}
-        <div className="mt-6">
-          <p className="text-sm text-gray-700 mb-2">
+        <div className="mt-10">
+          <p className="text-sm text-gray-700 mb-2 ml-1">
             탈퇴를 원하시면 '<span className="font-semibold">{CONFIRM_TEXT}</span>'를 입력해주세요.
           </p>
           <input

@@ -20,7 +20,7 @@ export function MenuItem({ label, to, onClick, variant = "default" }: MenuItemPr
   const content = (
     <div className="flex items-center justify-between w-full px-5 py-4">
       <span className={`text-base font-medium ${textColor}`}>{label}</span>
-      <ChevronRight size={20} className="text-gray-400" />
+      <ChevronRight size={18} className="text-gray-400" />
     </div>
   );
 
