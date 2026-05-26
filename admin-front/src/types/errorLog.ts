@@ -24,8 +24,6 @@ export interface ErrorLogItem {
   loanApplicationId: string | null;
   /** 스택 트레이스 */
   stackTrace: string;
-  /** 스레드 덤프 (에러 발생 시점의 스레드 정보) */
-  threadDump: string;
   /** 발생 일시 (ISO 8601) */
   occurredAt: string;
 }

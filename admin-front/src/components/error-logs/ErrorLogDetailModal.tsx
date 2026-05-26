@@ -69,14 +69,6 @@ export default function ErrorLogDetailModal({ log, onClose }: ErrorLogDetailModa
               {log.stackTrace}
             </pre>
           </div>
-
-          {/* 스레드 덤프 */}
-          <div>
-            <p className="text-xs font-medium text-text-secondary mb-1">스레드 덤프</p>
-            <pre className="text-xs text-white bg-black px-4 py-3 rounded-md overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed">
-              {log.threadDump}
-            </pre>
-          </div>
         </div>
 
         {/* 푸터 */}
