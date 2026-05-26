@@ -6,7 +6,7 @@ export interface Column<T> {
   header: string;
   /** 셀 렌더링 함수 */
   render: (row: T) => ReactNode;
-  /** 헤더/셀 정렬 (기본: "left") */
+  /** 헤더/셀 정렬 (기본: "center") */
   align?: 'left' | 'center' | 'right';
 }
 
@@ -39,13 +39,13 @@ export default function DataTable<T>({
 }: DataTableProps<T>) {
   return (
     <div className="overflow-x-auto rounded-lg border border-border-default bg-bg-surface shadow-card">
-      <table className="w-full text-left text-sm">
+      <table className="w-full table-fixed text-left text-sm">
         <thead>
           <tr className="border-b border-border-default bg-gray-50">
             {columns.map((col) => (
               <th
                 key={col.header}
-                className={`px-4 py-3 text-xs font-semibold text-text-secondary ${ALIGN_CLASSES[col.align ?? 'left']}`}
+                className={`px-4 py-3 text-xs font-semibold text-text-secondary ${ALIGN_CLASSES[col.align ?? 'center']}`}
               >
                 {col.header}
               </th>
@@ -71,7 +71,7 @@ export default function DataTable<T>({
                 {columns.map((col) => (
                   <td
                     key={col.header}
-                    className={`px-4 py-3 text-sm text-text-primary ${ALIGN_CLASSES[col.align ?? 'left']}`}
+                    className={`px-4 py-3 text-sm text-text-primary ${ALIGN_CLASSES[col.align ?? 'center']}`}
                   >
                     {col.render(row)}
                   </td>

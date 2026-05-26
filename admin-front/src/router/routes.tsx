@@ -6,7 +6,6 @@ import DashboardPage from "@/pages/dashboard/DashboardPage";
 import UsersPage from "@/pages/placeholder/UsersPage";
 import ApiLogsPage from "@/pages/placeholder/ApiLogsPage";
 import BatchPage from "@/pages/placeholder/BatchPage";
-import ReviewHistoryPage from "@/pages/placeholder/ReviewHistoryPage";
 import ManagerApprovalPage from "@/pages/manager-approval/ManagerApprovalPage";
 import LoanDetailPage from "@/pages/loan-detail/LoanDetailPage";
 import RoleGuard from "@/components/common/RoleGuard";
@@ -21,7 +20,6 @@ import { type ComponentType } from "react";
  */
 const PAGE_COMPONENTS: Record<string, ComponentType> = {
   "loan-applications": DashboardPage,
-  "review-history": ReviewHistoryPage,
   "manager-approval": ManagerApprovalPage,
   "loan-detail": LoanDetailPage,
   users: UsersPage,

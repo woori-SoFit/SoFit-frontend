@@ -290,6 +290,8 @@ export interface ManagerApprovalItem {
   applicationDate: string;
   applicantName: string;
   businessName: string;
+  /** 대출 상품명 */
+  productName: string;
   /** 요청 은행원명 */
   requestedByName: string;
   /** 신청 금액 (원) */

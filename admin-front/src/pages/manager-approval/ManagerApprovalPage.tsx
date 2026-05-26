@@ -1,42 +1,40 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useManagerApprovals } from '@/hooks/useManagerApprovals';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
-import Button from '@/components/common/Button';
 import DataTable from '@/components/common/DataTable';
 import type { Column } from '@/components/common/DataTable';
 import type { ManagerApprovalItem } from '@/types';
 
+const columns: Column<ManagerApprovalItem>[] = [
+  { header: '신청일', render: (row) => formatDate(row.applicationDate) },
+  { header: '신청자명', render: (row) => row.applicantName },
+  { header: '사업자명', render: (row) => row.businessName },
+  { header: '상품명', render: (row) => row.productName },
+  { header: '요청 은행원', render: (row) => row.requestedByName },
+  { header: '신청 금액', render: (row) => formatCurrency(row.requestedAmount) },
+  {
+    header: '상세 정보',
+    render: (row) => (
+      <Link
+        to={`/loan/${row.id}`}
+        aria-label={`${row.applicantName} 결재 건 상세보기`}
+        className="text-primary hover:text-primary/80 font-medium"
+      >
+        상세보기
+      </Link>
+    ),
+  },
+];
+
 /**
  * 지점장 결재 페이지.
  * MANAGER_REVIEW 상태인 대출 신청 건 목록을 테이블로 표시하고,
- * 각 건의 상세보기 버튼으로 대출 상세 페이지로 이동할 수 있다.
+ * 각 건의 상세보기 링크로 대출 상세 페이지로 이동할 수 있다.
  */
 export default function ManagerApprovalPage() {
-  const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = useManagerApprovals();
-
-  const columns: Column<ManagerApprovalItem>[] = [
-    { header: '신청일', render: (row) => formatDate(row.applicationDate) },
-    { header: '신청자명', render: (row) => row.applicantName },
-    { header: '사업자명', render: (row) => row.businessName },
-    { header: '요청 은행원', render: (row) => row.requestedByName },
-    { header: '신청 금액', align: 'right', render: (row) => formatCurrency(row.requestedAmount) },
-    {
-      header: '상세',
-      align: 'center',
-      render: (row) => (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => navigate(`/loan/${row.id}`)}
-        >
-          상세보기
-        </Button>
-      ),
-    },
-  ];
 
   return (
     <div className="p-6">
