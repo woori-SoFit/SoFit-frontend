@@ -1,7 +1,23 @@
 /**
- * 마이 비즈 데이터 도메인 타입 정의
+ * My Biz Data 관련 타입 정의
  */
 import type { LucideIcon } from "lucide-react";
+
+/** My Biz Data 연결 상태 응답 */
+export interface BizDataStatusResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: BizDataStatus | null;
+}
+
+/** My Biz Data 연결 상태 */
+export interface BizDataStatus {
+  /** My Biz Data 수집 완료 여부 */
+  isConnected: boolean;
+  /** 수집 완료 일시 (ISO 8601) */
+  connectedAt: string | null;
+}
 
 /** 마이 비즈 데이터 수집 step */
 export type BizDataCollectStep = "CERT_INFO" | "TERMS" | "LOADING";
