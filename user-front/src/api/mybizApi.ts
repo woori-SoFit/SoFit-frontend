@@ -1,44 +1,6 @@
 import axiosInstance from "./axiosInstance";
 import type { BizDashboardData } from "@/types/bizData";
-
-// ─── 백엔드 응답 타입 ─────────────────────────────────────────────
-
-interface MyBizApiResponse<T> {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: T;
-}
-
-interface MyBizDashboardResult {
-  referenceMonth: string;
-  monthlyRevenue: number;
-  monthlyRevenueGrowthRate: number | null;
-  cashFlow: number;
-  estimatedProfit: number;
-  industryCompare: {
-    industryName: string;
-    industrySalesRank: number;
-    industryProfitRank: number;
-    industryStabilityRank: number;
-  };
-  revenueTrend: Array<{ referenceMonth: string; monthlyRevenue: number }>;
-  cashFlowTrend: Array<{
-    referenceMonth: string;
-    monthlyInflow: number;
-    monthlyOutflow: number;
-  }>;
-  ratingTrend: Array<{ referenceMonth: string; reviewRating: number }>;
-  reviewRating: number;
-  reviewCount: number;
-  onlineReorderRate: number;
-  deliveryOrderCount: number;
-  availableMonths: string[];
-}
-
-interface LoanExecutionResult {
-  executedAmount: number;
-}
+import type { MyBizApiResponse, MyBizDashboardResult, LoanExecutionResult } from "@/types/mybizApi";
 
 // ─── 내부 유틸 ────────────────────────────────────────────────────
 
