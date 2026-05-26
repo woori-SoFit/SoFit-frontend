@@ -36,7 +36,10 @@ import CalculatePage from "@/pages/calculator/CalculatorPage";
 import MyPage from "@/pages/mypage/MyPage";
 import ProfilePage from "@/pages/mypage/ProfilePage";
 import BusinessInfoPage from "@/pages/mypage/BusinessInfoPage";
-import NotificationsPage from "@/pages/mypage/NotificationsPage";
+import WithdrawPage from "@/pages/mypage/WithdrawPage";
+
+// Notification
+import NotificationsPage from "@/pages/notification/NotificationsPage";
 
 // Error
 import NotFoundPage from "@/pages/error/NotFoundPage";
@@ -79,6 +82,21 @@ export const router = createBrowserRouter([
       // 대출 약정 (약관 동의 → PIN → 계좌 설정)
       { path: "/loan/agreement/:applicationId", element: <LoanAgreementPage /> },
 
+      // 심사 이후 — route 기반 분리
+      { path: "/loan-applications", element: <LoanProgressPage />},
+      { path: "/loan/review/:applicationId", element: <LoanReviewPage /> },
+      { path: "/loan/result/:applicationId", element: <LoanResultPage /> },
+      { path: "/loan/execution/:applicationId", element: <LoanExecutionPage /> },
+
+      // 마이페이지
+      { path: "/mypage", element: <MyPage /> },
+      { path: "/mypage/profile", element: <ProfilePage /> },
+      { path: "/mypage/business", element: <BusinessInfoPage /> },
+      { path: "/mypage/withdraw", element: <WithdrawPage /> },
+
+      // 알림
+      { path: "/notifications", element: <NotificationsPage /> },
+
       // S분석 리포트 — step 기반 흐름
       { path: "/grade-report", element: <GradeReportPage /> },
       { path: "/grade-report/detail", element: <GradeReportDetailPage /> },
@@ -99,12 +117,6 @@ export const router = createBrowserRouter([
 
       // 사전계산기
       { path: "/calculate", element: <CalculatePage />},
-
-      // 마이페이지
-      { path: "/mypage", element: <MyPage /> },
-      { path: "/mypage/profile", element: <ProfilePage /> },
-      { path: "/mypage/business", element: <BusinessInfoPage /> },
-      { path: "/mypage/notifications", element: <NotificationsPage /> },
     ],
   },
 
