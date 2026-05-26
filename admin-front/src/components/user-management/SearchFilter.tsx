@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { UserFilters } from '@/types/user';
 import { shouldTriggerSearch } from '@/utils/userUtils';
 
@@ -28,6 +28,14 @@ const STATUS_OPTIONS = [
  */
 export default function SearchFilter({ filters, onFiltersChange }: SearchFilterProps) {
   const [keyword, setKeyword] = useState(filters.keyword);
+  const filtersRef = useRef(filters);
+  const onFiltersChangeRef = useRef(onFiltersChange);
+
+  // 최신 값 유지
+  useEffect(() => {
+    filtersRef.current = filters;
+    onFiltersChangeRef.current = onFiltersChange;
+  });
 
   useEffect(() => {
     setKeyword(filters.keyword);
@@ -36,18 +44,20 @@ export default function SearchFilter({ filters, onFiltersChange }: SearchFilterP
   // 300ms 디바운스
   useEffect(() => {
     const timer = setTimeout(() => {
+      const currentFilters = filtersRef.current;
+      const currentOnChange = onFiltersChangeRef.current;
+
       if (shouldTriggerSearch(keyword)) {
-        if (keyword !== filters.keyword) {
-          onFiltersChange({ ...filters, keyword });
+        if (keyword !== currentFilters.keyword) {
+          currentOnChange({ ...currentFilters, keyword });
         }
       } else {
-        if (filters.keyword !== '') {
-          onFiltersChange({ ...filters, keyword: '' });
+        if (currentFilters.keyword !== '') {
+          currentOnChange({ ...currentFilters, keyword: '' });
         }
       }
     }, 300);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keyword]);
 
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

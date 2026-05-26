@@ -21,9 +21,9 @@ export default function UserManagementPage() {
     role: '',
     status: '',
   });
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
 
-  const params = buildUserListParams('all', filters, page + 1, PAGE_SIZE);
+  const params = buildUserListParams('all', filters, page, PAGE_SIZE);
 
   const { data: userData, isLoading, isError, refetch } = useUserList(params);
   const {
@@ -35,7 +35,7 @@ export default function UserManagementPage() {
 
   const handleFiltersChange = (newFilters: UserFilters) => {
     setFilters(newFilters);
-    setPage(0);
+    setPage(1);
   };
 
   return (
@@ -80,7 +80,7 @@ export default function UserManagementPage() {
           <UserTable
             data={userData.users}
             totalCount={userData.totalCount}
-            currentPage={page + 1}
+            currentPage={page}
             pageSize={PAGE_SIZE}
           />
         </div>
@@ -91,19 +91,19 @@ export default function UserManagementPage() {
         <div className="flex items-center justify-center gap-2 pt-4 mt-auto">
           <button
             type="button"
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
-            disabled={page === 0}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
             className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
           >
             이전
           </button>
           <span className="text-sm text-text-secondary">
-            {page + 1} / {userData.totalPages}
+            {page} / {userData.totalPages}
           </span>
           <button
             type="button"
-            onClick={() => setPage((p) => Math.min(userData.totalPages - 1, p + 1))}
-            disabled={page >= userData.totalPages - 1}
+            onClick={() => setPage((p) => Math.min(userData.totalPages, p + 1))}
+            disabled={page >= userData.totalPages}
             className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
           >
             다음
