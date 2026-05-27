@@ -1,26 +1,23 @@
 /**
  * Step 기반 순차 로딩 화면 공통 컴포넌트
- * — Bot 일러스트 + 플로팅 아이콘 + step 목록 카드
  *
  * 사용처:
  * - My Biz Data 수집 중 로딩
  *
- * cf. 대출 신청 MyData 불러오기 로딩은 별도 디자인이라 MydataLoadingStep을 사용
  */
 import { useState, useEffect, useRef } from "react";
 import type { LucideIcon } from "lucide-react";
-import { CircleCheckBig, Loader2, Circle, Bot, Home, CreditCard, Landmark, MapPin, Star, FileText } from "lucide-react";
+import { CircleCheckBig, Loader2, Circle } from "lucide-react";
+import Lottie from "lottie-react";
+import bizDataRobotAnimation from "@/assets/lottie/Biz-Data-Robot.json";
 
 type StepStatus = "pending" | "loading" | "done";
 
 export interface LoadingStep {
   label: string;
   status: StepStatus;
-  /** 왼쪽 아이콘 */
   icon?: LucideIcon;
-  /** 활성(loading/done)일 때 아이콘 배경 Tailwind class */
   activeBg?: string;
-  /** 활성(loading/done)일 때 아이콘 색상 Tailwind class */
   activeColor?: string;
 }
 
@@ -32,17 +29,7 @@ interface LoadingScreenProps {
   onComplete?: () => void;
 }
 
-const STEP_INTERVAL_MS = 500;
-
-/** 로봇 주변 플로팅 아이콘 위치 */
-const FLOATING_ICONS = [
-  { Icon: Home,      className: "top-2 left-1/2 -translate-x-8",   color: "text-red-400"   },
-  { Icon: Landmark,  className: "top-2 left-1/2 translate-x-2",    color: "text-blue-400"  },
-  { Icon: CreditCard,className: "top-1/2 left-2 -translate-y-1/2", color: "text-green-500" },
-  { Icon: MapPin,    className: "top-1/2 right-2 -translate-y-1/2",color: "text-purple-400"},
-  { Icon: Star,      className: "bottom-2 left-1/2 -translate-x-8",color: "text-amber-400" },
-  { Icon: FileText,  className: "bottom-2 left-1/2 translate-x-2", color: "text-slate-400" },
-] as const;
+const STEP_INTERVAL_MS = 1000;
 
 export function LoadingScreen({ title, description, steps, onComplete }: LoadingScreenProps) {
   const [internalSteps, setInternalSteps] = useState<LoadingStep[]>(() => steps ?? []);
@@ -97,26 +84,9 @@ export function LoadingScreen({ title, description, steps, onComplete }: Loading
         <p className="text-sm text-text-secondary text-center mb-6">{description}</p>
       )}
 
-      {/* 로봇 일러스트레이션 */}
-      <div className="relative flex items-center justify-center w-52 h-52 mb-6">
-        {/* 동심원 배경 */}
-        <div className="absolute w-52 h-52 rounded-full bg-blue-50/50" />
-        <div className="absolute w-36 h-36 rounded-full bg-blue-50" />
-
-        {/* 중앙 Bot 아이콘 */}
-        <div className="relative z-10 w-20 h-20 rounded-full bg-white shadow-md flex items-center justify-center">
-          <Bot size={44} className="text-primary" />
-        </div>
-
-        {/* 플로팅 아이콘들 */}
-        {FLOATING_ICONS.map(({ Icon, className, color }) => (
-          <div
-            key={className}
-            className={`absolute ${className} w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center`}
-          >
-            <Icon size={16} className={color} />
-          </div>
-        ))}
+      {/* 로봇 Lottie 애니메이션 */}
+      <div className="w-52 h-52 mb-6">
+        <Lottie animationData={bizDataRobotAnimation} loop className="w-full h-full" />
       </div>
 
       {/* Step 목록 카드 */}

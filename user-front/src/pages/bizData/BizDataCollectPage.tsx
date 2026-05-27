@@ -17,7 +17,7 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { useBizDataCollectStore } from "@/stores/bizDataCollectStore";
 import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { TermsPage } from "@/components/terms/TermsPage";
-import { LoadingScreen } from "@/components/common/LoadingScreen";
+import { LoadingScreen } from "@/components/bizData/LoadingScreen";
 import { MOCK_BIZ_DATA_TERMS, MOCK_BIZ_DATA_COLLECT_STEPS } from "@/mocks/bizData";
 import { connectMyBiz } from "@/api/mybizApi";
 

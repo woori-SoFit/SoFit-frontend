@@ -4,7 +4,7 @@
  * TODO: API 연동 완료 후 이 파일 삭제
  */
 import type { TermsItem } from "@/types/common";
-import type { BizDashboardData, CollectStep } from "@/types/bizData";
+import type { CollectStep } from "@/types/bizData";
 import { Home, CreditCard, Landmark, MapPin, Star, FileText } from "lucide-react";
 
 /** 마이 비즈 데이터 연결 상태 플래그 — TODO: API 연동 시 useQuery로 대체 */
@@ -44,7 +44,6 @@ export const MOCK_BIZ_DATA_TERMS: TermsItem[] = [
 
 /**
  * 데이터 수집 단계 (6개)
- * 와이어프레임 ⑤번 캡처 상태: 앞 2개 done, 3번째 loading, 나머지 pending
  */
 export const MOCK_BIZ_DATA_COLLECT_STEPS: CollectStep[] = [
   { label: "홈택스 연결 완료",       status: "done",    icon: Home,      activeBg: "bg-red-50",    activeColor: "text-red-500"   },
@@ -54,100 +53,3 @@ export const MOCK_BIZ_DATA_COLLECT_STEPS: CollectStep[] = [
   { label: "리뷰/평점 분석 중",       status: "pending", icon: Star,      activeBg: "bg-amber-50",  activeColor: "text-amber-500" },
   { label: "최종 분석 리포트 생성 중", status: "pending", icon: FileText,  activeBg: "bg-slate-100", activeColor: "text-slate-500" },
 ];
-
-const MOCK_BIZ_DASHBOARD_MAY: BizDashboardData = {
-  currentMonth: "2024.05",
-  availableMonths: [],
-  monthlyRevenue: 4820000,
-  monthOverMonthChange: 12.4,
-  cashFlow: 1250000,
-  netProfit: 820000,
-  industryComparison: {
-    industryName: "카페/커피 전문점",
-    revenue: 40,
-    profitability: 30,
-    stability: 35,
-  },
-  revenueTrend: [
-    { month: "1월", amount: 3200000 },
-    { month: "2월", amount: 3500000 },
-    { month: "3월", amount: 4100000 },
-    { month: "4월", amount: 4300000 },
-    { month: "5월", amount: 4820000 },
-  ],
-  transactionFlow: [
-    { month: "3월", income: 4100000, expense: 3200000 },
-    { month: "4월", income: 4300000, expense: 3400000 },
-    { month: "5월", income: 4820000, expense: 3570000 },
-  ],
-  loanBalance: 12000000,
-  loanRepaymentDate: "2024.06.15",
-  review: {
-    averageRating: 4.6,
-    reviewCount: 1248,
-    ratingTrend: [
-      { month: "1월", rating: 4.3 },
-      { month: "2월", rating: 4.4 },
-      { month: "3월", rating: 4.5 },
-      { month: "4월", rating: 4.5 },
-      { month: "5월", rating: 4.6 },
-    ],
-  },
-  customerRatio: {
-    repurchaseRate: 28,
-    recommendCount: 1240,
-  },
-};
-
-const MOCK_BIZ_DASHBOARD_APRIL: BizDashboardData = {
-  currentMonth: "2024.04",
-  availableMonths: [],
-  monthlyRevenue: 4300000,
-  monthOverMonthChange: -8.3,
-  cashFlow: 980000,
-  netProfit: 640000,
-  industryComparison: {
-    industryName: "카페/커피 전문점",
-    revenue: 45,
-    profitability: 35,
-    stability: 40,
-  },
-  revenueTrend: [
-    { month: "12월", amount: 2900000 },
-    { month: "1월", amount: 3200000 },
-    { month: "2월", amount: 3500000 },
-    { month: "3월", amount: 4100000 },
-    { month: "4월", amount: 4300000 },
-  ],
-  transactionFlow: [
-    { month: "2월", income: 3500000, expense: 2800000 },
-    { month: "3월", income: 4100000, expense: 3200000 },
-    { month: "4월", income: 4300000, expense: 3400000 },
-  ],
-  loanBalance: 12000000,
-  loanRepaymentDate: "2024.06.15",
-  review: {
-    averageRating: 4.5,
-    reviewCount: 1201,
-    ratingTrend: [
-      { month: "12월", rating: 4.2 },
-      { month: "1월", rating: 4.3 },
-      { month: "2월", rating: 4.4 },
-      { month: "3월", rating: 4.5 },
-      { month: "4월", rating: 4.5 },
-    ],
-  },
-  customerRatio: {
-    repurchaseRate: 24,
-    recommendCount: 1120,
-  },
-};
-
-/** 월별 대시보드 Mock 데이터 맵 — key: "YYYY.MM" */
-export const MOCK_BIZ_DASHBOARDS: Record<string, BizDashboardData> = {
-  "2024.05": MOCK_BIZ_DASHBOARD_MAY,
-  "2024.04": MOCK_BIZ_DASHBOARD_APRIL,
-};
-
-/** 현재 달 (가장 최신) */
-export const MOCK_CURRENT_MONTH = "2024.05";
