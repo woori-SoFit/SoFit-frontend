@@ -11,22 +11,40 @@ const REVIEW_STEPS = ["신청접수", "서류확인", "심사 중", "심사 완�
 
 /** 상태별 현재 단계 인덱스 */
 const STATUS_STEP_INDEX: Record<LoanApplicationStatus, number> = {
-  SUBMITTED: 2,
-  IN_REVIEW: 2,
+  DRAFT: 0,
+  SUBMITTED: 0,
+  CB_CHECKING: 1,
+  BASIC_REVIEW: 1,
+  S_CALCULATING: 2,
+  S_COMPLETED: 2,
+  SYSTEM_APPROVED: 2,
+  SYSTEM_HOLD: 2,
+  MANAGER_REVIEW: 2,
+  FINAL_REVIEW: 2,
   APPROVED: 3,
   REJECTED: 3,
   CONTRACTED: 3,
   EXECUTED: 3,
+  CANCELLED: 3,
 };
 
 /** 상태 배지 */
 const STATUS_BADGE: Record<LoanApplicationStatus, { label: string; color: string }> = {
-  SUBMITTED: { label: "심사 중", color: "bg-blue-100 text-primary" },
-  IN_REVIEW: { label: "심사 중", color: "bg-blue-100 text-primary" },
+  DRAFT: { label: "초안", color: "bg-gray-100 text-gray-600" },
+  SUBMITTED: { label: "접수 완료", color: "bg-blue-100 text-primary" },
+  CB_CHECKING: { label: "CB 조회 중", color: "bg-blue-100 text-primary" },
+  BASIC_REVIEW: { label: "기본 심사 중", color: "bg-blue-100 text-primary" },
+  S_CALCULATING: { label: "S등급 산출 중", color: "bg-blue-100 text-primary" },
+  S_COMPLETED: { label: "S등급 산출 완료", color: "bg-blue-100 text-primary" },
+  SYSTEM_APPROVED: { label: "시스템 승인", color: "bg-blue-100 text-primary" },
+  SYSTEM_HOLD: { label: "추가 심사 중", color: "bg-yellow-100 text-yellow-700" },
+  MANAGER_REVIEW: { label: "지점장 리뷰 중", color: "bg-yellow-100 text-yellow-700" },
+  FINAL_REVIEW: { label: "최종 심사 중", color: "bg-blue-100 text-primary" },
   APPROVED: { label: "대출 승인", color: "bg-green-100 text-green-700" },
   REJECTED: { label: "대출 거절", color: "bg-red-100 text-red-700" },
   CONTRACTED: { label: "약정 완료", color: "bg-green-100 text-green-700" },
   EXECUTED: { label: "실행 완료", color: "bg-green-100 text-green-700" },
+  CANCELLED: { label: "취소", color: "bg-gray-100 text-gray-600" },
 };
 
 interface LoanApplicationCardProps {
@@ -37,7 +55,7 @@ interface LoanApplicationCardProps {
 export function LoanApplicationCard({ app, onClick }: LoanApplicationCardProps) {
   const badge = STATUS_BADGE[app.status];
   const currentStepIndex = STATUS_STEP_INDEX[app.status];
-  const isCompleted = app.status === "APPROVED" || app.status === "REJECTED" || app.status === "CONTRACTED" || app.status === "EXECUTED";
+  const isCompleted = app.status === "APPROVED" || app.status === "REJECTED" || app.status === "CONTRACTED" || app.status === "EXECUTED" || app.status === "CANCELLED";
 
   return (
     <button

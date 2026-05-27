@@ -32,9 +32,11 @@ export default function LoanProgressPage() {
   });
 
   const handleCardClick = (app: LoanApplication) => {
-    if (app.status === "APPROVED" || app.status === "REJECTED") {
+    if (app.status === "APPROVED" || app.status === "REJECTED" || app.status === "CANCELLED") {
       navigate(`/loan/result/${app.id}`);
-    } else if (app.status === "IN_REVIEW" || app.status === "SUBMITTED") {
+    } else if (app.status === "CONTRACTED" || app.status === "EXECUTED") {
+      navigate(`/loan/result/${app.id}`);
+    } else {
       navigate(`/loan/review/${app.id}`);
     }
   };
