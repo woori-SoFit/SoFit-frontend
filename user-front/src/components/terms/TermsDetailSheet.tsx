@@ -17,9 +17,10 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
 const BASE_WIDTH = Math.min(window.innerWidth - 32, 398);
-const MIN_SCALE = 1.0;
+const MIN_SCALE = 0.75;
 const MAX_SCALE = 3.0;
 const SCALE_STEP = 0.25;
+const DEFAULT_SCALE = 1.25;
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -47,7 +48,7 @@ export function TermsDetailSheet({
   const [animate, setAnimate] = useState(false);
   const [numPages, setNumPages] = useState<number>(0);
   const [pdfError, setPdfError] = useState(false);
-  const [scale, setScale] = useState(1.0);
+  const [scale, setScale] = useState(DEFAULT_SCALE);
   const pinchRef = useRef<{ dist: number; scale: number } | null>(null);
 
   const handleDocumentLoadSuccess = useCallback(
@@ -86,7 +87,7 @@ export function TermsDetailSheet({
     if (isOpen && term) {
       setNumPages(0);
       setPdfError(false);
-      setScale(1.0);
+      setScale(DEFAULT_SCALE);
       setVisible(true);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setAnimate(true));
@@ -216,7 +217,7 @@ export function TermsDetailSheet({
               <ZoomOut size={18} />
             </button>
             <span className="text-xs text-text-secondary w-10 text-center tabular-nums">
-              {Math.round(scale * 100)}%
+              {Math.round((scale / DEFAULT_SCALE) * 100)}%
             </span>
             <button
               type="button"
