@@ -13,6 +13,26 @@ export function filterBusinessNumber(input: string): string {
 }
 
 /**
+ * 사업자등록번호 포맷팅
+ * 10자리 숫자를 "XXX-XX-XXXXX" 형식으로 포맷팅한다.
+ * @param digits 숫자만 포함된 문자열 (최대 10자리)
+ * @returns 하이픈이 삽입된 사업자등록번호 문자열
+ */
+export function formatBusinessNumber(digits: string): string {
+  const cleaned = digits.replace(/[^0-9]/g, "").slice(0, 10);
+
+  if (cleaned.length <= 3) {
+    return cleaned;
+  }
+
+  if (cleaned.length <= 5) {
+    return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
+  }
+
+  return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 5)}-${cleaned.slice(5)}`;
+}
+
+/**
  * 주민번호 포맷팅
  * 7자리 숫자를 "XXXXXX-X******" 형식으로 포맷팅한다.
  * 7자리 미만인 경우 입력된 만큼만 포맷팅한다.
