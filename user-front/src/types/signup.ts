@@ -19,6 +19,12 @@ export interface CheckLoginIdResponse {
   result: { available: boolean };
 }
 
+/** 약관 동의 항목 */
+export interface ConsentItem {
+  termId: number;
+  isConsented: boolean;
+}
+
 /** 회원가입 요청 */
 export interface SignupRequest {
   name: string;
@@ -26,6 +32,7 @@ export interface SignupRequest {
   phoneNumber: string;
   loginId: string;
   password: string;
+  consents: ConsentItem[];
 }
 
 /** 회원가입 응답 */
