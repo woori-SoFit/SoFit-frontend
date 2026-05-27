@@ -26,14 +26,3 @@ export const SERVER_HEALTH_KEYS = {
   all: ["server-health"] as const,
   status: () => [...SERVER_HEALTH_KEYS.all, "status"] as const,
 } as const;
-
-export const ERROR_LOG_KEYS = {
-  all: ["error-logs"] as const,
-  list: () => [...ERROR_LOG_KEYS.all, "list"] as const,
-} as const;
-
-export const BATCH_KEYS = {
-  all: ["batch"] as const,
-  list: () => [...BATCH_KEYS.all, "list"] as const,
-  latest: () => [...BATCH_KEYS.all, "latest"] as const,
-} as const;

@@ -6,21 +6,25 @@ interface InfraStatusSectionProps {
   servers: ServerStatus[] | undefined;
 }
 
-/** 데이터 없을 때 표시할 인프라 서비스 기본 목록 (호출 시점의 시간 사용) */
-function getFallbackServers(): ServerStatus[] {
-  return [
-    { name: 'MySQL', status: 'DOWN', responseMs: 0, lastCheckedAt: new Date().toISOString() },
-    { name: 'Redis', status: 'DOWN', responseMs: 0, lastCheckedAt: new Date().toISOString() },
-  ];
-}
-
 /**
  * DB 상태 섹션.
  * MySQL, Redis 서비스의 헬스체크 결과를 표시한다.
- * 데이터가 없는 경우 빨간 인디케이터 + "장애" 상태로 폴백 표시한다.
+ * 데이터가 없는 경우 안내 메시지를 표시한다.
  */
 export default function InfraStatusSection({ servers }: InfraStatusSectionProps) {
-  const displayServers = servers && servers.length > 0 ? servers : getFallbackServers();
+  if (!servers || servers.length === 0) {
+    return (
+      <section className="rounded-lg border border-gray-200 bg-white p-6">
+        <h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-gray-900">
+          <Database className="h-4 w-4 text-gray-600" />
+          DB
+        </h2>
+        <p className="text-sm text-red-600">
+          DB 상태 정보를 불러올 수 없습니다.
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section className="rounded-lg border border-gray-200 bg-white p-6">
@@ -30,7 +34,7 @@ export default function InfraStatusSection({ servers }: InfraStatusSectionProps)
       </h2>
 
       <div className="divide-y divide-gray-100">
-        {displayServers.map((server) => (
+        {servers.map((server) => (
           <ServerStatusRow
             key={server.name}
             name={server.name}

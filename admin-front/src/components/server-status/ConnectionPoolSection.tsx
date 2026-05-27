@@ -1,5 +1,5 @@
 import type { DbConnectionPool } from '@/types/serverHealth';
-import { getPoolColor } from '@/types/serverHealth';
+import { getPoolDisplayList } from '@/utils/serverHealthUtils';
 import { HardDrive } from 'lucide-react';
 
 interface ConnectionPoolSectionProps {
@@ -36,6 +36,8 @@ export default function ConnectionPoolSection({ pools }: ConnectionPoolSectionPr
     );
   }
 
+  const poolDisplayList = getPoolDisplayList(pools);
+
   return (
     <section className="rounded-lg border border-gray-200 bg-white p-6">
       <h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-gray-900">
@@ -44,35 +46,29 @@ export default function ConnectionPoolSection({ pools }: ConnectionPoolSectionPr
       </h2>
 
       <div className="space-y-4">
-        {pools.map((pool) => {
-          const percentage = pool.total > 0 ? Math.round((pool.used / pool.total) * 100) : 0;
-          const color = getPoolColor(pool.used, pool.total);
-          const barColorClass = POOL_COLOR_CLASS[color];
+        {poolDisplayList.map((pool) => (
+          <div key={pool.name} className="flex items-center gap-4">
+            {/* 애플리케이션 이름 */}
+            <span className="w-28 shrink-0 text-sm font-medium text-gray-700">
+              {pool.name}
+            </span>
 
-          return (
-            <div key={pool.name} className="flex items-center gap-4">
-              {/* 애플리케이션 이름 */}
-              <span className="w-28 shrink-0 text-sm font-medium text-gray-700">
-                {pool.name}
-              </span>
-
-              {/* 프로그레스 바 */}
-              <div className="flex-1">
-                <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200">
-                  <div
-                    className={`h-full rounded-full ${barColorClass}`}
-                    style={{ width: `${percentage}%` }}
-                  />
-                </div>
+            {/* 프로그레스 바 */}
+            <div className="flex-1">
+              <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200">
+                <div
+                  className={`h-full rounded-full ${POOL_COLOR_CLASS[pool.color]}`}
+                  style={{ width: `${pool.percentage}%` }}
+                />
               </div>
-
-              {/* 사용률 표시: {percentage}% {used}/{total} */}
-              <span className="shrink-0 text-sm text-gray-600">
-                {percentage}% {pool.used}/{pool.total}
-              </span>
             </div>
-          );
-        })}
+
+            {/* 사용률 표시: {percentage}% {used}/{total} */}
+            <span className="shrink-0 text-sm text-gray-600">
+              {pool.percentage}% {pool.used}/{pool.total}
+            </span>
+          </div>
+        ))}
       </div>
     </section>
   );

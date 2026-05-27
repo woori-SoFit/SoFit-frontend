@@ -1,7 +1,5 @@
 export * from './user';
 export * from './serverHealth';
-export * from './errorLog';
-export * from './batch';
 
 export interface MenuItem {
   label: string;
