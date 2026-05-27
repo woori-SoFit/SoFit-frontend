@@ -1,5 +1,3 @@
-import type { PaginatedResponse } from './common';
-
 /**
  * 대출 도메인 관련 타입 정의
  */
@@ -23,7 +21,14 @@ export interface LoanApplicationListRequest {
 }
 
 /** 대출 신청 목록 조회 응답 */
-export type LoanApplicationListResponse = PaginatedResponse<LoanApplicationItem>;
+// TODO: 백엔드 응답 필드명 contents로 통일 후 PaginatedResponse<LoanApplicationItem>으로 교체
+export interface LoanApplicationListResponse {
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
+  size: number;
+  applications: LoanApplicationItem[];
+}
 
 /** 대출 신청 목록 개별 항목 (서버 응답 원본) */
 export interface LoanApplicationItem {
