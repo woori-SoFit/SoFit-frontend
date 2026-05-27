@@ -1,22 +1,9 @@
 import type { BatchLatestInfo } from '@/types/batch';
 import { formatDateTime } from '@/utils/formatters';
+import { getBatchStatusBadge } from '@/utils/batchUtils';
 
 interface BatchScheduleCardProps {
   latest: BatchLatestInfo;
-}
-
-/** 배치 상태 배지 */
-function getStatusBadge(status: string) {
-  switch (status) {
-    case 'SUCCESS':
-      return { className: 'bg-green-100 text-green-700', label: '성공' };
-    case 'FAILED':
-      return { className: 'bg-red-100 text-red-700', label: '실패' };
-    case 'RUNNING':
-      return { className: 'bg-blue-100 text-blue-700', label: '실행 중' };
-    default:
-      return { className: 'bg-gray-100 text-gray-700', label: status };
-  }
 }
 
 /** 주기별 고정 정보 */
@@ -49,7 +36,7 @@ const DEFAULT_CYCLE_CONFIG = {
  */
 export default function BatchScheduleCard({ latest }: BatchScheduleCardProps) {
   const config = CYCLE_CONFIG[latest.cycle] ?? DEFAULT_CYCLE_CONFIG;
-  const statusBadge = getStatusBadge(latest.lastStatus);
+  const statusBadge = getBatchStatusBadge(latest.lastStatus);
 
   return (
     <div className="bg-white border border-border-default rounded-lg p-5 flex-1">
