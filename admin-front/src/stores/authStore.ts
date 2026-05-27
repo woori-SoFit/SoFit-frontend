@@ -1,33 +1,24 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import type { AdminRole } from "@/types";
-
-export const AUTH_STORE_KEY = "sofit-admin-auth";
-
-export interface MockUser {
-  id: number;
-  name: string;
-  role: AdminRole;
-}
+import type { AuthUser } from "@/types";
 
 interface AuthState {
-  /** mock 로그인된 사용자 (null이면 미인증) */
-  user: MockUser | null;
-  /** mock 로그인 */
-  login: (user: MockUser) => void;
-  /** mock 로그아웃 */
+  /** 로그인된 사용자 (null이면 미인증) */
+  user: AuthUser | null;
+  /** 로그인 성공 시 사용자 정보 저장 */
+  login: (user: AuthUser) => void;
+  /** 로그아웃 시 상태 초기화 */
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      login: (user) => set({ user }),
-      logout: () => set({ user: null }),
-    }),
-    {
-      name: AUTH_STORE_KEY,
-    }
-  )
-);
+/**
+ * 인증 상태 스토어
+ *
+ * - 세션 기반 인증이므로 persist 사용하지 않음
+ * - 로그인 API 응답 또는 /auth/me 응답으로 user 설정
+ * - 로그아웃 또는 401 시 user를 null로 초기화
+ */
+export const useAuthStore = create<AuthState>()((set) => ({
+  user: null,
+  login: (user) => set({ user }),
+  logout: () => set({ user: null }),
+}));

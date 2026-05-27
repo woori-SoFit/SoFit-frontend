@@ -4,6 +4,7 @@
  * 구조: 좌측 로고 + 우측 (사용자 이름 + 로그아웃 버튼)
  */
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/authStore";
 import { useAuthMe } from "@/hooks/useAuthMe";
 import Button from "@/components/common/Button";
@@ -13,11 +14,13 @@ import mainLogo from "@/assets/mainLogo.svg";
 export function Header() {
   const navigate = useNavigate();
   const logout = useAuthStore((s) => s.logout);
+  const queryClient = useQueryClient();
   const { data: user } = useAuthMe();
 
   const handleLogout = () => {
-    // TODO: API 연동 시 서버 세션 삭제 요청 추가
+    // TODO: 로그아웃 API 구현 후 서버 세션 삭제 요청 추가
     logout();
+    queryClient.clear();
     navigate("/login", { replace: true });
   };
 
@@ -32,7 +35,7 @@ export function Header() {
       {/* 우측: 사용자 정보 + 로그아웃 */}
       <div className="flex items-center gap-3">
         {user && (
-          <span className="text-sm text-text-secondary">{user.name}</span>
+          <span className="text-sm text-text-secondary">{user.name} 님</span>
         )}
         <Button size="sm" onClick={handleLogout}>
           로그아웃
