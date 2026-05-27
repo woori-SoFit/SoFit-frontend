@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react';
 import type { UserStatistics } from '@/types/user';
 import { calculatePercentage } from '@/utils/userUtils';
 import Card from '@/components/common/Card';
+import { Users, Landmark, User, UserX } from 'lucide-react';
 
 interface StatisticsCardsProps {
   data?: UserStatistics;
@@ -11,7 +13,7 @@ interface StatisticsCardsProps {
 
 /** 개별 통계 카드 정보 */
 interface CardInfo {
-  icon: string;
+  icon: ReactNode;
   iconBg: string;
   title: string;
   count: number;
@@ -26,28 +28,28 @@ function buildCards(data: UserStatistics): CardInfo[] {
 
   return [
     {
-      icon: '👥',
+      icon: <Users className="h-5 w-5 text-blue-600" />,
       iconBg: 'bg-blue-100',
       title: '전체 사용자',
       count: totalCount,
       subtitle: `활성 사용자 ${activeCount}명`,
     },
     {
-      icon: '🏦',
+      icon: <Landmark className="h-5 w-5 text-green-600" />,
       iconBg: 'bg-green-100',
       title: '은행원',
       count: bankerCount,
       subtitle: `전체의 ${calculatePercentage(bankerCount, totalCount)}`,
     },
     {
-      icon: '👤',
+      icon: <User className="h-5 w-5 text-amber-600" />,
       iconBg: 'bg-orange-100',
       title: '고객',
       count: userCount,
       subtitle: `전체의 ${calculatePercentage(userCount, totalCount)}`,
     },
     {
-      icon: '🚫',
+      icon: <UserX className="h-5 w-5 text-red-600" />,
       iconBg: 'bg-red-100',
       title: '비활성 사용자',
       count: inactiveCount,
@@ -120,7 +122,7 @@ export default function StatisticsCards({ data, isLoading, isError, onRetry }: S
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full ${card.iconBg}`}
             >
-              <span className="text-lg">{card.icon}</span>
+              {card.icon}
             </div>
             <div className="flex-1">
               <p className="text-xs text-gray-500">{card.title}</p>

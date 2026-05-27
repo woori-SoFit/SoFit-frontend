@@ -13,11 +13,17 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { IntroSection } from "@/components/bizData/IntroSection";
 import { DashboardSummary, formatCurrency, formatChangeRate } from "@/components/bizData/DashboardSummary";
 import { DashboardDetail } from "@/components/bizData/DashboardDetail";
-import { BottomButton } from "@/components/common/BottomButton";
-import { MOCK_IS_CONNECTED, MOCK_BIZ_DASHBOARDS, MOCK_CURRENT_MONTH } from "@/mocks/bizData";
+import type { BizDashboardData } from "@/types/bizData";
+import {
+  checkMyBizConnected,
+  fetchMyBizDashboard,
+  fetchLoanBalance,
+} from "@/api/mybizApi";
+
 
 export default function BizDataPage() {
   const navigate = useNavigate();
+  const [isConnected, setIsConnected] = useState<boolean | null>(null);
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("마이 비즈 데이터");
@@ -26,7 +32,19 @@ export default function BizDataPage() {
     };
   }, []);
 
-  const isConnected = MOCK_IS_CONNECTED;
+  useEffect(() => {
+    checkMyBizConnected()
+      .then(setIsConnected)
+      .catch(() => setIsConnected(false));
+  }, []);
+
+  if (isConnected === null) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100dvh-64px)]">
+        <p className="text-sm text-text-secondary">불러오는 중...</p>
+      </div>
+    );
+  }
 
   if (!isConnected) {
     return (
@@ -59,23 +77,58 @@ function findScrollParent(el: HTMLElement | null): HTMLElement {
 }
 
 function BizDashboard() {
-  const [selectedMonth, setSelectedMonth] = useState(MOCK_CURRENT_MONTH);
+  const [data, setData] = useState<BizDashboardData | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<string>("");
+  const [availableMonths, setAvailableMonths] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [monthError, setMonthError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [isCompact, setIsCompact] = useState(false);
-  const availableMonths = Object.keys(MOCK_BIZ_DASHBOARDS).sort().reverse();
-  const data = MOCK_BIZ_DASHBOARDS[selectedMonth] ?? MOCK_BIZ_DASHBOARDS[MOCK_CURRENT_MONTH];
   const dropdownRef = useRef<HTMLDivElement>(null);
   const fullCardRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
-  const changeRate = formatChangeRate(data.monthOverMonthChange);
-  const revenueLabel = selectedMonth === MOCK_CURRENT_MONTH ? "이번 달 매출" : `${selectedMonth} 매출`;
-  const changeColor =
-    changeRate.isPositive === null
-      ? "text-text-secondary"
-      : changeRate.isPositive
-        ? "text-success"
-        : "text-warning";
+  // 최초 로드: 최신 월 데이터 + 대출 잔액 병렬 조회
+  useEffect(() => {
+    let cancelled = false;
+    fetchMyBizDashboard().then((dashboard) => {
+      if (cancelled) return;
+      setData(dashboard);
+      setSelectedMonth(dashboard.currentMonth);
+      setAvailableMonths(dashboard.availableMonths);
+
+      fetchLoanBalance().then((loan) => {
+        if (cancelled) return;
+        setData((prev) =>
+          prev ? { ...prev, loanBalance: loan.loanBalance, loanRepaymentDate: loan.loanRepaymentDate } : prev
+        );
+      });
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  // 월 변경 시 해당 월 데이터 조회
+  const handleMonthChange = (month: string) => {
+    if (month === selectedMonth) { setOpen(false); return; }
+    setOpen(false);
+    setSelectedMonth(month);
+    setIsLoading(true);
+    setMonthError(null);
+    fetchMyBizDashboard(month)
+      .then((dashboard) => {
+        setData((prev) =>
+          prev
+            ? { ...dashboard, loanBalance: prev.loanBalance, loanRepaymentDate: prev.loanRepaymentDate }
+            : dashboard
+        );
+      })
+      .catch((err: unknown) => {
+        const status = (err as { response?: { status?: number } })?.response?.status;
+        if (status === 404) setMonthError(`${month} 데이터가 없습니다`);
+        else setMonthError("데이터를 불러오지 못했습니다");
+      })
+      .finally(() => setIsLoading(false));
+  };
 
   // 드롭다운 외부 클릭 닫기
   useEffect(() => {
@@ -89,7 +142,9 @@ function BizDashboard() {
   }, []);
 
   // 풀 카드 상단이 뷰포트 위로 사라지면 compact 활성
+  // data 로드 후 DOM이 실제로 렌더된 시점에 scroll parent를 찾아야 함
   useEffect(() => {
+    if (!data) return;
     const scrollEl = findScrollParent(rootRef.current);
     const handleScroll = () => {
       if (!fullCardRef.current) return;
@@ -97,11 +152,31 @@ function BizDashboard() {
     };
     scrollEl.addEventListener("scroll", handleScroll, { passive: true });
     return () => scrollEl.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [data]);
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100dvh-64px)]">
+        <p className="text-sm text-text-secondary">데이터를 불러오는 중...</p>
+      </div>
+    );
+  }
+
+  const currentMonth = availableMonths[0] ?? selectedMonth ?? "";
+  // availableMonths가 비어있어도 현재 선택된 달은 최소 1개 보여줌
+  const displayMonths = availableMonths.length > 0 ? availableMonths : (selectedMonth ? [selectedMonth] : []);
+  const changeRate = formatChangeRate(data.monthOverMonthChange);
+  const revenueLabel = selectedMonth === currentMonth ? "이번 달 매출" : `${selectedMonth} 매출`;
+  const changeColor =
+    changeRate.isPositive === null
+      ? "text-text-secondary"
+      : changeRate.isPositive
+        ? "text-success"
+        : "text-warning";
 
   return (
-    <div ref={rootRef} data-testid="biz-data-page">
-      {/* 컴팩트 sticky 바 — DashboardDetail보다 DOM 앞에 있어야 z-index 보장 */}
+    <div ref={rootRef} data-testid="biz-data-page" className={isLoading ? "opacity-60 pointer-events-none" : ""}>
+      {/* 컴팩트 sticky 바 */}
       <div className="sticky top-0 z-20">
         <div
           className={`bg-bg-surface overflow-hidden transition-all duration-200 ease-out ${
@@ -133,7 +208,7 @@ function BizDashboard() {
             onClick={() => setOpen((v) => !v)}
             className="flex items-center gap-1.5 text-sm font-medium text-text-primary bg-bg-surface border border-border-default rounded-lg px-3 py-2"
           >
-            {selectedMonth === MOCK_CURRENT_MONTH ? "이번 달" : selectedMonth}
+            {selectedMonth === currentMonth ? "이번 달" : selectedMonth}
             <ChevronDown
               size={14}
               className={`text-text-secondary transition-transform duration-200 ${open ? "rotate-180" : ""}`}
@@ -142,18 +217,18 @@ function BizDashboard() {
 
           {open && (
             <ul className="absolute top-full right-0 mt-1 z-30 bg-bg-surface border border-border-default rounded-lg shadow-card overflow-hidden min-w-[140px]">
-              {availableMonths.map((month) => (
+              {displayMonths.map((month) => (
                 <li key={month}>
                   <button
                     type="button"
-                    onClick={() => { setSelectedMonth(month); setOpen(false); }}
+                    onClick={() => handleMonthChange(month)}
                     className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
                       month === selectedMonth
                         ? "text-primary font-semibold bg-primary/5"
                         : "text-text-primary hover:bg-gray-50"
                     }`}
                   >
-                    {month} {month === MOCK_CURRENT_MONTH ? "(이번 달)" : ""}
+                    {month} {month === currentMonth ? "(이번 달)" : ""}
                   </button>
                 </li>
               ))}
@@ -162,10 +237,16 @@ function BizDashboard() {
         </div>
       </div>
 
+      {monthError && (
+        <div className="mx-5 mb-2 p-3 bg-warning/10 border border-warning/30 rounded-lg">
+          <p className="text-xs text-warning">{monthError}</p>
+        </div>
+      )}
+
       <DashboardSummary
         data={data}
         selectedMonth={selectedMonth}
-        currentMonth={MOCK_CURRENT_MONTH}
+        currentMonth={currentMonth}
         fullCardRef={fullCardRef}
       />
       <DashboardDetail data={data} />

@@ -1,5 +1,7 @@
 export * from './user';
 export * from './auth';
+export * from './serverHealth';
+export * from './errorLog';
 
 export interface MenuItem {
   label: string;
@@ -299,4 +301,12 @@ export interface ManagerApprovalItem {
   requestedByName: string;
   /** 신청 금액 (원) */
   requestedAmount: number;
+}
+
+/** 대출 신청 상태별 건수 */
+export interface LoanStatusCounts {
+  pending: number;
+  managerReview: number;
+  approved: number;
+  rejected: number;
 }
