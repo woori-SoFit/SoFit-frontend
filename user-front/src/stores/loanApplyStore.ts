@@ -1,19 +1,25 @@
 import { create } from "zustand";
-import type { LoanApplyStep, LoanApplyFormData } from "@/types/loan";
+import type { LoanApplyStep, LoanApplyFormData, SubmitLoanApplicationResult } from "@/types/loan";
 
 interface LoanApplyState {
   /** 현재 신청 step */
   currentStep: LoanApplyStep;
   /** 신청 대상 상품 ID */
   productId: number | null;
+  /** 생성된 대출 신청 ID */
+  applicationId: number | null;
   /** 신청 폼 데이터 (step 간 누적) */
   formData: Partial<LoanApplyFormData>;
+  /** 심사 요청 완료 후 응답 결과 */
+  submitResult: SubmitLoanApplicationResult | null;
 
   // Actions
   setStep: (step: LoanApplyStep) => void;
   nextStep: () => void;
   prevStep: () => void;
   setProductId: (id: number) => void;
+  setApplicationId: (id: number) => void;
+  setSubmitResult: (result: SubmitLoanApplicationResult) => void;
   updateFormData: (data: Partial<LoanApplyFormData>) => void;
   reset: () => void;
 }
@@ -31,7 +37,9 @@ const STEP_ORDER: LoanApplyStep[] = [
 
 const initialState = {
   currentStep: "TERMS" as LoanApplyStep,
-  productId: null,
+  productId: null as number | null,
+  applicationId: null as number | null,
+  submitResult: null as SubmitLoanApplicationResult | null,
   formData: {},
 };
 
@@ -59,6 +67,10 @@ export const useLoanApplyStore = create<LoanApplyState>((set, get) => ({
   },
 
   setProductId: (id) => set({ productId: id }),
+
+  setApplicationId: (id) => set({ applicationId: id }),
+
+  setSubmitResult: (result) => set({ submitResult: result }),
 
   updateFormData: (data) =>
     set((state) => ({ formData: { ...state.formData, ...data } })),

@@ -26,7 +26,7 @@ export function LoanApplyResult({
   onGoHome,
 }: LoanApplyResultProps) {
   return (
-    <div className="relative h-full mt-20">
+    <div className="relative h-full pt-20">
       {/* Lottie 축하 애니메이션 */}
       <div className="absolute inset-0 pointer-events-none z-10 flex items-start">
         <Lottie

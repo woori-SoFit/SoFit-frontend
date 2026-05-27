@@ -1,7 +1,11 @@
+import { useEffect } from "react";
+import { useLayoutStore } from "@/stores/layoutStore";
+import { useBusinessInfo } from "@/hooks/useBusinessInfo";
+
 /**
  * 사업자 정보 확인 페이지
  * Route: /mypage/business
- * Layout: StepLayout
+ * Layout: StepLayout (타이틀은 layoutStore로 설정)
  */
 import { useEffect } from "react";
 import { useLayoutStore } from "@/stores/layoutStore";
@@ -9,6 +13,8 @@ import { useBusinessInfo } from "@/hooks/useBusinessInfo";
 import { formatBusinessNumber } from "@/utils/signupValidation";
 
 export default function BusinessInfoPage() {
+  const { rows, isLoading } = useBusinessInfo();
+
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("사업자 정보 확인");
     useLayoutStore.getState().setOnBack(null);
@@ -50,7 +56,7 @@ export default function BusinessInfoPage() {
     <div className="bg-gray-50" data-testid="business-info-page">
       <div className="px-4 py-5">
         <div className="rounded-xl bg-white divide-y divide-gray-100">
-          {infoItems.map((item) => (
+          {rows.map((item) => (
             <div
               key={item.label}
               className="flex justify-between items-center py-4 px-5"
