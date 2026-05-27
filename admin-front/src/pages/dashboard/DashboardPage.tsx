@@ -1,30 +1,30 @@
 import { useState } from 'react';
 import { useLoanApplications } from '@/hooks/useLoanApplications';
 import { useLoanStatusCounts } from '@/hooks/useLoanStatusCounts';
-import { useAuthMe } from '@/hooks/useAuthMe';
 import { ApplicationTable } from '@/components/dashboard/ApplicationTable';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
 import Pagination from '@/components/common/Pagination';
 import type { ReviewStatus } from '@/types';
+import type { LoanApplicationListRequest } from '@/types/loan';
 
 const PAGE_SIZE = 10;
 
 export default function DashboardPage() {
-  const { data: authUser } = useAuthMe();
   const [page, setPage] = useState(0);
   const [statusFilter, setStatusFilter] = useState<ReviewStatus | 'ALL' | 'PENDING'>('ALL');
   const [onlyMine, setOnlyMine] = useState(false);
 
-  const currentUserName = authUser?.name ?? '';
   const { data: statusCounts } = useLoanStatusCounts();
 
-  const { data, isLoading, isError, refetch } = useLoanApplications({
+  const requestParams: LoanApplicationListRequest = {
     page,
     size: PAGE_SIZE,
-    status: statusFilter === 'ALL' ? undefined : statusFilter === 'PENDING' ? 'SYSTEM_APPROVED' : statusFilter,
-    assigneeName: onlyMine ? currentUserName : undefined,
-  });
+    status: statusFilter === 'ALL' ? undefined : statusFilter === 'PENDING' ? ['SYSTEM_APPROVED', 'SYSTEM_HOLD'] : statusFilter,
+    myOnly: onlyMine || undefined,
+  };
+
+  const { data, isLoading, isError, refetch } = useLoanApplications(requestParams);
 
   const handleStatusChange = (value: string) => {
     setStatusFilter(value as ReviewStatus | 'ALL' | 'PENDING');

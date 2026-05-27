@@ -12,6 +12,10 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  // 배열 파라미터를 status=A&status=B 형태로 직렬화 (Spring Boot 호환)
+  paramsSerializer: {
+    indexes: null,
+  },
 });
 
 // 응답 인터셉터: 공통 래퍼 언래핑 + 에러 처리

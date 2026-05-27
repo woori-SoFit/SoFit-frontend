@@ -11,6 +11,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: process.env.VITE_API_BASE_URL || "http://172.21.33.249:8081",
+        changeOrigin: true,
+      },
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true,
