@@ -4,30 +4,11 @@
  */
 import { ChevronRight, CircleCheckBig, Info } from "lucide-react";
 import { formatAmount, formatDate } from "@/utils/format";
-import type { LoanApplication, LoanApplicationStatus } from "@/types/loan";
+import type { LoanApplication } from "@/types/loan";
+import { STATUS_BADGE, STATUS_STEP_INDEX } from "@/constants/loanStatus";
 
 /** 심사 단계 정의 */
 const REVIEW_STEPS = ["신청접수", "서류확인", "심사 중", "심사 완료"];
-
-/** 상태별 현재 단계 인덱스 */
-const STATUS_STEP_INDEX: Record<LoanApplicationStatus, number> = {
-  SUBMITTED: 2,
-  IN_REVIEW: 2,
-  APPROVED: 3,
-  REJECTED: 3,
-  CONTRACTED: 3,
-  EXECUTED: 3,
-};
-
-/** 상태 배지 */
-const STATUS_BADGE: Record<LoanApplicationStatus, { label: string; color: string }> = {
-  SUBMITTED: { label: "심사 중", color: "bg-blue-100 text-primary" },
-  IN_REVIEW: { label: "심사 중", color: "bg-blue-100 text-primary" },
-  APPROVED: { label: "대출 승인", color: "bg-green-100 text-green-700" },
-  REJECTED: { label: "대출 거절", color: "bg-red-100 text-red-700" },
-  CONTRACTED: { label: "약정 완료", color: "bg-green-100 text-green-700" },
-  EXECUTED: { label: "실행 완료", color: "bg-green-100 text-green-700" },
-};
 
 interface LoanApplicationCardProps {
   app: LoanApplication;
@@ -37,7 +18,7 @@ interface LoanApplicationCardProps {
 export function LoanApplicationCard({ app, onClick }: LoanApplicationCardProps) {
   const badge = STATUS_BADGE[app.status];
   const currentStepIndex = STATUS_STEP_INDEX[app.status];
-  const isCompleted = app.status === "APPROVED" || app.status === "REJECTED" || app.status === "CONTRACTED" || app.status === "EXECUTED";
+  const isCompleted = app.status === "APPROVED" || app.status === "REJECTED" || app.status === "CONTRACTED" || app.status === "EXECUTED" || app.status === "CANCELLED";
 
   return (
     <button

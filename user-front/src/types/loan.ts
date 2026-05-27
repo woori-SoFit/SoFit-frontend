@@ -3,12 +3,21 @@
  */
 
 export type LoanApplicationStatus =
+  | "DRAFT"
   | "SUBMITTED"
-  | "IN_REVIEW"
+  | "CB_CHECKING"
+  | "BASIC_REVIEW"
+  | "S_CALCULATING"
+  | "S_COMPLETED"
+  | "SYSTEM_APPROVED"
+  | "SYSTEM_HOLD"
+  | "MANAGER_REVIEW"
+  | "FINAL_REVIEW"
   | "APPROVED"
   | "REJECTED"
   | "CONTRACTED"
-  | "EXECUTED";
+  | "EXECUTED"
+  | "CANCELLED";
 
 /** API 응답 기준 대출 상품 목록 아이템 */
 export interface LoanProductListItem {

@@ -76,6 +76,16 @@ body {
   animation: floating 2s ease-in-out infinite;
 }
 
+@keyframes pulse-outer {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+@keyframes pulse-inner {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.91); }
+}
+
 @theme {
   /* ── Brand Colors ── */
   --color-primary: #0067ac;
