@@ -243,3 +243,14 @@ export interface SubmitLoanApplicationResult {
   purpose: string;
   requestedTerm: number;
 }
+
+/** 임시저장(draft) 존재 여부 조회 API 응답 */
+export interface CheckDraftResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    hasDraft: boolean;
+    applicationId?: number;
+  };
+}

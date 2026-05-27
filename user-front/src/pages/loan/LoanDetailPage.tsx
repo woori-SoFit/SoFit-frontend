@@ -3,20 +3,23 @@
  * Route: /loan/:productId
  * Layout: StepLayout
  */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { UserRoundSearch, CircleDollarSign, CalendarRange } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { BottomButton } from "@/components/common/BottomButton";
+import { DraftResumeModal } from "@/components/loan/DraftResumeModal";
 import { LOAN_KEYS } from "@/constants/queryKeys";
-import { fetchLoanProduct } from "@/api/loanApi";
+import { fetchLoanProduct, checkLoanDraft } from "@/api/loanApi";
 import { formatMaxAmount, formatMaxTerm } from "@/utils/format";
 import loanProductIcon from "@/assets/icons/loan-product.svg";
 
 export default function LoanDetailPage() {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
 
   const { data: product, isLoading } = useQuery({
     queryKey: LOAN_KEYS.detail(Number(productId)),
@@ -27,6 +30,34 @@ export default function LoanDetailPage() {
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("상품 안내");
   }, []);
+
+  /** 대출 신청 버튼 클릭 — draft 존재 여부 확인 */
+  const handleApplyClick = async () => {
+    if (!product || isChecking) return;
+    setIsChecking(true);
+
+    try {
+      const { hasDraft } = await checkLoanDraft(product.productId);
+
+      if (hasDraft) {
+        setShowDraftModal(true);
+      } else {
+        navigateToApply();
+      }
+    } catch {
+      // API 실패 시 그냥 신규 신청으로 진행
+      navigateToApply();
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  /** 신청 페이지로 이동 */
+  const navigateToApply = () => {
+    navigate(`/loan/pre-apply/${product!.productId}`, {
+      state: { filterConditions: product!.filterConditions },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -118,13 +149,27 @@ export default function LoanDetailPage() {
 
       {/* 대출 신청 버튼 */}
       <BottomButton
-        label="대출 신청"
-        onClick={() => {
-          navigate(`/loan/pre-apply/${product.productId}`, {
-            state: { filterConditions: product.filterConditions },
-          });
-        }}
+        label={isChecking ? "확인 중..." : "대출 신청"}
+        onClick={handleApplyClick}
+        disabled={isChecking}
       />
+
+      {/* 임시저장 이어가기 모달 */}
+      {showDraftModal && (
+        <DraftResumeModal
+          onResume={() => {
+            setShowDraftModal(false);
+            navigate("/loan/apply", {
+              state: { productId: product.productId, resumeDraft: true },
+            });
+          }}
+          onNewApply={() => {
+            setShowDraftModal(false);
+            navigateToApply();
+          }}
+          onClose={() => setShowDraftModal(false)}
+        />
+      )}
     </div>
   );
 }

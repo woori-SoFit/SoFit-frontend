@@ -17,6 +17,7 @@ import type {
   LoanApplicationCompletedDetailResponse,
   SubmitLoanApplicationRequest,
   SubmitLoanApplicationResponse,
+  CheckDraftResponse,
 } from "@/types/loan";
 import type {
   CreateLoanApplicationRequest,
@@ -116,4 +117,15 @@ export async function submitLoanApplication(
     body
   );
   return res.data;
+}
+
+/** 대출 신청 임시저장(draft) 존재 여부 조회 */
+export async function checkLoanDraft(
+  productId: number
+): Promise<{ hasDraft: boolean; applicationId?: number }> {
+  const res = await axiosInstance.get<CheckDraftResponse>(
+    "/loan-applications/draft",
+    { params: { productId } }
+  );
+  return res.data.result;
 }
