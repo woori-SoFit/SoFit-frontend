@@ -20,7 +20,7 @@ function getStatusBadge(status: string) {
 }
 
 /** 주기별 고정 정보 */
-const CYCLE_CONFIG = {
+const CYCLE_CONFIG: Record<string, { label: string; badge: string; schedule: string; target: string }> = {
   DAILY: {
     label: '일단위 배치',
     badge: '24시간 주기',
@@ -33,14 +33,22 @@ const CYCLE_CONFIG = {
     schedule: '매월 7일 03:00',
     target: '전체 사업자',
   },
-} as const;
+};
+
+/** CYCLE_CONFIG에 없는 값이 들어올 경우 사용할 기본값 */
+const DEFAULT_CYCLE_CONFIG = {
+  label: '알 수 없는 배치',
+  badge: '주기 미정',
+  schedule: '-',
+  target: '-',
+};
 
 /**
  * 자동 배치 현황 카드 — 일단위/월단위 각각 표시
  * 고정값(주기, 대상)은 상수, 동적값(마지막 실행, 상태, 처리 건수)은 API에서 가져옴
  */
 export default function BatchScheduleCard({ latest }: BatchScheduleCardProps) {
-  const config = CYCLE_CONFIG[latest.cycle];
+  const config = CYCLE_CONFIG[latest.cycle] ?? DEFAULT_CYCLE_CONFIG;
   const statusBadge = getStatusBadge(latest.lastStatus);
 
   return (
