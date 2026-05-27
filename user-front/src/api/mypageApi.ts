@@ -10,13 +10,13 @@ import type {
 
 /** 사용자 프로필 상세 조회 */
 export async function fetchUserProfile(): Promise<UserProfileResponse> {
-  const res = await axiosInstance.get<UserProfileResponse>("/businesses/me");
+  const res = await axiosInstance.get<UserProfileResponse>("/users/me");
   return res.data;
 }
 
 /** 사업자 정보 조회 */
 export async function fetchBusinessInfo(): Promise<BusinessInfoResponse> {
-  const res = await axiosInstance.get<BusinessInfoResponse>("/users/me");
+  const res = await axiosInstance.get<BusinessInfoResponse>("/businesses/me");
   return res.data;
 }
 
