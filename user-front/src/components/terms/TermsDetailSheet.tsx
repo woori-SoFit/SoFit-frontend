@@ -5,6 +5,10 @@
  * - 대출 약관 상세
  * - My Biz Data 약관 상세
  * - 회원가입 약관 상세
+ *
+ * PDF 표시:
+ * - fileUrl이 있으면 object 태그로 바텀시트 내부에 PDF 표시
+ * - 백엔드 X-Frame-Options: SAMEORIGIN 설정 필요
  */
 import { useEffect, useState } from "react";
 import type { TermsItem } from "@/types/common";
@@ -36,14 +40,12 @@ export function TermsDetailSheet({
 
   useEffect(() => {
     if (isOpen && term) {
-      // 마운트 → 다음 프레임에 animate ON (translate-y-full → translate-y-0)
       setVisible(true);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setAnimate(true));
       });
       document.body.style.overflow = "hidden";
     } else {
-      // animate OFF → transition 끝나면 언마운트
       setAnimate(false);
       document.body.style.overflow = "";
     }
@@ -104,9 +106,21 @@ export function TermsDetailSheet({
 
         {/* 약관 본문 */}
         <div className="flex-1 overflow-y-auto px-5 py-4">
-          <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap">
-            {term.content}
-          </p>
+          {term.fileUrl ? (
+            <object
+              data={term.fileUrl}
+              type="application/pdf"
+              className="w-full h-full min-h-[50vh]"
+            >
+              <p className="text-sm text-text-secondary text-center py-10">
+                PDF 뷰어를 지원하지 않는 환경입니다.
+              </p>
+            </object>
+          ) : (
+            <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap">
+              {term.content}
+            </p>
+          )}
         </div>
 
         {/* 하단 버튼 */}

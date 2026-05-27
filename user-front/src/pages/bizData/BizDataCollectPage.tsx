@@ -18,7 +18,7 @@ import { useBizDataCollectStore } from "@/stores/bizDataCollectStore";
 import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { TermsPage } from "@/components/terms/TermsPage";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
-import { MOCK_BIZ_DATA_TERMS, MOCK_BIZ_DATA_COLLECT_STEPS } from "@/mocks/bizData";
+import { MOCK_BIZ_DATA_COLLECT_STEPS } from "@/mocks/bizData";
 import { connectMyBiz } from "@/api/mybizApi";
 
 export default function BizDataCollectPage() {
@@ -58,9 +58,9 @@ export default function BizDataCollectPage() {
     case "TERMS":
       return (
         <TermsPage
+          termType="MYBIZDATA"
           title="마이 비즈니스 데이터 약관 동의"
           description="S분석 리포트 생성을 위해 마이 비즈니스 데이터를 수집 분석합니다. 아래 약관에 동의해주세요."
-          terms={MOCK_BIZ_DATA_TERMS}
           submitLabel="동의하고 계속하기"
           onSubmit={() => nextStep()}
         />
