@@ -26,8 +26,12 @@ import { LoanConditionsStep } from "@/components/loan/LoanConditionsStep";
 import { LoanApplyResult } from "@/components/loan/LoanApplyResult";
 import { MOCK_BIZ_INFO_ROWS } from "@/mocks/bizInfo";
 import { MOCK_LOAN_APPLY_RESULT_ROWS } from "@/mocks/loanApplyResult";
+import { MOCK_LOAN_TERMS } from "@/mocks/loanTerms";
+import { MOCK_MYDATA_TERMS } from "@/mocks/mydataTerms";
 import { useNavigate, useLocation } from "react-router-dom";
 import { verifyFinancialCertificate } from "@/api/authApi";
+import { useBusinessInfo } from "@/hooks/useBusinessInfo";
+import { REPAYMENT_LABELS } from "@/constants/loanLabels";
 import type { CustomerVerifyData } from "@/types/auth";
 
 export default function LoanApplyPage() {
@@ -37,17 +41,25 @@ export default function LoanApplyPage() {
   const updateFormData = useLoanApplyStore((s) => s.updateFormData);
   const reset = useLoanApplyStore((s) => s.reset);
   const productId = useLoanApplyStore((s) => s.productId);
-  const setProductId = useLoanApplyStore((s) => s.setProductId);
+  const applicationId = useLoanApplyStore((s) => s.applicationId);
+  const submitResult = useLoanApplyStore((s) => s.submitResult);
   const navigate = useNavigate();
   const location = useLocation();
+  const { rows: bizInfoRows } = useBusinessInfo();
 
-  // navigation state에서 productId 수신 및 스토어 저장
+  // navigation state에서 productId, applicationId 수신 및 스토어 초기화
   useEffect(() => {
-    const stateProductId = (location.state as { productId?: number } | null)?.productId;
-    if (stateProductId) {
-      setProductId(stateProductId);
+    reset();
+
+    const state = location.state as { productId?: number; applicationId?: number } | null;
+    if (state?.productId) {
+      useLoanApplyStore.getState().setProductId(state.productId);
     }
-  }, [location.state, setProductId]);
+    if (state?.applicationId) {
+      useLoanApplyStore.getState().setApplicationId(state.applicationId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("대출 신청");
@@ -110,7 +122,7 @@ export default function LoanApplyPage() {
         <BizInfoConfirm
           title={<><span className="text-primary">사업자 정보</span>를 불러왔어요</>}
           description="아래 정보가 맞는지 확인해주세요."
-          rows={MOCK_BIZ_INFO_ROWS}
+          rows={bizInfoRows}
           onConfirm={() => nextStep()}
         />
       );
@@ -137,6 +149,7 @@ export default function LoanApplyPage() {
       return (
         <LoanConditionsStep
           productId={productId ?? 0}
+          applicationId={applicationId ?? 0}
           onSubmit={(data) => {
             updateFormData({
               desiredAmount: data.desiredAmount,
@@ -150,9 +163,33 @@ export default function LoanApplyPage() {
       );
 
     case "RESULT": {
+      const resultRows = submitResult
+        ? [
+            { label: "신청 상품", value: submitResult.productName },
+            {
+              label: "신청 금액",
+              value: `${(submitResult.requestedAmount / 10_000).toLocaleString()}만원`,
+            },
+            {
+              label: "신청 일시",
+              value: new Date(submitResult.appliedAt).toLocaleString("ko-KR", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            },
+            {
+              label: "상환 방식",
+              value: REPAYMENT_LABELS[submitResult.repaymentMethod] ?? submitResult.repaymentMethod,
+            },
+          ]
+        : [];
+
       return (
         <LoanApplyResult
-          rows={MOCK_LOAN_APPLY_RESULT_ROWS}
+          rows={resultRows}
           onViewApplications={() => {
             reset();
             navigate("/loan-applications");

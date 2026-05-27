@@ -36,9 +36,10 @@ export default function WithdrawPage() {
     if (!isConfirmed) return;
     try {
       await deleteAccount();
-    } finally {
       queryClient.clear();
       navigate("/login");
+    } catch (error) {
+      console.error("회원 탈퇴 실패:", error);
     }
   };
 

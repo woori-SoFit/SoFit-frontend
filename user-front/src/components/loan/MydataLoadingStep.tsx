@@ -71,7 +71,7 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
     // 각 항목별 랜덤 딜레이 (crypto 기반 보안 난수)
     LOADING_ITEMS.forEach((item) => {
       const randomValue = crypto.getRandomValues(new Uint32Array(1))[0];
-      const delay = 700 + (randomValue / 0xFFFFFFFF) * 3000;
+      const delay = 900 + (randomValue / 0xFFFFFFFF) * 3000;
       const timer = setTimeout(() => markItemDone(item.id), delay);
       timers.push(timer);
     });

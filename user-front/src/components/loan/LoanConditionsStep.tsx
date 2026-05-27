@@ -9,13 +9,14 @@
  *   4. 희망 대출금액 입력 (서버 minLimit ~ maxLimit)
  */
 import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { BottomButton } from "@/components/common/BottomButton";
-import { fetchLoanProductOptions } from "@/api/loanApi";
+import { fetchLoanProductOptions, submitLoanApplication } from "@/api/loanApi";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { REPAYMENT_LABELS, PURPOSE_LABELS } from "@/constants/loanLabels";
+import { useLoanApplyStore } from "@/stores/loanApplyStore";
 import loanCondIcon from "@/assets/icons/loan-pre-apply.svg";
-import type { LoanOption } from "@/types/loan";
+import type { LoanOption, SubmitLoanApplicationRequest } from "@/types/loan";
 
 interface LoanConditionsData {
   desiredAmount: number;
@@ -26,10 +27,12 @@ interface LoanConditionsData {
 
 interface LoanConditionsStepProps {
   productId: number;
+  applicationId: number;
   onSubmit: (data: LoanConditionsData) => void;
 }
 
-export function LoanConditionsStep({ productId, onSubmit }: LoanConditionsStepProps) {
+export function LoanConditionsStep({ productId, applicationId, onSubmit }: LoanConditionsStepProps) {
+  const queryClient = useQueryClient();
   // API 연동: 상품별 옵션 조회
   const { data: options, isLoading } = useQuery({
     queryKey: LOAN_KEYS.productOptions(productId),
@@ -114,13 +117,29 @@ export function LoanConditionsStep({ productId, onSubmit }: LoanConditionsStepPr
     return `${man.toLocaleString()}만원`;
   };
 
+  // 심사 요청 mutation
+  const submitMutation = useMutation({
+    mutationFn: (body: SubmitLoanApplicationRequest) =>
+      submitLoanApplication(applicationId, body),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: LOAN_KEYS.applications() });
+      useLoanApplyStore.getState().setSubmitResult(data.result);
+      onSubmit({
+        desiredAmount: amountInWon,
+        desiredTerm: termValue,
+        repaymentMethod: repayment!,
+        purpose: purpose!,
+      });
+    },
+  });
+
   const handleSubmit = () => {
     if (!isValid) return;
-    onSubmit({
-      desiredAmount: amountInWon,
-      desiredTerm: termValue,
-      repaymentMethod: repayment!,
+    submitMutation.mutate({
       purpose: purpose!,
+      repaymentMethod: repayment!,
+      requestedTerm: termValue,
+      requestedAmount: amountInWon,
     });
   };
 

@@ -44,15 +44,21 @@ export function GradeResultStep() {
         {/* S등급 표시 - 두 원 (연한 하늘색) */}
         <div className="relative flex items-center justify-center mt-10 mb-8">
           {/* 바깥 원 */}
-          <div className="w-44 h-44 rounded-full bg-sky-50 flex items-center justify-center">
+          <div
+            className="w-44 h-44 rounded-full bg-sky-50 flex items-center justify-center"
+            style={{ animation: "pulse-outer 2s ease-in-out infinite" }}
+          >
             {/* 안쪽 원 */}
-            <div className="w-36 h-36 rounded-full bg-sky-100 flex items-center justify-center">
-              {/* 등급 텍스트 */}
-              <span className="text-5xl font-bold text-primary">
-                {MOCK_DATA.grade}
-              </span>
-            </div>
+            <div
+              className="w-36 h-36 rounded-full bg-sky-100"
+              style={{ animation: "pulse-inner 2s ease-in-out infinite" }}
+            />
           </div>
+
+          {/* 등급 텍스트 — 원 위에 고정 */}
+          <span className="absolute text-5xl font-bold text-primary">
+            {MOCK_DATA.grade}
+          </span>
         </div>
 
         {/* 등급 수준 섹션 */}

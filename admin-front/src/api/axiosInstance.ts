@@ -7,10 +7,13 @@ import axios, { type AxiosError } from "axios";
  * - withCredentials: true — Session-Cookie 기반 인증 필수 설정
  */
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
+  },
+  // 배열 파라미터를 status=A&status=B 형태로 직렬화 (Spring Boot 호환)
+  paramsSerializer: {
+    indexes: null,
   },
 });
 

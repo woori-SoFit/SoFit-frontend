@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 import StatusBadge from '@/components/common/StatusBadge';
 import DataTable from '@/components/common/DataTable';
 import type { Column } from '@/components/common/DataTable';
-import type { LoanApplication } from '@/types';
+import type { LoanApplicationItem } from '@/types/loan';
 import { formatDate } from '@/utils/formatters';
 
 interface ApplicationTableProps {
-  applications: LoanApplication[];
+  applications: LoanApplicationItem[];
 }
 
-const columns: Column<LoanApplication>[] = [
+const columns: Column<LoanApplicationItem>[] = [
   { header: '신청일', render: (row) => formatDate(row.appliedAt) },
   { header: '신청자명', render: (row) => row.applicantName },
   { header: '사업자명', render: (row) => row.businessName },

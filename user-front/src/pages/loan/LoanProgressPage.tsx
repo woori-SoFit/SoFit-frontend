@@ -32,9 +32,11 @@ export default function LoanProgressPage() {
   });
 
   const handleCardClick = (app: LoanApplication) => {
-    if (app.status === "APPROVED" || app.status === "REJECTED") {
+    if (app.status === "APPROVED" || app.status === "REJECTED" || app.status === "CANCELLED") {
       navigate(`/loan/result/${app.id}`);
-    } else if (app.status === "IN_REVIEW" || app.status === "SUBMITTED") {
+    } else if (app.status === "CONTRACTED" || app.status === "EXECUTED") {
+      navigate(`/loan/result/${app.id}`);
+    } else {
       navigate(`/loan/review/${app.id}`);
     }
   };
@@ -59,14 +61,16 @@ export default function LoanProgressPage() {
         </div>
 
         {inProgress.length === 0 ? (
-          <p className="px-5 text-sm text-text-secondary">심사 중인 대출이 없습니다.</p>
+          <div className="px-5 flex items-center justify-center min-h-[200px]">
+            <p className="text-md text-text-secondary">심사 중인 대출이 없습니다.</p>
+          </div>
         ) : (
           <CardSlider items={inProgress} onCardClick={handleCardClick} />
         )}
       </section>
 
       {/* 심사 완료된 대출 */}
-      <section className="mt-14">
+      <section className="mt-16">
         <div className="px-5 flex items-center gap-2 mb-4">
           <h2 className="text-lg font-bold text-text-primary">심사 완료된 대출</h2>
           <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center font-medium">
@@ -75,7 +79,9 @@ export default function LoanProgressPage() {
         </div>
 
         {completed.length === 0 ? (
-          <p className="px-5 text-sm text-text-secondary">심사 완료된 대출이 없습니다.</p>
+          <div className="px-5 flex items-center justify-center min-h-[200px]">
+            <p className="text-md text-text-secondary">심사 완료된 대출이 없습니다.</p>
+          </div>
         ) : (
           <CardSlider items={completed} onCardClick={handleCardClick} />
         )}

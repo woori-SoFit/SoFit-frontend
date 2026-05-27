@@ -3,12 +3,21 @@
  */
 
 export type LoanApplicationStatus =
+  | "DRAFT"
   | "SUBMITTED"
-  | "IN_REVIEW"
+  | "CB_CHECKING"
+  | "BASIC_REVIEW"
+  | "S_CALCULATING"
+  | "S_COMPLETED"
+  | "SYSTEM_APPROVED"
+  | "SYSTEM_HOLD"
+  | "MANAGER_REVIEW"
+  | "FINAL_REVIEW"
   | "APPROVED"
   | "REJECTED"
   | "CONTRACTED"
-  | "EXECUTED";
+  | "EXECUTED"
+  | "CANCELLED";
 
 /** API 응답 기준 대출 상품 목록 아이템 */
 export interface LoanProductListItem {
@@ -206,4 +215,31 @@ export interface LoanProductOptionsResponse {
     minLimit: number;
     loanOptions: LoanOption[];
   };
+}
+
+/** 대출 심사 요청 API 요청 본문 */
+export interface SubmitLoanApplicationRequest {
+  purpose: string;
+  repaymentMethod: string;
+  requestedTerm: number;
+  requestedAmount: number;
+}
+
+/** 대출 심사 요청 API 응답 */
+export interface SubmitLoanApplicationResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: SubmitLoanApplicationResult;
+}
+
+/** 대출 심사 요청 결과 데이터 */
+export interface SubmitLoanApplicationResult {
+  applicationId: number;
+  productName: string;
+  requestedAmount: number;
+  appliedAt: string;
+  repaymentMethod: string;
+  purpose: string;
+  requestedTerm: number;
 }
