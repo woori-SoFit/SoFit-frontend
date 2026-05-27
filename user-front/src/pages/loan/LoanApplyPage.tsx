@@ -32,6 +32,7 @@ import { MOCK_MYDATA_TERMS } from "@/mocks/mydataTerms";
 import { useNavigate, useLocation } from "react-router-dom";
 import { verifyFinancialCertificate } from "@/api/authApi";
 import { useBusinessInfo } from "@/hooks/useBusinessInfo";
+import { checkMyBizConnected } from "@/api/mybizApi";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
 import type { CustomerVerifyData } from "@/types/auth";
 
@@ -46,7 +47,7 @@ export default function LoanApplyPage() {
   const submitResult = useLoanApplyStore((s) => s.submitResult);
   const navigate = useNavigate();
   const location = useLocation();
-  const { rows: bizInfoRows, isMybizConnected } = useBusinessInfo();
+  const { rows: bizInfoRows } = useBusinessInfo();
 
   // navigation state에서 productId, applicationId 수신 및 스토어 초기화
   useEffect(() => {
@@ -152,8 +153,9 @@ export default function LoanApplyPage() {
 
     case "MYDATA_LOADING":
       return (
-        <MydataLoadingStep onComplete={() => {
-          if (isMybizConnected) {
+        <MydataLoadingStep onComplete={async () => {
+          const connected = await checkMyBizConnected();
+          if (connected) {
             // 이미 연동됨 → BizDataCollectPage LOADING으로 이동 후 LOAN_CONDITIONS로 복귀
             navigate("/biz-data/collect", {
               state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "LOADING", buttonLabel: "대출 조건 입력하기" },
