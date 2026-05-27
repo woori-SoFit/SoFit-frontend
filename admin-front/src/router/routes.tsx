@@ -9,7 +9,6 @@ import BatchPage from "@/pages/placeholder/BatchPage";
 import ManagerApprovalPage from "@/pages/manager-approval/ManagerApprovalPage";
 import LoanDetailPage from "@/pages/loan-detail/LoanDetailPage";
 import ErrorLogsPage from "@/pages/error-logs/ErrorLogsPage";
-import BatchPage from "@/pages/batch/BatchPage";
 import RoleGuard from "@/components/common/RoleGuard";
 import { getAllRouteItems } from "@/constants/permissions";
 import { type ComponentType } from "react";
@@ -26,6 +25,7 @@ const PAGE_COMPONENTS: Record<string, ComponentType> = {
   "loan-detail": LoanDetailPage,
   users: UserManagementPage,
   "server-status": ServerStatusPage,
+  "error-logs": ErrorLogsPage,
   batch: BatchPage,
 };
 
