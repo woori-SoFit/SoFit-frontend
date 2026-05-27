@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { fetchUserProfile } from "@/api/mypageApi";
 import { MYPAGE_KEYS } from "@/constants/queryKeys";
+import { formatPhoneNumber, formatResidentNumber } from "@/utils/signupValidation";
 
 export default function ProfilePage() {
   useEffect(() => {
@@ -50,8 +51,8 @@ export default function ProfilePage() {
   const infoItems = [
     { label: "이름", value: profile?.name ?? "-" },
     { label: "아이디", value: profile?.loginId ?? "-" },
-    { label: "주민등록번호", value: profile?.residentNumber ?? "-" },
-    { label: "연락처", value: profile?.phoneNumber ?? "-" },
+    { label: "주민등록번호", value: profile?.residentNumber ? formatResidentNumber(profile.residentNumber) : "-" },
+    { label: "연락처", value: profile?.phoneNumber ? formatPhoneNumber(profile.phoneNumber) : "-" },
   ];
 
   return (

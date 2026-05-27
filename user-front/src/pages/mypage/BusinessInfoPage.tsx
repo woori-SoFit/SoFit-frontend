@@ -6,6 +6,7 @@
 import { useEffect } from "react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useBusinessInfo } from "@/hooks/useBusinessInfo";
+import { formatBusinessNumber } from "@/utils/signupValidation";
 
 export default function BusinessInfoPage() {
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function BusinessInfoPage() {
   }
 
   const infoItems = [
-    { label: "사업자등록번호", value: data?.businessNumber ?? "-" },
+    { label: "사업자등록번호", value: data?.businessNumber ? formatBusinessNumber(data.businessNumber) : "-" },
     { label: "상호명", value: data?.businessName ?? "-" },
     { label: "대표자명", value: data?.representativeName ?? "-" },
     { label: "개업일", value: data?.openDate ?? "-" },
