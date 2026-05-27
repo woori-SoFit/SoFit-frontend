@@ -86,9 +86,8 @@ export function ProductCardSlider({ cards, interval = 3000 }: ProductCardSliderP
           return (
             <div
               key={card.id}
-              className="absolute top-0 left-1/2 w-[64%] rounded-2xl p-5 text-white"
+              className="absolute top-0 left-1/2 w-[64%]"
               style={{
-                backgroundColor: card.bg,
                 transform: `translateX(calc(-50% + ${translateX}%)) rotate(${rotate}deg) scale(${scale})`,
                 transformOrigin: "center bottom",
                 zIndex,
@@ -99,6 +98,11 @@ export function ProductCardSlider({ cards, interval = 3000 }: ProductCardSliderP
                 pointerEvents: offset === 0 ? "auto" : "none",
               }}
             >
+              {/* 카드 본체 — 개별 그림자 + 글래스모피즘 */}
+              <div
+                className="rounded-2xl p-5 text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)] backdrop-blur-xl border border-white/20"
+                style={{ backgroundColor: `${card.bg}cc` }}
+              >
               <p className="text-sm text-white/80 leading-snug">{card.subtitle}</p>
               <p className="mt-1 text-lg font-bold leading-snug">{card.title}</p>
 
@@ -112,6 +116,7 @@ export function ProductCardSlider({ cards, interval = 3000 }: ProductCardSliderP
                 <p className="text-xs text-white/70">{card.tag}</p>
                 <p className="text-3xl font-extrabold tracking-tight">{card.rate}</p>
                 <p className="mt-0.5 text-xs text-white/70">{card.desc}</p>
+              </div>
               </div>
             </div>
           );

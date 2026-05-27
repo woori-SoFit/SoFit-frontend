@@ -8,7 +8,7 @@ import type { ProductCard } from "@/components/home/ProductCardSlider";
 export const MOCK_PRODUCT_CARDS: ProductCard[] = [
   {
     id: 1,
-    bg: "#294f71",
+    bg: "#0EA5E9",
     tag: "최고 연",
     rate: "6.00%",
     desc: "기본 2.00%, 12개월 기준",
@@ -17,7 +17,7 @@ export const MOCK_PRODUCT_CARDS: ProductCard[] = [
   },
   {
     id: 2,
-    bg: "#27476e",
+    bg: "#2563EB",
     tag: "최저 연",
     rate: "4.50%",
     desc: "우대금리 적용 시",
@@ -26,7 +26,7 @@ export const MOCK_PRODUCT_CARDS: ProductCard[] = [
   },
   {
     id: 3,
-    bg: "#376996",
+    bg: "#4F46E5",
     tag: "한도",
     rate: "5천만원",
     desc: "S등급 우대 적용",
@@ -35,7 +35,7 @@ export const MOCK_PRODUCT_CARDS: ProductCard[] = [
   },
   {
     id: 4,
-    bg: "#294f71",
+    bg: "#0EA5E9",
     tag: "최고 연",
     rate: "6.00%",
     desc: "기본 2.00%, 12개월 기준",
@@ -44,7 +44,7 @@ export const MOCK_PRODUCT_CARDS: ProductCard[] = [
   },
   {
     id: 5,
-    bg: "#27476e",
+    bg: "#2563EB",
     tag: "최저 연",
     rate: "4.50%",
     desc: "우대금리 적용 시",
@@ -53,7 +53,7 @@ export const MOCK_PRODUCT_CARDS: ProductCard[] = [
   },
   {
     id: 6,
-    bg: "#376996",
+    bg: "#4F46E5",
     tag: "한도",
     rate: "5천만원",
     desc: "S등급 우대 적용",
