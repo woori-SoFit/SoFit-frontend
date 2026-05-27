@@ -14,9 +14,17 @@ const axiosInstance = axios.create({
   },
 });
 
-// 응답 인터셉터: 공통 에러 처리
+// 응답 인터셉터: 공통 래퍼 언래핑 + 에러 처리
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // 서버 공통 응답 형식: { isSuccess, code, message, result }
+    // result만 꺼내서 반환
+    const data = response.data;
+    if (data && typeof data === 'object' && 'result' in data) {
+      response.data = data.result;
+    }
+    return response;
+  },
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       // 세션 만료 또는 미인증 → 로그인 페이지로 리다이렉트

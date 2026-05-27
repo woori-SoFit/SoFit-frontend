@@ -57,6 +57,7 @@ export const MOCK_BIZ_DATA_COLLECT_STEPS: CollectStep[] = [
 
 const MOCK_BIZ_DASHBOARD_MAY: BizDashboardData = {
   currentMonth: "2024.05",
+  availableMonths: [],
   monthlyRevenue: 4820000,
   monthOverMonthChange: 12.4,
   cashFlow: 1250000,
@@ -100,6 +101,7 @@ const MOCK_BIZ_DASHBOARD_MAY: BizDashboardData = {
 
 const MOCK_BIZ_DASHBOARD_APRIL: BizDashboardData = {
   currentMonth: "2024.04",
+  availableMonths: [],
   monthlyRevenue: 4300000,
   monthOverMonthChange: -8.3,
   cashFlow: 980000,

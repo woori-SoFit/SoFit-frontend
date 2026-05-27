@@ -36,9 +36,10 @@ export default function MyPage() {
   const handleLogoutConfirm = async () => {
     try {
       await postLogout();
-    } finally {
       queryClient.clear();
       navigate("/login");
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
     }
   };
 

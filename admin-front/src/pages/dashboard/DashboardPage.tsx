@@ -1,20 +1,14 @@
 import { useState } from 'react';
 import { useLoanApplications } from '@/hooks/useLoanApplications';
+import { useLoanStatusCounts } from '@/hooks/useLoanStatusCounts';
 import { useAuthMe } from '@/hooks/useAuthMe';
 import { ApplicationTable } from '@/components/dashboard/ApplicationTable';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
+import Pagination from '@/components/common/Pagination';
 import type { ReviewStatus } from '@/types';
 
 const PAGE_SIZE = 10;
-
-const STATUS_OPTIONS: { value: ReviewStatus | 'ALL' | 'PENDING'; label: string }[] = [
-  { value: 'ALL', label: '전체' },
-  { value: 'PENDING', label: '심사 대기' },
-  { value: 'MANAGER_REVIEW', label: '추가 심사 중' },
-  { value: 'APPROVED', label: '승인 완료' },
-  { value: 'REJECTED', label: '거절 완료' },
-];
 
 export default function DashboardPage() {
   const { data: authUser } = useAuthMe();
@@ -23,6 +17,7 @@ export default function DashboardPage() {
   const [onlyMine, setOnlyMine] = useState(false);
 
   const currentUserName = authUser?.name ?? '';
+  const { data: statusCounts } = useLoanStatusCounts();
 
   const { data, isLoading, isError, refetch } = useLoanApplications({
     page,
@@ -43,7 +38,7 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6">
-      {/* 헤더: 제목 + 건수 (왼쪽) / 필터 (오른쪽) */}
+      {/* 헤더: 제목 + 건수 (왼쪽) / 필터 뱃지 + 내 담당만 보기 (오른쪽) */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-text-primary">
@@ -56,7 +51,6 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* 필터 영역 (오른쪽) */}
         <div className="flex items-center gap-4">
           <label className="flex items-center gap-2 text-sm text-text-primary cursor-pointer">
             <input
@@ -68,17 +62,65 @@ export default function DashboardPage() {
             내 담당만 보기
           </label>
 
-          <select
-            value={statusFilter}
-            onChange={(e) => handleStatusChange(e.target.value)}
-            className="px-3 py-2 text-sm border border-border-default rounded-md bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-border-focus"
-          >
-            {STATUS_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          {statusCounts && (
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => handleStatusChange('ALL')}
+                className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                  statusFilter === 'ALL'
+                    ? 'bg-gray-700 text-white'
+                    : 'bg-gray-100 text-text-secondary hover:bg-gray-200'
+                }`}
+              >
+                전체
+              </button>
+              <button
+                type="button"
+                onClick={() => handleStatusChange('PENDING')}
+                className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                  statusFilter === 'PENDING'
+                    ? 'bg-yellow-500 text-white'
+                    : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100'
+                }`}
+              >
+                심사 대기 {statusCounts.pending}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleStatusChange('MANAGER_REVIEW')}
+                className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                  statusFilter === 'MANAGER_REVIEW'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+                }`}
+              >
+                추가 심사 {statusCounts.managerReview}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleStatusChange('APPROVED')}
+                className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                  statusFilter === 'APPROVED'
+                    ? 'bg-green-500 text-white'
+                    : 'bg-green-50 text-green-700 hover:bg-green-100'
+                }`}
+              >
+                승인 {statusCounts.approved}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleStatusChange('REJECTED')}
+                className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                  statusFilter === 'REJECTED'
+                    ? 'bg-red-500 text-white'
+                    : 'bg-red-50 text-red-700 hover:bg-red-100'
+                }`}
+              >
+                거절 {statusCounts.rejected}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -96,28 +138,12 @@ export default function DashboardPage() {
       )}
 
       {/* 페이지네이션 (하단 고정) */}
-      {!isLoading && !isError && data && data.totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-4">
-          <button
-            type="button"
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
-            disabled={page === 0}
-            className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            이전
-          </button>
-          <span className="text-sm text-text-secondary">
-            {page + 1} / {data.totalPages}
-          </span>
-          <button
-            type="button"
-            onClick={() => setPage((p) => Math.min(data.totalPages - 1, p + 1))}
-            disabled={page >= data.totalPages - 1}
-            className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            다음
-          </button>
-        </div>
+      {!isLoading && !isError && data && (
+        <Pagination
+          currentPage={page + 1}
+          totalPages={data.totalPages}
+          onPageChange={(p) => setPage(p - 1)}
+        />
       )}
     </div>
   );

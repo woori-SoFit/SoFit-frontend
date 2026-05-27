@@ -3,11 +3,12 @@ import type { RouteObject } from "react-router-dom";
 import { AdminLayout } from "@/components/common/AdminLayout";
 import LoginPage from "@/pages/auth/LoginPage";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
-import UsersPage from "@/pages/placeholder/UsersPage";
-import ApiLogsPage from "@/pages/placeholder/ApiLogsPage";
+import UserManagementPage from "@/pages/user-management/UserManagementPage";
+import ServerStatusPage from "@/pages/server-status/ServerStatusPage";
 import BatchPage from "@/pages/placeholder/BatchPage";
 import ManagerApprovalPage from "@/pages/manager-approval/ManagerApprovalPage";
 import LoanDetailPage from "@/pages/loan-detail/LoanDetailPage";
+import ErrorLogsPage from "@/pages/error-logs/ErrorLogsPage";
 import RoleGuard from "@/components/common/RoleGuard";
 import { getAllRouteItems } from "@/constants/permissions";
 import { type ComponentType } from "react";
@@ -22,8 +23,9 @@ const PAGE_COMPONENTS: Record<string, ComponentType> = {
   "loan-applications": DashboardPage,
   "manager-approval": ManagerApprovalPage,
   "loan-detail": LoanDetailPage,
-  users: UsersPage,
-  "api-logs": ApiLogsPage,
+  users: UserManagementPage,
+  "server-status": ServerStatusPage,
+  "error-logs": ErrorLogsPage,
   batch: BatchPage,
 };
 

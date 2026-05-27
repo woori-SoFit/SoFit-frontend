@@ -1,19 +1,22 @@
 /** 사용자 프로필 상세 (ProfilePage용) */
 export interface UserProfile {
-  userId: number;
-  loginId: string;
   name: string;
-  phone: string;
-  role: string;
+  loginId: string;
+  phoneNumber: string;
+  residentNumber: string;
 }
 
 /** 사업자 정보 */
 export interface BusinessInfo {
   businessNumber: string;
-  companyName: string;
-  industry: string;
-  openDate: string;
+  businessName: string;
   representativeName: string;
+  residentNumber: string;
+  openDate: string;
+  businessCategory: string;
+  businessType: string;
+  businessAddress: string;
+  isMybizConnected: boolean;
 }
 
 /** 알림 항목 */
