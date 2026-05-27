@@ -7,6 +7,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { MYPAGE_KEYS } from "@/constants/queryKeys";
 import { fetchBusinessInfo } from "@/api/bizDataApi";
+import { formatBusinessNumber } from "@/utils/signupValidation";
 import type { InfoRow } from "@/components/loan/BizInfoConfirm";
 
 export function useBusinessInfo() {
@@ -20,7 +21,7 @@ export function useBusinessInfo() {
   /** BizInfoConfirm / BusinessInfoPage에서 사용할 InfoRow 배열 */
   const rows: InfoRow[] = bizInfo
     ? [
-        { label: "사업자등록번호", value: bizInfo.businessNumber },
+        { label: "사업자등록번호", value: formatBusinessNumber(bizInfo.businessNumber) },
         { label: "상호명", value: bizInfo.businessName },
         { label: "대표자명", value: bizInfo.representativeName },
         { label: "개업일", value: bizInfo.openDate },
@@ -32,6 +33,7 @@ export function useBusinessInfo() {
   return {
     bizInfo,
     rows,
+    isMybizConnected: bizInfo?.isMybizConnected ?? false,
     isLoading,
     isError,
   };

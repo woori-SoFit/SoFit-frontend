@@ -185,8 +185,10 @@ export type LoanApplyStep =
   | "BIZ_CONFIRM"     // 4. 사업자 정보 확인
   | "MYDATA_TERMS"    // 5. MyData 동의
   | "MYDATA_LOADING"  // 6. 데이터 로딩
-  | "LOAN_CONDITIONS" // 7. 대출 조건 입력
-  | "RESULT";         // 8. 신청 완료/실패
+  | "BIZ_DATA_CHECK"  // 7. 마이비즈 데이터 연동 확인
+  | "BIZ_INTRO"       // 8. 마이비즈 데이터 소개
+  | "LOAN_CONDITIONS" // 9. 대출 조건 입력
+  | "RESULT";         // 10. 신청 완료/실패
 
 export interface LoanApplyFormData {
   agreedTermIds: number[];

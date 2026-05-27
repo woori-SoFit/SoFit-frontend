@@ -24,8 +24,24 @@ import { connectMyBiz } from "@/api/mybizApi";
 export default function BizDataCollectPage() {
   const currentStep = useBizDataCollectStore((s) => s.currentStep);
   const nextStep = useBizDataCollectStore((s) => s.nextStep);
+  const setStep = useBizDataCollectStore((s) => s.setStep);
   const reset = useBizDataCollectStore((s) => s.reset);
   const navigate = useNavigate();
+
+  // 대출 신청 흐름에서 진입한 경우 완료 후 돌아갈 경로
+  const locationState = history.state?.usr as { returnTo?: string; startAt?: string } | null;
+  const returnTo = locationState?.returnTo;
+
+  // startAt이 지정되면 해당 step부터 시작
+  useEffect(() => {
+    const startAt = locationState?.startAt;
+    if (startAt === "LOADING") {
+      setStep("LOADING");
+    } else if (startAt === "TERMS") {
+      setStep("TERMS");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("마이 비즈 데이터");
@@ -33,7 +49,7 @@ export default function BizDataCollectPage() {
     // 커스텀 뒤로가기: CERT_INFO면 실제 뒤로가기, 아니면 이전 step
     useLayoutStore.getState().setOnBack(() => {
       const current = useBizDataCollectStore.getState().currentStep;
-      if (current === "CERT_INFO") {
+      if (current === "CERT_INFO" || current === "TERMS") {
         navigate(-1);
       } else {
         useBizDataCollectStore.getState().prevStep();
@@ -75,7 +91,11 @@ export default function BizDataCollectPage() {
           onComplete={() => {
             connectMyBiz().finally(() => {
               reset();
-              navigate("/biz-data");
+              if (returnTo) {
+                navigate(returnTo);
+              } else {
+                navigate("/biz-data");
+              }
             });
           }}
         />

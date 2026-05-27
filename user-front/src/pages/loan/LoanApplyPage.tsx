@@ -24,6 +24,9 @@ import { BizInfoConfirm } from "@/components/loan/BizInfoConfirm";
 import { MydataLoadingStep } from "@/components/loan/MydataLoadingStep";
 import { LoanConditionsStep } from "@/components/loan/LoanConditionsStep";
 import { LoanApplyResult } from "@/components/loan/LoanApplyResult";
+import { BizDataCheckStep } from "@/components/grade/BizDataCheckStep";
+import { IntroSection } from "@/components/bizData/IntroSection";
+import { BottomButton } from "@/components/common/BottomButton";
 import { MOCK_LOAN_TERMS } from "@/mocks/loanTerms";
 import { MOCK_MYDATA_TERMS } from "@/mocks/mydataTerms";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -43,13 +46,22 @@ export default function LoanApplyPage() {
   const submitResult = useLoanApplyStore((s) => s.submitResult);
   const navigate = useNavigate();
   const location = useLocation();
-  const { rows: bizInfoRows } = useBusinessInfo();
+  const { rows: bizInfoRows, isMybizConnected } = useBusinessInfo();
 
   // navigation state에서 productId, applicationId 수신 및 스토어 초기화
   useEffect(() => {
+    const state = location.state as { productId?: number; applicationId?: number } | null;
+
+    // URL 쿼리에서 step 복원 (BizDataCollectPage에서 돌아온 경우)
+    const params = new URLSearchParams(location.search);
+    const stepParam = params.get("step");
+    if (stepParam === "LOAN_CONDITIONS") {
+      setStep("LOAN_CONDITIONS");
+      return;
+    }
+
     reset();
 
-    const state = location.state as { productId?: number; applicationId?: number } | null;
     if (state?.productId) {
       useLoanApplyStore.getState().setProductId(state.productId);
     }
@@ -140,7 +152,39 @@ export default function LoanApplyPage() {
 
     case "MYDATA_LOADING":
       return (
-        <MydataLoadingStep onComplete={() => nextStep()} />
+        <MydataLoadingStep onComplete={() => {
+          if (isMybizConnected) {
+            // 이미 연동됨 → BizDataCollectPage LOADING으로 이동 후 LOAN_CONDITIONS로 복귀
+            navigate("/biz-data/collect", {
+              state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "LOADING" },
+            });
+          } else {
+            // 미연동 → BIZ_DATA_CHECK로 이동
+            nextStep();
+          }
+        }} />
+      );
+
+    case "BIZ_DATA_CHECK":
+      return (
+        <BizDataCheckStep onNext={() => nextStep()} />
+      );
+
+    case "BIZ_INTRO":
+      return (
+        <div className="flex flex-col h-full">
+          <div className="flex-1 overflow-y-auto">
+            <IntroSection />
+          </div>
+          <BottomButton
+            label="데이터 불러오기"
+            onClick={() => {
+              navigate("/biz-data/collect", {
+                state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "TERMS" },
+              });
+            }}
+          />
+        </div>
       );
 
     case "LOAN_CONDITIONS":
