@@ -4,6 +4,7 @@
  * 구조:
  * - 상단: 사용자 이름 + 역할 한글 표시명
  * - 카테고리별 메뉴 그룹 (역할 기반 필터링)
+ * - 하단: 개발자 전용 외부 서비스 바로가기
  * - 밝은 배경, 우측 border
  */
 import { NavLink, Navigate } from "react-router-dom";
@@ -11,6 +12,14 @@ import { useAuthMe } from "@/hooks/useAuthMe";
 import { getFilteredMenuGroups } from "@/utils/menuFilter";
 import { ROLE_DISPLAY_NAMES } from "@/constants/permissions";
 import Spinner from "@/components/common/Spinner";
+
+/** 개발자 전용 외부 서비스 바로가기 */
+const EXTERNAL_SHORTCUTS = [
+  { label: "Jenkins", url: import.meta.env.VITE_JENKINS_URL },
+  { label: "SonarQube", url: import.meta.env.VITE_SONARQUBE_URL },
+  { label: "Spring Boot Admin", url: import.meta.env.VITE_SPRING_BOOT_ADMIN_URL },
+  { label: "OpenStack", url: import.meta.env.VITE_OPENSTACK_URL },
+];
 
 export function Sidebar() {
   const { data: user, isLoading, isAuthenticated } = useAuthMe();
@@ -68,6 +77,39 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
+
+      {/* 개발자 전용 바로가기 */}
+      {user.role === "ADMIN_DEV" && (
+        <div className="px-3 pb-4 border-t border-border-default pt-3">
+          <p className="px-2 mb-1 text-xs font-semibold text-text-disabled uppercase">
+            바로가기
+          </p>
+          {EXTERNAL_SHORTCUTS.map((shortcut) => (
+            <a
+              key={shortcut.label}
+              href={shortcut.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-gray-50 hover:text-text-primary transition-colors"
+            >
+              <span>{shortcut.label}</span>
+              <svg
+                className="w-3 h-3 text-text-disabled"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </a>
+          ))}
+        </div>
+      )}
     </aside>
   );
 }

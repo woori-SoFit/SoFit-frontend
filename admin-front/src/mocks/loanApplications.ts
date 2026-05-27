@@ -1,4 +1,4 @@
-import type { LoanApplication, LoanApplicationParams, PaginatedResponse } from '@/types';
+import type { LoanApplication, LoanApplicationParams, LoanStatusCounts, PaginatedResponse } from '@/types';
 
 const MOCK_DATA: LoanApplication[] = [
   {
@@ -204,4 +204,20 @@ export function getMockLoanApplications(
     currentPage: params.page,
     size: params.size,
   };
+}
+
+
+/**
+ * 상태별 건수를 반환하는 Mock 함수.
+ * SYSTEM_APPROVED + SYSTEM_HOLD = 심사 대기
+ */
+export function getMockLoanStatusCounts(): LoanStatusCounts {
+  const pending = MOCK_DATA.filter(
+    (app) => app.status === 'SYSTEM_APPROVED' || app.status === 'SYSTEM_HOLD'
+  ).length;
+  const managerReview = MOCK_DATA.filter((app) => app.status === 'MANAGER_REVIEW').length;
+  const approved = MOCK_DATA.filter((app) => app.status === 'APPROVED').length;
+  const rejected = MOCK_DATA.filter((app) => app.status === 'REJECTED').length;
+
+  return { pending, managerReview, approved, rejected };
 }
