@@ -29,8 +29,9 @@ export default function BizDataCollectPage() {
   const navigate = useNavigate();
 
   // 대출 신청 흐름에서 진입한 경우 완료 후 돌아갈 경로
-  const locationState = history.state?.usr as { returnTo?: string; startAt?: string } | null;
+  const locationState = history.state?.usr as { returnTo?: string; startAt?: string; buttonLabel?: string } | null;
   const returnTo = locationState?.returnTo;
+  const loadingButtonLabel = locationState?.buttonLabel ?? "분석 결과 보기";
 
   // startAt이 지정되면 해당 step부터 시작
   useEffect(() => {
@@ -88,6 +89,7 @@ export default function BizDataCollectPage() {
           title="사업 데이터를 분석하고 있어요"
           description="AI가 다양한 데이터를 안전하게 수집 분석합니다."
           steps={MOCK_BIZ_DATA_COLLECT_STEPS}
+          buttonLabel={loadingButtonLabel}
           onComplete={() => {
             connectMyBiz().finally(() => {
               reset();
