@@ -41,7 +41,7 @@ export function IntroSection() {
         <img
           src={bizDataIllust}
           alt="마이 비즈 데이터 일러스트"
-          className="w-full max-w-[280px]"
+          className="w-full max-w-[280px] py-10"
         />
       </div>
 

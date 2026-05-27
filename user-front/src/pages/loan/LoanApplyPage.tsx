@@ -167,13 +167,16 @@ export default function LoanApplyPage() {
 
     case "BIZ_DATA_CHECK":
       return (
-        <BizDataCheckStep onNext={() => nextStep()} />
+        <BizDataCheckStep
+          heading="대출을 신청하기 위해서는"
+          onNext={() => nextStep()}
+        />
       );
 
     case "BIZ_INTRO":
       return (
         <div className="flex flex-col h-full">
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1">
             <IntroSection />
           </div>
           <BottomButton
