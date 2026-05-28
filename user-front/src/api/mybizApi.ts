@@ -70,16 +70,14 @@ export async function fetchMyBizDashboard(month?: string): Promise<BizDashboardD
 /**
  * 마이비즈 데이터 연결 여부 확인.
  * GET /api/report/mybiz-status
+ *
+ * @throws 네트워크 오류 시 예외를 그대로 throw (호출부에서 처리)
  */
 export async function checkMyBizConnected(): Promise<boolean> {
-  try {
-    const res = await axiosInstance.get<MyBizApiResponse<{ isMybizConnected: boolean }>>(
-      "/report/mybiz-status"
-    );
-    return res.data.result.isMybizConnected;
-  } catch {
-    return false;
-  }
+  const res = await axiosInstance.get<MyBizApiResponse<{ isMybizConnected: boolean }>>(
+    "/report/mybiz-status"
+  );
+  return res.data.result.isMybizConnected;
 }
 
 /**

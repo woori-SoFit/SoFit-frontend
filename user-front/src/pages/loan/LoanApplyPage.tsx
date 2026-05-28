@@ -15,8 +15,7 @@
  *
  * step 상태: useLoanApplyStore (Zustand)
  */
-import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useLoanApplyStore } from "@/stores/loanApplyStore";
 import { TermsPage } from "@/components/terms/TermsPage";
@@ -52,12 +51,19 @@ export default function LoanApplyPage() {
   const { terms: loanTerms } = useTerms("LOAN_APPLICATION");
   const { terms: mydataTerms } = useTerms("MYDATA");
 
-  // 대출 전용 사업자 정보 조회 (BIZ_CONFIRM step에서 사용, resumeStep 업데이트)
-  const { data: loanBizInfo } = useQuery({
-    queryKey: ["loan", "bizInfo", applicationId],
-    queryFn: () => fetchLoanBizInfo(applicationId!),
-    enabled: !!applicationId && currentStep === "BIZ_CONFIRM",
-  });
+  // 대출 전용 사업자 정보 조회 (BIZ_CONFIRM step 진입 시 1회 호출, resumeStep 업데이트)
+  const [loanBizInfo, setLoanBizInfo] = useState<Awaited<ReturnType<typeof fetchLoanBizInfo>> | null>(null);
+
+  useEffect(() => {
+    if (!applicationId || currentStep !== "BIZ_CONFIRM") return;
+    let cancelled = false;
+
+    fetchLoanBizInfo(applicationId).then((result) => {
+      if (!cancelled) setLoanBizInfo(result);
+    });
+
+    return () => { cancelled = true; };
+  }, [applicationId, currentStep]);
 
   const loanBizInfoRows = loanBizInfo
     ? [
@@ -218,14 +224,19 @@ export default function LoanApplyPage() {
     case "MYDATA_LOADING":
       return (
         <MydataLoadingStep onComplete={async () => {
-          const connected = await checkMyBizConnected();
-          if (connected) {
-            // 이미 연동됨 → BizDataCollectPage LOADING으로 이동 후 LOAN_CONDITIONS로 복귀
-            navigate("/biz-data/collect", {
-              state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "LOADING", buttonLabel: "대출 조건 입력하기", applicationId },
-            });
-          } else {
-            // 미연동 → BIZ_DATA_CHECK로 이동
+          try {
+            const connected = await checkMyBizConnected();
+            if (connected) {
+              // 이미 연동됨 → BizDataCollectPage LOADING으로 이동 후 LOAN_CONDITIONS로 복귀
+              navigate("/biz-data/collect", {
+                state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "LOADING", buttonLabel: "대출 조건 입력하기", applicationId },
+              });
+            } else {
+              // 미연동 → BIZ_DATA_CHECK로 이동
+              nextStep();
+            }
+          } catch {
+            // 네트워크 오류 시 미연동으로 간주하지 않고 BIZ_DATA_CHECK로 이동
             nextStep();
           }
         }} />

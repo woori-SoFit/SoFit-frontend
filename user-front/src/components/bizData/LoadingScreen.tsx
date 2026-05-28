@@ -39,6 +39,7 @@ const STEP_INTERVAL_MS = 1000;
 export function LoadingScreen({ title, description, steps, buttonLabel = "다음", onAllDone, onComplete }: LoadingScreenProps) {
   const [internalSteps, setInternalSteps] = useState<LoadingStep[]>(() => steps ?? []);
   const [allDone, setAllDone] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const onAllDoneCalledRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -78,7 +79,9 @@ export function LoadingScreen({ title, description, steps, buttonLabel = "다음
       setAllDone(true);
       if (!onAllDoneCalledRef.current && onAllDone) {
         onAllDoneCalledRef.current = true;
-        onAllDone();
+        Promise.resolve(onAllDone()).catch(() => {
+          setHasError(true);
+        });
       }
     }
   }, [internalSteps, onAllDone]);
@@ -144,12 +147,31 @@ export function LoadingScreen({ title, description, steps, buttonLabel = "다음
         )}
       </div>
 
-      {/* 하단 버튼 — 전체 완료 시 활성화 */}
-      <BottomButton
-        label={buttonLabel}
-        onClick={() => onComplete?.()}
-        disabled={!allDone}
-      />
+      {/* 하단 버튼 — 전체 완료 시 활성화, 에러 시 비활성화 */}
+      {hasError ? (
+        <div className="px-5 py-4 text-center">
+          <p className="text-sm text-error mb-3">처리 중 오류가 발생했습니다. 다시 시도해주세요.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setHasError(false);
+              onAllDoneCalledRef.current = false;
+              // 재시도 트리거: allDone 상태 유지하므로 useEffect가 다시 실행됨
+              setAllDone(false);
+              setTimeout(() => setAllDone(true), 0);
+            }}
+            className="w-full h-12 rounded-xl bg-primary text-white text-base font-semibold"
+          >
+            다시 시도
+          </button>
+        </div>
+      ) : (
+        <BottomButton
+          label={buttonLabel}
+          onClick={() => onComplete?.()}
+          disabled={!allDone}
+        />
+      )}
     </div>
   );
 }
