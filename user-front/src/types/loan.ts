@@ -258,3 +258,13 @@ export interface CheckDraftResponse {
     resumeStep?: string;
   };
 }
+
+/** 대출 약관 동의 요청 */
+export interface LoanConsentsRequest {
+  termType: string;
+  applicationId: number;
+  consents: Array<{
+    termId: number;
+    isConsented: boolean;
+  }>;
+}
