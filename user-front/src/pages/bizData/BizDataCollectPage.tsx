@@ -18,8 +18,10 @@ import { useBizDataCollectStore } from "@/stores/bizDataCollectStore";
 import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { TermsPage } from "@/components/terms/TermsPage";
 import { LoadingScreen } from "@/components/bizData/LoadingScreen";
-import { MOCK_BIZ_DATA_TERMS, MOCK_BIZ_DATA_COLLECT_STEPS } from "@/mocks/bizData";
+import { MOCK_BIZ_DATA_COLLECT_STEPS } from "@/mocks/bizData";
 import { connectMyBiz } from "@/api/mybizApi";
+import { submitTermsConsents } from "@/api/termsApi";
+import { useTerms } from "@/hooks/useTerms";
 
 export default function BizDataCollectPage() {
   const currentStep = useBizDataCollectStore((s) => s.currentStep);
@@ -27,6 +29,7 @@ export default function BizDataCollectPage() {
   const setStep = useBizDataCollectStore((s) => s.setStep);
   const reset = useBizDataCollectStore((s) => s.reset);
   const navigate = useNavigate();
+  const { terms: mybizTerms } = useTerms("MYBIZDATA");
 
   // 대출 신청 흐름에서 진입한 경우 완료 후 돌아갈 경로
   const locationState = history.state?.usr as { returnTo?: string; startAt?: string; buttonLabel?: string } | null;
@@ -79,7 +82,17 @@ export default function BizDataCollectPage() {
           title="마이 비즈니스 데이터 약관 동의"
           description="S분석 리포트 생성을 위해 마이 비즈니스 데이터를 수집 분석합니다. 아래 약관에 동의해주세요."
           submitLabel="동의하고 계속하기"
-          onSubmit={() => nextStep()}
+          onSubmit={async (agreedIds) => {
+            const consents = mybizTerms.map((term) => ({
+              termId: term.id,
+              isConsented: agreedIds.includes(term.id),
+            }));
+            await submitTermsConsents({
+              termType: "MYBIZDATA",
+              consents,
+            });
+            nextStep();
+          }}
         />
       );
 

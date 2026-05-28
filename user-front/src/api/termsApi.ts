@@ -3,24 +3,7 @@
  */
 import axiosInstance from "./axiosInstance";
 import type { TermsItem, TermType } from "@/types/common";
-
-/** 약관 목록 조회 API 응답 */
-interface TermsApiResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: {
-    terms: Array<{
-      termId: number;
-      termType: string;
-      version: string;
-      title: string;
-      fileUrl: string;
-      isRequired: boolean;
-      effectiveAt: string;
-    }>;
-  };
-}
+import type { TermsApiResponse, TermsConsentsRequest } from "@/types/terms";
 
 /** 약관 목록 조회 */
 export async function fetchTerms(termType: TermType): Promise<TermsItem[]> {
@@ -35,4 +18,9 @@ export async function fetchTerms(termType: TermType): Promise<TermsItem[]> {
     required: term.isRequired,
     fileUrl: term.fileUrl,
   }));
+}
+
+/** 공통 약관 동의 제출 (대출 약관 제외) */
+export async function submitTermsConsents(request: TermsConsentsRequest): Promise<void> {
+  await axiosInstance.post("/terms/consents", request);
 }

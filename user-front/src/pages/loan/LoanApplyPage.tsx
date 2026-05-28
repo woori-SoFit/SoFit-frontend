@@ -32,6 +32,7 @@ import { verifyFinancialCertificate } from "@/api/authApi";
 import { useBusinessInfo } from "@/hooks/useBusinessInfo";
 import { checkMyBizConnected } from "@/api/mybizApi";
 import { submitLoanConsents } from "@/api/loanApi";
+import { submitTermsConsents } from "@/api/termsApi";
 import { useTerms } from "@/hooks/useTerms";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
 import type { CustomerVerifyData } from "@/types/auth";
@@ -50,6 +51,7 @@ export default function LoanApplyPage() {
   const location = useLocation();
   const { rows: bizInfoRows } = useBusinessInfo();
   const { terms: loanTerms } = useTerms("LOAN_APPLICATION");
+  const { terms: mydataTerms } = useTerms("MYDATA");
 
   // navigation state에서 productId, applicationId 수신 및 스토어 초기화
   useEffect(() => {
@@ -179,7 +181,18 @@ export default function LoanApplyPage() {
           title="마이데이터 정보 동의"
           description="대출 심사를 위해 마이데이터 정보 활용에 동의해 주세요."
           submitLabel="동의하고 계속"
-          onSubmit={() => {
+          onSubmit={async (agreedIds) => {
+            if (applicationId) {
+              const consents = mydataTerms.map((term) => ({
+                termId: term.id,
+                isConsented: agreedIds.includes(term.id),
+              }));
+              await submitTermsConsents({
+                termType: "MYDATA",
+                applicationId,
+                consents,
+              });
+            }
             nextStep();
           }}
         />

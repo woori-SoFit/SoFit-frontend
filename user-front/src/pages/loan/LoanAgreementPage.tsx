@@ -19,6 +19,8 @@ import { TermsPage } from "@/components/terms/TermsPage";
 import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { AccountStep } from "@/components/loan/AccountStep";
 import { formatAmount } from "@/utils/format";
+import { submitTermsConsents } from "@/api/termsApi";
+import { useTerms } from "@/hooks/useTerms";
 import confettiAnimation from "@/assets/lottie/Success-Celebration.json";
 
 type AgreementStep = "CONFIRM" | "TERMS" | "CERT" | "ACCOUNT" | "COMPLETE";
@@ -37,6 +39,7 @@ const MOCK_AGREEMENT_DATA = {
 export default function LoanAgreementPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState<AgreementStep>("CONFIRM");
+  const { terms: agreementTerms } = useTerms("LOAN_AGREEMENT");
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("약정 체결");
@@ -90,7 +93,18 @@ export default function LoanAgreementPage() {
           title="약정 약관 동의"
           description="대출 약정을 위해 아래 약관에 동의해 주세요."
           submitLabel="동의하고 계속"
-          onSubmit={() => setStep("CERT")}
+          onSubmit={async (agreedIds) => {
+            const consents = agreementTerms.map((term) => ({
+              termId: term.id,
+              isConsented: agreedIds.includes(term.id),
+            }));
+            await submitTermsConsents({
+              termType: "LOAN_AGREEMENT",
+              applicationId: data.applicationId,
+              consents,
+            });
+            setStep("CERT");
+          }}
         />
       );
 
