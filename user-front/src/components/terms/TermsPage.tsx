@@ -4,36 +4,62 @@
  * TermsAgreement + TermsDetailSheet + 다음 버튼을 하나의 페이지 단위로 묶음
  *
  * 사용처:
- * - 대출 신청 약관 동의 step (TERMS)
- * - 마이데이터 약관 동의 step (MYDATA_TERMS)
- * - 대출 약정 약관 동의
+ * - 대출 신청 약관 동의 step (LOAN_APPLICATION)
+ * - 마이데이터 약관 동의 step (MYDATA)
+ * - 마이 비즈 데이터 약관 동의 (MYBIZDATA)
+ * - 대출 약정 약관 동의 (LOAN_AGREEMENT)
+ * - 회원가입 약관 동의 (PERSONAL_INFO)
+ *
+ * termType을 전달하면 API에서 약관 목록을 자동 조회합니다.
+ * terms를 직접 전달하면 기존처럼 정적 데이터를 사용합니다.
  */
 import { useState, useRef } from "react";
-import type { TermsItem } from "@/types/common";
+import type { TermsItem, TermType } from "@/types/common";
 import { TermsAgreement } from "./TermsAgreement";
 import { TermsDetailSheet } from "./TermsDetailSheet";
 import { BottomButton } from "@/components/common/BottomButton";
+import { useTerms } from "@/hooks/useTerms";
 
-interface TermsPageProps {
+interface TermsPageBaseProps {
   /** 페이지 상단 타이틀 */
   title: string;
   /** 페이지 상단 설명 (선택) */
   description?: string;
-  /** 표시할 약관 목록 */
-  terms: TermsItem[];
   /** 다음 버튼 레이블 (기본값: "다음") */
   submitLabel?: string;
   /** 필수 약관 전체 동의 후 다음 버튼 클릭 시 호출 */
   onSubmit: (agreedIds: number[]) => void;
 }
 
+interface TermsPageWithType extends TermsPageBaseProps {
+  /** API에서 조회할 약관 유형 */
+  termType: TermType;
+  terms?: never;
+}
+
+interface TermsPageWithTerms extends TermsPageBaseProps {
+  /** 직접 전달하는 약관 목록 (기존 호환) */
+  terms: TermsItem[];
+  termType?: never;
+}
+
+type TermsPageProps = TermsPageWithType | TermsPageWithTerms;
+
 export function TermsPage({
   title,
   description,
-  terms,
+  terms: staticTerms,
+  termType,
   submitLabel = "다음",
   onSubmit,
 }: TermsPageProps) {
+  const { terms: apiTerms, isLoading, isError } = useTerms(
+    termType ?? ("PERSONAL_INFO" as TermType)
+  );
+
+  // termType이 있으면 API 데이터 사용, 없으면 정적 데이터 사용
+  const terms = termType ? apiTerms : (staticTerms ?? []);
+
   const [agreedIds, setAgreedIds] = useState<number[]>([]);
   const [detailTerm, setDetailTerm] = useState<TermsItem | null>(null);
 
@@ -83,6 +109,26 @@ export function TermsPage({
     setDetailTerm(null);
     allAgreeQueueRef.current = [];
   };
+
+  // termType 모드에서 로딩/에러 처리
+  if (termType && isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-full gap-3">
+        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm text-text-secondary">약관을 불러오는 중...</p>
+      </div>
+    );
+  }
+
+  if (termType && isError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-full gap-3 px-5">
+        <p className="text-sm text-text-secondary text-center">
+          약관을 불러오지 못했습니다.<br />잠시 후 다시 시도해주세요.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-full">

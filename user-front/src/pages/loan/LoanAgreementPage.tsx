@@ -19,7 +19,6 @@ import { TermsPage } from "@/components/terms/TermsPage";
 import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { AccountStep } from "@/components/loan/AccountStep";
 import { formatAmount } from "@/utils/format";
-import { MOCK_AGREEMENT_TERMS } from "@/mocks/agreementTerms";
 import confettiAnimation from "@/assets/lottie/Success-Celebration.json";
 
 type AgreementStep = "CONFIRM" | "TERMS" | "CERT" | "ACCOUNT" | "COMPLETE";
@@ -87,9 +86,9 @@ export default function LoanAgreementPage() {
     case "TERMS":
       return (
         <TermsPage
+          termType="LOAN_AGREEMENT"
           title="약정 약관 동의"
           description="대출 약정을 위해 아래 약관에 동의해 주세요."
-          terms={MOCK_AGREEMENT_TERMS}
           submitLabel="동의하고 계속"
           onSubmit={() => setStep("CERT")}
         />

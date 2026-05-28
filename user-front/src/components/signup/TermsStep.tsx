@@ -4,12 +4,13 @@ import { TermsPage } from "../terms/TermsPage";
 import { useSignupStore } from "../../stores/signupStore";
 import { submitSignup } from "../../api/signupApi";
 import type { SignupRequest, ConsentItem } from "@/types/signup";
-import { MOCK_SIGNUP_TERMS } from "@/mocks/signupTerms";
+import { useTerms } from "@/hooks/useTerms";
 
 /** 약관 동의 스텝 — 약관 동의 후 회원가입 API 호출 */
 export default function TermsStep() {
   const { formData, updateFormData, nextStep } = useSignupStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { terms } = useTerms("PERSONAL_INFO");
 
   const signupMutation = useMutation({
     mutationFn: (request: SignupRequest) => submitSignup(request),
@@ -29,8 +30,8 @@ export default function TermsStep() {
     updateFormData({ agreedTermIds: agreedIds });
     setIsSubmitting(true);
 
-    // 전체 약관 목록 기준으로 consents 배열 생성
-    const consents: ConsentItem[] = MOCK_SIGNUP_TERMS.map((term) => ({
+    // API에서 조회한 약관 목록 기준으로 consents 배열 생성
+    const consents: ConsentItem[] = terms.map((term) => ({
       termId: term.id,
       isConsented: agreedIds.includes(term.id),
     }));
@@ -49,9 +50,9 @@ export default function TermsStep() {
 
   return (
     <TermsPage
+      termType="PERSONAL_INFO"
       title="약관 동의"
       description="서비스 이용을 위해 약관에 동의해주세요."
-      terms={MOCK_SIGNUP_TERMS}
       submitLabel={isSubmitting ? "가입 처리 중..." : "가입하기"}
       onSubmit={handleSubmit}
     />

@@ -30,6 +30,11 @@ export const BIZ_DATA_KEYS = {
   status: () => [...BIZ_DATA_KEYS.all, "status"] as const,
 } as const;
 
+export const TERMS_KEYS = {
+  all: ["terms"] as const,
+  list: (termType: string) => [...TERMS_KEYS.all, "list", termType] as const,
+} as const;
+
 export const MYPAGE_KEYS = {
   all: ["mypage"] as const,
   profile: () => [...MYPAGE_KEYS.all, "profile"] as const,

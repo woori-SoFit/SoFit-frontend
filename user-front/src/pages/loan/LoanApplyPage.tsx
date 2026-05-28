@@ -24,6 +24,8 @@ import { BizInfoConfirm } from "@/components/loan/BizInfoConfirm";
 import { MydataLoadingStep } from "@/components/loan/MydataLoadingStep";
 import { LoanConditionsStep } from "@/components/loan/LoanConditionsStep";
 import { LoanApplyResult } from "@/components/loan/LoanApplyResult";
+import { MOCK_BIZ_INFO_ROWS } from "@/mocks/bizInfo";
+import { MOCK_LOAN_APPLY_RESULT_ROWS } from "@/mocks/loanApplyResult";
 import { MOCK_LOAN_TERMS } from "@/mocks/loanTerms";
 import { MOCK_MYDATA_TERMS } from "@/mocks/mydataTerms";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -82,9 +84,9 @@ export default function LoanApplyPage() {
     case "TERMS":
       return (
         <TermsPage
+          termType="LOAN_APPLICATION"
           title="대출 약관 동의"
           description="대출 신청을 위해 아래 약관에 동의해 주세요."
-          terms={MOCK_LOAN_TERMS}
           submitLabel="동의하고 계속"
           onSubmit={(agreedIds) => {
             updateFormData({ agreedTermIds: agreedIds });
@@ -128,9 +130,9 @@ export default function LoanApplyPage() {
     case "MYDATA_TERMS":
       return (
         <TermsPage
+          termType="MYDATA"
           title="마이데이터 정보 동의"
           description="대출 심사를 위해 마이데이터 정보 활용에 동의해 주세요."
-          terms={MOCK_MYDATA_TERMS}
           submitLabel="동의하고 계속"
           onSubmit={() => {
             nextStep();
