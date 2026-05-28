@@ -17,7 +17,7 @@ export function BizDataCheckStep({ onNext, heading = "성장 S등급 리포트 �
   return (
     <div className="flex flex-col h-full">
       {/* 컨텐츠 영역 */}
-      <div className="flex-1 flex flex-col items-center mt-12 px-5">
+      <div className="flex-1 flex flex-col items-center mt-10 px-5">
         {/* 아이콘 영역 */}
         <div className="w-62 h-32 mb-10">
           <Lottie animationData={fileLoadingAnimation} loop className="w-full h-full" />

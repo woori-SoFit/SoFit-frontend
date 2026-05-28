@@ -28,6 +28,7 @@ import { BizDataCheckStep } from "@/components/grade/BizDataCheckStep";
 import { IntroSection } from "@/components/bizData/IntroSection";
 import { BottomButton } from "@/components/common/BottomButton";
 import { ExitConfirmModal } from "@/components/loan/ExitConfirmModal";
+import { StepProgress } from "@/components/common/StepProgress";
 import { useNavigate, useLocation } from "react-router-dom";
 import { verifyFinancialCertificate } from "@/api/authApi";
 import { formatBusinessNumber } from "@/utils/signupValidation";
@@ -139,6 +140,24 @@ export default function LoanApplyPage() {
       useLayoutStore.getState().setOnHome(null);
     };
   }, [navigate]);
+
+  // 대출 신청 스텝퍼 정의
+  const LOAN_STEP_LABELS = ["약관동의", "본인인증", "사업자확인", "데이터동의", "조건입력"];
+
+  const STEP_TO_PROGRESS_INDEX: Record<string, number> = {
+    TERMS: 0,
+    CERT_INFO: 1,
+    PIN: 1,
+    BIZ_CONFIRM: 2,
+    MYDATA_TERMS: 3,
+    MYDATA_LOADING: 3,
+    BIZ_DATA_CHECK: 3,
+    BIZ_INTRO: 3,
+    LOAN_CONDITIONS: 4,
+  };
+
+  const progressIndex = STEP_TO_PROGRESS_INDEX[currentStep] ?? -1;
+  const showStepper = progressIndex >= 0 && currentStep !== "RESULT";
 
   const renderStep = () => {
     switch (currentStep) {
@@ -335,8 +354,11 @@ export default function LoanApplyPage() {
   };
 
   return (
-    <>
-      {renderStep()}
+    <div className="flex flex-col h-full overflow-hidden">
+      {showStepper && <StepProgress steps={LOAN_STEP_LABELS} currentIndex={progressIndex} />}
+      <div className="flex-1 overflow-y-auto">
+        {renderStep()}
+      </div>
 
       {/* 이탈 방지 모달 */}
       {exitModal && (
@@ -353,6 +375,6 @@ export default function LoanApplyPage() {
           }}
         />
       )}
-    </>
+    </div>
   );
 }

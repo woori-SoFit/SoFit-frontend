@@ -133,7 +133,7 @@ export function TermsPage({
   return (
     <div className="flex flex-col min-h-full">
       {/* 본문 */}
-      <div className="flex-1 px-5 pt-10 pb-4">
+      <div className="flex-1 px-5 pt-7 pb-4">
         {/* 타이틀 */}
         <h1 className="text-xl font-bold text-text-primary mb-2">
           {title}
