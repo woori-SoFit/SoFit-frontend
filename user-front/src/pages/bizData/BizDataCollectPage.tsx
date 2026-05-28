@@ -20,6 +20,7 @@ import { TermsPage } from "@/components/terms/TermsPage";
 import { LoadingScreen } from "@/components/bizData/LoadingScreen";
 import { MOCK_BIZ_DATA_COLLECT_STEPS } from "@/mocks/bizData";
 import { connectMyBiz } from "@/api/mybizApi";
+import { completeLoanMybizData } from "@/api/loanApi";
 import { submitTermsConsents } from "@/api/termsApi";
 import { useTerms } from "@/hooks/useTerms";
 
@@ -32,9 +33,10 @@ export default function BizDataCollectPage() {
   const { terms: mybizTerms } = useTerms("MYBIZDATA");
 
   // 대출 신청 흐름에서 진입한 경우 완료 후 돌아갈 경로
-  const locationState = history.state?.usr as { returnTo?: string; startAt?: string; buttonLabel?: string } | null;
+  const locationState = history.state?.usr as { returnTo?: string; startAt?: string; buttonLabel?: string; applicationId?: number } | null;
   const returnTo = locationState?.returnTo;
   const loadingButtonLabel = locationState?.buttonLabel ?? "분석 결과 보기";
+  const loanApplicationId = locationState?.applicationId;
 
   // startAt이 지정되면 해당 step부터 시작
   useEffect(() => {
@@ -103,15 +105,20 @@ export default function BizDataCollectPage() {
           description="AI가 다양한 데이터를 안전하게 수집 분석합니다."
           steps={MOCK_BIZ_DATA_COLLECT_STEPS}
           buttonLabel={loadingButtonLabel}
-          onComplete={() => {
-            connectMyBiz().finally(() => {
-              reset();
-              if (returnTo) {
-                navigate(returnTo);
-              } else {
-                navigate("/biz-data");
-              }
-            });
+          onComplete={async () => {
+            if (loanApplicationId) {
+              // 대출 흐름: 마이비즈 단계 완료 API 호출
+              await completeLoanMybizData(loanApplicationId);
+            } else {
+              // 일반 마이비즈 흐름: 연동 완료 처리
+              await connectMyBiz();
+            }
+            reset();
+            if (returnTo) {
+              navigate(returnTo);
+            } else {
+              navigate("/biz-data");
+            }
           }}
         />
       );

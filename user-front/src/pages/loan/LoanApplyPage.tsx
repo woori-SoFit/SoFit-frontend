@@ -222,7 +222,7 @@ export default function LoanApplyPage() {
           if (connected) {
             // 이미 연동됨 → BizDataCollectPage LOADING으로 이동 후 LOAN_CONDITIONS로 복귀
             navigate("/biz-data/collect", {
-              state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "LOADING", buttonLabel: "대출 조건 입력하기" },
+              state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "LOADING", buttonLabel: "대출 조건 입력하기", applicationId },
             });
           } else {
             // 미연동 → BIZ_DATA_CHECK로 이동
@@ -249,7 +249,7 @@ export default function LoanApplyPage() {
             label="데이터 불러오기"
             onClick={() => {
               navigate("/biz-data/collect", {
-                state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "TERMS", buttonLabel: "대출 조건 입력하기" },
+                state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "TERMS", buttonLabel: "대출 조건 입력하기", applicationId },
               });
             }}
           />

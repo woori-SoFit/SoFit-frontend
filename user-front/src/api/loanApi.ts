@@ -132,7 +132,7 @@ export async function checkLoanDraft(
   return res.data.result;
 }
 
-/** 대출 약관 동의 제출 */
+/** 대출 약관 동의 제출 (resumeStep 업데이트) */
 export async function submitLoanConsents(
   applicationId: number,
   request: LoanConsentsRequest
@@ -162,4 +162,9 @@ export async function submitLoanMydata(
     `/loan-applications/${applicationId}/mydata`,
     request
   );
+}
+
+/** 대출 신청 마이비즈데이터 연동 완료 처리 (resumeStep 업데이트) */
+export async function completeLoanMybizData(applicationId: number): Promise<void> {
+  await axiosInstance.post(`/loan-applications/${applicationId}/mybiz-data`);
 }
