@@ -155,10 +155,11 @@ export function LoadingScreen({ title, description, steps, buttonLabel = "다음
             type="button"
             onClick={() => {
               setHasError(false);
-              onAllDoneCalledRef.current = false;
-              // 재시도 트리거: allDone 상태 유지하므로 useEffect가 다시 실행됨
-              setAllDone(false);
-              setTimeout(() => setAllDone(true), 0);
+              if (onAllDone) {
+                Promise.resolve(onAllDone()).catch(() => {
+                  setHasError(true);
+                });
+              }
             }}
             className="w-full h-12 rounded-xl bg-primary text-white text-base font-semibold"
           >
