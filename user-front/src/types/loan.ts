@@ -254,5 +254,7 @@ export interface CheckDraftResponse {
   result: {
     hasDraft: boolean;
     applicationId?: number;
+    lastCompletedStep?: string;
+    resumeStep?: string;
   };
 }

@@ -20,6 +20,7 @@ export default function LoanDetailPage() {
   const navigate = useNavigate();
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
+  const [draftData, setDraftData] = useState<{ applicationId?: number; resumeStep?: string }>({});
 
   const { data: product, isLoading } = useQuery({
     queryKey: LOAN_KEYS.detail(Number(productId)),
@@ -37,9 +38,10 @@ export default function LoanDetailPage() {
     setIsChecking(true);
 
     try {
-      const { hasDraft } = await checkLoanDraft(product.productId);
+      const result = await checkLoanDraft(product.productId);
 
-      if (hasDraft) {
+      if (result.hasDraft) {
+        setDraftData({ applicationId: result.applicationId, resumeStep: result.resumeStep });
         setShowDraftModal(true);
       } else {
         navigateToApply();
@@ -160,7 +162,11 @@ export default function LoanDetailPage() {
           onResume={() => {
             setShowDraftModal(false);
             navigate("/loan/apply", {
-              state: { productId: product.productId, resumeDraft: true },
+              state: {
+                productId: product.productId,
+                applicationId: draftData.applicationId,
+                resumeStep: draftData.resumeStep,
+              },
             });
           }}
           onNewApply={() => {

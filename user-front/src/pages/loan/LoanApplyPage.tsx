@@ -33,6 +33,7 @@ import { useBusinessInfo } from "@/hooks/useBusinessInfo";
 import { checkMyBizConnected } from "@/api/mybizApi";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
 import type { CustomerVerifyData } from "@/types/auth";
+import type { LoanApplyStep } from "@/types/loan";
 
 export default function LoanApplyPage() {
   const currentStep = useLoanApplyStore((s) => s.currentStep);
@@ -49,7 +50,11 @@ export default function LoanApplyPage() {
 
   // navigation state에서 productId, applicationId 수신 및 스토어 초기화
   useEffect(() => {
-    const state = location.state as { productId?: number; applicationId?: number } | null;
+    const state = location.state as {
+      productId?: number;
+      applicationId?: number;
+      resumeStep?: string;
+    } | null;
 
     // URL 쿼리에서 step 복원 (BizDataCollectPage에서 돌아온 경우)
     const params = new URLSearchParams(location.search);
@@ -67,7 +72,21 @@ export default function LoanApplyPage() {
     if (state?.applicationId) {
       useLoanApplyStore.getState().setApplicationId(state.applicationId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    // 임시저장 이어가기: resumeStep에 따라 해당 step으로 이동
+    if (state?.resumeStep) {
+      const stepMap: Record<string, LoanApplyStep> = {
+        CONSENT: "TERMS",
+        BIZ_INFO: "CERT_INFO",
+        COLLECT_DATA: "MYDATA_TERMS",
+        MYBIZ: "MYDATA_LOADING",
+        LOAN_CONDITION: "LOAN_CONDITIONS",
+      };
+      const targetStep = stepMap[state.resumeStep];
+      if (targetStep) {
+        setStep(targetStep);
+      }
+    }
   }, []);
 
   useEffect(() => {

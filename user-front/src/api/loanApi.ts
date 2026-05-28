@@ -122,7 +122,7 @@ export async function submitLoanApplication(
 /** 대출 신청 임시저장(draft) 존재 여부 조회 */
 export async function checkLoanDraft(
   productId: number
-): Promise<{ hasDraft: boolean; applicationId?: number }> {
+): Promise<{ hasDraft: boolean; applicationId?: number; resumeStep?: string }> {
   const res = await axiosInstance.get<CheckDraftResponse>(
     "/loan-applications/draft",
     { params: { productId } }
