@@ -17,6 +17,9 @@ import type {
   LoanApplicationCompletedDetailResponse,
   SubmitLoanApplicationRequest,
   SubmitLoanApplicationResponse,
+  CheckDraftResponse,
+  LoanConsentsRequest,
+  LoanBizInfoResponse,
 } from "@/types/loan";
 import type {
   CreateLoanApplicationRequest,
@@ -116,4 +119,52 @@ export async function submitLoanApplication(
     body
   );
   return res.data;
+}
+
+/** 대출 신청 임시저장(draft) 존재 여부 조회 */
+export async function checkLoanDraft(
+  productId: number
+): Promise<{ hasDraft: boolean; applicationId?: number; resumeStep?: string }> {
+  const res = await axiosInstance.get<CheckDraftResponse>(
+    "/loan-applications/draft",
+    { params: { productId } }
+  );
+  return res.data.result;
+}
+
+/** 대출 약관 동의 제출 (resumeStep 업데이트) */
+export async function submitLoanConsents(
+  applicationId: number,
+  request: LoanConsentsRequest
+): Promise<void> {
+  await axiosInstance.post(
+    `/loan-applications/${applicationId}/consents`,
+    request
+  );
+}
+
+/** 대출 신청 사업자 정보 조회 (resumeStep 업데이트) */
+export async function fetchLoanBizInfo(
+  applicationId: number
+): Promise<LoanBizInfoResponse["result"]> {
+  const res = await axiosInstance.post<LoanBizInfoResponse>(
+    `/loan-applications/${applicationId}/biz-info`
+  );
+  return res.data.result;
+}
+
+/** 대출 신청 마이데이터 동의 제출 (resumeStep 업데이트) */
+export async function submitLoanMydata(
+  applicationId: number,
+  request: LoanConsentsRequest
+): Promise<void> {
+  await axiosInstance.post(
+    `/loan-applications/${applicationId}/mydata`,
+    request
+  );
+}
+
+/** 대출 신청 마이비즈데이터 연동 완료 처리 (resumeStep 업데이트) */
+export async function completeLoanMybizData(applicationId: number): Promise<void> {
+  await axiosInstance.post(`/loan-applications/${applicationId}/mybiz-data`);
 }

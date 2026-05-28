@@ -10,23 +10,22 @@ import { BottomButton } from "@/components/common/BottomButton";
 
 interface BizDataCheckStepProps {
   onNext: () => void;
+  heading?: string;
 }
 
-export function BizDataCheckStep({ onNext }: BizDataCheckStepProps) {
+export function BizDataCheckStep({ onNext, heading = "성장 S등급 리포트 서비스를\n이용하기 위해서는" }: BizDataCheckStepProps) {
   return (
     <div className="flex flex-col h-full">
       {/* 컨텐츠 영역 */}
-      <div className="flex-1 flex flex-col items-center mt-12 px-5">
+      <div className="flex-1 flex flex-col items-center mt-10 px-5">
         {/* 아이콘 영역 */}
         <div className="w-62 h-32 mb-10">
           <Lottie animationData={fileLoadingAnimation} loop className="w-full h-full" />
         </div>
 
         {/* 메인 문구 */}
-        <h2 className="text-xl font-bold text-text-primary text-center leading-snug">
-          성장 등급 리포트 서비스를
-          <br />
-          이용하기 위해서는
+        <h2 className="text-xl font-bold text-text-primary text-center leading-snug whitespace-pre-line">
+          {heading}
           <br />
           <span className="text-primary">마이 비즈 데이터</span>를 불러와야 해요.
         </h2>

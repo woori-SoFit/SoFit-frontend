@@ -11,7 +11,8 @@
  *   5. 대출 실행 완료
  */
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import Lottie from "lottie-react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
@@ -19,24 +20,26 @@ import { TermsPage } from "@/components/terms/TermsPage";
 import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { AccountStep } from "@/components/loan/AccountStep";
 import { formatAmount } from "@/utils/format";
+import { REPAYMENT_LABELS } from "@/constants/loanLabels";
+import { fetchLoanApplicationCompletedDetail } from "@/api/loanApi";
+import { submitTermsConsents } from "@/api/termsApi";
+import { useTerms } from "@/hooks/useTerms";
+import { LOAN_KEYS } from "@/constants/queryKeys";
 import confettiAnimation from "@/assets/lottie/Success-Celebration.json";
 
 type AgreementStep = "CONFIRM" | "TERMS" | "CERT" | "ACCOUNT" | "COMPLETE";
 
-/** Mock 약정 데이터 — TODO: API 연동 시 제거 */
-const MOCK_AGREEMENT_DATA = {
-  applicationId: 2,
-  productName: "우리 사장님 대출",
-  approvedAmount: 65_000_000,
-  proposedRate: 4.25,
-  term: 60,
-  repaymentMethod: "원리금균등분할상환",
-  maturityDate: "2031-05-07",
-};
-
 export default function LoanAgreementPage() {
   const navigate = useNavigate();
+  const { applicationId } = useParams<{ applicationId: string }>();
   const [step, setStep] = useState<AgreementStep>("CONFIRM");
+  const { terms: agreementTerms } = useTerms("LOAN_AGREEMENT");
+
+  const { data, isLoading } = useQuery({
+    queryKey: LOAN_KEYS.application(Number(applicationId)),
+    queryFn: () => fetchLoanApplicationCompletedDetail(Number(applicationId)),
+    enabled: !!applicationId,
+  });
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("약정 체결");
@@ -58,8 +61,28 @@ export default function LoanAgreementPage() {
     };
   }, [navigate, step]);
 
-  const data = MOCK_AGREEMENT_DATA;
-  const termLabel = data.term >= 12 ? `${Math.floor(data.term / 12)}년` : `${data.term}개월`;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-sm text-text-secondary">약정 정보를 불러오는 중...</p>
+      </div>
+    );
+  }
+
+  if (!data || !data.decisionInfo) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-text-secondary">약정 정보를 찾을 수 없습니다.</p>
+      </div>
+    );
+  }
+
+  const { decisionInfo } = data;
+  const approvedAmount = decisionInfo.approvedAmount ?? 0;
+  const approvedRate = decisionInfo.approvedRate ?? 0;
+  const approvedTerm = decisionInfo.approvedTerm ?? 0;
+  const termLabel = approvedTerm >= 12 ? `${Math.floor(approvedTerm / 12)}년` : `${approvedTerm}개월`;
+  const repaymentLabel = REPAYMENT_LABELS[data.repaymentMethod] ?? data.repaymentMethod;
 
   switch (step) {
     // 1. 약정 체결 확인
@@ -71,10 +94,10 @@ export default function LoanAgreementPage() {
             title={data.productName}
             description="아래 대출 조건을 확인하고 약정을 진행해주세요."
             rows={[
-              { label: "승인금액", value: formatAmount(data.approvedAmount) },
-              { label: "예정 금리(연)", value: `${data.proposedRate}%` },
-              { label: "만기일", value: data.maturityDate.replace(/-/g, ".") },
-              { label: "상환 방식", value: data.repaymentMethod },
+              { label: "승인금액", value: formatAmount(approvedAmount) },
+              { label: "예정 금리(연)", value: `${approvedRate}%` },
+              { label: "대출기간", value: termLabel },
+              { label: "상환 방식", value: repaymentLabel },
             ]}
             buttonLabel="약정 동의하기"
             onConfirm={() => setStep("TERMS")}
@@ -90,7 +113,18 @@ export default function LoanAgreementPage() {
           title="약정 약관 동의"
           description="대출 약정을 위해 아래 약관에 동의해 주세요."
           submitLabel="동의하고 계속"
-          onSubmit={() => setStep("CERT")}
+          onSubmit={async (agreedIds) => {
+            const consents = agreementTerms.map((term) => ({
+              termId: term.id,
+              isConsented: agreedIds.includes(term.id),
+            }));
+            await submitTermsConsents({
+              termType: "LOAN_AGREEMENT",
+              applicationId: data.applicationId,
+              consents,
+            });
+            setStep("CERT");
+          }}
         />
       );
 
@@ -123,10 +157,10 @@ export default function LoanAgreementPage() {
             description="입금까지 영업일 기준 1~2일 소요됩니다."
             rows={[
               { label: "상품명", value: data.productName },
-              { label: "실행금액", value: formatAmount(data.approvedAmount) },
-              { label: "금리(연)", value: `${data.proposedRate}%` },
+              { label: "실행금액", value: formatAmount(approvedAmount) },
+              { label: "금리(연)", value: `${approvedRate}%` },
               { label: "대출기간", value: termLabel },
-              { label: "상환방식", value: data.repaymentMethod },
+              { label: "상환방식", value: repaymentLabel },
             ]}
             buttonLabel="홈으로 이동"
             onConfirm={() => navigate("/")}

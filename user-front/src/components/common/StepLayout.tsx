@@ -7,7 +7,7 @@
  *
  * 타이틀은 각 페이지에서 useLayoutStore.setStepTitle()로 설정
  */
-import { Outlet, useNavigate, Link } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { ChevronLeft, House } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
 
@@ -15,12 +15,21 @@ export function StepLayout() {
   const navigate = useNavigate();
   const title = useLayoutStore((s) => s.stepTitle);
   const onBack = useLayoutStore((s) => s.onBack);
+  const onHome = useLayoutStore((s) => s.onHome);
 
   const handleBack = () => {
     if (onBack) {
       onBack();
     } else {
       navigate(-1);
+    }
+  };
+
+  const handleHome = () => {
+    if (onHome) {
+      onHome();
+    } else {
+      navigate("/");
     }
   };
 
@@ -47,13 +56,14 @@ export function StepLayout() {
           )}
 
           {/* 홈 */}
-          <Link
-            to="/"
+          <button
+            type="button"
+            onClick={handleHome}
             aria-label="홈으로"
             className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors ml-auto z-10"
           >
             <House size={22} className="text-gray-700" />
-          </Link>
+          </button>
         </div>
       </header>
 

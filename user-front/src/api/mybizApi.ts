@@ -69,20 +69,15 @@ export async function fetchMyBizDashboard(month?: string): Promise<BizDashboardD
 
 /**
  * 마이비즈 데이터 연결 여부 확인.
- * GET /api/businesses/me 의 isMybizConnected 필드 사용.
- * 사업자 프로필 미존재(404) 시 false 반환.
+ * GET /api/report/mybiz-status
+ *
+ * @throws 네트워크 오류 시 예외를 그대로 throw (호출부에서 처리)
  */
 export async function checkMyBizConnected(): Promise<boolean> {
-  try {
-    const res = await axiosInstance.get<MyBizApiResponse<{ isMybizConnected: boolean }>>(
-      "/businesses/me"
-    );
-    return res.data.result.isMybizConnected;
-  } catch (err: unknown) {
-    const status = (err as { response?: { status?: number } })?.response?.status;
-    if (status === 404) return false;
-    throw err;
-  }
+  const res = await axiosInstance.get<MyBizApiResponse<{ isMybizConnected: boolean }>>(
+    "/report/mybiz-status"
+  );
+  return res.data.result.isMybizConnected;
 }
 
 /**

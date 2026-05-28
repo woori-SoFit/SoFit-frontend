@@ -187,7 +187,7 @@ export function CustomerVerifyPage({
   // 정보 입력 화면
   return (
     <div className="flex flex-col min-h-full">
-      <div className="flex-1 px-5 pt-10 pb-4">
+      <div className="flex-1 px-5 pt-7 pb-4">
         <div className="mb-10">
           <h1 className="text-xl font-bold text-text-primary pb-2">
             금융인증서를 불러오기 위해<br />고객 정보를 입력해주세요

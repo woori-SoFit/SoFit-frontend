@@ -83,7 +83,7 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="flex-1 px-5 pt-8 pb-6">
+      <div className="flex-1 px-5 pt-6 pb-6">
       {/* 상단 안내 */}
       <div className="mb-8">
         <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">

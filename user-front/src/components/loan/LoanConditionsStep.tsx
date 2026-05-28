@@ -162,7 +162,7 @@ export function LoanConditionsStep({ productId, applicationId, onSubmit }: LoanC
   return (
     <div className="flex flex-col min-h-full">
       {/* 상단 안내 배너 */}
-      <div className="mx-5 mt-6 p-5 rounded-2xl bg-blue-50 flex items-center justify-between">
+      <div className="mx-5 mt-4 p-5 rounded-2xl bg-blue-50 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-bold text-text-primary mb-1">
             희망하시는 <span className="text-primary">대출 조건</span>을<br />입력해주세요.

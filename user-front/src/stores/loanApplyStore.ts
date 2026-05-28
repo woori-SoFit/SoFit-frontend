@@ -31,6 +31,8 @@ const STEP_ORDER: LoanApplyStep[] = [
   "BIZ_CONFIRM",
   "MYDATA_TERMS",
   "MYDATA_LOADING",
+  "BIZ_DATA_CHECK",
+  "BIZ_INTRO",
   "LOAN_CONDITIONS",
   "RESULT",
 ];

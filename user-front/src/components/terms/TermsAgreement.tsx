@@ -77,7 +77,7 @@ export function TermsAgreement({
         {terms.map((term) => {
           const isAgreed = agreedIds.includes(term.id);
           return (
-            <li key={term.id} className="flex items-center gap-3 py-3">
+            <li key={term.id} className="flex items-center py-4">
               {/* 체크 영역 (아이콘 + 텍스트) — 클릭 시 동의 토글 */}
               <div
                 className="flex items-center gap-3 flex-1 cursor-pointer"
@@ -97,7 +97,7 @@ export function TermsAgreement({
                 type="button"
                 onClick={() => onViewDetail(term)}
                 aria-label={`${term.title} 상세 보기`}
-                className="flex items-center justify-center w-7 h-7 text-text-disabled hover:text-text-secondary transition-colors"
+                className="flex items-center justify-center w-4 h-7 pt-0.5 text-text-disabled hover:text-text-secondary transition-colors"
               >
                 <ChevronRight size={16} />
               </button>
