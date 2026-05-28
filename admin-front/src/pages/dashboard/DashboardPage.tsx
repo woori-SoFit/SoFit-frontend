@@ -130,7 +130,7 @@ export default function DashboardPage() {
       {/* 테이블 */}
       {!isLoading && !isError && data && (
         <div className="min-h-[540px]">
-          <ApplicationTable applications={data.applications} />
+          <ApplicationTable applications={data.contents} />
         </div>
       )}
 
