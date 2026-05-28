@@ -32,8 +32,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { verifyFinancialCertificate } from "@/api/authApi";
 import { formatBusinessNumber } from "@/utils/signupValidation";
 import { checkMyBizConnected } from "@/api/mybizApi";
-import { submitLoanConsents, fetchLoanBizInfo } from "@/api/loanApi";
-import { submitTermsConsents } from "@/api/termsApi";
+import { submitLoanConsents, fetchLoanBizInfo, submitLoanMydata } from "@/api/loanApi";
 import { useTerms } from "@/hooks/useTerms";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
 import type { CustomerVerifyData } from "@/types/auth";
@@ -101,7 +100,7 @@ export default function LoanApplyPage() {
       const stepMap: Record<string, LoanApplyStep> = {
         CONSENT: "TERMS",
         BIZ_INFO: "CERT_INFO",
-        COLLECT_DATA: "MYDATA_TERMS",
+        COLLECT_DATA: "MYDATA_LOADING",
         MYBIZ: "MYDATA_LOADING",
         LOAN_CONDITION: "LOAN_CONDITIONS",
       };
@@ -205,7 +204,7 @@ export default function LoanApplyPage() {
                 termId: term.id,
                 isConsented: agreedIds.includes(term.id),
               }));
-              await submitTermsConsents({
+              await submitLoanMydata(applicationId, {
                 termType: "MYDATA",
                 applicationId,
                 consents,

@@ -20,7 +20,7 @@ export async function fetchTerms(termType: TermType): Promise<TermsItem[]> {
   }));
 }
 
-/** 공통 약관 동의 제출 (대출 약관 제외) */
+/** 공통 약관 동의 제출 (대출/마이데이터 약관 제외) */
 export async function submitTermsConsents(request: TermsConsentsRequest): Promise<void> {
   await axiosInstance.post("/terms/consents", request);
 }

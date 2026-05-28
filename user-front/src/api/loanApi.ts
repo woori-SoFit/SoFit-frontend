@@ -152,3 +152,14 @@ export async function fetchLoanBizInfo(
   );
   return res.data.result;
 }
+
+/** 대출 신청 마이데이터 동의 제출 (resumeStep 업데이트) */
+export async function submitLoanMydata(
+  applicationId: number,
+  request: LoanConsentsRequest
+): Promise<void> {
+  await axiosInstance.post(
+    `/loan-applications/${applicationId}/mydata`,
+    request
+  );
+}
