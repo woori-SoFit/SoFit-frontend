@@ -12,6 +12,9 @@ interface LayoutState {
   /** 커스텀 뒤로가기 핸들러 — null이면 기본 navigate(-1) 동작 */
   onBack: (() => void) | null;
   setOnBack: (handler: (() => void) | null) => void;
+  /** 커스텀 홈 버튼 핸들러 — null이면 기본 "/" 이동 */
+  onHome: (() => void) | null;
+  setOnHome: (handler: (() => void) | null) => void;
 }
 
 export const useLayoutStore = create<LayoutState>((set) => ({
@@ -19,4 +22,6 @@ export const useLayoutStore = create<LayoutState>((set) => ({
   setStepTitle: (title) => set({ stepTitle: title }),
   onBack: null,
   setOnBack: (handler) => set({ onBack: handler }),
+  onHome: null,
+  setOnHome: (handler) => set({ onHome: handler }),
 }));

@@ -27,6 +27,7 @@ import { LoanApplyResult } from "@/components/loan/LoanApplyResult";
 import { BizDataCheckStep } from "@/components/grade/BizDataCheckStep";
 import { IntroSection } from "@/components/bizData/IntroSection";
 import { BottomButton } from "@/components/common/BottomButton";
+import { ExitConfirmModal } from "@/components/loan/ExitConfirmModal";
 import { useNavigate, useLocation } from "react-router-dom";
 import { verifyFinancialCertificate } from "@/api/authApi";
 import { formatBusinessNumber } from "@/utils/signupValidation";
@@ -50,6 +51,9 @@ export default function LoanApplyPage() {
   const location = useLocation();
   const { terms: loanTerms } = useTerms("LOAN_APPLICATION");
   const { terms: mydataTerms } = useTerms("MYDATA");
+
+  // 이탈 방지 모달 상태
+  const [exitModal, setExitModal] = useState<"back" | "home" | null>(null);
 
   // 대출 전용 사업자 정보 조회 (BIZ_CONFIRM step 진입 시 1회 호출, resumeStep 업데이트)
   const [loanBizInfo, setLoanBizInfo] = useState<Awaited<ReturnType<typeof fetchLoanBizInfo>> | null>(null);
@@ -120,23 +124,24 @@ export default function LoanApplyPage() {
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("대출 신청");
 
-    // 커스텀 뒤로가기: 첫 step이면 실제 뒤로가기, 아니면 이전 step
+    // 뒤로가기: 이탈 방지 모달 표시
     useLayoutStore.getState().setOnBack(() => {
-      const current = useLoanApplyStore.getState().currentStep;
-      if (current === "TERMS") {
-        navigate(-1);
-      } else {
-        useLoanApplyStore.getState().prevStep();
-      }
+      setExitModal("back");
+    });
+
+    // 홈 버튼: 이탈 방지 모달 표시
+    useLayoutStore.getState().setOnHome(() => {
+      setExitModal("home");
     });
 
     return () => {
-      // 페이지 떠날 때 onBack 초기화
       useLayoutStore.getState().setOnBack(null);
+      useLayoutStore.getState().setOnHome(null);
     };
   }, [navigate]);
 
-  switch (currentStep) {
+  const renderStep = () => {
+    switch (currentStep) {
     case "TERMS":
       return (
         <TermsPage
@@ -327,4 +332,27 @@ export default function LoanApplyPage() {
     default:
       return null;
   }
+  };
+
+  return (
+    <>
+      {renderStep()}
+
+      {/* 이탈 방지 모달 */}
+      {exitModal && (
+        <ExitConfirmModal
+          type={exitModal}
+          onClose={() => setExitModal(null)}
+          onConfirm={() => {
+            setExitModal(null);
+            if (exitModal === "home") {
+              navigate("/");
+            } else {
+              navigate(-1);
+            }
+          }}
+        />
+      )}
+    </>
+  );
 }
