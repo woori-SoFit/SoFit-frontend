@@ -61,7 +61,7 @@ export async function connectMyBiz(): Promise<void> {
 export async function fetchMyBizDashboard(month?: string): Promise<BizDashboardData> {
   const params = month ? { month } : {};
   const res = await axiosInstance.get<MyBizApiResponse<MyBizDashboardResult>>(
-    "/my-biz/dashboard",
+    "/mybiz/dashboard",
     { params }
   );
   return mapToFrontendDashboard(res.data.result);
