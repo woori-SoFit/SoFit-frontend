@@ -268,3 +268,20 @@ export interface LoanConsentsRequest {
     isConsented: boolean;
   }>;
 }
+
+/** 대출 신청 사업자 정보 조회 API 응답 */
+export interface LoanBizInfoResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    businessNumber: string;
+    businessName: string;
+    representativeName: string;
+    openDate: string;
+    businessCategory: string;
+    businessType: string;
+    businessAddress: string;
+    isMybizConnected: boolean;
+  };
+}

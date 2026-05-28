@@ -16,6 +16,7 @@
  * step 상태: useLoanApplyStore (Zustand)
  */
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useLoanApplyStore } from "@/stores/loanApplyStore";
 import { TermsPage } from "@/components/terms/TermsPage";
@@ -29,9 +30,9 @@ import { IntroSection } from "@/components/bizData/IntroSection";
 import { BottomButton } from "@/components/common/BottomButton";
 import { useNavigate, useLocation } from "react-router-dom";
 import { verifyFinancialCertificate } from "@/api/authApi";
-import { useBusinessInfo } from "@/hooks/useBusinessInfo";
+import { formatBusinessNumber } from "@/utils/signupValidation";
 import { checkMyBizConnected } from "@/api/mybizApi";
-import { submitLoanConsents } from "@/api/loanApi";
+import { submitLoanConsents, fetchLoanBizInfo } from "@/api/loanApi";
 import { submitTermsConsents } from "@/api/termsApi";
 import { useTerms } from "@/hooks/useTerms";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
@@ -49,9 +50,26 @@ export default function LoanApplyPage() {
   const submitResult = useLoanApplyStore((s) => s.submitResult);
   const navigate = useNavigate();
   const location = useLocation();
-  const { rows: bizInfoRows } = useBusinessInfo();
   const { terms: loanTerms } = useTerms("LOAN_APPLICATION");
   const { terms: mydataTerms } = useTerms("MYDATA");
+
+  // 대출 전용 사업자 정보 조회 (BIZ_CONFIRM step에서 사용, resumeStep 업데이트)
+  const { data: loanBizInfo } = useQuery({
+    queryKey: ["loan", "bizInfo", applicationId],
+    queryFn: () => fetchLoanBizInfo(applicationId!),
+    enabled: !!applicationId && currentStep === "BIZ_CONFIRM",
+  });
+
+  const loanBizInfoRows = loanBizInfo
+    ? [
+        { label: "사업자등록번호", value: formatBusinessNumber(loanBizInfo.businessNumber) },
+        { label: "상호명", value: loanBizInfo.businessName },
+        { label: "대표자명", value: loanBizInfo.representativeName },
+        { label: "개업일", value: loanBizInfo.openDate },
+        { label: "업종/업태", value: `${loanBizInfo.businessCategory}/${loanBizInfo.businessType}` },
+        { label: "사업장 주소", value: loanBizInfo.businessAddress },
+      ]
+    : [];
 
   // navigation state에서 productId, applicationId 수신 및 스토어 초기화
   useEffect(() => {
@@ -169,7 +187,7 @@ export default function LoanApplyPage() {
         <BizInfoConfirm
           title={<><span className="text-primary">사업자 정보</span>를 불러왔어요</>}
           description="아래 정보가 맞는지 확인해주세요."
-          rows={bizInfoRows}
+          rows={loanBizInfoRows}
           onConfirm={() => nextStep()}
         />
       );

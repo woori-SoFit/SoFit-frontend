@@ -19,6 +19,7 @@ import type {
   SubmitLoanApplicationResponse,
   CheckDraftResponse,
   LoanConsentsRequest,
+  LoanBizInfoResponse,
 } from "@/types/loan";
 import type {
   CreateLoanApplicationRequest,
@@ -140,4 +141,14 @@ export async function submitLoanConsents(
     `/loan-applications/${applicationId}/consents`,
     request
   );
+}
+
+/** 대출 신청 사업자 정보 조회 (resumeStep 업데이트) */
+export async function fetchLoanBizInfo(
+  applicationId: number
+): Promise<LoanBizInfoResponse["result"]> {
+  const res = await axiosInstance.post<LoanBizInfoResponse>(
+    `/loan-applications/${applicationId}/biz-info`
+  );
+  return res.data.result;
 }
