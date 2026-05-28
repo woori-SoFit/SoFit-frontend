@@ -105,14 +105,14 @@ export default function BizDataCollectPage() {
           description="AI가 다양한 데이터를 안전하게 수집 분석합니다."
           steps={MOCK_BIZ_DATA_COLLECT_STEPS}
           buttonLabel={loadingButtonLabel}
-          onComplete={async () => {
+          onAllDone={async () => {
             if (loanApplicationId) {
-              // 대출 흐름: 마이비즈 단계 완료 API 호출
               await completeLoanMybizData(loanApplicationId);
             } else {
-              // 일반 마이비즈 흐름: 연동 완료 처리
               await connectMyBiz();
             }
+          }}
+          onComplete={() => {
             reset();
             if (returnTo) {
               navigate(returnTo);

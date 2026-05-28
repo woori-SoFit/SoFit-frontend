@@ -28,15 +28,18 @@ interface LoadingScreenProps {
   steps?: LoadingStep[];
   /** 하단 버튼 레이블 (기본값: "다음") */
   buttonLabel?: string;
-  /** 모든 step 완료 후 버튼 클릭 시 호출 */
+  /** 모든 step 완료 시 자동 호출 (API 요청 등) */
+  onAllDone?: () => void | Promise<void>;
+  /** 하단 버튼 클릭 시 호출 (화면 이동 등) */
   onComplete?: () => void;
 }
 
 const STEP_INTERVAL_MS = 1000;
 
-export function LoadingScreen({ title, description, steps, buttonLabel = "대출 조건 입력하기", onComplete }: LoadingScreenProps) {
+export function LoadingScreen({ title, description, steps, buttonLabel = "다음", onAllDone, onComplete }: LoadingScreenProps) {
   const [internalSteps, setInternalSteps] = useState<LoadingStep[]>(() => steps ?? []);
   const [allDone, setAllDone] = useState(false);
+  const onAllDoneCalledRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -68,13 +71,17 @@ export function LoadingScreen({ title, description, steps, buttonLabel = "대출
     };
   }, [internalSteps]);
 
-  // 전체 완료 감지
+  // 전체 완료 감지 → onAllDone 자동 호출
   useEffect(() => {
     if (internalSteps.length === 0) return;
     if (internalSteps.every((s) => s.status === "done")) {
       setAllDone(true);
+      if (!onAllDoneCalledRef.current && onAllDone) {
+        onAllDoneCalledRef.current = true;
+        onAllDone();
+      }
     }
-  }, [internalSteps]);
+  }, [internalSteps, onAllDone]);
 
   return (
     <div data-testid="loading-screen" className="flex flex-col h-full">

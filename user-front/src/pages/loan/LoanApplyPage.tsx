@@ -100,7 +100,7 @@ export default function LoanApplyPage() {
       const stepMap: Record<string, LoanApplyStep> = {
         CONSENT: "TERMS",
         BIZ_INFO: "CERT_INFO",
-        COLLECT_DATA: "MYDATA_LOADING",
+        COLLECT_DATA: "MYDATA_TERMS",
         MYBIZ: "MYDATA_LOADING",
         LOAN_CONDITION: "LOAN_CONDITIONS",
       };
