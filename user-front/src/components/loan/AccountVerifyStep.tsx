@@ -35,6 +35,13 @@ export function AccountVerifyStep({
     setTimeout(() => inputRef.current?.focus(), 100);
   }, []);
 
+  // 인증 실패로 코드가 초기화되면 다시 포커스
+  useEffect(() => {
+    if (verificationCode === "" && error) {
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [verificationCode, error]);
+
   /** 계좌번호 마스킹 (예: 1002940540000 → 1002-****-40000) */
   const maskedAccount = accountNumber.length >= 8
     ? `${accountNumber.slice(0, 4)}-****-${accountNumber.slice(-5)}`
@@ -108,7 +115,10 @@ export function AccountVerifyStep({
             className="w-0 h-0 overflow-hidden opacity-0 absolute"
           />
           {error && (
-            <p className="text-xs text-error text-center">{error}</p>
+            <p className="text-xs text-error text-center mt-3">
+              인증번호가 일치하지 않습니다.<br />
+              입금자명에 표시된 숫자 3자리를 다시 확인해주세요.
+            </p>
           )}
         </div>
 

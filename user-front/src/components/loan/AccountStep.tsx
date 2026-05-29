@@ -68,6 +68,7 @@ export function AccountStep({ onSubmit, onSendVerification, onVerifyCode }: Acco
         const result = await onVerifyCode(verificationCode);
         if (!result.success) {
           setError(result.message ?? "인증코드가 일치하지 않습니다.");
+          setVerificationCode("");
           setIsLoading(false);
           return;
         }
@@ -75,6 +76,7 @@ export function AccountStep({ onSubmit, onSendVerification, onVerifyCode }: Acco
       onSubmit();
     } catch {
       setError("인증에 실패했습니다. 다시 시도해주세요.");
+      setVerificationCode("");
     } finally {
       setIsLoading(false);
     }
