@@ -285,3 +285,23 @@ export interface LoanBizInfoResponse {
     isMybizConnected: boolean;
   };
 }
+
+/** 대출 실행 상세 조회 API 응답 */
+export interface LoanExecutionDetailResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: LoanExecutionDetail;
+}
+
+/** 대출 실행 상세 데이터 */
+export interface LoanExecutionDetail {
+  executionId: number;
+  applicationId: number;
+  productId: number;
+  productName: string;
+  executedAmount: number;
+  approvedRate: number;
+  approvedTerm: number;
+  repaymentMethod: string;
+}

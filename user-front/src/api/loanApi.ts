@@ -20,6 +20,8 @@ import type {
   CheckDraftResponse,
   LoanConsentsRequest,
   LoanBizInfoResponse,
+  LoanExecutionDetailResponse,
+  LoanExecutionDetail,
 } from "@/types/loan";
 import type {
   CreateLoanApplicationRequest,
@@ -167,4 +169,14 @@ export async function submitLoanMydata(
 /** 대출 신청 마이비즈데이터 연동 완료 처리 (resumeStep 업데이트) */
 export async function completeLoanMybizData(applicationId: number): Promise<void> {
   await axiosInstance.post(`/loan-applications/${applicationId}/mybiz-data`);
+}
+
+/** 대출 실행 상세 조회 */
+export async function fetchLoanExecutionDetail(
+  applicationId: number
+): Promise<LoanExecutionDetail> {
+  const res = await axiosInstance.get<LoanExecutionDetailResponse>(
+    `/loan-applications/${applicationId}/execution`
+  );
+  return res.data.result;
 }

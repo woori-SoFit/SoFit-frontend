@@ -34,8 +34,10 @@ export default function LoanProgressPage() {
   const handleCardClick = (app: LoanApplication) => {
     if (app.status === "APPROVED" || app.status === "REJECTED" || app.status === "CANCELLED") {
       navigate(`/loan/result/${app.id}`);
-    } else if (app.status === "CONTRACTED" || app.status === "EXECUTED") {
-      navigate(`/loan/result/${app.id}`);
+    } else if (app.status === "EXECUTED") {
+      navigate(`/loan/execution/${app.id}`);
+    } else if (app.status === "CONTRACTED") {
+      navigate(`/loan/agreement/${app.id}`);
     } else {
       navigate(`/loan/review/${app.id}`);
     }
