@@ -305,3 +305,25 @@ export interface LoanExecutionDetail {
   approvedTerm: number;
   repaymentMethod: string;
 }
+
+/** 1원 송금 요청 API 응답 */
+export interface AccountVerificationResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    maskedAccountNumber: string;
+    authCode: string;
+    expiredAt: string;
+  };
+}
+
+/** 인증 코드 확인 API 응답 */
+export interface AccountVerificationConfirmResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    accountVerified: boolean;
+  };
+}

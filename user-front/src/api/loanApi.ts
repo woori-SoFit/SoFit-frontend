@@ -22,6 +22,8 @@ import type {
   LoanBizInfoResponse,
   LoanExecutionDetailResponse,
   LoanExecutionDetail,
+  AccountVerificationResponse,
+  AccountVerificationConfirmResponse,
 } from "@/types/loan";
 import type {
   CreateLoanApplicationRequest,
@@ -179,4 +181,28 @@ export async function fetchLoanExecutionDetail(
     `/loan-applications/${applicationId}/execution`
   );
   return res.data.result;
+}
+
+/** 1원 송금 요청 */
+export async function requestAccountVerification(
+  applicationId: number,
+  accountNumber: string
+): Promise<AccountVerificationResponse["result"]> {
+  const res = await axiosInstance.post<AccountVerificationResponse>(
+    `/loan-applications/${applicationId}/account-verification`,
+    { accountNumber }
+  );
+  return res.data.result;
+}
+
+/** 인증 코드 확인 */
+export async function confirmAccountVerification(
+  applicationId: number,
+  verificationCode: string
+): Promise<boolean> {
+  const res = await axiosInstance.post<AccountVerificationConfirmResponse>(
+    `/loan-applications/${applicationId}/account-verification/confirm`,
+    { verificationCode }
+  );
+  return res.data.result.accountVerified;
 }

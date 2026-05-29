@@ -22,6 +22,7 @@ import { AccountStep } from "@/components/loan/AccountStep";
 import { formatAmount } from "@/utils/format";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
 import { fetchLoanApplicationCompletedDetail } from "@/api/loanApi";
+import { requestAccountVerification, confirmAccountVerification } from "@/api/loanApi";
 import { submitTermsConsents } from "@/api/termsApi";
 import { useTerms } from "@/hooks/useTerms";
 import { LOAN_KEYS } from "@/constants/queryKeys";
@@ -144,7 +145,21 @@ export default function LoanAgreementPage() {
 
     // 4. 대출 실행 계좌 설정
     case "ACCOUNT":
-      return <AccountStep onSubmit={() => setStep("COMPLETE")} />;
+      return (
+        <AccountStep
+          onSendVerification={async (accountNumber) => {
+            await requestAccountVerification(data.applicationId, accountNumber);
+          }}
+          onVerifyCode={async (code) => {
+            const verified = await confirmAccountVerification(data.applicationId, code);
+            return {
+              success: verified,
+              message: verified ? undefined : "인증코드가 일치하지 않습니다.",
+            };
+          }}
+          onSubmit={() => setStep("COMPLETE")}
+        />
+      );
 
     // 5. 대출 실행 완료
     case "COMPLETE":
