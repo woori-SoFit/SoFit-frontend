@@ -26,6 +26,7 @@ import { submitTermsConsents } from "@/api/termsApi";
 import { useTerms } from "@/hooks/useTerms";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import confettiAnimation from "@/assets/lottie/Success-Celebration.json";
+import handshakeAnimation from "@/assets/lottie/Handshake.json";
 
 type AgreementStep = "CONFIRM" | "TERMS" | "CERT" | "ACCOUNT" | "COMPLETE";
 
@@ -88,9 +89,13 @@ export default function LoanAgreementPage() {
     // 1. 약정 체결 확인
     case "CONFIRM":
       return (
-        <div className="h-full pt-25">
+        <div className="h-full pt-8">
           <ConfirmPage
-            icon={null}
+            icon={
+              <div className="w-32 h-32 mb-5">
+                <Lottie animationData={handshakeAnimation} loop={5} className="w-full h-full" />
+              </div>
+            }
             title={data.productName}
             description="아래 대출 조건을 확인하고 약정을 진행해주세요."
             rows={[

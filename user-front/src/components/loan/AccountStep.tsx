@@ -1,61 +1,113 @@
 /**
  * 대출 실행 계좌 설정 스텝
  * 대출 약정 플로우에서 사용
+ *
+ * Flow:
+ *   1. 계좌번호 입력 (AccountInputStep) → 1원 송금 요청
+ *   2. 인증코드 입력 (AccountVerifyStep) → 검증
  */
-import { useState } from "react";
-import { BottomButton } from "@/components/common/BottomButton";
+import { useState, useEffect } from "react";
+import { useLayoutStore } from "@/stores/layoutStore";
+import { AccountInputStep } from "./AccountInputStep";
+import { AccountVerifyStep } from "./AccountVerifyStep";
 
 interface AccountStepProps {
-  onSubmit: () => void; // 계좌번호 전달
+  /** 계좌 인증 완료 시 호출 */
+  onSubmit: () => void;
+  /** 1원 송금 요청 API (계좌번호 전달, 선택) */
+  onSendVerification?: (accountNumber: string) => Promise<void>;
+  /** 인증코드 검증 API (인증코드 전달, 선택) */
+  onVerifyCode?: (verificationCode: string) => Promise<{ success: boolean; message?: string }>;
 }
 
-export function AccountStep({ onSubmit }: AccountStepProps) {
-  const [accountNumber, setAccountNumber] = useState("");
+type Step = "ACCOUNT" | "VERIFY";
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const digits = e.target.value.replace(/\D/g, "");
-    setAccountNumber(digits);
+export function AccountStep({ onSubmit, onSendVerification, onVerifyCode }: AccountStepProps) {
+  const [step, setStep] = useState<Step>("ACCOUNT");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // step에 따라 상단 헤더 타이틀 변경
+  useEffect(() => {
+    useLayoutStore.getState().setStepTitle(
+      step === "ACCOUNT" ? "대출 실행 계좌 설정" : "계좌 인증"
+    );
+  }, [step]);
+
+  const isAccountValid = accountNumber.length >= 10 && accountNumber.length <= 14;
+  const isCodeValid = verificationCode.length === 3;
+
+  /** 계좌번호 입력 → 1원 송금 요청 */
+  const handleAccountSubmit = async () => {
+    if (!isAccountValid || isLoading) return;
+    setIsLoading(true);
+    setError("");
+
+    try {
+      if (onSendVerification) {
+        await onSendVerification(accountNumber);
+      }
+      setStep("VERIFY");
+    } catch {
+      setError("1원 송금에 실패했습니다. 계좌번호를 확인해주세요.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const isValid = accountNumber.length >= 10 && accountNumber.length <= 14;
+  /** 인증코드 검증 */
+  const handleVerifySubmit = async () => {
+    if (!isCodeValid || isLoading) return;
+    setIsLoading(true);
+    setError("");
+
+    try {
+      if (onVerifyCode) {
+        const result = await onVerifyCode(verificationCode);
+        if (!result.success) {
+          setError(result.message ?? "인증코드가 일치하지 않습니다.");
+          setIsLoading(false);
+          return;
+        }
+      }
+      onSubmit();
+    } catch {
+      setError("인증에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (step === "VERIFY") {
+    return (
+      <AccountVerifyStep
+        accountNumber={accountNumber}
+        verificationCode={verificationCode}
+        onChangeCode={(value) => {
+          setVerificationCode(value);
+          setError("");
+        }}
+        error={error}
+        isLoading={isLoading}
+        isValid={isCodeValid}
+        onSubmit={handleVerifySubmit}
+      />
+    );
+  }
 
   return (
-    <div className="flex flex-col min-h-full">
-      <div className="flex-1 px-5 pt-10 pb-4">
-        <h1 className="text-xl font-bold text-text-primary mb-2">
-          대출금 입금 계좌
-        </h1>
-        <p className="text-sm text-text-secondary mb-8">
-          대출금을 받으실 계좌번호를 입력해주세요.
-        </p>
-
-        <div>
-          <label
-            htmlFor="account-number"
-            className="block text-sm font-medium text-text-primary mb-2"
-          >
-            계좌번호
-          </label>
-          <input
-            id="account-number"
-            type="text"
-            inputMode="numeric"
-            value={accountNumber}
-            onChange={handleChange}
-            placeholder="'-' 없이 숫자만 입력"
-            className="w-full h-12 px-4 border border-border-default rounded-lg text-base text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-primary"
-          />
-          <p className="mt-2 text-xs text-text-disabled">
-            본인 명의 계좌만 등록 가능합니다.
-          </p>
-        </div>
-      </div>
-
-      <BottomButton
-        label="대출 실행하기"
-        onClick={onSubmit}
-        disabled={!isValid}
-      />
-    </div>
+    <AccountInputStep
+      accountNumber={accountNumber}
+      onChangeAccount={(value) => {
+        setAccountNumber(value);
+        setError("");
+      }}
+      error={error}
+      isLoading={isLoading}
+      isValid={isAccountValid}
+      onSubmit={handleAccountSubmit}
+    />
   );
 }
