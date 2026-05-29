@@ -14,12 +14,13 @@
  */
 import { useState, useRef, useCallback } from "react";
 import Lottie from "lottie-react";
-import { CircleCheckBig, ShieldCheck, Lock } from "lucide-react";
+import { ShieldCheck, Lock } from "lucide-react";
 import { PinInput } from "./PinInput";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
 import { BottomButton } from "@/components/common/BottomButton";
 import type { CustomerVerifyData, VerifyResult } from "@/types/auth";
 import documentAnimation from "@/assets/lottie/Document.json";
+import verificationAnimation from "@/assets/lottie/Verification.json";
 
 export type { CustomerVerifyData };
 
@@ -132,9 +133,9 @@ export function CustomerVerifyPage({
   // 성공 애니메이션 화면
   if (step === "SUCCESS") {
     return (
-      <div className="flex flex-col items-center justify-center min-h-full px-5 animate-fade-in">
-        <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center mb-5 animate-bounce-once">
-          <CircleCheckBig size={40} className="text-white" />
+      <div className="flex flex-col items-center pt-46 min-h-full px-5 animate-fade-in">
+        <div className="w-32 h-32 mb-5">
+          <Lottie animationData={verificationAnimation} loop={false} className="w-full h-full" />
         </div>
 
         <h2 className="text-xl font-bold text-text-primary text-center">
