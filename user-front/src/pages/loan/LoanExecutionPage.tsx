@@ -13,7 +13,7 @@ import { fetchLoanExecutionDetail } from "@/api/loanApi";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { formatAmount } from "@/utils/format";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
-import confettiAnimation from "@/assets/lottie/Success-Celebration.json";
+import LoanExecution from "@/assets/lottie/LoanExecution.json";
 
 export default function LoanExecutionPage() {
   const navigate = useNavigate();
@@ -51,15 +51,12 @@ export default function LoanExecutionPage() {
 
   return (
     <div className="relative h-full pt-10 overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none z-10 flex items-start justify-center">
-        <Lottie
-          animationData={confettiAnimation}
-          loop={3}
-          className="w-full max-w-sm -translate-y-25"
-        />
-      </div>
-
       <ConfirmPage
+        icon={
+          <div className="w-32 h-32 mb-6">
+            <Lottie animationData={LoanExecution} loop />
+          </div>
+        }
         title="대출 실행이 완료되었습니다"
         description="대출금이 정상적으로 지급되었습니다."
         rows={[
