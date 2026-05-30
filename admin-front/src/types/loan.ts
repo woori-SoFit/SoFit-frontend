@@ -285,3 +285,24 @@ export interface LoanInfoTabResponse {
   userInputInfo: UserInputInfo;
   consentHistories: ConsentHistory[];
 }
+
+/** CB 점수 정보 (S등급 분석 탭 API 응답 내부) */
+export interface CBScoreInfo {
+  score: number;
+  maxScore: number;
+}
+
+/** SCB 점수 정보 (S등급 분석 탭 API 응답 내부) */
+export interface SCBInfo {
+  score: number;
+  maxScore: number;
+  bonusPoints: number;
+}
+
+/** S등급 분석 탭 API 응답 (GET /api/admin/loan-applications/{id}/grade) */
+export interface SGradeTabResponse {
+  cbScore: CBScoreInfo;
+  sGrade: string;
+  scbInfo: SCBInfo;
+  shapResult: ShapResult;
+}

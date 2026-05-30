@@ -10,6 +10,7 @@ export const LOAN_KEYS = {
   applications: () => [...LOAN_KEYS.all, "applications"] as const,
   application: (id: number) => [...LOAN_KEYS.all, "application", id] as const,
   statusCounts: () => [...LOAN_KEYS.all, "status-counts"] as const,
+  sGradeTab: (id: number) => [...LOAN_KEYS.all, "sgrade-tab", id] as const,
   shap: (id: number) => [...LOAN_KEYS.all, "shap", id] as const,
   recommendation: (id: number) => [...LOAN_KEYS.all, "recommendation", id] as const,
   reviewTab: (id: number) => [...LOAN_KEYS.all, "review-tab", id] as const,

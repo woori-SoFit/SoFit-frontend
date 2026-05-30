@@ -4,6 +4,7 @@ import type {
   LoanInfoTabResponse,
   LoanSummary,
   MyBizData,
+  SGradeTabResponse,
   ShapResult,
   RecommendationData,
   ReviewTabData,
@@ -13,7 +14,6 @@ import type {
   ManagerApprovalItem,
 } from '@/types';
 import {
-  getMockShapResult,
   getMockRecommendation,
   getMockReviewTabData,
   getMockManagerApprovals,
@@ -86,11 +86,23 @@ export async function fetchMyBizData(id: number): Promise<MyBizData> {
 }
 
 /**
+ * S등급 분석 탭 데이터를 조회합니다.
+ * GET /api/admin/loan-applications/{id}/grade
+ */
+export async function fetchSGradeTab(id: number): Promise<SGradeTabResponse> {
+  const { data } = await axiosInstance.get<SGradeTabResponse>(
+    `/api/admin/loan-applications/${id}/grade`
+  );
+  return data;
+}
+
+/**
  * SHAP 분석 결과를 조회합니다.
- * 향후 실제 API 연동 시 axiosInstance.get(`/api/admin/loan-applications/${id}?section=sgrade`)로 교체합니다.
+ * S등급 분석 탭 API에서 shapResult를 추출하여 반환합니다.
  */
 export async function fetchShapResult(id: number): Promise<ShapResult | undefined> {
-  return Promise.resolve(getMockShapResult(id));
+  const gradeData = await fetchSGradeTab(id);
+  return gradeData.shapResult;
 }
 
 /**

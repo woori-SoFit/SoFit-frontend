@@ -6,6 +6,7 @@ import { useLoanDetail } from '@/hooks/useLoanDetail';
 import { useLoanMutations } from '@/hooks/useLoanMutations';
 import { useReviewTab } from '@/hooks/useReviewTab';
 import { useMyBizData } from '@/hooks/useMyBizData';
+import { useSGradeTab } from '@/hooks/useSGradeTab';
 import { formatDate } from '@/utils/formatters';
 import StatusBadge from '@/components/common/StatusBadge';
 import LoadingState from '@/components/common/LoadingState';
@@ -62,6 +63,12 @@ export default function LoanDetailPage() {
   const { data: myBizData, isLoading: isMyBizDataLoading } = useMyBizData(
     loanId ?? 0,
     activeTab === 'mybizdata',
+  );
+
+  // S등급 분석 탭 전용 데이터 (탭이 sgrade일 때 조회)
+  const { data: sGradeTab, isLoading: isSGradeTabLoading } = useSGradeTab(
+    loanId ?? 0,
+    activeTab === 'sgrade',
   );
 
   if (loanId === null) {
@@ -225,19 +232,27 @@ export default function LoanDetailPage() {
 
       {/* ─── S등급 분석 탭 ─── */}
       {activeTab === 'sgrade' && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <CBScoreCard score={data.cbScore} />
-            <SGradeCard grade={data.sGrade} />
-            <SCBScoreCard
-              scbScore={data.scbScore}
-              cbScore={data.cbScore}
-              bonusPoints={data.bonusPoints}
-              sGrade={data.sGrade}
-            />
-          </div>
-          <ShapExplanation loanId={loanId} />
-        </div>
+        isSGradeTabLoading
+          ? <LoadingState />
+          : sGradeTab ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <CBScoreCard score={sGradeTab.cbScore.score} />
+                <SGradeCard grade={sGradeTab.sGrade} />
+                <SCBScoreCard
+                  scbScore={sGradeTab.scbInfo.score}
+                  cbScore={sGradeTab.cbScore.score}
+                  bonusPoints={sGradeTab.scbInfo.bonusPoints}
+                  sGrade={sGradeTab.sGrade}
+                />
+              </div>
+              <ShapExplanation loanId={loanId} />
+            </div>
+          ) : (
+            <div className="py-12 text-center text-sm text-text-secondary">
+              S등급 분석 데이터가 아직 생성되지 않았습니다.
+            </div>
+          )
       )}
 
       {/* ─── 심사 결과 탭 ─── */}
