@@ -15,7 +15,6 @@ import type {
 } from '@/types';
 import {
   getMockRecommendation,
-  getMockReviewTabData,
   getMockManagerApprovals,
   mockApproveLoan,
   mockRejectLoan,
@@ -115,11 +114,13 @@ export async function fetchRecommendation(id: number): Promise<RecommendationDat
 
 /**
  * 심사 결과 탭 전용 데이터를 조회합니다.
- * productInfo + applicationInfo + recommendation + decision 을 포함합니다.
- * 향후 실제 API 연동 시 axiosInstance.get(`/api/admin/loan-applications/${id}/review`)로 교체합니다.
+ * GET /api/admin/loan-applications/{id}/review
  */
-export async function fetchReviewTabData(id: number): Promise<ReviewTabData | undefined> {
-  return Promise.resolve(getMockReviewTabData(id));
+export async function fetchReviewTabData(id: number): Promise<ReviewTabData> {
+  const { data } = await axiosInstance.get<ReviewTabData>(
+    `/api/admin/loan-applications/${id}/review`
+  );
+  return data;
 }
 
 /**

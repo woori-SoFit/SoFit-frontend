@@ -216,15 +216,15 @@ export interface RecommendationData {
   approvedRate: number;
   /** 확정 기간 (개월) */
   approvedTerm: number;
-  repaymentMethod: RepaymentMethod;
+  repaymentMethod: RepaymentMethod | null;
 }
 
 /** 심사 결정 정보 */
 export interface ReviewDecision {
   status: ReviewStatus;
-  comment: string;
+  comment: string | null;
   reviewerName: string;
-  reviewerRole: 'SYSTEM' | 'BANK_TELLER' | 'BANK_MANAGER';
+  reviewerRole: 'SYSTEM' | 'ADMIN_BANK_TELLER' | 'ADMIN_BANK_MANAGER';
   /** 심사 일시 (ISO 8601) */
   decidedAt: string;
 }
