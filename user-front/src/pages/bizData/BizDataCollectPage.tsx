@@ -35,8 +35,13 @@ export default function BizDataCollectPage() {
   // 대출 신청 흐름에서 진입한 경우 완료 후 돌아갈 경로
   const locationState = history.state?.usr as { returnTo?: string; startAt?: string; buttonLabel?: string; applicationId?: number } | null;
   const returnTo = locationState?.returnTo;
-  const loadingButtonLabel = locationState?.buttonLabel ?? "분석 결과 보기";
   const loanApplicationId = locationState?.applicationId;
+
+  // grade-report에서 진입한 경우 커스텀 버튼 라벨 사용
+  const isFromGradeReport = returnTo === "/grade-report";
+  const loadingButtonLabel = isFromGradeReport
+    ? "성장 S등급 분석하러 가기"
+    : (locationState?.buttonLabel ?? "분석 결과 보기");
 
   // startAt이 지정되면 해당 step부터 시작
   useEffect(() => {
@@ -114,7 +119,9 @@ export default function BizDataCollectPage() {
           }}
           onComplete={() => {
             reset();
-            if (returnTo) {
+            if (isFromGradeReport) {
+              navigate(returnTo, { state: { startAt: "LOADING" } });
+            } else if (returnTo) {
               navigate(returnTo);
             } else {
               navigate("/biz-data");
