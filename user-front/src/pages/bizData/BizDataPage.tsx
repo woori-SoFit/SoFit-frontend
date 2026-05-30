@@ -201,13 +201,8 @@ function BizDashboard() {
         </div>
       </div>
 
-      {/* 헤더: 제목 + 월 선택 드롭다운 */}
-      <div className="px-5 pt-6 pb-2 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">마이 비즈 데이터</h1>
-          <p className="text-sm text-text-secondary mt-1">사업 현황을 한눈에 확인하세요</p>
-        </div>
-
+      {/* 헤더: 월 선택 드롭다운 (오른쪽 정렬) */}
+      <div className="px-5 pt-4 pb-2 flex items-center justify-end">
         <div className="relative shrink-0" ref={dropdownRef}>
           <button
             type="button"
