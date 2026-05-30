@@ -33,7 +33,9 @@ export default function CustomerVerifyStep() {
             message: response.message,
           };
         } catch (err) {
-          const status = (err as AxiosError)?.response?.status;
+          const axiosErr = err as AxiosError<{ message?: string }>;
+          const status = axiosErr?.response?.status;
+
           if (status === 404) {
             return {
               success: false,
@@ -41,9 +43,17 @@ export default function CustomerVerifyStep() {
               resetToInfo: true,
             };
           }
+          if (status === 400) {
+            const serverMessage = axiosErr?.response?.data?.message;
+            return {
+              success: false,
+              message: serverMessage ?? "PIN이 일치하지 않습니다. 다시 입력해 주세요.",
+            };
+          }
+          // 네트워크 오류, 500 등
           return {
             success: false,
-            message: "PIN이 일치하지 않습니다. 다시 입력해 주세요.",
+            message: "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
           };
         }
       }}

@@ -116,8 +116,7 @@ export function AccountVerifyStep({
           />
           {error && (
             <p className="text-xs text-error text-center mt-3">
-              인증번호가 일치하지 않습니다.<br />
-              입금자명에 표시된 숫자 3자리를 다시 확인해주세요.
+              {error}
             </p>
           )}
         </div>

@@ -14,10 +14,10 @@ import { AccountVerifyStep } from "./AccountVerifyStep";
 interface AccountStepProps {
   /** 계좌 인증 완료 시 호출 */
   onSubmit: () => void;
-  /** 1원 송금 요청 API (계좌번호 전달, 선택) */
-  onSendVerification?: (accountNumber: string) => Promise<void>;
-  /** 인증코드 검증 API (인증코드 전달, 선택) */
-  onVerifyCode?: (verificationCode: string) => Promise<{ success: boolean; message?: string }>;
+  /** 1원 송금 요청 API (계좌번호 전달) */
+  onSendVerification: (accountNumber: string) => Promise<void>;
+  /** 인증코드 검증 API (인증코드 전달) */
+  onVerifyCode: (verificationCode: string) => Promise<{ success: boolean; message?: string }>;
 }
 
 type Step = "ACCOUNT" | "VERIFY";
@@ -46,9 +46,7 @@ export function AccountStep({ onSubmit, onSendVerification, onVerifyCode }: Acco
     setError("");
 
     try {
-      if (onSendVerification) {
-        await onSendVerification(accountNumber);
-      }
+      await onSendVerification(accountNumber);
       setStep("VERIFY");
     } catch {
       setError("1원 송금에 실패했습니다. 계좌번호를 확인해주세요.");
@@ -64,14 +62,12 @@ export function AccountStep({ onSubmit, onSendVerification, onVerifyCode }: Acco
     setError("");
 
     try {
-      if (onVerifyCode) {
-        const result = await onVerifyCode(verificationCode);
-        if (!result.success) {
-          setError(result.message ?? "인증코드가 일치하지 않습니다.");
-          setVerificationCode("");
-          setIsLoading(false);
-          return;
-        }
+      const result = await onVerifyCode(verificationCode);
+      if (!result.success) {
+        setError(result.message ?? "인증코드가 일치하지 않습니다.");
+        setVerificationCode("");
+        setIsLoading(false);
+        return;
       }
       onSubmit();
     } catch {

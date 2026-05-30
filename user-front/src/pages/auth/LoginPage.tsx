@@ -169,12 +169,12 @@ export default function LoginPage() {
         </button>
       </form>
 
-      {/* 비밀번호 찾기 링크 */}
-      <div className="flex justify-center mt-4">
+      {/* 비밀번호 찾기 링크 — 미구현 */}
+      {/* <div className="flex justify-center mt-4">
         <Link to="" className="text-sm text-primary">
           비밀번호 찾기 &gt;
         </Link>
-      </div>
+      </div> */}
 
       {/* 하단 회원가입 링크 */}
       <div className="flex justify-center items-center mt-auto pb-10 gap-2">
