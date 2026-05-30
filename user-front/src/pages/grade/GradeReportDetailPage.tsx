@@ -5,11 +5,9 @@
  *
  * GradeResultStep에서 '상세 리포트 보기' 클릭 후 진입.
  * 종합 등급, 평가 항목별 강점/약점, 조언사항을 표시합니다.
- *
- * TODO: API 연동 시 실제 데이터로 교체
  */
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Globe,
   TrendingUp,
@@ -23,22 +21,7 @@ import { BottomButton } from "@/components/common/BottomButton";
 import Lottie from "lottie-react";
 import rocketLaunchAnimation from "@/assets/lottie/Rocket-Launch.json";
 import wibeeIcon from "@/assets/icons/wibee.svg";
-
-// TODO: API 연동 시 실제 데이터로 교체
-const MOCK_DATA = {
-  sGrade: "S3",
-  strengthKeywords: [
-    "온라인 정보 접근성 점수",
-    "온라인 플랫폼 활동 지수",
-    "업종 평균 대비 매출 비율",
-  ],
-  improvementKeywords: [
-    "업력 대비 매출증가율(3개월)",
-    "직원당 매출증가율(6개월)",
-  ],
-  advice:
-    "• 온라인에서 고객과 활발하게 소통하며 높은 평점을 유지하고 있어 디지털 경쟁력이 우수합니다.\n• 연간 매출 증가율이 업종 평균을 크게 상회하여 성장세가 뚜렷합니다.\n• 최근 매출이 조금 주춤한 상황이니 계절적 요인을 고려한 프로모션 전략을 검토해보세요.\n• 직원 생산성 향상을 위한 업무 프로세스 개선을 권장합니다.",
-};
+import type { GradeDetailResult } from "@/api/gradeApi";
 
 /** 키워드에 맞는 아이콘 매핑 */
 function getIcon(keyword: string) {
@@ -62,14 +45,31 @@ function getIcon(keyword: string) {
 
 export default function GradeReportDetailPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const detail = (location.state as { detail?: GradeDetailResult } | null)?.detail;
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("성장 S등급 상세 리포트");
   }, []);
 
+  // 데이터가 없는 경우 (직접 URL 접근 등)
+  if (!detail) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full px-5">
+        <p className="text-text-secondary text-center">
+          상세 리포트 데이터를 불러올 수 없습니다.
+        </p>
+        <BottomButton
+          label="돌아가기"
+          onClick={() => navigate("/grade-report")}
+        />
+      </div>
+    );
+  }
+
   const allItems = [
-    ...MOCK_DATA.strengthKeywords.map((k) => ({ keyword: k, type: "강점" as const })),
-    ...MOCK_DATA.improvementKeywords.map((k) => ({ keyword: k, type: "약점" as const })),
+    ...detail.strengthKeywords.map((k) => ({ keyword: k, type: "강점" as const })),
+    ...detail.improvementKeywords.map((k) => ({ keyword: k, type: "약점" as const })),
   ];
 
   return (
@@ -98,11 +98,11 @@ export default function GradeReportDetailPage() {
             </p>
 
             <p className="text-5xl font-bold text-primary">
-              {MOCK_DATA.sGrade}
+              {detail.sGrade}
             </p>
 
             <span className="inline-block mt-3 px-3 py-1 rounded-full text-xs font-medium text-primary bg-primary/10">
-              상위 20%
+              상위 {parseInt(detail.sGrade.replace(/\D/g, ""), 10) * 10}%
             </span>
           </div>
         </section>
@@ -160,7 +160,7 @@ export default function GradeReportDetailPage() {
               <div className="absolute top-4 -left-2 w-3 h-3 bg-sky-100 border-l border-b border-sky-200 rotate-45" />
 
               <p className="text-sm text-text-primary leading-relaxed whitespace-pre-line">
-                {MOCK_DATA.advice}
+                {detail.advice}
               </p>
             </div>
           </div>
