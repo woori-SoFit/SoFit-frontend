@@ -50,7 +50,6 @@ export function CustomerVerifyPage({
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [showResetButton, setShowResetButton] = useState(false);
 
   const rrnBackRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
@@ -121,7 +120,6 @@ export function CustomerVerifyPage({
         } else if (result.resetToInfo) {
           // 인증서 미발견(404) → 에러 메시지 표시 + 정보 재입력 유도 (PIN 화면 유지)
           setErrorMessage(result.message || "인증서를 찾을 수 없습니다. 정보를 다시 확인해주세요.");
-          setShowResetButton(true);
         } else {
           // PIN 불일치(400) → 에러 메시지 표시, PIN 재입력
           setErrorMessage(result.message || "PIN이 일치하지 않습니다. 다시 입력해 주세요.");
@@ -167,7 +165,6 @@ export function CustomerVerifyPage({
             onClick={() => {
               setStep("INFO");
               setErrorMessage("");
-              setShowResetButton(false);
             }}
             className="w-full h-12 rounded-lg border border-border-default text-sm font-semibold text-text-primary hover:bg-gray-50 transition-colors"
           >
