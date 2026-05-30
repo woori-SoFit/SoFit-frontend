@@ -8,9 +8,11 @@ import { Link } from "react-router-dom";
 import { useMe } from "@/hooks/useMe";
 import { Bell, ChevronRight, UserCircle } from "lucide-react";
 import mainLogo from "@/assets/mainLogo.svg";
+import { MOCK_NOTIFICATIONS } from "@/mocks/notifications";
 
 export function AppHeader() {
   const { isLoggedIn } = useMe();
+  const unreadCount = MOCK_NOTIFICATIONS.filter((n) => !n.isRead).length;
 
   return (
     <header className="sticky top-0 z-50 w-full bg-bg-base">
@@ -26,11 +28,16 @@ export function AppHeader() {
             <>
               {/* 알림 */}
               <Link
-                to="/mypage/notifications"
+                to="/notifications"
                 aria-label="알림"
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-text-primary"
+                className="relative w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-text-primary"
               >
                 <Bell size={20} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </Link>
 
               {/* 마이페이지 */}
