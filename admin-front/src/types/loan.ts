@@ -5,6 +5,7 @@
 import type { PaginatedResponse } from './common';
 
 export type ReviewStatus = 
+  'SUBMITTED' |
   'SYSTEM_APPROVED' |
   'SYSTEM_HOLD' | 
   'MANAGER_REVIEW' | 
@@ -274,4 +275,13 @@ export interface LoanStatusCounts {
   managerReview: number;
   approved: number;
   rejected: number;
+}
+
+/** 정보 탭 API 응답 (GET /api/admin/loan-applications/{id}/info) */
+export interface LoanInfoTabResponse {
+  applicantInfo: CustomerInfo;
+  businessInfo: BusinessInfo;
+  applicationInfo: ApplicationInfo;
+  userInputInfo: UserInputInfo;
+  consentHistories: ConsentHistory[];
 }

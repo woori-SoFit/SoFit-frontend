@@ -1,6 +1,7 @@
 import axiosInstance from './axiosInstance';
 import type {
   LoanDetailData,
+  LoanInfoTabResponse,
   LoanSummary,
   ShapResult,
   RecommendationData,
@@ -11,7 +12,6 @@ import type {
   ManagerApprovalItem,
 } from '@/types';
 import {
-  getMockLoanDetail,
   getMockShapResult,
   getMockRecommendation,
   getMockReviewTabData,
@@ -35,11 +35,42 @@ export async function fetchLoanSummary(id: number): Promise<LoanSummary> {
 }
 
 /**
- * 대출 신청 상세 데이터를 조회합니다.
- * 향후 실제 API 연동 시 axiosInstance.get(`/api/admin/loan-applications/${id}/info`)로 교체합니다.
+ * 대출 신청 정보 탭 데이터를 조회합니다.
+ * GET /api/admin/loan-applications/{id}/info
  */
-export async function fetchLoanDetail(id: number): Promise<LoanDetailData | undefined> {
-  return Promise.resolve(getMockLoanDetail(id));
+export async function fetchLoanDetail(id: number): Promise<LoanDetailData> {
+  const { data } = await axiosInstance.get<LoanInfoTabResponse>(
+    `/api/admin/loan-applications/${id}/info`
+  );
+
+  return {
+    id,
+    applicationDate: '',
+    reviewStatus: 'SUBMITTED',
+    assigneeName: '',
+    productInfo: {
+      productName: '',
+      minAmount: 0,
+      maxAmount: 0,
+      minInterestRate: 0,
+      maxInterestRate: 0,
+      minTermMonths: 0,
+      maxTermMonths: 0,
+      availableRepaymentMethods: [],
+      availablePurposes: [],
+    },
+    customerInfo: data.applicantInfo,
+    businessInfo: data.businessInfo,
+    applicationInfo: data.applicationInfo,
+    userInputInfo: data.userInputInfo,
+    consentHistories: data.consentHistories,
+    myBizData: null,
+    cbScore: null,
+    sGrade: null,
+    scbScore: null,
+    bonusPoints: null,
+    shapResult: null,
+  };
 }
 
 /**

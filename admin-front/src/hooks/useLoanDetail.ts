@@ -17,10 +17,11 @@ export interface UseLoanDetailReturn {
  * - 404 응답 시 retry 하지 않음, 그 외 오류는 최대 3회 retry
  */
 export function useLoanDetail(id: number): UseLoanDetailReturn {
-  const { data, isLoading, isError, error, refetch } = useQuery<LoanDetailData | undefined, Error>({
+  const { data, isLoading, isError, error, refetch } = useQuery<LoanDetailData, Error>({
     queryKey: LOAN_KEYS.detail(id),
     queryFn: () => fetchLoanDetail(id),
     staleTime: 30_000,
+    enabled: id > 0,
     retry: (failureCount, err) => {
       // 404 응답 시 retry 하지 않음
       if (
