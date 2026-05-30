@@ -45,6 +45,22 @@ export default function GradeReportPage() {
     }
   }, [location.state, setStep]);
 
+  // RESULT 스텝인데 gradeResult가 없으면 (뒤로가기로 돌아온 경우) API 재조회
+  useEffect(() => {
+    if (currentStep === "RESULT" && !gradeResult) {
+      const refetch = async () => {
+        try {
+          const result = await fetchGradeResult();
+          setGradeResult(result);
+        } catch {
+          // 조회 실패 시 INTRO로 리셋
+          setStep("INTRO");
+        }
+      };
+      refetch();
+    }
+  }, [currentStep, gradeResult, setStep]);
+
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("성장 S등급 분석 리포트");
 
