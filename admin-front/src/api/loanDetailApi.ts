@@ -1,3 +1,4 @@
+import axiosInstance from './axiosInstance';
 import type {
   LoanDetailData,
   LoanSummary,
@@ -15,7 +16,6 @@ import {
   getMockRecommendation,
   getMockReviewTabData,
   getMockManagerApprovals,
-  getMockLoanSummary,
   mockApproveLoan,
   mockRejectLoan,
   mockEscalateLoan,
@@ -25,10 +25,13 @@ import {
 
 /**
  * 대출 신청 공통 정보(헤더용)를 조회합니다.
- * 향후 실제 API 연동 시 axiosInstance.get(`/api/admin/loan-applications/${id}`)로 교체합니다.
+ * GET /api/admin/loan-applications/{id}
  */
-export async function fetchLoanSummary(id: number): Promise<LoanSummary | undefined> {
-  return Promise.resolve(getMockLoanSummary(id));
+export async function fetchLoanSummary(id: number): Promise<LoanSummary> {
+  const { data } = await axiosInstance.get<LoanSummary>(
+    `/api/admin/loan-applications/${id}`
+  );
+  return data;
 }
 
 /**

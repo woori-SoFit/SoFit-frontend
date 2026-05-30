@@ -44,10 +44,11 @@ export interface LoanApplicationItem {
 export interface LoanSummary {
   applicationId: number;
   applicantName: string;
-  businessName: string;
+  businessName: string | null;
   productName: string;
   status: ReviewStatus;
   appliedAt: string;
+  assignedBankerId: number | null;
   assigneeName: string;
   rejectionComment?: string;
   approvalComment?: string;
