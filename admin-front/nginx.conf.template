@@ -1,6 +1,20 @@
 server {
     listen 80;
 
+    # .mjs 등 모듈 스크립트가 application/octet-stream 으로 떨어져
+    # strict MIME 체크에 실패하는 문제 방지
+    types {
+        application/javascript mjs js;
+        text/css               css;
+        text/html              html;
+        image/svg+xml          svg;
+        image/png              png;
+        image/jpeg             jpg jpeg;
+        font/woff2             woff2;
+        application/wasm       wasm;
+    }
+    default_type application/octet-stream;
+
     location / {
         root /usr/share/nginx/html;
         index index.html;

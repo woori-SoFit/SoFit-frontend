@@ -1,6 +1,21 @@
 server {
     listen 80;
 
+    # .mjs 파일을 JavaScript MIME으로 응답
+    # (nginx 기본 mime.types 에 application/octet-stream 으로 떨어져
+    #  module script 가 strict MIME 체크에 걸려 로드 실패하는 문제 방지)
+    types {
+        application/javascript mjs js;
+        text/css               css;
+        text/html              html;
+        image/svg+xml          svg;
+        image/png              png;
+        image/jpeg             jpg jpeg;
+        font/woff2             woff2;
+        application/wasm       wasm;
+    }
+    default_type application/octet-stream;
+
     location / {
         root /usr/share/nginx/html;
         index index.html;
