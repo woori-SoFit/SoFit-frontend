@@ -4,30 +4,10 @@
  * Layout: StepLayout
  */
 import { useEffect } from "react";
-import { ChevronRight, ShieldCheck, FileCheck , Wallet } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
-import { MOCK_NOTIFICATIONS, type MockNotification, type NotificationType } from "@/mocks/notifications";
-
-/** 알림 유형별 아이콘 + 색상 매핑 */
-function getNotificationIcon(type: NotificationType) {
-  switch (type) {
-    case "LOAN_REVIEWED":
-      return {
-        icon: <ShieldCheck size={22} className="text-[#0F6E56]" />,
-        bg: "bg-[#E1F5EE]",
-      };
-    case "LOAN_APPLIED":
-      return {
-        icon: <FileCheck  size={22} className="text-primary" />,
-        bg: "bg-primary/10",
-      };
-    case "LOAN_EXECUTED":
-      return {
-        icon: <Wallet size={22} className="text-[#854F0B]" />,
-        bg: "bg-[#FAEEDA]",
-      };
-  }
-}
+import { MOCK_NOTIFICATIONS, type MockNotification } from "@/mocks/notifications";
+import { getNotificationIcon } from "@/utils/notificationIcon";
 
 function NotificationItem({ notification }: { notification: MockNotification }) {
   const { icon, bg } = getNotificationIcon(notification.type);
