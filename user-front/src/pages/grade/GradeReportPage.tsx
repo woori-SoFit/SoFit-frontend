@@ -19,6 +19,7 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { useGradeReportStore } from "@/stores/gradeReportStore";
 import { useMe } from "@/hooks/useMe";
 import { checkMyBizConnected } from "@/api/mybizApi";
+import { fetchGradeResult, type GradeResult } from "@/api/gradeApi";
 import { GradeIntroStep } from "@/components/grade/GradeIntroStep";
 import { BizDataCheckStep } from "@/components/grade/BizDataCheckStep";
 import { GradeLoadingStep } from "@/components/grade/GradeLoadingStep";
@@ -32,6 +33,7 @@ export default function GradeReportPage() {
   const location = useLocation();
   const { isLoggedIn } = useMe();
   const [isLoading, setIsLoading] = useState(false);
+  const [gradeResult, setGradeResult] = useState<GradeResult | null>(null);
 
   // /biz-data/collect 완료 후 돌아왔을 때 LOADING 스텝으로 진입
   useEffect(() => {
@@ -70,14 +72,16 @@ export default function GradeReportPage() {
     nextStep();
   }, [isLoggedIn, navigate, nextStep]);
 
-  /** BIZ_CHECK 스텝에서 "불러오기" 클릭 시 마이비즈 연동 여부 확인 */
+  /** BIZ_CHECK 스텝에서 "불러오기" 클릭 시 마이비즈 연동 여부 확인 후 S등급 조회 */
   const handleBizCheck = useCallback(async () => {
     setIsLoading(true);
     try {
       const isConnected = await checkMyBizConnected();
       if (isConnected) {
-        // 마이비즈 연동 완료 → LOADING 스텝으로 이동
-        setStep("LOADING");
+        // 마이비즈 연동 완료 → S등급 결과 조회
+        const result = await fetchGradeResult();
+        setGradeResult(result);
+        setStep("RESULT");
       } else {
         // 마이비즈 미연동 → bizData IntroSection 페이지로 이동
         navigate("/biz-data", {
@@ -105,7 +109,7 @@ export default function GradeReportPage() {
       return <GradeLoadingStep onComplete={nextStep} />;
 
     case "RESULT":
-      return <GradeResultStep />;
+      return <GradeResultStep gradeResult={gradeResult} />;
 
     default:
       return null;
