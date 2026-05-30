@@ -13,6 +13,7 @@ export const LOAN_KEYS = {
   shap: (id: number) => [...LOAN_KEYS.all, "shap", id] as const,
   recommendation: (id: number) => [...LOAN_KEYS.all, "recommendation", id] as const,
   reviewTab: (id: number) => [...LOAN_KEYS.all, "review-tab", id] as const,
+  myBizData: (id: number) => [...LOAN_KEYS.all, "mybiz-data", id] as const,
   managerApprovals: () => [...LOAN_KEYS.all, "manager-approvals"] as const,
 } as const;
 

@@ -5,6 +5,7 @@ import { useLoanSummary } from '@/hooks/useLoanSummary';
 import { useLoanDetail } from '@/hooks/useLoanDetail';
 import { useLoanMutations } from '@/hooks/useLoanMutations';
 import { useReviewTab } from '@/hooks/useReviewTab';
+import { useMyBizData } from '@/hooks/useMyBizData';
 import { formatDate } from '@/utils/formatters';
 import StatusBadge from '@/components/common/StatusBadge';
 import LoadingState from '@/components/common/LoadingState';
@@ -55,6 +56,12 @@ export default function LoanDetailPage() {
   const { data: reviewTab, isLoading: isReviewTabLoading } = useReviewTab(
     loanId ?? 0,
     activeTab === 'review',
+  );
+
+  // MY BIZ DATA 탭 전용 데이터 (탭이 mybizdata일 때 조회)
+  const { data: myBizData, isLoading: isMyBizDataLoading } = useMyBizData(
+    loanId ?? 0,
+    activeTab === 'mybizdata',
   );
 
   if (loanId === null) {
@@ -211,7 +218,9 @@ export default function LoanDetailPage() {
 
       {/* ─── MY BIZ DATA 탭 ─── */}
       {activeTab === 'mybizdata' && (
-        <MyBizDataCard data={data.myBizData} />
+        isMyBizDataLoading
+          ? <LoadingState />
+          : <MyBizDataCard data={myBizData} />
       )}
 
       {/* ─── S등급 분석 탭 ─── */}

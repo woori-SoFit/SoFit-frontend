@@ -3,6 +3,7 @@ import type {
   LoanDetailData,
   LoanInfoTabResponse,
   LoanSummary,
+  MyBizData,
   ShapResult,
   RecommendationData,
   ReviewTabData,
@@ -71,6 +72,17 @@ export async function fetchLoanDetail(id: number): Promise<LoanDetailData> {
     bonusPoints: null,
     shapResult: null,
   };
+}
+
+/**
+ * My Biz Data 탭 데이터를 조회합니다.
+ * GET /api/admin/loan-applications/{id}/mybiz-data
+ */
+export async function fetchMyBizData(id: number): Promise<MyBizData> {
+  const { data } = await axiosInstance.get<MyBizData>(
+    `/api/admin/loan-applications/${id}/mybiz-data`
+  );
+  return data;
 }
 
 /**
