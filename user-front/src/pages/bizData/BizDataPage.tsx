@@ -7,7 +7,7 @@
  * - 연결 완료 시: 통합 대시보드
  */
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { IntroSection } from "@/components/bizData/IntroSection";
@@ -23,7 +23,11 @@ import {
 
 export default function BizDataPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
+
+  // grade-report에서 진입한 경우 returnTo를 전달받음
+  const returnTo = (location.state as { returnTo?: string } | null)?.returnTo;
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("마이 비즈 데이터");
@@ -53,7 +57,9 @@ export default function BizDataPage() {
         <div className="px-5 pb-6 pt-3 bg-bg-base">
           <button
             type="button"
-            onClick={() => navigate("/biz-data/collect")}
+            onClick={() => navigate("/biz-data/collect", {
+              state: returnTo ? { returnTo } : undefined,
+            })}
             className="w-full h-12 rounded-lg text-base font-semibold bg-primary text-white hover:bg-primary-dark active:bg-primary-dark transition-colors"
           >
             데이터 연결 시작하기

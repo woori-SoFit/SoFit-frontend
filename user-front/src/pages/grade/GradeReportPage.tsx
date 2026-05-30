@@ -13,10 +13,12 @@
  *
  * 주의: SHAP 내부 파생 변수 노출 금지, 친화적 용어만 표시
  */
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useCallback, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useGradeReportStore } from "@/stores/gradeReportStore";
+import { useMe } from "@/hooks/useMe";
+import { checkMyBizConnected } from "@/api/mybizApi";
 import { GradeIntroStep } from "@/components/grade/GradeIntroStep";
 import { BizDataCheckStep } from "@/components/grade/BizDataCheckStep";
 import { GradeLoadingStep } from "@/components/grade/GradeLoadingStep";
@@ -24,8 +26,22 @@ import { GradeResultStep } from "@/components/grade/GradeResultStep";
 
 export default function GradeReportPage() {
   const currentStep = useGradeReportStore((s) => s.currentStep);
+  const setStep = useGradeReportStore((s) => s.setStep);
   const nextStep = useGradeReportStore((s) => s.nextStep);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isLoggedIn } = useMe();
+  const [isLoading, setIsLoading] = useState(false);
+
+  // /biz-data/collect 완료 후 돌아왔을 때 LOADING 스텝으로 진입
+  useEffect(() => {
+    const state = location.state as { startAt?: string } | null;
+    if (state?.startAt === "LOADING") {
+      setStep("LOADING");
+      // state 정리 (뒤로가기 시 재진입 방지)
+      window.history.replaceState({}, "");
+    }
+  }, [location.state, setStep]);
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("성장 S등급 분석 리포트");
@@ -45,12 +61,45 @@ export default function GradeReportPage() {
     };
   }, [navigate]);
 
+  /** INTRO 스텝에서 "S분석 리포트 시작하기" 클릭 시 인증 확인 후 다음 스텝 */
+  const handleIntroNext = useCallback(() => {
+    if (!isLoggedIn) {
+      navigate(`/login?returnUrl=${encodeURIComponent("/grade-report")}`, { replace: true });
+      return;
+    }
+    nextStep();
+  }, [isLoggedIn, navigate, nextStep]);
+
+  /** BIZ_CHECK 스텝에서 "불러오기" 클릭 시 마이비즈 연동 여부 확인 */
+  const handleBizCheck = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const isConnected = await checkMyBizConnected();
+      if (isConnected) {
+        // 마이비즈 연동 완료 → LOADING 스텝으로 이동
+        setStep("LOADING");
+      } else {
+        // 마이비즈 미연동 → bizData IntroSection 페이지로 이동
+        navigate("/biz-data", {
+          state: { returnTo: "/grade-report" },
+        });
+      }
+    } catch {
+      // API 호출 실패 시 안전하게 bizData IntroSection 페이지로 이동
+      navigate("/biz-data", {
+        state: { returnTo: "/grade-report" },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setStep, navigate]);
+
   switch (currentStep) {
     case "INTRO":
-      return <GradeIntroStep onNext={nextStep} />;
+      return <GradeIntroStep onNext={handleIntroNext} />;
 
     case "BIZ_CHECK":
-      return <BizDataCheckStep onNext={nextStep} />;
+      return <BizDataCheckStep onNext={handleBizCheck} isLoading={isLoading} />;
 
     case "LOADING":
       return <GradeLoadingStep onComplete={nextStep} />;
