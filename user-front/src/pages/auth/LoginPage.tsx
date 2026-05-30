@@ -18,6 +18,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const passwordRef = useRef<HTMLInputElement>(null);
+  const loginIdRef = useRef<HTMLInputElement>(null);
 
   // 폼 상태
   const [loginId, setLoginId] = useState("");
@@ -37,6 +38,9 @@ export default function LoginPage() {
       } else {
         setServerError("로그인에 실패했습니다. 잠시 후 다시 시도해주세요");
       }
+      setLoginId("");
+      setPassword("");
+      setTimeout(() => loginIdRef.current?.focus(), 100);
     },
   });
 
@@ -101,6 +105,7 @@ export default function LoginPage() {
           </label>
           <input
             id="loginId"
+            ref={loginIdRef}
             type="text"
             value={loginId}
             onChange={handleLoginIdChange}

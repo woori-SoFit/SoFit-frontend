@@ -20,7 +20,11 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      window.location.href = "/login";
+      // 로그인 요청 401은 리다이렉트 X
+      const requestUrl = error.config?.url ?? "";
+      if (!requestUrl.includes("/auth/login")) {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   }
