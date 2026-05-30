@@ -285,3 +285,45 @@ export interface LoanBizInfoResponse {
     isMybizConnected: boolean;
   };
 }
+
+/** 대출 실행 상세 조회 API 응답 */
+export interface LoanExecutionDetailResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: LoanExecutionDetail;
+}
+
+/** 대출 실행 상세 데이터 */
+export interface LoanExecutionDetail {
+  executionId: number;
+  applicationId: number;
+  productId: number;
+  productName: string;
+  executedAmount: number;
+  approvedRate: number;
+  approvedTerm: number;
+  repaymentMethod: string;
+}
+
+/** 1원 송금 요청 API 응답 */
+export interface AccountVerificationResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    maskedAccountNumber: string;
+    authCode: string;
+    expiredAt: string;
+  };
+}
+
+/** 인증 코드 확인 API 응답 */
+export interface AccountVerificationConfirmResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    accountVerified: boolean;
+  };
+}

@@ -21,11 +21,12 @@ import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { AccountStep } from "@/components/loan/AccountStep";
 import { formatAmount } from "@/utils/format";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
-import { fetchLoanApplicationCompletedDetail } from "@/api/loanApi";
+import { requestAccountVerification, confirmAccountVerification, fetchLoanApplicationCompletedDetail } from "@/api/loanApi";
 import { submitTermsConsents } from "@/api/termsApi";
 import { useTerms } from "@/hooks/useTerms";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import confettiAnimation from "@/assets/lottie/Success-Celebration.json";
+import handshakeAnimation from "@/assets/lottie/Handshake.json";
 
 type AgreementStep = "CONFIRM" | "TERMS" | "CERT" | "ACCOUNT" | "COMPLETE";
 
@@ -88,9 +89,13 @@ export default function LoanAgreementPage() {
     // 1. 약정 체결 확인
     case "CONFIRM":
       return (
-        <div className="h-full pt-25">
+        <div className="h-full pt-8">
           <ConfirmPage
-            icon={null}
+            icon={
+              <div className="w-32 h-32 mb-5">
+                <Lottie animationData={handshakeAnimation} loop={5} className="w-full h-full" />
+              </div>
+            }
             title={data.productName}
             description="아래 대출 조건을 확인하고 약정을 진행해주세요."
             rows={[
@@ -139,7 +144,21 @@ export default function LoanAgreementPage() {
 
     // 4. 대출 실행 계좌 설정
     case "ACCOUNT":
-      return <AccountStep onSubmit={() => setStep("COMPLETE")} />;
+      return (
+        <AccountStep
+          onSendVerification={async (accountNumber) => {
+            await requestAccountVerification(data.applicationId, accountNumber);
+          }}
+          onVerifyCode={async (code) => {
+            const verified = await confirmAccountVerification(data.applicationId, code);
+            return {
+              success: verified,
+              message: verified ? undefined : "인증코드가 일치하지 않습니다.",
+            };
+          }}
+          onSubmit={() => setStep("COMPLETE")}
+        />
+      );
 
     // 5. 대출 실행 완료
     case "COMPLETE":

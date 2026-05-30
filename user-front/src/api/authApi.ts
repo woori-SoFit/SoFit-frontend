@@ -26,3 +26,14 @@ export async function verifyFinancialCertificate(
   );
   return data;
 }
+
+/** 회원가입용 금융인증서 PIN 인증 API */
+export async function verifyPinForSignup(
+  params: FinancialCertVerifyRequest
+): Promise<FinancialCertVerifyResponse> {
+  const { data } = await axiosInstance.post<FinancialCertVerifyResponse>(
+    "/auth/verify-pin",
+    params
+  );
+  return data;
+}

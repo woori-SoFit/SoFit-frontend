@@ -49,7 +49,7 @@ export function PinInput({ onSubmit, isLoading = false, errorMessage }: PinInput
 
   return (
     <div data-testid="pin-input" className="flex flex-col items-center h-full">
-      <div className="flex flex-col items-center pt-12 pb-8">
+      <div className="flex flex-col items-center pt-6">
         {/* 자물쇠 아이콘 */}
         <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-6">
           <LockKeyhole size={28} className="text-primary" />
@@ -79,7 +79,7 @@ export function PinInput({ onSubmit, isLoading = false, errorMessage }: PinInput
       </div>
 
       {/* 숫자 키패드 */}
-      <div className="flex-1 flex items-end w-full pb-10">
+      <div className="flex-1 flex items-end w-full pb-4">
         <div className="grid grid-cols-3 gap-y-5 w-full">
           {["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "del"].map(
             (key) => {
