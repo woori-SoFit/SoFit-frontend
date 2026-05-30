@@ -171,7 +171,7 @@ export default function LoginPage() {
 
       {/* 비밀번호 찾기 링크 */}
       <div className="flex justify-center mt-4">
-        <Link to="/find-password" className="text-sm text-primary">
+        <Link to="" className="text-sm text-primary">
           비밀번호 찾기 &gt;
         </Link>
       </div>
