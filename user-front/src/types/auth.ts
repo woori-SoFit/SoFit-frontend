@@ -64,4 +64,6 @@ export interface CustomerVerifyData {
 export interface VerifyResult {
   success: boolean;
   message?: string;
+  /** true이면 정보 입력 화면으로 되돌아감 (인증서 미발견 등) */
+  resetToInfo?: boolean;
 }
