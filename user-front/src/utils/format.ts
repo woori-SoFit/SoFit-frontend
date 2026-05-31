@@ -26,3 +26,11 @@ export function formatDate(dateStr: string): string {
   const dateOnly = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
   return dateOnly.replace(/-/g, ".");
 }
+
+/** 연월 포맷 (YYYY-MM → YYYY년 M월) */
+export function formatYearMonth(yyyyMM: string): string {
+  if (!yyyyMM) return "";
+  const [y, m] = yyyyMM.split("-");
+  if (!y || !m) return yyyyMM;
+  return `${y}년 ${parseInt(m, 10)}월`;
+}

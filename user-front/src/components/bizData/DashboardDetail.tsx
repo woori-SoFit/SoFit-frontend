@@ -59,17 +59,24 @@ function SingleStar({ fillRatio }: { fillRatio: number }) {
 }
 
 export function DashboardDetail({ data }: DashboardDetailProps) {
+  const hasRevenueTrend = data.revenueTrend.length > 0;
+  const hasTransactionFlow = data.transactionFlow.length > 0;
+
   return (
     <section className="px-5 pb-8 flex flex-col gap-5">
-      {/* 월별 매출 추이 */}
-      <div className="bg-bg-surface rounded-xl shadow-card p-4">
-        <RevenueLineChart data={data.revenueTrend} />
-      </div>
+      {/* 월별 매출 — 자료가 없으면 박스 자체 숨김 */}
+      {hasRevenueTrend && (
+        <div className="bg-bg-surface rounded-xl shadow-card p-4">
+          <RevenueLineChart data={data.revenueTrend} />
+        </div>
+      )}
 
-      {/* 계좌 입출금 흐름 */}
-      <div className="bg-bg-surface rounded-xl shadow-card p-4">
-        <TransactionBarChart data={data.transactionFlow} />
-      </div>
+      {/* 계좌 입출금 — 자료가 없으면 박스 자체 숨김 */}
+      {hasTransactionFlow && (
+        <div className="bg-bg-surface rounded-xl shadow-card p-4">
+          <TransactionBarChart data={data.transactionFlow} />
+        </div>
+      )}
 
       {/* 대출 현황 — 2열 */}
       <div className="bg-bg-surface rounded-xl shadow-card p-4">
@@ -86,7 +93,7 @@ export function DashboardDetail({ data }: DashboardDetailProps) {
         </div>
       </div>
 
-      {/* 리뷰/평점 현황 + 리뷰 추이 — 나란히 */}
+      {/* 리뷰/평점 현황 + 평점 추이 — 나란히 */}
       <div className="bg-bg-surface rounded-xl shadow-card p-4">
         <div className="flex gap-4">
           {/* 왼쪽: 평점 정보 */}
