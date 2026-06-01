@@ -34,7 +34,13 @@ export function useUnreadCount(): {
       return;
     }
 
-    const count = data.result.filter((item) => item.isRead === false).length;
+    const notifications = data.result;
+    if (!Array.isArray(notifications)) {
+      setUnreadCount(0);
+      return;
+    }
+
+    const count = notifications.filter((item) => item.isRead === false).length;
     setUnreadCount(count);
   }, [data, isLoading, isError, setUnreadCount]);
 
