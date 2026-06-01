@@ -1,0 +1,28 @@
+/**
+ * 알림 관련 타입 정의
+ */
+
+/** 알림 타입 */
+export type NotificationType =
+  | "LOAN_SUBMITTED"
+  | "LOAN_DECIDED"
+  | "LOAN_EXECUTED";
+
+/** 알림 항목 */
+export interface NotificationItem {
+  id: number;
+  type: NotificationType;
+  title: string;
+  content: string;
+  createdAt: string;
+  isRead: boolean;
+  applicationId: number;
+}
+
+/** 알림 목록 API 응답 */
+export interface NotificationsResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: NotificationItem[];
+}
