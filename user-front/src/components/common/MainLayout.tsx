@@ -9,9 +9,14 @@
  */
 import { Outlet } from "react-router-dom";
 import { AppHeader } from "./AppHeader";
+import { useSSE } from "@/hooks/useSSE";
+import { useUnreadCount } from "@/hooks/useUnreadCount";
 
 export function MainLayout() {
-  // TODO: useQuery로 /api/members/me 조회 → 미인증 시 /login 리다이렉트
+  // SSE 실시간 알림 연결 (로그인 시에만 활성화)
+  useSSE();
+  // 미읽음 알림 개수 초기화
+  useUnreadCount();
 
   return (
     <div className="app-container flex flex-col min-h-screen bg-[--color-bg-base]">
