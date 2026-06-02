@@ -182,32 +182,6 @@ export interface LoanProductInfo {
   availablePurposes: LoanPurpose[];
 }
 
-/** 대출 신청 상세 전체 데이터 */
-export interface LoanDetailData {
-  id: number;
-  applicationDate: string;
-  reviewStatus: ReviewStatus;
-  assigneeName: string;
-  productInfo: LoanProductInfo;
-  customerInfo: CustomerInfo;
-  businessInfo: BusinessInfo;
-  applicationInfo: ApplicationInfo;
-  userInputInfo: UserInputInfo;
-  consentHistories: ConsentHistory[];
-  myBizData: MyBizData | null;
-  cbScore: number | null;
-  /** "S1" ~ "S10" */
-  sGrade: string | null;
-  scbScore: number | null;
-  /** 가산점 */
-  bonusPoints: number | null;
-  shapResult: ShapResult | null;
-  rejectionComment?: string;
-  approvalComment?: string;
-  /** 심사 결정 일시 (APPROVED/REJECTED 상태일 때만 존재, ISO 8601) */
-  decidedAt?: string;
-}
-
 /** 시스템 추천값 */
 export interface RecommendationData {
   /** 승인 금액 (원) */

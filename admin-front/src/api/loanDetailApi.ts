@@ -1,12 +1,9 @@
 import axiosInstance from './axiosInstance';
 import type {
-  LoanDetailData,
   LoanInfoTabResponse,
   LoanSummary,
   MyBizData,
   SGradeTabResponse,
-  ShapResult,
-  RecommendationData,
   ReviewTabData,
   ApprovalPayload,
   RejectionPayload,
@@ -14,7 +11,6 @@ import type {
   ManagerApprovalItem,
 } from '@/types';
 import {
-  getMockRecommendation,
   getMockManagerApprovals,
   mockApproveLoan,
   mockRejectLoan,
@@ -35,42 +31,14 @@ export async function fetchLoanSummary(id: number): Promise<LoanSummary> {
 }
 
 /**
- * 대출 신청 정보 탭 데이터를 조회합니다.
+ * 정보 탭 데이터를 조회합니다.
  * GET /api/admin/loan-applications/{id}/info
  */
-export async function fetchLoanDetail(id: number): Promise<LoanDetailData> {
+export async function fetchInfoTab(id: number): Promise<LoanInfoTabResponse> {
   const { data } = await axiosInstance.get<LoanInfoTabResponse>(
     `/api/admin/loan-applications/${id}/info`
   );
-
-  return {
-    id,
-    applicationDate: '',
-    reviewStatus: 'SUBMITTED',
-    assigneeName: '',
-    productInfo: {
-      productName: '',
-      minAmount: 0,
-      maxAmount: 0,
-      minInterestRate: 0,
-      maxInterestRate: 0,
-      minTermMonths: 0,
-      maxTermMonths: 0,
-      availableRepaymentMethods: [],
-      availablePurposes: [],
-    },
-    customerInfo: data.applicantInfo,
-    businessInfo: data.businessInfo,
-    applicationInfo: data.applicationInfo,
-    userInputInfo: data.userInputInfo,
-    consentHistories: data.consentHistories,
-    myBizData: null,
-    cbScore: null,
-    sGrade: null,
-    scbScore: null,
-    bonusPoints: null,
-    shapResult: null,
-  };
+  return data;
 }
 
 /**
@@ -93,23 +61,6 @@ export async function fetchSGradeTab(id: number): Promise<SGradeTabResponse> {
     `/api/admin/loan-applications/${id}/grade`
   );
   return data;
-}
-
-/**
- * SHAP 분석 결과를 조회합니다.
- * S등급 분석 탭 API에서 shapResult를 추출하여 반환합니다.
- */
-export async function fetchShapResult(id: number): Promise<ShapResult | undefined> {
-  const gradeData = await fetchSGradeTab(id);
-  return gradeData.shapResult;
-}
-
-/**
- * 시스템 추천값(승인 금액, 금리, 기간, 상환 방식)을 조회합니다.
- * 향후 실제 API 연동 시 axiosInstance.get(`/api/admin/loan-applications/${id}/recommendation`)로 교체합니다.
- */
-export async function fetchRecommendation(id: number): Promise<RecommendationData> {
-  return Promise.resolve(getMockRecommendation(id));
 }
 
 /**
