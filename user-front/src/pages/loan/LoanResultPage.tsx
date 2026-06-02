@@ -85,7 +85,6 @@ function ApprovedView({
         title={<>심사가 <span className="text-primary">승인</span>되었습니다!</>}
         rows={[
           { label: "신청 상품", value: data.productName },
-          { label: "신청금액", value: formatAmount(data.requestedAmount) },
           { label: "승인금액", value: decisionInfo.approvedAmount ? formatAmount(decisionInfo.approvedAmount) : "-" },
           { label: "금리(연)", value: decisionInfo.approvedRate ? `${decisionInfo.approvedRate}%` : "-" },
           { label: "대출기간", value: termLabel },

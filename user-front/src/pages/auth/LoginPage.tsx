@@ -18,6 +18,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const passwordRef = useRef<HTMLInputElement>(null);
+  const loginIdRef = useRef<HTMLInputElement>(null);
 
   // 폼 상태
   const [loginId, setLoginId] = useState("");
@@ -37,6 +38,9 @@ export default function LoginPage() {
       } else {
         setServerError("로그인에 실패했습니다. 잠시 후 다시 시도해주세요");
       }
+      setLoginId("");
+      setPassword("");
+      setTimeout(() => loginIdRef.current?.focus(), 100);
     },
   });
 
@@ -101,6 +105,7 @@ export default function LoginPage() {
           </label>
           <input
             id="loginId"
+            ref={loginIdRef}
             type="text"
             value={loginId}
             onChange={handleLoginIdChange}
@@ -164,12 +169,12 @@ export default function LoginPage() {
         </button>
       </form>
 
-      {/* 비밀번호 찾기 링크 */}
-      <div className="flex justify-center mt-4">
-        <Link to="/find-password" className="text-sm text-primary">
+      {/* 비밀번호 찾기 링크 — 미구현 */}
+      {/* <div className="flex justify-center mt-4">
+        <Link to="" className="text-sm text-primary">
           비밀번호 찾기 &gt;
         </Link>
-      </div>
+      </div> */}
 
       {/* 하단 회원가입 링크 */}
       <div className="flex justify-center items-center mt-auto pb-10 gap-2">

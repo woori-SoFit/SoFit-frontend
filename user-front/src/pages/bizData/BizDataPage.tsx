@@ -10,9 +10,11 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
+import { useMe } from "@/hooks/useMe";
 import { IntroSection } from "@/components/bizData/IntroSection";
 import { DashboardSummary, formatCurrency, formatChangeRate } from "@/components/bizData/DashboardSummary";
 import { DashboardDetail } from "@/components/bizData/DashboardDetail";
+import { formatYearMonth } from "@/utils/format";
 import type { BizDashboardData } from "@/types/bizData";
 import {
   checkMyBizConnected,
@@ -83,6 +85,8 @@ function findScrollParent(el: HTMLElement | null): HTMLElement {
 }
 
 function BizDashboard() {
+  const { me } = useMe();
+  const userName = me?.name ?? "";
   const [data, setData] = useState<BizDashboardData | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [availableMonths, setAvailableMonths] = useState<string[]>([]);
@@ -130,8 +134,8 @@ function BizDashboard() {
       })
       .catch((err: unknown) => {
         const status = (err as { response?: { status?: number } })?.response?.status;
-        if (status === 404) setMonthError(`${month} 데이터가 없습니다`);
-        else setMonthError("데이터를 불러오지 못했습니다");
+        if (status === 404) setMonthError(`${formatYearMonth(month)} 자료가 없어요`);
+        else setMonthError("자료를 불러오지 못했어요");
       })
       .finally(() => setIsLoading(false));
   };
@@ -163,7 +167,7 @@ function BizDashboard() {
   if (!data) {
     return (
       <div className="flex items-center justify-center h-[calc(100dvh-64px)]">
-        <p className="text-sm text-text-secondary">데이터를 불러오는 중...</p>
+        <p className="text-sm text-text-secondary">자료를 불러오는 중...</p>
       </div>
     );
   }
@@ -172,13 +176,15 @@ function BizDashboard() {
   // availableMonths가 비어있어도 현재 선택된 달은 최소 1개 보여줌
   const displayMonths = availableMonths.length > 0 ? availableMonths : (selectedMonth ? [selectedMonth] : []);
   const changeRate = formatChangeRate(data.monthOverMonthChange);
-  const revenueLabel = selectedMonth === currentMonth ? "이번 달 매출" : `${selectedMonth} 매출`;
+  const revenueLabel =
+    selectedMonth === currentMonth ? "이번 달 매출" : `${formatYearMonth(selectedMonth)} 매출`;
+  // 양수 info(파랑) / 음수 error(빨강) — DashboardSummary와 색 통일
   const changeColor =
     changeRate.isPositive === null
       ? "text-text-secondary"
       : changeRate.isPositive
-        ? "text-success"
-        : "text-warning";
+        ? "text-info"
+        : "text-error";
 
   return (
     <div ref={rootRef} data-testid="biz-data-page" className={isLoading ? "opacity-60 pointer-events-none" : ""}>
@@ -201,11 +207,15 @@ function BizDashboard() {
         </div>
       </div>
 
-      {/* 헤더: 제목 + 월 선택 드롭다운 */}
-      <div className="px-5 pt-6 pb-2 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">마이 비즈 데이터</h1>
-          <p className="text-sm text-text-secondary mt-1">사업 현황을 한눈에 확인하세요</p>
+      {/* 헤더: 사용자 인사 + 월 선택 드롭다운 */}
+      <div className="px-5 pt-4 pb-2 flex items-end justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-base font-semibold text-text-primary truncate">
+            {userName ? `${userName} 사장님,` : "사장님,"}
+          </p>
+          <p className="text-xs text-text-secondary mt-0.5">
+            사업 현황을 한눈에 확인해 보세요
+          </p>
         </div>
 
         <div className="relative shrink-0" ref={dropdownRef}>
@@ -214,7 +224,7 @@ function BizDashboard() {
             onClick={() => setOpen((v) => !v)}
             className="flex items-center gap-1.5 text-sm font-medium text-text-primary bg-bg-surface border border-border-default rounded-lg px-3 py-2"
           >
-            {selectedMonth === currentMonth ? "이번 달" : selectedMonth}
+            {selectedMonth === currentMonth ? "이번 달" : formatYearMonth(selectedMonth)}
             <ChevronDown
               size={14}
               className={`text-text-secondary transition-transform duration-200 ${open ? "rotate-180" : ""}`}
@@ -234,7 +244,7 @@ function BizDashboard() {
                         : "text-text-primary hover:bg-gray-50"
                     }`}
                   >
-                    {month} {month === currentMonth ? "(이번 달)" : ""}
+                    {formatYearMonth(month)} {month === currentMonth ? "(이번 달)" : ""}
                   </button>
                 </li>
               ))}

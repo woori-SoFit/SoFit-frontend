@@ -29,14 +29,14 @@ export function TransactionBarChart({ data }: TransactionBarChartProps) {
     <div className="w-full">
       <div className="flex items-center justify-between mb-2">
         <h4 className="text-sm font-semibold text-text-primary">
-          계좌 입출금 흐름{monthLabel ? ` (${monthLabel})` : ""}
+          계좌 입출금{monthLabel ? ` (${monthLabel})` : ""}
         </h4>
         <span className="text-xs text-text-secondary">(단위: 원)</span>
       </div>
       {data.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-[180px] gap-1.5">
-          <p className="text-sm font-medium text-text-secondary">입출금 데이터를 수집하는 중이에요</p>
-          <p className="text-xs text-text-disabled">데이터가 쌓이면 표시돼요</p>
+          <p className="text-sm font-medium text-text-secondary">입출금 자료를 모으는 중이에요</p>
+          <p className="text-xs text-text-disabled">자료가 쌓이면 보여드릴게요</p>
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={180}>

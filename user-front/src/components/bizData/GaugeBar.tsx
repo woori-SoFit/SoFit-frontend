@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
+import { InfoTooltip } from "@/components/common/InfoTooltip";
 
 interface GaugeBarProps {
   label: string;
   percent: number;
   color: string;
+  /** 라벨 옆에 도움말 툴팁을 표시할 때 메시지 전달 */
+  tooltip?: string;
 }
 
-export function GaugeBar({ label, percent, color }: GaugeBarProps) {
+export function GaugeBar({ label, percent, color, tooltip }: GaugeBarProps) {
   const clampedPercent = Math.max(0, Math.min(100, percent));
   const fillPercent = 100 - clampedPercent;
   const [width, setWidth] = useState(0);
@@ -18,9 +21,10 @@ export function GaugeBar({ label, percent, color }: GaugeBarProps) {
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm font-medium text-text-primary w-14 shrink-0">
-        {label}
-      </span>
+      <div className="flex items-center gap-1 w-14 shrink-0">
+        <span className="text-sm font-medium text-text-primary">{label}</span>
+        {tooltip && <InfoTooltip ariaLabel={`${label} 설명`} message={tooltip} />}
+      </div>
       <div className="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden">
         <div
           className={`h-full rounded-full ${color} transition-all duration-700 ease-out`}

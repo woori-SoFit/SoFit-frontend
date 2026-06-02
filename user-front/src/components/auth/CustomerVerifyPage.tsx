@@ -14,12 +14,13 @@
  */
 import { useState, useRef, useCallback } from "react";
 import Lottie from "lottie-react";
-import { CircleCheckBig, ShieldCheck, Lock } from "lucide-react";
+import { ShieldCheck, Lock } from "lucide-react";
 import { PinInput } from "./PinInput";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
 import { BottomButton } from "@/components/common/BottomButton";
 import type { CustomerVerifyData, VerifyResult } from "@/types/auth";
 import documentAnimation from "@/assets/lottie/Document.json";
+import verificationAnimation from "@/assets/lottie/Verification.json";
 
 export type { CustomerVerifyData };
 
@@ -116,8 +117,11 @@ export function CustomerVerifyPage({
           // 성공 → 애니메이션 화면
           setStep("SUCCESS");
           setTimeout(onSuccess, 1500);
+        } else if (result.resetToInfo) {
+          // 인증서 미발견(404) → 에러 메시지 표시 + 정보 재입력 유도 (PIN 화면 유지)
+          setErrorMessage(result.message || "인증서를 찾을 수 없습니다. 정보를 다시 확인해주세요.");
         } else {
-          // 실패 → 서버 메시지 표시
+          // PIN 불일치(400) → 에러 메시지 표시, PIN 재입력
           setErrorMessage(result.message || "PIN이 일치하지 않습니다. 다시 입력해 주세요.");
         }
       } catch {
@@ -132,9 +136,9 @@ export function CustomerVerifyPage({
   // 성공 애니메이션 화면
   if (step === "SUCCESS") {
     return (
-      <div className="flex flex-col items-center justify-center min-h-full px-5 animate-fade-in">
-        <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center mb-5 animate-bounce-once">
-          <CircleCheckBig size={40} className="text-white" />
+      <div className="flex flex-col items-center pt-46 min-h-full px-5 animate-fade-in">
+        <div className="w-32 h-32 mb-5">
+          <Lottie animationData={verificationAnimation} loop={false} className="w-full h-full" />
         </div>
 
         <h2 className="text-xl font-bold text-text-primary text-center">
@@ -147,11 +151,27 @@ export function CustomerVerifyPage({
   // PIN 입력 화면
   if (step === "PIN") {
     return (
-      <PinInput
-        onSubmit={handlePinSubmit}
-        isLoading={isLoading}
-        errorMessage={errorMessage}
-      />
+      <div className="flex flex-col h-full overflow-hidden">
+        <div className="flex-1 min-h-0">
+          <PinInput
+            onSubmit={handlePinSubmit}
+            isLoading={isLoading}
+            errorMessage={errorMessage}
+          />
+        </div>
+        <div className="px-5 pb-6 shrink-0">
+          <button
+            type="button"
+            onClick={() => {
+              setStep("INFO");
+              setErrorMessage("");
+            }}
+            className="w-full h-12 rounded-lg border border-border-default text-sm font-semibold text-text-primary hover:bg-gray-50 transition-colors"
+          >
+            정보 다시 입력하기
+          </button>
+        </div>
+      </div>
     );
   }
 

@@ -25,7 +25,7 @@ import iconCalculator from "@/assets/icons/menu-calculator.svg";
 const MENU_ITEMS = [
   {
     id: "loan-list",
-    label: "대출 목록",
+    label: "대출 상품",
     to: "/loan",
     icon: iconLoanList,
   },
@@ -79,7 +79,7 @@ export default function HomePage() {
         >
           <div>
             <p className="text-base font-bold text-[--color-text-primary]">
-              대출진행관리
+              나의 대출 현황
             </p>
             <p className="mt-0.5 text-sm text-[--color-text-secondary]">
               신청중인 대출 바로 확인하기

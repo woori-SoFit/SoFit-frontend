@@ -88,7 +88,7 @@ export default function CredentialsStep() {
   };
 
   const inputClass =
-    "w-full h-10 px-3 border border-border-default bg-white rounded-lg text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-primary";
+    "w-full h-11 px-3 border border-border-default bg-white rounded-lg text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-primary";
 
   return (
     <div className="flex flex-col flex-1" data-testid="credentials-step">
@@ -122,7 +122,7 @@ export default function CredentialsStep() {
               type="button"
               onClick={handleCheckId}
               disabled={isCheckButtonDisabled}
-              className="h-10 px-3 rounded-lg text-xs font-medium whitespace-nowrap transition-colors bg-primary text-white hover:bg-primary-dark active:bg-primary-dark cursor-pointer disabled:bg-bg-muted disabled:text-text-disabled disabled:cursor-not-allowed"
+              className="h-11 px-3 rounded-lg text-xs font-medium whitespace-nowrap transition-colors bg-primary text-white hover:bg-primary-dark active:bg-primary-dark cursor-pointer disabled:bg-bg-muted disabled:text-text-disabled disabled:cursor-not-allowed"
             >
               중복확인
             </button>

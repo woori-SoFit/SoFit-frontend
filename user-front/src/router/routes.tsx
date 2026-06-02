@@ -76,7 +76,8 @@ export const router = createBrowserRouter([
       { path: "/loan", element: <LoanListPage /> },
       { path: "/loan/:productId", element: <LoanDetailPage /> },
 
-      // My Biz Data 수집
+      // My Biz Data 대시보드 + 수집
+      { path: "/biz-data", element: <BizDataPage /> },
       { path: "/biz-data/collect", element: <BizDataCollectPage /> },
 
       // 대출 약정 (약관 동의 → PIN → 계좌 설정)
@@ -111,9 +112,6 @@ export const router = createBrowserRouter([
     children: [
       // 홈
       { path: "/", element: <HomePage /> },
-
-      // My Biz Data 대시보드
-      { path: "/biz-data", element: <BizDataPage /> },
 
       // 사전계산기
       { path: "/calculate", element: <CalculatePage />},

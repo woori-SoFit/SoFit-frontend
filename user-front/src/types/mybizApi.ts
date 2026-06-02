@@ -30,8 +30,6 @@ export interface MyBizDashboardResult {
   ratingTrend: Array<{ referenceMonth: string; reviewRating: number }>;
   reviewRating: number;
   reviewCount: number;
-  onlineReorderRate: number;
-  deliveryOrderCount: number;
   availableMonths: string[];
 }
 

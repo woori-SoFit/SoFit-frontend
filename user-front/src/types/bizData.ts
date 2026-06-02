@@ -76,10 +76,6 @@ export interface BizDashboardData {
       rating: number;
     }>;
   };
-  customerRatio: {
-    repurchaseRate: number;
-    recommendCount: number;
-  };
 }
 
 /** 데이터 수집 단계 아이템 */

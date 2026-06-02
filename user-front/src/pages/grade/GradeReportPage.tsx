@@ -73,6 +73,7 @@ export default function GradeReportPage() {
   }, [isLoggedIn, navigate, nextStep]);
 
   /** BIZ_CHECK 스텝에서 "불러오기" 클릭 시 마이비즈 연동 여부 확인 후 S등급 조회 */
+  /** BIZ_CHECK 스텝에서 "불러오기" 클릭 시 마이비즈 연동 여부 확인 */
   const handleBizCheck = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -82,6 +83,8 @@ export default function GradeReportPage() {
         const result = await fetchGradeResult();
         setGradeResult(result);
         setStep("RESULT");
+        // 마이비즈 연동 완료 → LOADING 스텝으로 이동
+        setStep("LOADING");
       } else {
         // 마이비즈 미연동 → bizData IntroSection 페이지로 이동
         navigate("/biz-data", {

@@ -22,6 +22,10 @@ export default defineConfig(({ mode }) => {
           target: env.VITE_DEV_API_PROXY_TARGET,
           changeOrigin: true,
         },
+        "/terms": {
+          target: env.VITE_DEV_API_PROXY_TARGET,
+          changeOrigin: true,
+        },
       },
     },
 
