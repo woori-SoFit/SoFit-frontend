@@ -274,7 +274,7 @@ export default function ConditionComparisonCard({
             {[...decisions].reverse().map((decision, idx) => {
               const isApproved = decision.status === 'APPROVED';
               const isRejected = decision.status === 'REJECTED';
-              const isHold = decision.status === 'SYSTEM_HOLD';
+              const isHold = decision.status === 'SYSTEM_REJECTED';
 
               const dotColor = isApproved || decision.status === 'SYSTEM_APPROVED'
                 ? 'bg-success'
@@ -287,14 +287,14 @@ export default function ConditionComparisonCard({
               const roleLabel =
                 decision.reviewerRole === 'SYSTEM'
                   ? '시스템'
-                  : decision.reviewerRole === 'BANK_TELLER'
+                  : decision.reviewerRole === 'ADMIN_BANK_TELLER'
                     ? '은행원'
                     : '지점장';
 
               const statusLabel =
                 decision.status === 'SYSTEM_APPROVED'
                   ? '자동 승인'
-                  : decision.status === 'SYSTEM_HOLD'
+                  : decision.status === 'SYSTEM_REJECTED'
                     ? '자동 보류'
                     : isApproved
                       ? '승인'

@@ -9,39 +9,74 @@ interface DashboardDetailProps {
 }
 
 function StarRating({ rating }: { rating: number }) {
-  const full = Math.floor(rating);
-  const half = rating - full >= 0.5;
+  const clamped = Math.max(0, Math.min(5, rating));
+
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-0.5" aria-label={`평점 ${clamped} / 5`}>
       {Array.from({ length: 5 }).map((_, i) => {
-        const filled = i < full || (i === full && half);
-        return (
-          <svg key={i} width="16" height="16" viewBox="0 0 24 24"
-            fill={filled ? "currentColor" : "none"}
-            stroke="currentColor" strokeWidth="2"
-            strokeLinecap="round" strokeLinejoin="round"
-            className="text-warning"
-          >
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
-        );
+        // i번째 별의 채움 비율 (0~1) — 4.3이면 [1, 1, 1, 1, 0.3]
+        const fill = Math.max(0, Math.min(1, clamped - i));
+        return <SingleStar key={i} fillRatio={fill} />;
       })}
     </div>
   );
 }
 
+function StarShape({ filled }: { filled: boolean }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="text-warning shrink-0 block"
+    >
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
+function SingleStar({ fillRatio }: { fillRatio: number }) {
+  return (
+    <div className="relative" style={{ width: 16, height: 16 }}>
+      {/* 빈 별 (배경) */}
+      <StarShape filled={false} />
+      {/* 채워진 별 — 비율만큼 좌측 클립 */}
+      {fillRatio > 0 && (
+        <div
+          className="absolute top-0 left-0 h-full overflow-hidden pointer-events-none"
+          style={{ width: `${fillRatio * 100}%` }}
+        >
+          <StarShape filled />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function DashboardDetail({ data }: DashboardDetailProps) {
+  const hasRevenueTrend = data.revenueTrend.length > 0;
+  const hasTransactionFlow = data.transactionFlow.length > 0;
+
   return (
     <section className="px-5 pb-8 flex flex-col gap-5">
-      {/* 월별 매출 추이 */}
-      <div className="bg-bg-surface rounded-xl shadow-card p-4">
-        <RevenueLineChart data={data.revenueTrend} />
-      </div>
+      {/* 월별 매출 — 자료가 없으면 박스 자체 숨김 */}
+      {hasRevenueTrend && (
+        <div className="bg-bg-surface rounded-xl shadow-card p-4">
+          <RevenueLineChart data={data.revenueTrend} />
+        </div>
+      )}
 
-      {/* 계좌 입출금 흐름 */}
-      <div className="bg-bg-surface rounded-xl shadow-card p-4">
-        <TransactionBarChart data={data.transactionFlow} />
-      </div>
+      {/* 계좌 입출금 — 자료가 없으면 박스 자체 숨김 */}
+      {hasTransactionFlow && (
+        <div className="bg-bg-surface rounded-xl shadow-card p-4">
+          <TransactionBarChart data={data.transactionFlow} />
+        </div>
+      )}
 
       {/* 대출 현황 — 2열 */}
       <div className="bg-bg-surface rounded-xl shadow-card p-4">
@@ -58,7 +93,7 @@ export function DashboardDetail({ data }: DashboardDetailProps) {
         </div>
       </div>
 
-      {/* 리뷰/평점 현황 + 리뷰 추이 — 나란히 */}
+      {/* 리뷰/평점 현황 + 평점 추이 — 나란히 */}
       <div className="bg-bg-surface rounded-xl shadow-card p-4">
         <div className="flex gap-4">
           {/* 왼쪽: 평점 정보 */}
@@ -77,25 +112,11 @@ export function DashboardDetail({ data }: DashboardDetailProps) {
 
           {/* 오른쪽: 평점 추이 차트 */}
           <div className="flex-1 flex flex-col">
-            <h3 className="text-sm font-semibold text-text-primary mb-2">리뷰 추이</h3>
+            <h3 className="text-sm font-semibold text-text-primary mb-2">평점 추이</h3>
             <div className="flex-1">
               <RatingLineChart data={data.review.ratingTrend} />
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* 재구매율 + 주문 건수 */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-bg-surface rounded-xl shadow-card p-4">
-          <p className="text-xs text-text-secondary mb-1">재구매율(추정)</p>
-          <p className="text-lg font-bold text-text-primary">{data.customerRatio.repurchaseRate}%</p>
-        </div>
-        <div className="bg-bg-surface rounded-xl shadow-card p-4">
-          <p className="text-xs text-text-secondary mb-1">추천 건수(추정)</p>
-          <p className="text-lg font-bold text-text-primary">
-            {formatCurrency(data.customerRatio.recommendCount)}건
-          </p>
         </div>
       </div>
     </section>
