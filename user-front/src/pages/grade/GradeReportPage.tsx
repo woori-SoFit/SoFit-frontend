@@ -64,10 +64,12 @@ export default function GradeReportPage() {
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("성장 S등급 분석 리포트");
 
-    // 커스텀 뒤로가기: 첫 step이면 실제 뒤로가기, 아니면 이전 step
+    // 커스텀 뒤로가기: RESULT이면 홈으로, INTRO이면 실제 뒤로가기, 그 외는 이전 step
     useLayoutStore.getState().setOnBack(() => {
       const current = useGradeReportStore.getState().currentStep;
-      if (current === "INTRO") {
+      if (current === "RESULT") {
+        navigate("/");
+      } else if (current === "INTRO") {
         navigate(-1);
       } else {
         useGradeReportStore.getState().prevStep();
