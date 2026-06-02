@@ -215,10 +215,10 @@ export interface ReviewTabData {
 /** 승인 요청 페이로드 */
 export interface ApprovalPayload {
   approvedAmount: number;
-  interestRate: number;
-  loanTermMonths: number;
+  approvedRate: number;
+  approvedTerm: number;
   repaymentMethod: RepaymentMethod;
-  comment?: string;
+  comment: string;
 }
 
 /** 거절 요청 페이로드 */
@@ -226,9 +226,11 @@ export interface RejectionPayload {
   comment: string;
 }
 
-/** 추가 결재 요청 페이로드 */
-export interface EscalationPayload {
-  comment: string;
+/** 심사 결정 API 응답 */
+export interface ReviewDecisionResponse {
+  decisionId: number;
+  applicationId: number;
+  decision: 'APPROVED' | 'REJECTED';
 }
 
 /** 지점장 결재 목록 항목 */

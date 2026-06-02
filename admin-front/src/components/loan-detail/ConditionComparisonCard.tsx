@@ -287,7 +287,7 @@ export default function ConditionComparisonCard({
               const roleLabel =
                 decision.reviewerRole === 'SYSTEM'
                   ? '시스템'
-                  : decision.reviewerRole === 'BANK_TELLER'
+                  : decision.reviewerRole === 'ADMIN_BANK_TELLER'
                     ? '은행원'
                     : '지점장';
 
