@@ -7,7 +7,6 @@ export {
   fetchReviewTabData,
   approveLoan,
   rejectLoan,
-  requestEscalation,
   fetchManagerApprovals,
 } from './loanDetailApi';
 export { fetchServerHealth } from './serverHealthApi';

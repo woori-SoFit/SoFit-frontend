@@ -7,15 +7,9 @@ import type {
   ReviewTabData,
   ApprovalPayload,
   RejectionPayload,
-  EscalationPayload,
+  ReviewDecisionResponse,
   ManagerApprovalItem,
 } from '@/types';
-import {
-  getMockManagerApprovals,
-  mockApproveLoan,
-  mockRejectLoan,
-  mockEscalateLoan,
-} from '@/mocks/loanDetailMock';
 
 // ─── 조회 API ───────────────────────────────────────────────────
 
@@ -76,10 +70,13 @@ export async function fetchReviewTabData(id: number): Promise<ReviewTabData> {
 
 /**
  * 지점장 결재 대기 목록을 조회합니다.
- * 향후 실제 API 연동 시 axiosInstance.get('/api/admin/loan-applications/manager-approvals')로 교체합니다.
+ * GET /api/admin/manager/loan-applications
  */
 export async function fetchManagerApprovals(): Promise<ManagerApprovalItem[]> {
-  return Promise.resolve(getMockManagerApprovals());
+  const { data } = await axiosInstance.get<{ applications: ManagerApprovalItem[] }>(
+    '/api/admin/manager/loan-applications'
+  );
+  return data.applications ?? [];
 }
 
 // ─── 심사 처리 API (은행원/지점장 공용) ─────────────────────────────
@@ -87,31 +84,25 @@ export async function fetchManagerApprovals(): Promise<ManagerApprovalItem[]> {
 /**
  * 대출 승인 처리를 요청합니다. (은행원/지점장 공용)
  * BE에서 세션 역할 + 건 상태로 내부 분기합니다.
- * 향후 실제 API 연동 시 axiosInstance.post(`/api/admin/loan-applications/${id}/approve`, payload)로 교체합니다.
+ * POST /api/admin/loan-applications/{id}/approve
  */
-export async function approveLoan(id: number, payload: ApprovalPayload): Promise<void> {
-  if (import.meta.env.DEV) console.log(`[Mock] approveLoan id=${id}`, payload);
-  mockApproveLoan(id, payload);
-  return Promise.resolve();
+export async function approveLoan(id: number, payload: ApprovalPayload): Promise<ReviewDecisionResponse> {
+  const { data } = await axiosInstance.post<ReviewDecisionResponse>(
+    `/api/admin/loan-applications/${id}/approve`,
+    payload
+  );
+  return data;
 }
 
 /**
  * 대출 거절 처리를 요청합니다. (은행원/지점장 공용)
  * BE에서 세션 역할 + 건 상태로 내부 분기합니다.
- * 향후 실제 API 연동 시 axiosInstance.post(`/api/admin/loan-applications/${id}/reject`, payload)로 교체합니다.
+ * POST /api/admin/loan-applications/{id}/reject
  */
-export async function rejectLoan(id: number, payload: RejectionPayload): Promise<void> {
-  if (import.meta.env.DEV) console.log(`[Mock] rejectLoan id=${id}`, payload);
-  mockRejectLoan(id, payload);
-  return Promise.resolve();
-}
-
-/**
- * 추가 결재 요청을 전송합니다.
- * 향후 실제 API 연동 시 axiosInstance.post(`/api/admin/loan-applications/${id}/escalate`, payload)로 교체합니다.
- */
-export async function requestEscalation(id: number, payload: EscalationPayload): Promise<void> {
-  if (import.meta.env.DEV) console.log(`[Mock] requestEscalation id=${id}`, payload);
-  mockEscalateLoan(id, payload);
-  return Promise.resolve();
+export async function rejectLoan(id: number, payload: RejectionPayload): Promise<ReviewDecisionResponse> {
+  const { data } = await axiosInstance.post<ReviewDecisionResponse>(
+    `/api/admin/loan-applications/${id}/reject`,
+    payload
+  );
+  return data;
 }
