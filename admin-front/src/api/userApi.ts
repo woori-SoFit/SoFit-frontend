@@ -2,9 +2,10 @@ import axiosInstance from './axiosInstance';
 import type {
   UserListParams,
   PaginatedUserResponse,
-  PaginatedUserRawResponse,
+  UserListItemRaw,
   UserStatistics,
 } from '@/types/user';
+import type { PaginatedResponse } from '@/types/common';
 
 /**
  * 사용자 목록을 페이징으로 조회합니다.
@@ -13,7 +14,7 @@ import type {
 export async function fetchUsers(
   params: UserListParams,
 ): Promise<PaginatedUserResponse> {
-  const { data } = await axiosInstance.get<PaginatedUserRawResponse>(
+  const { data } = await axiosInstance.get<PaginatedResponse<UserListItemRaw>>(
     '/api/admin/users',
     { params }
   );

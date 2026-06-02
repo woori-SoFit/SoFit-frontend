@@ -65,12 +65,3 @@ export interface UserListItemRaw {
   phoneNumber: string;
   createdAt: string;
 }
-
-/** GET /api/admin/users 페이징 응답 원본 */
-export interface PaginatedUserRawResponse {
-  contents: UserListItemRaw[];
-  totalCount: number;
-  totalPages: number;
-  currentPage: number;
-  size: number;
-}
