@@ -3,7 +3,9 @@ export { loginAdmin, fetchAuthMe } from './authApi';
 export { fetchLoanApplications } from './loanApi';
 export {
   fetchLoanSummary,
-  fetchInfoTab,
+  fetchLoanDetail,
+  fetchShapResult,
+  fetchRecommendation,
   fetchReviewTabData,
   approveLoan,
   rejectLoan,

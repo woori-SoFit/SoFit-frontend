@@ -10,7 +10,7 @@ export type LoanApplicationStatus =
   | "S_CALCULATING"
   | "S_COMPLETED"
   | "SYSTEM_APPROVED"
-  | "SYSTEM_REJECTED"
+  | "SYSTEM_HOLD"
   | "MANAGER_REVIEW"
   | "FINAL_REVIEW"
   | "APPROVED"

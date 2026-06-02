@@ -1,9 +1,8 @@
-import axiosInstance from './axiosInstance';
 import type {
-  LoanInfoTabResponse,
+  LoanDetailData,
   LoanSummary,
-  MyBizData,
-  SGradeTabResponse,
+  ShapResult,
+  RecommendationData,
   ReviewTabData,
   ApprovalPayload,
   RejectionPayload,
@@ -11,7 +10,12 @@ import type {
   ManagerApprovalItem,
 } from '@/types';
 import {
+  getMockLoanDetail,
+  getMockShapResult,
+  getMockRecommendation,
+  getMockReviewTabData,
   getMockManagerApprovals,
+  getMockLoanSummary,
   mockApproveLoan,
   mockRejectLoan,
   mockEscalateLoan,
@@ -21,57 +25,43 @@ import {
 
 /**
  * 대출 신청 공통 정보(헤더용)를 조회합니다.
- * GET /api/admin/loan-applications/{id}
+ * 향후 실제 API 연동 시 axiosInstance.get(`/api/admin/loan-applications/${id}`)로 교체합니다.
  */
-export async function fetchLoanSummary(id: number): Promise<LoanSummary> {
-  const { data } = await axiosInstance.get<LoanSummary>(
-    `/api/admin/loan-applications/${id}`
-  );
-  return data;
+export async function fetchLoanSummary(id: number): Promise<LoanSummary | undefined> {
+  return Promise.resolve(getMockLoanSummary(id));
 }
 
 /**
- * 정보 탭 데이터를 조회합니다.
- * GET /api/admin/loan-applications/{id}/info
+ * 대출 신청 상세 데이터를 조회합니다.
+ * 향후 실제 API 연동 시 axiosInstance.get(`/api/admin/loan-applications/${id}/info`)로 교체합니다.
  */
-export async function fetchInfoTab(id: number): Promise<LoanInfoTabResponse> {
-  const { data } = await axiosInstance.get<LoanInfoTabResponse>(
-    `/api/admin/loan-applications/${id}/info`
-  );
-  return data;
+export async function fetchLoanDetail(id: number): Promise<LoanDetailData | undefined> {
+  return Promise.resolve(getMockLoanDetail(id));
 }
 
 /**
- * My Biz Data 탭 데이터를 조회합니다.
- * GET /api/admin/loan-applications/{id}/mybiz-data
+ * SHAP 분석 결과를 조회합니다.
+ * 향후 실제 API 연동 시 axiosInstance.get(`/api/admin/loan-applications/${id}?section=sgrade`)로 교체합니다.
  */
-export async function fetchMyBizData(id: number): Promise<MyBizData> {
-  const { data } = await axiosInstance.get<MyBizData>(
-    `/api/admin/loan-applications/${id}/mybiz-data`
-  );
-  return data;
+export async function fetchShapResult(id: number): Promise<ShapResult | undefined> {
+  return Promise.resolve(getMockShapResult(id));
 }
 
 /**
- * S등급 분석 탭 데이터를 조회합니다.
- * GET /api/admin/loan-applications/{id}/grade
+ * 시스템 추천값(승인 금액, 금리, 기간, 상환 방식)을 조회합니다.
+ * 향후 실제 API 연동 시 axiosInstance.get(`/api/admin/loan-applications/${id}/recommendation`)로 교체합니다.
  */
-export async function fetchSGradeTab(id: number): Promise<SGradeTabResponse> {
-  const { data } = await axiosInstance.get<SGradeTabResponse>(
-    `/api/admin/loan-applications/${id}/grade`
-  );
-  return data;
+export async function fetchRecommendation(id: number): Promise<RecommendationData> {
+  return Promise.resolve(getMockRecommendation(id));
 }
 
 /**
  * 심사 결과 탭 전용 데이터를 조회합니다.
- * GET /api/admin/loan-applications/{id}/review
+ * productInfo + applicationInfo + recommendation + decision 을 포함합니다.
+ * 향후 실제 API 연동 시 axiosInstance.get(`/api/admin/loan-applications/${id}/review`)로 교체합니다.
  */
-export async function fetchReviewTabData(id: number): Promise<ReviewTabData> {
-  const { data } = await axiosInstance.get<ReviewTabData>(
-    `/api/admin/loan-applications/${id}/review`
-  );
-  return data;
+export async function fetchReviewTabData(id: number): Promise<ReviewTabData | undefined> {
+  return Promise.resolve(getMockReviewTabData(id));
 }
 
 /**

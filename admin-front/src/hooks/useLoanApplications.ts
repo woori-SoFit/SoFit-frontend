@@ -24,12 +24,12 @@ export interface UseLoanApplicationsReturn {
 /**
  * UI 필터 값을 API 요청 파라미터로 변환합니다.
  * - 'ALL': status 미지정 (전체 조회)
- * - 'PENDING': SYSTEM_APPROVED + SYSTEM_REJECTED (심사 대기 건)
+ * - 'PENDING': SYSTEM_APPROVED + SYSTEM_HOLD (심사 대기 건)
  * - 그 외: 해당 상태 단건 필터
  */
 function resolveStatusFilter(statusFilter: StatusFilterValue): ReviewStatus | ReviewStatus[] | undefined {
   if (statusFilter === 'ALL') return undefined;
-  if (statusFilter === 'PENDING') return ['SYSTEM_APPROVED', 'SYSTEM_REJECTED'];
+  if (statusFilter === 'PENDING') return ['SYSTEM_APPROVED', 'SYSTEM_HOLD'];
   return statusFilter;
 }
 

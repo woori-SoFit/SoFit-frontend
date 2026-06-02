@@ -11,10 +11,10 @@ import type { ReviewTabData } from '@/types';
  * @param enabled 쿼리 활성화 여부 (심사 결과 탭 활성 시에만 true)
  */
 export function useReviewTab(id: number, enabled: boolean) {
-  const { data, isLoading, isError, error, refetch } = useQuery<ReviewTabData, Error>({
+  const { data, isLoading, isError, error, refetch } = useQuery<ReviewTabData | undefined, Error>({
     queryKey: LOAN_KEYS.reviewTab(id),
     queryFn: () => fetchReviewTabData(id),
-    enabled: id > 0 && enabled,
+    enabled,
     staleTime: 30_000,
   });
 

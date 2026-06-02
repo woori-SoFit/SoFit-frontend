@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { LOAN_KEYS } from '@/constants/queryKeys';
-import { fetchInfoTab } from '@/api/loanDetailApi';
-import type { LoanInfoTabResponse } from '@/types';
+import { fetchLoanDetail } from '@/api/loanDetailApi';
+import type { LoanDetailData } from '@/types';
 
-export interface UseInfoTabReturn {
-  data: LoanInfoTabResponse | undefined;
+export interface UseLoanDetailReturn {
+  data: LoanDetailData | undefined;
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
@@ -12,17 +12,15 @@ export interface UseInfoTabReturn {
 }
 
 /**
- * 정보 탭 데이터를 조회하는 커스텀 훅.
- * GET /api/admin/loan-applications/{id}/info
+ * 대출 신청 상세 데이터를 조회하는 커스텀 훅.
  * - staleTime 30초
  * - 404 응답 시 retry 하지 않음, 그 외 오류는 최대 3회 retry
  */
-export function useInfoTab(id: number): UseInfoTabReturn {
-  const { data, isLoading, isError, error, refetch } = useQuery<LoanInfoTabResponse, Error>({
+export function useLoanDetail(id: number): UseLoanDetailReturn {
+  const { data, isLoading, isError, error, refetch } = useQuery<LoanDetailData | undefined, Error>({
     queryKey: LOAN_KEYS.detail(id),
-    queryFn: () => fetchInfoTab(id),
+    queryFn: () => fetchLoanDetail(id),
     staleTime: 30_000,
-    enabled: id > 0,
     retry: (failureCount, err) => {
       // 404 응답 시 retry 하지 않음
       if (
