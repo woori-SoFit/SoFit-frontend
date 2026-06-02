@@ -2,9 +2,11 @@ import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthMe } from '@/hooks/useAuthMe';
 import { useLoanSummary } from '@/hooks/useLoanSummary';
-import { useLoanDetail } from '@/hooks/useLoanDetail';
+import { useInfoTab } from '@/hooks/useInfoTab';
 import { useLoanMutations } from '@/hooks/useLoanMutations';
 import { useReviewTab } from '@/hooks/useReviewTab';
+import { useMyBizData } from '@/hooks/useMyBizData';
+import { useSGradeTab } from '@/hooks/useSGradeTab';
 import { formatDate } from '@/utils/formatters';
 import StatusBadge from '@/components/common/StatusBadge';
 import LoadingState from '@/components/common/LoadingState';
@@ -47,7 +49,7 @@ export default function LoanDetailPage() {
   const [pendingAction, setPendingAction] = useState<'approve' | 'reject' | 'escalate' | null>(null);
   const [comment, setComment] = useState('');
 
-  const { data, isLoading, isError, refetch } = useLoanDetail(loanId ?? 0);
+  const { data: infoTab, isLoading, isError, refetch } = useInfoTab(loanId ?? 0);
   const { data: summary } = useLoanSummary(loanId ?? 0);
   const mutations = useLoanMutations(loanId ?? 0);
 
@@ -55,6 +57,18 @@ export default function LoanDetailPage() {
   const { data: reviewTab, isLoading: isReviewTabLoading } = useReviewTab(
     loanId ?? 0,
     activeTab === 'review',
+  );
+
+  // MY BIZ DATA 탭 전용 데이터 (탭이 mybizdata일 때 조회)
+  const { data: myBizData, isLoading: isMyBizDataLoading } = useMyBizData(
+    loanId ?? 0,
+    activeTab === 'mybizdata',
+  );
+
+  // S등급 분석 탭 전용 데이터 (탭이 sgrade일 때 조회)
+  const { data: sGradeTab, isLoading: isSGradeTabLoading } = useSGradeTab(
+    loanId ?? 0,
+    activeTab === 'sgrade',
   );
 
   if (loanId === null) {
@@ -74,7 +88,7 @@ export default function LoanDetailPage() {
     return <ErrorState onRetry={() => refetch()} />;
   }
 
-  if (!data) {
+  if (!infoTab) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
         <p className="mb-4 text-lg font-medium text-text-primary">해당 대출 신청 건을 찾을 수 없습니다.</p>
@@ -84,9 +98,9 @@ export default function LoanDetailPage() {
   }
 
   const userRole = authUser?.role;
-  const status = summary?.status ?? data?.reviewStatus;
+  const status = summary?.status ?? 'SUBMITTED';
 
-  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && (status === 'SYSTEM_APPROVED' || status === 'SYSTEM_HOLD');
+  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && (status === 'SYSTEM_APPROVED' || status === 'SYSTEM_REJECTED');
   const canManagerAct = userRole === 'ADMIN_BANK_MANAGER' && status === 'MANAGER_REVIEW';
 
   const showApproveReject = canTellerAct || canManagerAct;
@@ -194,16 +208,16 @@ export default function LoanDetailPage() {
       {activeTab === 'info' && (
         <div className="grid grid-cols-2 gap-4">
           {/* 1행: 고객 기본 정보 | 사업자 정보 */}
-          <CustomerInfoCard data={data.customerInfo} />
-          <BusinessInfoCard data={data.businessInfo} />
+          <CustomerInfoCard data={infoTab.applicantInfo} />
+          <BusinessInfoCard data={infoTab.businessInfo} />
 
           {/* 2행: 고객 신청 정보 (2열 전체) */}
           <div className="col-span-2">
             <ApplicationRequestCard
-              applicationInfo={data.applicationInfo}
-              userInputInfo={data.userInputInfo}
-              productInfo={data.productInfo}
-              consentHistories={data.consentHistories}
+              applicationInfo={infoTab.applicationInfo}
+              userInputInfo={infoTab.userInputInfo}
+              productName={summary?.productName}
+              consentHistories={infoTab.consentHistories}
             />
           </div>
         </div>
@@ -211,38 +225,51 @@ export default function LoanDetailPage() {
 
       {/* ─── MY BIZ DATA 탭 ─── */}
       {activeTab === 'mybizdata' && (
-        <MyBizDataCard data={data.myBizData} />
+        isMyBizDataLoading
+          ? <LoadingState />
+          : <MyBizDataCard data={myBizData} />
       )}
 
       {/* ─── S등급 분석 탭 ─── */}
       {activeTab === 'sgrade' && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <CBScoreCard score={data.cbScore} />
-            <SGradeCard grade={data.sGrade} />
-            <SCBScoreCard
-              scbScore={data.scbScore}
-              cbScore={data.cbScore}
-              bonusPoints={data.bonusPoints}
-              sGrade={data.sGrade}
-            />
-          </div>
-          <ShapExplanation loanId={loanId} />
-        </div>
+        isSGradeTabLoading
+          ? <LoadingState />
+          : sGradeTab ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <CBScoreCard score={sGradeTab.cbScore.score} />
+                <SGradeCard grade={sGradeTab.sGrade} />
+                <SCBScoreCard
+                  scbScore={sGradeTab.scbInfo.score}
+                  cbScore={sGradeTab.cbScore.score}
+                  bonusPoints={sGradeTab.scbInfo.bonusPoints}
+                  sGrade={sGradeTab.sGrade}
+                />
+              </div>
+              <ShapExplanation shapResult={sGradeTab.shapResult} />
+            </div>
+          ) : (
+            <div className="py-12 text-center text-sm text-text-secondary">
+              S등급 분석 데이터가 아직 생성되지 않았습니다.
+            </div>
+          )
       )}
 
       {/* ─── 심사 결과 탭 ─── */}
       {activeTab === 'review' && (
         <div className="space-y-6">
-          {/* 상품 기준 | 신청 조건 | 승인 결과 3열 비교 + 심사 처리 */}
+          {isReviewTabLoading ? (
+            <LoadingState />
+          ) : reviewTab ? (
+          /* 상품 기준 | 신청 조건 | 승인 결과 3열 비교 + 심사 처리 */
           <ConditionComparisonCard
-            product={reviewTab?.productInfo ?? data.productInfo}
-            applicationInfo={reviewTab?.applicationInfo ?? data.applicationInfo}
-            recommendation={reviewTab?.recommendation}
-            isLoading={isReviewTabLoading}
+            product={reviewTab.productInfo}
+            applicationInfo={reviewTab.applicationInfo}
+            recommendation={reviewTab.recommendation}
+            isLoading={false}
             editable={showApproveReject}
             onConditionChange={setApprovalCondition}
-            decisions={reviewTab?.decisions ?? []}
+            decisions={reviewTab.decisions ?? []}
           >
             {!isDecided && (showApproveReject || showEscalation) && (
               <>
@@ -341,6 +368,11 @@ export default function LoanDetailPage() {
               </>
             )}
           </ConditionComparisonCard>
+          ) : (
+            <div className="py-12 text-center text-sm text-text-secondary">
+              심사 결과 데이터를 불러올 수 없습니다.
+            </div>
+          )}
         </div>
       )}
 
