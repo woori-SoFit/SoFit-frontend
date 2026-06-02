@@ -43,10 +43,6 @@ function mapToFrontendDashboard(res: MyBizDashboardResult): BizDashboardData {
         rating: Number(t.reviewRating),
       })),
     },
-    customerRatio: {
-      repurchaseRate: Number(res.onlineReorderRate),
-      recommendCount: res.deliveryOrderCount,
-    },
   };
 }
 
