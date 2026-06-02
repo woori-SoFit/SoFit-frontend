@@ -1,6 +1,6 @@
 // API 함수 barrel export
 export { loginAdmin, fetchAuthMe } from './authApi';
-export { fetchLoanApplications } from './loanApi';
+export { fetchLoanApplications, fetchLoanStatusCounts } from './loanApi';
 export {
   fetchLoanSummary,
   fetchInfoTab,
