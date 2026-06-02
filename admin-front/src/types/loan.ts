@@ -7,7 +7,7 @@ import type { PaginatedResponse } from './common';
 export type ReviewStatus = 
   'SUBMITTED' |
   'SYSTEM_APPROVED' |
-  'SYSTEM_HOLD' | 
+  'SYSTEM_REJECTED' | 
   'MANAGER_REVIEW' | 
   'APPROVED' | 
   'REJECTED';

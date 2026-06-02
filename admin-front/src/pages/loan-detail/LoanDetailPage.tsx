@@ -100,7 +100,7 @@ export default function LoanDetailPage() {
   const userRole = authUser?.role;
   const status = summary?.status ?? 'SUBMITTED';
 
-  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && (status === 'SYSTEM_APPROVED' || status === 'SYSTEM_HOLD');
+  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && (status === 'SYSTEM_APPROVED' || status === 'SYSTEM_REJECTED');
   const canManagerAct = userRole === 'ADMIN_BANK_MANAGER' && status === 'MANAGER_REVIEW';
 
   const showApproveReject = canTellerAct || canManagerAct;

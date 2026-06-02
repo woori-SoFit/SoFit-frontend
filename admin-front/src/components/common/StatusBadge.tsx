@@ -5,8 +5,9 @@ interface StatusBadgeProps {
 }
 
 export const STATUS_CONFIG: Record<ReviewStatus, { label: string; className: string }> = {
+  SUBMITTED: { label: '접수 완료', className: 'bg-text-secondary/10 text-text-secondary' },
   SYSTEM_APPROVED: { label: '심사 대기', className: 'bg-warning/10 text-warning' },
-  SYSTEM_HOLD: { label: '심사 대기', className: 'bg-warning/10 text-warning' },
+  SYSTEM_REJECTED: { label: '심사 대기', className: 'bg-warning/10 text-warning' },
   MANAGER_REVIEW: { label: '추가 심사 중', className: 'bg-info/10 text-info' },
   APPROVED: { label: '승인 완료', className: 'bg-success/10 text-success' },
   REJECTED: { label: '거절 완료', className: 'bg-error/10 text-error' },
