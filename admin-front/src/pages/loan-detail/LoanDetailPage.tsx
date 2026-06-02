@@ -112,9 +112,9 @@ export default function LoanDetailPage() {
   };
 
   const handleSubmit = () => {
-    if (!comment.trim() || !pendingAction) return;
+    if (!loanId || !comment.trim() || !pendingAction) return;
 
-    const onSuccess = () => {
+    const onSettled = () => {
       setComment('');
       setPendingAction(null);
     };
@@ -128,10 +128,10 @@ export default function LoanDetailPage() {
         repaymentMethod: approvalCondition.repaymentMethod,
         comment: comment.trim(),
       };
-      mutations.approve.mutate(payload, { onSuccess });
+      mutations.approve.mutate(payload, { onSettled });
     } else if (pendingAction === 'reject') {
       const payload: RejectionPayload = { comment: comment.trim() };
-      mutations.reject.mutate(payload, { onSuccess });
+      mutations.reject.mutate(payload, { onSettled });
     }
   };
 
