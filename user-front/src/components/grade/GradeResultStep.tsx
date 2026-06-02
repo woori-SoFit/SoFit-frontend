@@ -3,25 +3,21 @@
  *
  * 사용자의 S등급 분석 결과를 표시.
  * "상세 리포트 보기" 클릭 시 GradeReportDetailPage로 이동.
- *
- * TODO: API 연동 시 실제 유저 이름, S등급 데이터로 교체
  */
 import { useNavigate } from "react-router-dom";
 import { Sprout } from "lucide-react";
 import { FeatureCard } from "@/components/grade/FeatureCard";
 import { BottomButton } from "@/components/common/BottomButton";
 import { useMe } from "@/hooks/useMe";
-
-// TODO: API 연동 시 실제 데이터로 교체
-const MOCK_DATA = {
-  grade: "S3",
-  gradeDescription: "안정적으로 성장하고 있는\n우수 사업장입니다.",
-  gradeDetail: "지속적인 매출 성장과 안정적인 상권을\n기반으로 신용도가 양호해요.",
-};
+import type { GradeResult } from "@/api/gradeApi";
 
 const ALL_GRADES = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10"];
 
-export function GradeResultStep() {
+interface GradeResultStepProps {
+  gradeResult: GradeResult | null;
+}
+
+export function GradeResultStep({ gradeResult }: GradeResultStepProps) {
   const navigate = useNavigate();
   const { me } = useMe();
   const userName = me?.name ?? "";
@@ -29,6 +25,20 @@ export function GradeResultStep() {
   const handleDetailReport = () => {
     navigate("/grade-report/detail");
   };
+
+  if (!gradeResult) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full px-5">
+        <p className="text-text-secondary text-center">
+          아직 성장 S등급이 산출되지 않았어요.
+        </p>
+      </div>
+    );
+  }
+
+  const grade = gradeResult.sGrade;
+  const gradeDescription = gradeResult.comment;
+  const gradeDetail = gradeResult.commentDetail;
 
   return (
     <div className="flex flex-col h-full">
@@ -57,7 +67,7 @@ export function GradeResultStep() {
 
           {/* 등급 텍스트 — 원 위에 고정 */}
           <span className="absolute text-5xl font-bold text-primary">
-            {MOCK_DATA.grade}
+            {grade}
           </span>
         </div>
 
@@ -67,9 +77,9 @@ export function GradeResultStep() {
 
           {/* 현재 등급 화살표 표시 */}
           <div className="grid grid-cols-10 gap-0.5 mb-1">
-            {ALL_GRADES.map((grade) => (
-              <div key={`arrow-${grade}`} className="flex justify-center">
-                {grade === MOCK_DATA.grade && (
+            {ALL_GRADES.map((g) => (
+              <div key={`arrow-${g}`} className="flex justify-center">
+                {g === grade && (
                   <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
                     <path d="M6 8L0 0H12L6 8Z" fill="#1E293B" />
                   </svg>
@@ -80,16 +90,16 @@ export function GradeResultStep() {
 
           {/* 등급 바 */}
           <div className="grid grid-cols-10 gap-0.5 mb-3">
-            {ALL_GRADES.map((grade) => (
+            {ALL_GRADES.map((g) => (
               <div
-                key={grade}
+                key={g}
                 className={`h-8 flex items-center justify-center rounded text-xs font-medium ${
-                  grade === MOCK_DATA.grade
+                  g === grade
                     ? "bg-primary text-white"
                     : "bg-gray-100 text-text-secondary"
                 }`}
               >
-                {grade}
+                {g}
               </div>
             ))}
           </div>
@@ -109,9 +119,9 @@ export function GradeResultStep() {
               <Sprout size={32} className="text-primary" aria-hidden="true" />
             }
             iconAlt="성장 등급 설명 아이콘"
-            title={MOCK_DATA.gradeDescription}
+            title={gradeDescription}
             titleClassName="text-primary"
-            description={MOCK_DATA.gradeDetail}
+            description={gradeDetail}
           />
         </div>
       </div>
