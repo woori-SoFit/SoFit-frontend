@@ -52,9 +52,12 @@ export function useMarkAsRead(): {
           if (!old) return old;
           return {
             ...old,
-            result: old.result.map((item: NotificationItem) =>
-              item.id === notificationId ? { ...item, isRead: true } : item
-            ),
+            result: {
+              ...old.result,
+              notifications: old.result.notifications.map((item: NotificationItem) =>
+                item.notificationId === notificationId ? { ...item, isRead: true } : item
+              ),
+            },
           };
         }
       );
@@ -99,8 +102,8 @@ export function useMarkAsRead(): {
       // 이미 읽음 상태인지 확인
       const cachedData =
         queryClient.getQueryData<NotificationsResponse>(NOTIFICATION_KEYS.all);
-      const targetNotification = cachedData?.result.find(
-        (item: NotificationItem) => item.id === notificationId
+      const targetNotification = cachedData?.result?.notifications?.find(
+        (item: NotificationItem) => item.notificationId === notificationId
       );
 
       // 이미 읽음 상태이면 API 호출하지 않음

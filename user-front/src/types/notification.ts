@@ -10,10 +10,10 @@ export type NotificationType =
 
 /** 알림 항목 */
 export interface NotificationItem {
-  id: number;
+  notificationId: number;
   type: NotificationType;
   title: string;
-  content: string;
+  message: string;
   createdAt: string;
   isRead: boolean;
   applicationId: number;
@@ -24,5 +24,7 @@ export interface NotificationsResponse {
   isSuccess: boolean;
   code: string;
   message: string;
-  result: NotificationItem[];
+  result: {
+    notifications: NotificationItem[];
+  };
 }

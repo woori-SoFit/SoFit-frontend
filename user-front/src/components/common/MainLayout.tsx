@@ -9,14 +9,8 @@
  */
 import { Outlet } from "react-router-dom";
 import { AppHeader } from "./AppHeader";
-import { useSSE } from "@/hooks/useSSE";
-import { useUnreadCount } from "@/hooks/useUnreadCount";
 
 export function MainLayout() {
-  // SSE 실시간 알림 연결 (로그인 시에만 활성화)
-  useSSE();
-  // 미읽음 알림 개수 초기화
-  useUnreadCount();
 
   return (
     <div className="app-container flex flex-col min-h-screen bg-[--color-bg-base]">

@@ -20,10 +20,12 @@ export function useNotifications(): {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: NOTIFICATION_KEYS.all,
     queryFn: fetchNotifications,
+    structuralSharing: false,
+    staleTime: Infinity,
   });
 
   return {
-    data: data?.result,
+    data: data?.result?.notifications,
     isLoading,
     isError,
     refetch,

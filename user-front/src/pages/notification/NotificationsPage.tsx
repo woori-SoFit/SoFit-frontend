@@ -60,7 +60,7 @@ function NotificationItemRow({
           </span>
         </div>
         <p className="mt-0.5 text-sm text-gray-500 truncate">
-          {notification.content}
+          {notification.message}
         </p>
       </div>
 
@@ -84,7 +84,7 @@ export default function NotificationsPage() {
   const handleClickNotification = (notification: NotificationItemType) => {
     // 미읽음이면 읽음 처리
     if (!notification.isRead) {
-      markAsRead(notification.id);
+      markAsRead(notification.notificationId);
     }
 
     // 알림 타입에 따라 페이지 이동
@@ -137,7 +137,7 @@ export default function NotificationsPage() {
         <div className="divide-y divide-gray-100 px-5">
           {notifications.map((notification) => (
             <NotificationItemRow
-              key={notification.id}
+              key={notification.notificationId}
               notification={notification}
               onClickItem={handleClickNotification}
               isPending={isPending}
