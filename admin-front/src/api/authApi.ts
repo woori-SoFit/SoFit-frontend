@@ -22,4 +22,12 @@ export async function fetchAuthMe(): Promise<AuthMeResponse> {
   return response.data;
 }
 
+/**
+ * 관리자 로그아웃 API (서버 세션 삭제)
+ * POST /api/admin/auth/logout
+ */
+export async function logoutAdmin(): Promise<void> {
+  await axiosInstance.post("/api/admin/auth/logout");
+}
+
 
