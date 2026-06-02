@@ -10,4 +10,4 @@ export {
   fetchManagerApprovals,
 } from './loanDetailApi';
 export { fetchServerHealth } from './serverHealthApi';
-export { fetchUsers, fetchUserStatistics, downloadUsersExcel } from './userApi';
+export { fetchUsers, fetchUserStatistics } from './userApi';
