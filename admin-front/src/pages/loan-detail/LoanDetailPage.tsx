@@ -51,7 +51,12 @@ export default function LoanDetailPage() {
 
   const { data: infoTab, isLoading, isError, refetch } = useInfoTab(loanId ?? 0);
   const { data: summary } = useLoanSummary(loanId ?? 0);
-  const mutations = useLoanMutations(loanId ?? 0);
+  const mutations = useLoanMutations(loanId ?? 0, {
+    onSuccess: () => {
+      setComment('');
+      setPendingAction(null);
+    },
+  });
 
   // 심사 결과 탭 전용 데이터 (탭이 review일 때 조회)
   const { data: reviewTab, isLoading: isReviewTabLoading } = useReviewTab(
@@ -114,11 +119,6 @@ export default function LoanDetailPage() {
   const handleSubmit = () => {
     if (!loanId || !comment.trim() || !pendingAction) return;
 
-    const onSettled = () => {
-      setComment('');
-      setPendingAction(null);
-    };
-
     if (pendingAction === 'approve') {
       if (!approvalCondition) return;
       const payload: ApprovalPayload = {
@@ -128,10 +128,10 @@ export default function LoanDetailPage() {
         repaymentMethod: approvalCondition.repaymentMethod,
         comment: comment.trim(),
       };
-      mutations.approve.mutate(payload, { onSettled });
+      mutations.approve.mutate(payload);
     } else if (pendingAction === 'reject') {
       const payload: RejectionPayload = { comment: comment.trim() };
-      mutations.reject.mutate(payload, { onSettled });
+      mutations.reject.mutate(payload);
     }
   };
 
