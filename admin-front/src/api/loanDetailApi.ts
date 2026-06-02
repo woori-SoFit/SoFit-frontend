@@ -10,9 +10,6 @@ import type {
   ReviewDecisionResponse,
   ManagerApprovalItem,
 } from '@/types';
-import {
-  getMockManagerApprovals,
-} from '@/mocks/loanDetailMock';
 
 // ─── 조회 API ───────────────────────────────────────────────────
 
@@ -73,10 +70,13 @@ export async function fetchReviewTabData(id: number): Promise<ReviewTabData> {
 
 /**
  * 지점장 결재 대기 목록을 조회합니다.
- * 향후 실제 API 연동 시 axiosInstance.get('/api/admin/loan-applications/manager-approvals')로 교체합니다.
+ * GET /api/admin/manager/loan-applications
  */
 export async function fetchManagerApprovals(): Promise<ManagerApprovalItem[]> {
-  return Promise.resolve(getMockManagerApprovals());
+  const { data } = await axiosInstance.get<{ applications: ManagerApprovalItem[] }>(
+    '/api/admin/manager/loan-applications'
+  );
+  return data.applications ?? [];
 }
 
 // ─── 심사 처리 API (은행원/지점장 공용) ─────────────────────────────
