@@ -35,9 +35,13 @@ export const TERMS_KEYS = {
   list: (termType: string) => [...TERMS_KEYS.all, "list", termType] as const,
 } as const;
 
+export const NOTIFICATION_KEYS = {
+  all: ["notifications"] as const,
+  list: () => [...NOTIFICATION_KEYS.all] as const,
+} as const;
+
 export const MYPAGE_KEYS = {
   all: ["mypage"] as const,
   profile: () => [...MYPAGE_KEYS.all, "profile"] as const,
   business: () => [...MYPAGE_KEYS.all, "business"] as const,
-  notifications: () => [...MYPAGE_KEYS.all, "notifications"] as const,
 } as const;

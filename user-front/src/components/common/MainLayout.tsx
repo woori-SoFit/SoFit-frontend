@@ -11,7 +11,6 @@ import { Outlet } from "react-router-dom";
 import { AppHeader } from "./AppHeader";
 
 export function MainLayout() {
-  // TODO: useQuery로 /api/members/me 조회 → 미인증 시 /login 리다이렉트
 
   return (
     <div className="app-container flex flex-col min-h-screen bg-[--color-bg-base]">

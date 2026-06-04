@@ -18,6 +18,18 @@ export default defineConfig(({ mode }) => {
 
     server: {
       proxy: {
+        "/api/notifications/subscribe": {
+          target: env.VITE_DEV_API_PROXY_TARGET,
+          changeOrigin: true,
+          configure: (proxy) => {
+            proxy.on("proxyRes", (proxyRes) => {
+              if (proxyRes.headers) {
+                proxyRes.headers["cache-control"] = "no-cache";
+                proxyRes.headers["x-accel-buffering"] = "no";
+              }
+            });
+          },
+        },
         "/api": {
           target: env.VITE_DEV_API_PROXY_TARGET,
           changeOrigin: true,

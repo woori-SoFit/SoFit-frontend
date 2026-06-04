@@ -8,11 +8,11 @@ import { Link } from "react-router-dom";
 import { useMe } from "@/hooks/useMe";
 import { Bell, ChevronRight, UserCircle } from "lucide-react";
 import mainLogo from "@/assets/mainLogo.svg";
-import { MOCK_NOTIFICATIONS } from "@/mocks/notifications";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 export function AppHeader() {
   const { isLoggedIn } = useMe();
-  const unreadCount = MOCK_NOTIFICATIONS.filter((n) => !n.isRead).length;
+  const unreadCount = useNotificationStore((s) => s.unreadCount);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-bg-base">
