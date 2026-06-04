@@ -4,33 +4,46 @@
  * 사용자의 S등급 분석 결과를 표시.
  * "상세 리포트 보기" 클릭 시 GradeReportDetailPage로 이동.
  */
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sprout } from "lucide-react";
 import { FeatureCard } from "@/components/grade/FeatureCard";
 import { BottomButton } from "@/components/common/BottomButton";
 import { useMe } from "@/hooks/useMe";
+import { fetchGradeDetail } from "@/api/gradeApi";
 import type { GradeResult } from "@/api/gradeApi";
 
 const ALL_GRADES = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10"];
 
 interface GradeResultStepProps {
   gradeResult: GradeResult | null;
+  message?: string;
 }
 
-export function GradeResultStep({ gradeResult }: GradeResultStepProps) {
+export function GradeResultStep({ gradeResult, message }: GradeResultStepProps) {
   const navigate = useNavigate();
   const { me } = useMe();
   const userName = me?.name ?? "";
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleDetailReport = () => {
-    navigate("/grade-report/detail");
+  const handleDetailReport = async () => {
+    setIsLoading(true);
+    try {
+      const detail = await fetchGradeDetail();
+      navigate("/grade-report/detail", { state: { detail } });
+    } catch {
+      // API 실패 시에도 페이지 이동 (데이터 없이)
+      navigate("/grade-report/detail");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!gradeResult) {
     return (
       <div className="flex flex-col items-center justify-center h-full px-5">
         <p className="text-text-secondary text-center">
-          아직 성장 S등급이 산출되지 않았어요.
+          {message || '아직 성장 S등급이 산출되지 않았어요.'}
         </p>
       </div>
     );
@@ -130,6 +143,7 @@ export function GradeResultStep({ gradeResult }: GradeResultStepProps) {
       <BottomButton
         label="상세 리포트 보기"
         onClick={handleDetailReport}
+        disabled={isLoading}
       />
     </div>
   );

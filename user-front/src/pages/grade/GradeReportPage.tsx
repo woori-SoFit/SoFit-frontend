@@ -34,6 +34,12 @@ export default function GradeReportPage() {
   const { isLoggedIn } = useMe();
   const [isLoading, setIsLoading] = useState(false);
   const [gradeResult, setGradeResult] = useState<GradeResult | null>(null);
+  const [gradeMessage, setGradeMessage] = useState<string>('');
+
+  // 페이지 진입 시 항상 INTRO부터 시작 (로그아웃 후 재진입 대비)
+  useEffect(() => {
+    useGradeReportStore.getState().reset();
+  }, []);
 
   // /biz-data/collect 완료 후 돌아왔을 때 LOADING 스텝으로 진입
   useEffect(() => {
@@ -45,13 +51,31 @@ export default function GradeReportPage() {
     }
   }, [location.state, setStep]);
 
+  // RESULT 스텝인데 gradeResult가 없으면 (뒤로가기로 돌아온 경우) API 재조회
+  useEffect(() => {
+    if (currentStep === "RESULT" && !gradeResult) {
+      const refetch = async () => {
+        try {
+          const { result, message } = await fetchGradeResult();
+          setGradeResult(result);
+          setGradeMessage(message);
+        } catch {
+          // 등급 미산출 → gradeResult null 상태로 RESULT 유지 (미산출 안내 표시)
+        }
+      };
+      refetch();
+    }
+  }, [currentStep, gradeResult, setStep]);
+
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("성장 S등급 분석 리포트");
 
-    // 커스텀 뒤로가기: 첫 step이면 실제 뒤로가기, 아니면 이전 step
+    // 커스텀 뒤로가기: RESULT이면 홈으로, INTRO이면 실제 뒤로가기, 그 외는 이전 step
     useLayoutStore.getState().setOnBack(() => {
       const current = useGradeReportStore.getState().currentStep;
-      if (current === "INTRO") {
+      if (current === "RESULT") {
+        navigate("/");
+      } else if (current === "INTRO") {
         navigate(-1);
       } else {
         useGradeReportStore.getState().prevStep();
@@ -73,26 +97,29 @@ export default function GradeReportPage() {
   }, [isLoggedIn, navigate, nextStep]);
 
   /** BIZ_CHECK 스텝에서 "불러오기" 클릭 시 마이비즈 연동 여부 확인 후 S등급 조회 */
-  /** BIZ_CHECK 스텝에서 "불러오기" 클릭 시 마이비즈 연동 여부 확인 */
   const handleBizCheck = useCallback(async () => {
     setIsLoading(true);
     try {
       const isConnected = await checkMyBizConnected();
       if (isConnected) {
-        // 마이비즈 연동 완료 → S등급 결과 조회
-        const result = await fetchGradeResult();
-        setGradeResult(result);
+        // 마이비즈 연동 완료 → S등급 결과 조회 시도
+        try {
+          const { result, message } = await fetchGradeResult();
+          setGradeResult(result);
+          setGradeMessage(message);
+        } catch {
+          // 등급 미산출 → gradeResult null 상태로 RESULT 표시
+          setGradeResult(null);
+        }
         setStep("RESULT");
-        // 마이비즈 연동 완료 → LOADING 스텝으로 이동
-        setStep("LOADING");
       } else {
-        // 마이비즈 미연동 → bizData IntroSection 페이지로 이동
+        // 마이비즈 미연동 → bizData Intro 페이지로 이동
         navigate("/biz-data", {
           state: { returnTo: "/grade-report" },
         });
       }
     } catch {
-      // API 호출 실패 시 안전하게 bizData IntroSection 페이지로 이동
+      // 연동 여부 확인 API 실패 시 bizData Intro 페이지로 이동
       navigate("/biz-data", {
         state: { returnTo: "/grade-report" },
       });
@@ -112,7 +139,7 @@ export default function GradeReportPage() {
       return <GradeLoadingStep onComplete={nextStep} />;
 
     case "RESULT":
-      return <GradeResultStep gradeResult={gradeResult} />;
+      return <GradeResultStep gradeResult={gradeResult} message={gradeMessage} />;
 
     default:
       return null;
