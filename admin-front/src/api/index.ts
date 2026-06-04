@@ -3,13 +3,10 @@ export { loginAdmin, fetchAuthMe } from './authApi';
 export { fetchLoanApplications } from './loanApi';
 export {
   fetchLoanSummary,
-  fetchLoanDetail,
-  fetchShapResult,
-  fetchRecommendation,
+  fetchInfoTab,
   fetchReviewTabData,
   approveLoan,
   rejectLoan,
-  requestEscalation,
   fetchManagerApprovals,
 } from './loanDetailApi';
 export { fetchServerHealth } from './serverHealthApi';

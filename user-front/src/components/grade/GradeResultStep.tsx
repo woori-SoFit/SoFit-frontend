@@ -2,7 +2,7 @@
  * S등급 분석 결과 스텝
  *
  * 사용자의 S등급 분석 결과를 표시.
- * "상세 리포트 보기" 클릭 시 상세 리포트 API 호출 후 GradeReportDetailPage로 이동.
+ * "상세 리포트 보기" 클릭 시 GradeReportDetailPage로 이동.
  */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

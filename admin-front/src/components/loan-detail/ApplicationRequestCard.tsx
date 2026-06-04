@@ -1,4 +1,4 @@
-import type { ApplicationInfo, UserInputInfo, LoanProductInfo, ConsentHistory } from '@/types';
+import type { ApplicationInfo, UserInputInfo, ConsentHistory } from '@/types';
 import { formatCurrency, formatMonths, displayValue } from '@/utils/formatters';
 import { REPAYMENT_METHOD_LABELS, PURPOSE_LABELS } from '@/constants/loanLabels';
 import Card from '@/components/common/Card';
@@ -7,7 +7,7 @@ import InfoRow from '@/components/common/InfoRow';
 interface ApplicationRequestCardProps {
   applicationInfo: ApplicationInfo;
   userInputInfo: UserInputInfo;
-  productInfo: LoanProductInfo;
+  productName?: string;
   consentHistories: ConsentHistory[];
 }
 
@@ -45,7 +45,7 @@ const EXISTING_LOAN_LABELS: Record<string, string> = {
  * 신청 조건(희망 금액, 기간, 상환 방식, 자금 용도)과
  * 신청자 직접 입력 정보(연 소득, 신용점수, 소득 종류, 보유 대출액)를 하나의 카드에 표시한다.
  */
-export default function ApplicationRequestCard({ applicationInfo, userInputInfo, productInfo, consentHistories }: ApplicationRequestCardProps) {
+export default function ApplicationRequestCard({ applicationInfo, userInputInfo, productName, consentHistories }: ApplicationRequestCardProps) {
   const applicationInfoItems = [
     {
       label: '희망 대출 금액',
@@ -93,7 +93,7 @@ export default function ApplicationRequestCard({ applicationInfo, userInputInfo,
       <div className="mb-4 flex items-center gap-2">
         <span className="text-xs text-text-secondary">신청 상품</span>
         <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-          {productInfo.productName}
+          {productName ?? '-'}
         </span>
       </div>
 
