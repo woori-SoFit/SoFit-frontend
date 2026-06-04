@@ -20,14 +20,12 @@ export async function fetchLoanApplications(
 }
 
 /**
- * 대출 신청 상태별 건수를 조회합니다.
- * TODO: API 구현 완료 후 실제 호출로 교체
+ * 대출 신청 상태별 건수(통계)를 조회합니다.
+ * GET /api/admin/loan-applications/statistics
  */
 export async function fetchLoanStatusCounts(): Promise<LoanStatusCounts> {
-  return {
-    pending: 0,
-    managerReview: 0,
-    approved: 0,
-    rejected: 0,
-  };
+  const { data } = await axiosInstance.get<LoanStatusCounts>(
+    '/api/admin/loan-applications/statistics'
+  );
+  return data;
 }
