@@ -41,7 +41,10 @@ export default function BizDataPage() {
   useEffect(() => {
     checkMyBizConnected()
       .then(setIsConnected)
-      .catch(() => setIsConnected(false));
+      .catch(() => {
+        // 비로그인
+        setIsConnected(false);
+      });
   }, []);
 
   if (isConnected === null) {

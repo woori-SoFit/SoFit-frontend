@@ -20,9 +20,10 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // 로그인 요청 401은 리다이렉트 X
       const requestUrl = error.config?.url ?? "";
-      if (requestUrl !== "/auth/login") {
+      // 로그인 요청 또는 비로그인 허용 경로는 리다이렉트 제외
+      const noRedirectPaths = ["/auth/login", "/report/mybiz-status"];
+      if (!noRedirectPaths.includes(requestUrl)) {
         window.location.href = "/login";
       }
     }
