@@ -10,6 +10,12 @@ export interface GradeResult {
   createdAt: string;
 }
 
+/** fetchGradeResult 반환 타입 */
+export interface GradeResultResponse {
+  result: GradeResult | null;
+  message: string;
+}
+
 /** 성장 S등급 상세 리포트 API 응답 타입 */
 export interface GradeDetailResult {
   sGrade: string;
@@ -36,9 +42,12 @@ interface GradeDetailApiResponse {
  * 성장 S등급 결과 조회
  * GET /api/report/grade
  */
-export async function fetchGradeResult(): Promise<GradeResult> {
+export async function fetchGradeResult(): Promise<GradeResultResponse> {
   const res = await axiosInstance.get<GradeApiResponse>("/report/grade");
-  return res.data.result;
+  return {
+    result: res.data.result ?? null,
+    message: res.data.message,
+  };
 }
 
 /**

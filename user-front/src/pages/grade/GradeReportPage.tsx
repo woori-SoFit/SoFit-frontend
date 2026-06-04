@@ -34,6 +34,7 @@ export default function GradeReportPage() {
   const { isLoggedIn } = useMe();
   const [isLoading, setIsLoading] = useState(false);
   const [gradeResult, setGradeResult] = useState<GradeResult | null>(null);
+  const [gradeMessage, setGradeMessage] = useState<string>('');
 
   // 페이지 진입 시 항상 INTRO부터 시작 (로그아웃 후 재진입 대비)
   useEffect(() => {
@@ -55,8 +56,9 @@ export default function GradeReportPage() {
     if (currentStep === "RESULT" && !gradeResult) {
       const refetch = async () => {
         try {
-          const result = await fetchGradeResult();
+          const { result, message } = await fetchGradeResult();
           setGradeResult(result);
+          setGradeMessage(message);
         } catch {
           // 등급 미산출 → gradeResult null 상태로 RESULT 유지 (미산출 안내 표시)
         }
@@ -102,8 +104,9 @@ export default function GradeReportPage() {
       if (isConnected) {
         // 마이비즈 연동 완료 → S등급 결과 조회 시도
         try {
-          const result = await fetchGradeResult();
+          const { result, message } = await fetchGradeResult();
           setGradeResult(result);
+          setGradeMessage(message);
         } catch {
           // 등급 미산출 → gradeResult null 상태로 RESULT 표시
           setGradeResult(null);
@@ -136,7 +139,7 @@ export default function GradeReportPage() {
       return <GradeLoadingStep onComplete={nextStep} />;
 
     case "RESULT":
-      return <GradeResultStep gradeResult={gradeResult} />;
+      return <GradeResultStep gradeResult={gradeResult} message={gradeMessage} />;
 
     default:
       return null;

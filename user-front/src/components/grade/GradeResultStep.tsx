@@ -17,9 +17,10 @@ const ALL_GRADES = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10"]
 
 interface GradeResultStepProps {
   gradeResult: GradeResult | null;
+  message?: string;
 }
 
-export function GradeResultStep({ gradeResult }: GradeResultStepProps) {
+export function GradeResultStep({ gradeResult, message }: GradeResultStepProps) {
   const navigate = useNavigate();
   const { me } = useMe();
   const userName = me?.name ?? "";
@@ -42,7 +43,7 @@ export function GradeResultStep({ gradeResult }: GradeResultStepProps) {
     return (
       <div className="flex flex-col items-center justify-center h-full px-5">
         <p className="text-text-secondary text-center">
-          아직 성장 S등급이 산출되지 않았어요.
+          {message || '아직 성장 S등급이 산출되지 않았어요.'}
         </p>
       </div>
     );
