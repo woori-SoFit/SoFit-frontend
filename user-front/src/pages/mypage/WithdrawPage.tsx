@@ -50,7 +50,7 @@ export default function WithdrawPage() {
         {/* 경고 아이콘 */}
         <div className="flex justify-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
-            <TriangleAlert size={28} className="text-red-500" />
+            <TriangleAlert size={28} className="text-error" />
           </div>
         </div>
 
@@ -68,7 +68,7 @@ export default function WithdrawPage() {
 
         {/* 삭제되는 정보 카드 */}
         <div className="mt-8 rounded-xl bg-red-50 p-5">
-          <p className="text-sm font-bold text-red-500 mb-3">삭제되는 정보</p>
+          <p className="text-sm font-bold text-error mb-3">삭제되는 정보</p>
           <ul className="space-y-1.5">
             {DELETED_INFO.map((item) => (
               <li key={item} className="text-sm text-gray-700">
@@ -98,7 +98,7 @@ export default function WithdrawPage() {
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="flex-1 rounded-xl border border-gray-200 bg-white py-3.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+          className="flex-1 rounded-xl border border-gray-200 bg-white py-3.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
         >
           취소
         </button>
@@ -106,9 +106,9 @@ export default function WithdrawPage() {
           type="button"
           onClick={handleWithdraw}
           disabled={!isConfirmed}
-          className={`flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition-colors ${
+          className={`flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition-colors cursor-pointer ${
             isConfirmed
-              ? "bg-red-500 hover:bg-red-600"
+              ? "bg-error hover:bg-red-600"
               : "bg-red-200 cursor-not-allowed"
           }`}
         >
