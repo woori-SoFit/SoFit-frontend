@@ -11,15 +11,15 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { BottomButton } from "@/components/common/BottomButton";
 import { DraftResumeModal } from "@/components/loan/DraftResumeModal";
 import { LOAN_KEYS } from "@/constants/queryKeys";
-import { fetchLoanProduct, checkLoanDraft } from "@/api/loanApi";
+import { fetchLoanProduct, checkLoanDraft, deleteLoanApplication } from "@/api/loanApi";
 import { formatMaxAmount, formatMaxTerm } from "@/utils/format";
 import loanProductIcon from "@/assets/icons/loan-product.svg";
 
 export default function LoanDetailPage() {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
-  const [showDraftModal, setShowDraftModal] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
+  const [showDraftModal, setShowDraftModal] = useState(false);
   const [draftData, setDraftData] = useState<{ applicationId?: number; resumeStep?: string }>({});
 
   const { data: product, isLoading } = useQuery({
@@ -32,7 +32,14 @@ export default function LoanDetailPage() {
     useLayoutStore.getState().setStepTitle("상품 안내");
   }, []);
 
-  /** 대출 신청 버튼 클릭 — draft 존재 여부 확인 */
+  /** pre-apply로 이동 (신규 신청) */
+  const navigateToPreApply = () => {
+    navigate(`/loan/pre-apply/${product!.productId}`, {
+      state: { filterConditions: product!.filterConditions },
+    });
+  };
+
+  /** 대출 신청 버튼 클릭 — draft 존재 여부 확인 후 분기 */
   const handleApplyClick = async () => {
     if (!product || isChecking) return;
     setIsChecking(true);
@@ -44,21 +51,14 @@ export default function LoanDetailPage() {
         setDraftData({ applicationId: result.applicationId, resumeStep: result.resumeStep });
         setShowDraftModal(true);
       } else {
-        navigateToApply();
+        navigateToPreApply();
       }
     } catch {
-      // API 실패 시 그냥 신규 신청으로 진행
-      navigateToApply();
+      // API 실패 시 신규 신청으로 진행
+      navigateToPreApply();
     } finally {
       setIsChecking(false);
     }
-  };
-
-  /** 신청 페이지로 이동 */
-  const navigateToApply = () => {
-    navigate(`/loan/pre-apply/${product!.productId}`, {
-      state: { filterConditions: product!.filterConditions },
-    });
   };
 
   if (isLoading) {
@@ -169,9 +169,17 @@ export default function LoanDetailPage() {
               },
             });
           }}
-          onNewApply={() => {
+          onNewApply={async () => {
             setShowDraftModal(false);
-            navigateToApply();
+            // draft 삭제 후 신규 신청 진행
+            if (draftData.applicationId) {
+              try {
+                await deleteLoanApplication(draftData.applicationId);
+              } catch {
+                // 삭제 실패는 무시하고 진행
+              }
+            }
+            navigateToPreApply();
           }}
           onClose={() => setShowDraftModal(false)}
         />

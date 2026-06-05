@@ -23,6 +23,12 @@ interface ConfirmModalProps {
   onCancel: () => void;
   /** 오른쪽 버튼 클릭 */
   onConfirm: () => void;
+  /**
+   * 딤 배경 클릭 시 동작 (선택)
+   * - 전달하지 않으면 기존 동작(onConfirm) 유지
+   * - null 전달 시 딤 클릭 비활성화
+   */
+  onDimClick?: (() => void) | null;
 }
 
 export function ConfirmModal({
@@ -32,13 +38,16 @@ export function ConfirmModal({
   confirmLabel = "확인",
   onCancel,
   onConfirm,
+  onDimClick,
 }: ConfirmModalProps) {
+  const handleDimClick = onDimClick === undefined ? onConfirm : onDimClick ?? undefined;
+
   return (
     <>
-      {/* 딤 배경 — 클릭 시 모달 닫기 (계속 진행) */}
+      {/* 딤 배경 */}
       <div
         className="fixed inset-0 z-50 bg-black/40"
-        onClick={onConfirm}
+        onClick={handleDimClick}
         aria-hidden="true"
       />
 

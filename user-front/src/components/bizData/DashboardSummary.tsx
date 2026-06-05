@@ -2,25 +2,16 @@ import type { RefObject } from "react";
 import type { BizDashboardData } from "@/types/bizData";
 import { GaugeBar } from "./GaugeBar";
 import { InfoTooltip } from "@/components/common/InfoTooltip";
-import { formatYearMonth } from "@/utils/format";
+import { formatYearMonth, formatCurrency, formatChangeRate } from "@/utils/format";
+
+// 하위 호환을 위한 re-export (BizDataPage, DashboardDetail에서 이 경로로 import 중)
+export { formatCurrency, formatChangeRate } from "@/utils/format";
 
 interface DashboardSummaryProps {
   data: BizDashboardData;
   selectedMonth: string;
   currentMonth: string;
   fullCardRef: RefObject<HTMLDivElement>;
-}
-
-export function formatCurrency(amount: number): string {
-  return amount.toLocaleString("ko-KR");
-}
-
-export function formatChangeRate(rate: number | null): { text: string; isPositive: boolean | null } {
-  if (rate === null || rate === undefined) {
-    return { text: "—", isPositive: null };
-  }
-  const isPositive = rate >= 0;
-  return { text: `${isPositive ? "+" : ""}${rate.toFixed(1)}%`, isPositive };
 }
 
 export function DashboardSummary({ data, selectedMonth, currentMonth, fullCardRef }: DashboardSummaryProps) {

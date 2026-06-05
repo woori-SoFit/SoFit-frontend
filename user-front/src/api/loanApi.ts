@@ -125,6 +125,11 @@ export async function submitLoanApplication(
   return res.data;
 }
 
+/** 대출 신청 임시저장(draft) 삭제 */
+export async function deleteLoanApplication(applicationId: number): Promise<void> {
+  await axiosInstance.delete(`/loan-applications/${applicationId}`);
+}
+
 /** 대출 신청 임시저장(draft) 존재 여부 조회 */
 export async function checkLoanDraft(
   productId: number

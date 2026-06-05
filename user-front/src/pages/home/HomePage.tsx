@@ -17,6 +17,7 @@ import { fetchLoanProducts } from "@/api/loanApi";
 import { useMe } from "@/hooks/useMe";
 import type { LoanProductListItem } from "@/types/loan";
 import { HOME_MENU_ITEMS } from "@/constants/homeMenuItems";
+import { formatAmount } from "@/utils/format";
 
 import iconLoanHistory from "@/assets/icons/menu-loan-history.svg";
 
@@ -26,18 +27,12 @@ const CARD_PALETTE = ["#0EA5E9", "#2563EB", "#4F46E5", "#0891B2", "#7C3AED"];
 /** LoanProductListItem → ProductCard 변환 */
 function toProductCard(product: LoanProductListItem, index: number): ProductCard {
   const bg = CARD_PALETTE[index % CARD_PALETTE.length];
-  // maxLimit을 "X천만원" / "X억원" 형식으로 표시
-  const limitLabel =
-    product.maxLimit >= 100_000_000
-      ? `${product.maxLimit / 100_000_000}억원`
-      : `${product.maxLimit / 10_000}만원`;
-
   return {
     id: product.productId,
     productId: product.productId,
     bg,
     tag: "한도",
-    rate: limitLabel,
+    rate: formatAmount(product.maxLimit),
     desc: product.title,
     title: product.productName,
     subtitle: product.title,

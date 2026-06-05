@@ -34,3 +34,17 @@ export function formatYearMonth(yyyyMM: string): string {
   if (!y || !m) return yyyyMM;
   return `${y}년 ${parseInt(m, 10)}월`;
 }
+
+/** 금액 포맷 — 원화 단순 콤마 구분 (예: 1,234,567) */
+export function formatCurrency(amount: number): string {
+  return amount.toLocaleString("ko-KR");
+}
+
+/** 전월 대비 변화율 포맷 */
+export function formatChangeRate(rate: number | null): { text: string; isPositive: boolean | null } {
+  if (rate === null || rate === undefined) {
+    return { text: "—", isPositive: null };
+  }
+  const isPositive = rate >= 0;
+  return { text: `${isPositive ? "+" : ""}${rate.toFixed(1)}%`, isPositive };
+}

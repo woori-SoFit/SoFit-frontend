@@ -9,13 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProducts } from "@/api/loanApi";
-
-/** 금액 포맷 (만원 단위) */
-function formatAmount(amount: number) {
-  const man = amount / 10_000;
-  if (man >= 10_000) return `${(man / 10_000).toFixed(0)}억`;
-  return `${man.toLocaleString()}만`;
-}
+import { formatMaxAmount } from "@/utils/format";
 
 export default function LoanListPage() {
   const navigate = useNavigate();
@@ -66,12 +60,11 @@ export default function LoanListPage() {
                   <h3 className="text-base font-semibold text-text-primary">
                     {product.title}
                   </h3>
-                  
                 </div>
                 {/* 한도 정보 */}
-                  <p className="text-base text-text-secondary">
-                    최대 <span className="font-bold text-primary">{formatAmount(product.maxLimit)}원</span>
-                  </p>
+                <p className="text-base text-text-secondary">
+                  <span className="font-bold text-primary">{formatMaxAmount(product.maxLimit)}</span>
+                </p>
               </div>
             </button>
           </li>

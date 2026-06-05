@@ -367,11 +367,7 @@ export default function LoanApplyPage() {
           onClose={() => setExitModal(null)}
           onConfirm={() => {
             setExitModal(null);
-            if (exitModal === "home") {
-              navigate("/");
-            } else {
-              navigate(-1);
-            }
+            navigate("/");
           }}
         />
       )}
