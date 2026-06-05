@@ -8,6 +8,7 @@
  * 전체 완료 시 onComplete 호출
  */
 import { useEffect, useState } from "react";
+import Lottie from "lottie-react";
 import {
   BriefcaseBusiness,
   BarChart3,
@@ -20,7 +21,7 @@ import {
   LockKeyhole,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import mydataIcon from "@/assets/icons/mydata.svg";
+import documentProcessing from "@/assets/lottie/Document-Processing.json";
 import { BottomButton } from "@/components/common/BottomButton";
 
 interface LoadingItem {
@@ -83,18 +84,22 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="flex-1 px-5 pt-6 pb-6">
+      <div className="flex-1 px-5 pt-1">
       {/* 상단 안내 */}
       <div className="mb-8">
-        <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
-          <img src={mydataIcon} alt="" className="w-12 h-12" />
+        <div className="w-14 h-14 mb-3">
+          <Lottie
+            animationData={documentProcessing}
+            loop={true}
+            className="w-full h-full"
+          />
         </div>
-        <h1 className="text-xl font-bold text-text-primary leading-tight mb-2">
-          대출 심사에 필요한 추가 서류를<br />불러오는 중이에요
+        <h1 className="text-xl font-bold text-text-primary leading-tight mb-2 ml-2">
+          {allDone
+            ? <>대출 심사에 필요한 추가 서류를<br />모두 불러왔어요</>
+            : <>대출 심사에 필요한 추가 서류를<br />불러오는 중이에요</>
+          }
         </h1>
-        <p className="text-sm text-text-secondary">
-          잠시만 기다려주세요.
-        </p>
       </div>
 
       {/* 항목 목록 */}
@@ -105,7 +110,7 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
           return (
             <li key={item.id} className="flex items-center gap-4">
               {/* 아이콘 */}
-              <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
                 <Icon size={20} className="text-primary" />
               </div>
 
