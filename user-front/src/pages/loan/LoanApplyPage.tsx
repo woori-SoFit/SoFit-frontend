@@ -217,6 +217,7 @@ export default function LoanApplyPage() {
           title={<><span className="text-primary">사업자 정보</span>를 불러왔어요</>}
           description="아래 정보가 맞는지 확인해주세요."
           rows={loanBizInfoRows}
+          isLoading={loanBizInfo === null}
           onConfirm={() => nextStep()}
         />
       );
