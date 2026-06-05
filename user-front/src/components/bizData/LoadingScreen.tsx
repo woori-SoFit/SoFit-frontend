@@ -18,8 +18,6 @@ export interface LoadingStep {
   label: string;
   status: StepStatus;
   icon?: LucideIcon;
-  activeBg?: string;
-  activeColor?: string;
 }
 
 interface LoadingScreenProps {
@@ -108,16 +106,13 @@ export function LoadingScreen({ title, description, steps, buttonLabel = "다음
             <ul className="divide-y divide-gray-50">
               {internalSteps.map((step, index) => {
                 const StepIcon = step.icon;
-                const isActive = step.status !== "pending";
-                const iconBg = isActive ? (step.activeBg ?? "bg-primary/10") : "bg-gray-100";
-                const iconColor = isActive ? (step.activeColor ?? "text-primary") : "text-gray-400";
 
                 return (
                   <li key={index} className="flex items-center gap-3 px-4 py-3.5">
                     {/* 왼쪽 아이콘 */}
                     {StepIcon && (
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${iconBg}`}>
-                        <StepIcon size={17} className={iconColor} />
+                      <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-blue-50">
+                        <StepIcon size={17} className="text-primary" />
                       </div>
                     )}
 

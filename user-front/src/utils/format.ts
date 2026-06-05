@@ -29,6 +29,17 @@ export function formatDate(dateStr: string): string {
   return `${y}년 ${parseInt(m, 10)}월 ${parseInt(d, 10)}일`;
 }
 
+/** 날짜+시간 포맷 (ISO datetime → YYYY년 M월 D일 HH:MM) */
+export function formatDateTime(dateStr: string): string {
+  const [datePart, timePart] = dateStr.includes("T") ? dateStr.split("T") : [dateStr, ""];
+  const [y, m, d] = datePart.split("-");
+  if (!y || !m || !d) return dateStr;
+  const dateFormatted = `${y}년 ${parseInt(m, 10)}월 ${parseInt(d, 10)}일`;
+  if (!timePart) return dateFormatted;
+  const [hh, mm] = timePart.split(":");
+  return `${dateFormatted} ${hh}:${mm}`;
+}
+
 /** 연월 포맷 (YYYY-MM → YYYY년 M월) */
 export function formatYearMonth(yyyyMM: string): string {
   if (!yyyyMM) return "";

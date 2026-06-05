@@ -36,6 +36,7 @@ import { checkMyBizConnected } from "@/api/mybizApi";
 import { submitLoanConsents, fetchLoanBizInfo, submitLoanMydata } from "@/api/loanApi";
 import { useTerms } from "@/hooks/useTerms";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
+import { formatAmount, formatDateTime } from "@/utils/format";
 import type { CustomerVerifyData } from "@/types/auth";
 import type { LoanApplyStep } from "@/types/loan";
 
@@ -315,17 +316,11 @@ export default function LoanApplyPage() {
             { label: "신청 상품", value: submitResult.productName },
             {
               label: "신청 금액",
-              value: `${(submitResult.requestedAmount / 10_000).toLocaleString()}만원`,
+              value: formatAmount(submitResult.requestedAmount),
             },
             {
               label: "신청 일시",
-              value: new Date(submitResult.appliedAt).toLocaleString("ko-KR", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-              }),
+              value: formatDateTime(submitResult.appliedAt),
             },
             {
               label: "상환 방식",

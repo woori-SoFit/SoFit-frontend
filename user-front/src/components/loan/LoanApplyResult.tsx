@@ -9,7 +9,7 @@
 import Lottie from "lottie-react";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
 import type { InfoRow } from "@/components/common/ConfirmPage";
-import confettiAnimation from "@/assets/lottie/Flex-Confetti.json";
+import checkAnimation from "@/assets/lottie/Check.json";
 
 interface LoanApplyResultProps {
   /** 정보 테이블 데이터 */
@@ -26,18 +26,9 @@ export function LoanApplyResult({
   onGoHome,
 }: LoanApplyResultProps) {
   return (
-    <div className="relative h-full pt-20">
-      {/* Lottie 축하 애니메이션 */}
-      <div className="absolute inset-0 pointer-events-none z-10 flex items-start">
-        <Lottie
-          animationData={confettiAnimation}
-          loop={3}
-          className="w-full max-w-sm -translate-y-35"
-        />
-      </div>
-
-      {/* 기존 ConfirmPage */}
+    <div className="relative h-full pt-15">
       <ConfirmPage
+        icon={<Lottie animationData={checkAnimation} loop={1} className="w-42" />}
         title="대출 신청이 완료되었습니다!"
         description="신청 결과는 알림으로 안내해 드릴게요."
         rows={rows}
