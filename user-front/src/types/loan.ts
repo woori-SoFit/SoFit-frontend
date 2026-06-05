@@ -12,7 +12,6 @@ export type LoanApplicationStatus =
   | "SYSTEM_APPROVED"
   | "SYSTEM_REJECTED"
   | "MANAGER_REVIEW"
-  | "FINAL_REVIEW"
   | "APPROVED"
   | "REJECTED"
   | "CONTRACTED"

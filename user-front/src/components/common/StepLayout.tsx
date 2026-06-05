@@ -37,7 +37,7 @@ export function StepLayout() {
     <div className="app-container flex flex-col min-h-screen">
       {/* 상단 헤더 */}
       <header className="sticky top-0 z-50">
-        <div className="flex items-center px-2 h-16 relative">
+        <div className="flex items-center px-2 h-14 relative">
           {/* 뒤로가기 */}
           <button
             type="button"
