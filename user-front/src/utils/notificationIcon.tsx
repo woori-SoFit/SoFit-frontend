@@ -1,7 +1,7 @@
 /**
  * 알림 유형별 아이콘 + 배경색 매핑 유틸
  */
-import { Bell, FileCheck, FileText, Megaphone } from "lucide-react";
+import { Bell, FileCheck, ShieldCheck, Wallet } from "lucide-react";
 import type { NotificationType } from "@/types/notification";
 
 export interface NotificationIconConfig {
@@ -13,18 +13,18 @@ export function getNotificationIcon(type: string): NotificationIconConfig {
   switch (type as NotificationType) {
     case "LOAN_SUBMITTED":
       return {
-        icon: <FileText size={22} className="text-primary" />,
+        icon: <FileCheck  size={22} className="text-primary" />,
         bg: "bg-primary/10",
       };
     case "LOAN_DECIDED":
       return {
-        icon: <FileCheck size={22} className="text-primary" />,
-        bg: "bg-primary/10",
+        icon: <ShieldCheck size={22} className="text-[#0F6E56]" />,
+        bg: "bg-[#E1F5EE]",
       };
     case "LOAN_EXECUTED":
       return {
-        icon: <Megaphone size={22} className="text-green-600" />,
-        bg: "bg-green-100",
+        icon: <Wallet size={22} className="text-[#854F0B]" />,
+        bg: "bg-[#FAEEDA]",
       };
     default:
       return {

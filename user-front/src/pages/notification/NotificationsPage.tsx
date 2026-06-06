@@ -16,11 +16,11 @@ import type { NotificationItem as NotificationItemType } from "@/types/notificat
 function getNotificationRoute(notification: NotificationItemType): string | null {
   switch (notification.type) {
     case "LOAN_SUBMITTED":
-      return `/loan/review/${notification.applicationId}`;
+      return `/loan/review/${notification.referenceId}`;
     case "LOAN_DECIDED":
-      return `/loan/result/${notification.applicationId}`;
+      return `/loan/result/${notification.referenceId}`;
     case "LOAN_EXECUTED":
-      return `/loan/execution/${notification.applicationId}`;
+      return `/loan/execution/${notification.referenceId}`;
     default:
       return null;
   }
@@ -59,6 +59,11 @@ function NotificationItemRow({
             {notification.title}
           </span>
         </div>
+        {notification.referenceLabel && (
+          <span className="mt-1 inline-block text-xs font-medium text-primary bg-primary/10 rounded px-1.5 py-0.5">
+            {notification.referenceLabel}
+          </span>
+        )}
         <p className="mt-0.5 text-sm text-gray-500 truncate">
           {notification.message}
         </p>
