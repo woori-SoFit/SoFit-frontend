@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Lottie from "lottie-react";
 import { useLayoutStore } from "@/stores/layoutStore";
+import { EmptyError } from "@/components/common/EmptyError";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
 import { fetchLoanExecutionDetail } from "@/api/loanApi";
 import { LOAN_KEYS } from "@/constants/queryKeys";
@@ -38,11 +39,7 @@ export default function LoanExecutionPage() {
   }
 
   if (!data) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-text-secondary">실행 정보를 찾을 수 없습니다.</p>
-      </div>
-    );
+    return <EmptyError message="실행 정보를 찾을 수 없습니다." />;
   }
 
   const termLabel = data.approvedTerm >= 12

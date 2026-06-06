@@ -27,6 +27,7 @@ import { useTerms } from "@/hooks/useTerms";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import confettiAnimation from "@/assets/lottie/Success-Celebration.json";
 import handshakeAnimation from "@/assets/lottie/Handshake.json";
+import { EmptyError } from "@/components/common/EmptyError";
 
 type AgreementStep = "CONFIRM" | "TERMS" | "CERT" | "ACCOUNT" | "COMPLETE";
 
@@ -71,11 +72,7 @@ export default function LoanAgreementPage() {
   }
 
   if (!data || !data.decisionInfo) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-text-secondary">약정 정보를 찾을 수 없습니다.</p>
-      </div>
-    );
+    return <EmptyError message="약정 정보를 찾을 수 없습니다." />;
   }
 
   const { decisionInfo } = data;

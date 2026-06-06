@@ -5,8 +5,9 @@
  */
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, RefreshCw } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
+import { EmptyError } from "@/components/common/EmptyError";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useMarkAsRead } from "@/hooks/useMarkAsRead";
 import { getNotificationIcon } from "@/utils/notificationIcon";
@@ -72,7 +73,7 @@ function NotificationItemRow({
 
 export default function NotificationsPage() {
   const navigate = useNavigate();
-  const { data: notifications, isLoading, isError, refetch } = useNotifications();
+  const { data: notifications, isLoading, isError } = useNotifications();
   const { markAsRead, isPending, errorMessage } = useMarkAsRead();
 
   useEffect(() => {
@@ -105,19 +106,7 @@ export default function NotificationsPage() {
 
   // 에러 상태
   if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 gap-4" data-testid="notifications-error">
-        <p className="text-gray-500">알림을 불러오지 못했습니다</p>
-        <button
-          type="button"
-          onClick={() => refetch()}
-          className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors"
-        >
-          <RefreshCw size={14} />
-          다시 시도
-        </button>
-      </div>
-    );
+    return <EmptyError message="알림을 불러오지 못했습니다" />;
   }
 
   return (

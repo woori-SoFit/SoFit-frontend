@@ -26,6 +26,7 @@ import {
 import { useLayoutStore } from "@/stores/layoutStore";
 import { BottomButton } from "@/components/common/BottomButton";
 import { DraftResumeModal } from "@/components/loan/DraftResumeModal";
+import { EmptyError } from "@/components/common/EmptyError";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProduct, checkLoanDraft, deleteLoanApplication } from "@/api/loanApi";
 import { formatMaxAmount, formatMaxTerm } from "@/utils/format";
@@ -120,11 +121,7 @@ export default function LoanDetailPage() {
   }
 
   if (!product) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-text-secondary">상품 정보를 찾을 수 없습니다.</p>
-      </div>
-    );
+    return <EmptyError message="상품 정보를 찾을 수 없습니다." />;
   }
 
   const desc = product.productDescription;

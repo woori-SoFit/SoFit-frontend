@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import Lottie from "lottie-react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
+import { EmptyError } from "@/components/common/EmptyError";
 import { fetchLoanApplicationDetail } from "@/api/loanApi";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { formatAmount, formatDate } from "@/utils/format";
@@ -40,11 +41,7 @@ export default function LoanReviewPage() {
   }
 
   if (!app) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-text-secondary">신청 정보를 찾을 수 없습니다.</p>
-      </div>
-    );
+    return <EmptyError message="신청 정보를 찾을 수 없습니다." />;
   }
 
   return (

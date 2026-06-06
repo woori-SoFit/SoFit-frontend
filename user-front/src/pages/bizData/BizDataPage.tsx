@@ -8,7 +8,7 @@
  */
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useMe } from "@/hooks/useMe";
 import { IntroSection } from "@/components/bizData/IntroSection";
@@ -16,6 +16,7 @@ import { DashboardSummary, formatCurrency, formatChangeRate } from "@/components
 import { DashboardDetail } from "@/components/bizData/DashboardDetail";
 import { formatYearMonth } from "@/utils/format";
 import type { BizDashboardData } from "@/types/bizData";
+import { EmptyError } from "@/components/common/EmptyError";
 import {
   checkMyBizConnected,
   fetchMyBizDashboard,
@@ -91,39 +92,41 @@ function BizDashboard() {
   const { me } = useMe();
   const userName = me?.name ?? "";
   const [data, setData] = useState<BizDashboardData | null>(null);
+  const [fetchError, setFetchError] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [availableMonths, setAvailableMonths] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [monthError, setMonthError] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
   const [isCompact, setIsCompact] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const fullCardRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
   // 최초 로드: 최신 월 데이터 + 대출 잔액 병렬 조회
   useEffect(() => {
     let cancelled = false;
-    fetchMyBizDashboard().then((dashboard) => {
-      if (cancelled) return;
-      setData(dashboard);
-      setSelectedMonth(dashboard.currentMonth);
-      setAvailableMonths(dashboard.availableMonths);
-
-      fetchLoanBalance().then((loan) => {
+    fetchMyBizDashboard()
+      .then((dashboard) => {
         if (cancelled) return;
-        setData((prev) =>
-          prev ? { ...prev, loanBalance: loan.loanBalance, loanRepaymentDate: loan.loanRepaymentDate } : prev
-        );
+        setData(dashboard);
+        setSelectedMonth(dashboard.currentMonth);
+        setAvailableMonths(dashboard.availableMonths);
+
+        fetchLoanBalance().then((loan) => {
+          if (cancelled) return;
+          setData((prev) =>
+            prev ? { ...prev, loanBalance: loan.loanBalance, loanRepaymentDate: loan.loanRepaymentDate } : prev
+          );
+        });
+      })
+      .catch(() => {
+        if (!cancelled) setFetchError(true);
       });
-    });
     return () => { cancelled = true; };
   }, []);
 
   // 월 변경 시 해당 월 데이터 조회
   const handleMonthChange = (month: string) => {
-    if (month === selectedMonth) { setOpen(false); return; }
-    setOpen(false);
+    if (month === selectedMonth) return;
     setSelectedMonth(month);
     setIsLoading(true);
     setMonthError(null);
@@ -143,17 +146,6 @@ function BizDashboard() {
       .finally(() => setIsLoading(false));
   };
 
-  // 드롭다운 외부 클릭 닫기
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   // 풀 카드 상단이 뷰포트 위로 사라지면 compact 활성
   // data 로드 후 DOM이 실제로 렌더된 시점에 scroll parent를 찾아야 함
   useEffect(() => {
@@ -166,6 +158,10 @@ function BizDashboard() {
     scrollEl.addEventListener("scroll", handleScroll, { passive: true });
     return () => scrollEl.removeEventListener("scroll", handleScroll);
   }, [data]);
+
+  if (fetchError || (!data && !isLoading)) {
+    return <EmptyError />;
+  }
 
   if (!data) {
     return (
@@ -211,7 +207,7 @@ function BizDashboard() {
       </div>
 
       {/* 헤더: 사용자 인사 + 월 선택 드롭다운 */}
-      <div className="px-5 pt-4 pb-2 flex items-end justify-between gap-3">
+      <div className="px-5 py-2 flex items-end justify-between gap-3">
         <div className="min-w-0">
           <p className="text-base font-semibold text-text-primary truncate">
             {userName ? `${userName} 사장님,` : "사장님,"}
@@ -221,38 +217,34 @@ function BizDashboard() {
           </p>
         </div>
 
-        <div className="relative shrink-0" ref={dropdownRef}>
+        <div className="flex items-center gap- shrink-0">
           <button
             type="button"
-            onClick={() => setOpen((v) => !v)}
-            className="flex items-center gap-1.5 text-sm font-medium text-text-primary bg-bg-surface border border-border-default rounded-lg px-3 py-2"
+            onClick={() => {
+              const idx = displayMonths.indexOf(selectedMonth);
+              if (idx < displayMonths.length - 1) handleMonthChange(displayMonths[idx + 1]);
+            }}
+            disabled={displayMonths.indexOf(selectedMonth) >= displayMonths.length - 1}
+            aria-label="이전 달"
+            className="w-5 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors disabled:opacity-30"
           >
-            {selectedMonth === currentMonth ? "이번 달" : formatYearMonth(selectedMonth)}
-            <ChevronDown
-              size={14}
-              className={`text-text-secondary transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-            />
+            <ChevronLeft size={18} className="text-text-primary" />
           </button>
-
-          {open && (
-            <ul className="absolute top-full right-0 mt-1 z-30 bg-bg-surface border border-border-default rounded-lg shadow-card overflow-hidden min-w-[140px]">
-              {displayMonths.map((month) => (
-                <li key={month}>
-                  <button
-                    type="button"
-                    onClick={() => handleMonthChange(month)}
-                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
-                      month === selectedMonth
-                        ? "text-primary font-semibold bg-primary/5"
-                        : "text-text-primary hover:bg-gray-50"
-                    }`}
-                  >
-                    {formatYearMonth(month)} {month === currentMonth ? "(이번 달)" : ""}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+          <span className="text-sm font-medium text-text-primary min-w-[80px] text-center">
+            {selectedMonth === currentMonth ? "이번 달" : formatYearMonth(selectedMonth)}
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              const idx = displayMonths.indexOf(selectedMonth);
+              if (idx > 0) handleMonthChange(displayMonths[idx - 1]);
+            }}
+            disabled={displayMonths.indexOf(selectedMonth) <= 0}
+            aria-label="다음 달"
+            className="w-5 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors disabled:opacity-30"
+          >
+            <ChevronRight size={18} className="text-text-primary" />
+          </button>
         </div>
       </div>
 

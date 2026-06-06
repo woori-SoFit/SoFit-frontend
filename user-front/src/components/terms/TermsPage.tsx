@@ -18,6 +18,7 @@ import type { TermsItem, TermType } from "@/types/common";
 import { TermsAgreement } from "./TermsAgreement";
 import { TermsDetailSheet } from "./TermsDetailSheet";
 import { BottomButton } from "@/components/common/BottomButton";
+import { EmptyError } from "@/components/common/EmptyError";
 import { useTerms } from "@/hooks/useTerms";
 
 interface TermsPageBaseProps {
@@ -122,13 +123,7 @@ export function TermsPage({
   }
 
   if (termType && isError) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-full gap-3 px-5">
-        <p className="text-sm text-text-secondary text-center">
-          약관을 불러오지 못했습니다.<br />잠시 후 다시 시도해주세요.
-        </p>
-      </div>
-    );
+    return <EmptyError message="약관을 불러오지 못했습니다." />;
   }
 
   return (
