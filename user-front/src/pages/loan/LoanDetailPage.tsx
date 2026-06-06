@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
+  ChevronLeft,
+  House,
   UserRoundSearch,
   CircleDollarSign,
   CalendarRange,
@@ -64,8 +66,25 @@ export default function LoanDetailPage() {
     enabled: !!productId,
   });
 
+  const onBack = useLayoutStore((s) => s.onBack);
+  const onHome = useLayoutStore((s) => s.onHome);
+
+  const handleBack = () => {
+    if (onBack) onBack();
+    else navigate(-1);
+  };
+
+  const handleHome = () => {
+    if (onHome) onHome();
+    else navigate("/");
+  };
+
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("상품 안내");
+    useLayoutStore.getState().setOverlayHeader(true);
+    return () => {
+      useLayoutStore.getState().setOverlayHeader(false);
+    };
   }, []);
 
   const navigateToPreApply = () => {
@@ -113,10 +132,28 @@ export default function LoanDetailPage() {
 
   return (
     <div className="relative flex flex-col h-full">
-      {/*
-       * Scroll Snap 컨테이너
-       */}
-      <div className="flex-1 overflow-y-scroll snap-y snap-mandatory scroll-smooth pb-16">
+      {/* 투명 오버레이 헤더 — absolute로 콘텐츠 위에 떠있음 */}
+      <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-2 h-14 pointer-events-none">
+        <button
+          type="button"
+          onClick={handleBack}
+          aria-label="뒤로가기"
+          className="w-10 h-10 flex items-center justify-center rounded-full pointer-events-auto"
+        >
+          <ChevronLeft size={26} className="text-gray-700 drop-shadow-sm" />
+        </button>
+        <button
+          type="button"
+          onClick={handleHome}
+          aria-label="홈으로"
+          className="w-10 h-10 flex items-center justify-center rounded-full pointer-events-auto"
+        >
+          <House size={22} className="text-gray-700 drop-shadow-sm" />
+        </button>
+      </div>
+
+      {/* Scroll Snap 컨테이너 — 최상단부터 시작 */}
+      <div className="flex-1 overflow-y-scroll snap-y snap-mandatory scroll-smooth pb-16 scrollbar-none">
 
         {/* ── 섹션 1: 상품 소개 ── */}
         <section className="snap-start snap-always min-h-full flex flex-col relative overflow-hidden">
@@ -124,7 +161,7 @@ export default function LoanDetailPage() {
             <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-sky-100/60 blur-3xl" />
           </div>
 
-          <div className="flex flex-col items-center pt-8 pb-2 px-5 z-1">
+          <div className="flex flex-col items-center pt-20 pb-2 px-5 z-1">
             <p className="text-sm font-medium text-primary mb-3">{product.productName}</p>
             <h1 className="text-2xl font-bold text-text-primary text-center leading-tight mb-3 whitespace-pre-line">
               {product.title}
@@ -134,7 +171,7 @@ export default function LoanDetailPage() {
             </p>
           </div>
 
-          <div className="flex items-center justify-center py-12 z-1">
+          <div className="flex items-center justify-center py-16 z-1">
             <img src={loanProductIcon} alt="" aria-hidden="true" className="w-44 h-44 object-contain" />
           </div>
 
@@ -173,8 +210,7 @@ export default function LoanDetailPage() {
 
           {/* 스크롤 유도 인디케이터 */}
           {hasDesc && (
-            <div className="flex flex-col items-center gap-2 py-8 z-1">
-              <p className="text-xs text-text-secondary">상세 정보 보기</p>
+            <div className="flex flex-col items-center gap-2 py-6 z-1">
               <div className="flex flex-col gap-1 items-center">
                 <div className="w-1 h-1 rounded-full bg-primary/40" />
                 <div className="w-1 h-1 rounded-full bg-primary/60" />
@@ -186,7 +222,7 @@ export default function LoanDetailPage() {
 
         {/* ── 섹션 2: 상세 정보 1 (대상/한도/기간/금리) ── */}
         {hasDesc && (
-          <section className="snap-start snap-always min-h-full px-5 pt-2 pb-18">
+          <section className="snap-start snap-always min-h-full px-5 pt-15 pb-20">
             <h2 className="text-lg font-bold text-text-primary mb-5">상품 상세 정보</h2>
             <ul className="flex flex-col gap-4">
               {DESC_SECTION_1.map((item) => {
@@ -212,7 +248,7 @@ export default function LoanDetailPage() {
 
         {/* ── 섹션 3: 상세 정보 2 (우대금리/상환/담보/수수료) ── */}
         {hasDesc && (
-          <section className="snap-start snap-always min-h-full px-5 pt-2 pb-20">
+          <section className="snap-start snap-always min-h-full px-5 pt-15 pb-20">
             <h2 className="text-lg font-bold text-text-primary mb-5">금리 및 기타 안내</h2>
             <ul className="flex flex-col gap-4">
               {DESC_SECTION_2.map((item) => {

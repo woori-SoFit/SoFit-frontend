@@ -18,6 +18,7 @@ import { useMe } from "@/hooks/useMe";
 import type { LoanProductListItem } from "@/types/loan";
 import { HOME_MENU_ITEMS } from "@/constants/homeMenuItems";
 import { formatAmount } from "@/utils/format";
+import mainLogo from "@/assets/mainLogo.svg";
 
 import iconLoanHistory from "@/assets/icons/menu-loan-history.svg";
 
@@ -81,10 +82,10 @@ export default function HomePage() {
         <h1 className="text-[21px] font-bold leading-snug text-[--color-text-primary]">
           <span className="text-primary">{userName}{" "}</span>
           사장님의 성장을 <br />
-          <span className="text-primary">SoFit</span>이 함께할게요
+          <img src={mainLogo} alt="SoFit" className="inline h-7 mb-1.5" />이 함께할게요
         </h1>
 
-        <p className="mt-1 text-sm text-[--color-text-secondary]">
+        <p className="text-sm text-gray-600">
           개인사업자를 위한 특별한 상품을 만나보세요
         </p>
       </section>
