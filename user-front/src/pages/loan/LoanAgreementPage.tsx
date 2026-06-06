@@ -28,6 +28,7 @@ import { LOAN_KEYS } from "@/constants/queryKeys";
 import confettiAnimation from "@/assets/lottie/Success-Celebration.json";
 import handshakeAnimation from "@/assets/lottie/Handshake.json";
 import { EmptyError } from "@/components/common/EmptyError";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 
 type AgreementStep = "CONFIRM" | "TERMS" | "CERT" | "ACCOUNT" | "COMPLETE";
 
@@ -64,11 +65,7 @@ export default function LoanAgreementPage() {
   }, [navigate, step]);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-text-secondary">약정 정보를 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="약정 정보를 불러오는 중..." />;
   }
 
   if (!data || !data.decisionInfo) {

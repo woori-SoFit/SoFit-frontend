@@ -11,6 +11,7 @@
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { BottomButton } from "@/components/common/BottomButton";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { fetchLoanProductOptions, submitLoanApplication } from "@/api/loanApi";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { REPAYMENT_LABELS, PURPOSE_LABELS } from "@/constants/loanLabels";
@@ -144,11 +145,7 @@ export function LoanConditionsStep({ productId, applicationId, onSubmit }: LoanC
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-text-secondary">대출 옵션을 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="대출 옵션을 불러오는 중..." />;
   }
 
   if (!options) {

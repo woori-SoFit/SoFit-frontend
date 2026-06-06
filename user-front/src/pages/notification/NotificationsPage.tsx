@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { EmptyError } from "@/components/common/EmptyError";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useMarkAsRead } from "@/hooks/useMarkAsRead";
 import { getNotificationIcon } from "@/utils/notificationIcon";
@@ -97,11 +98,7 @@ export default function NotificationsPage() {
 
   // 로딩 상태
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20" data-testid="notifications-loading">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    );
+    return <CharacterLoadingSpinner text="알림을 불러오는 중..." />;
   }
 
   // 에러 상태

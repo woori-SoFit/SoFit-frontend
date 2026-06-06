@@ -19,6 +19,7 @@ import { TermsAgreement } from "./TermsAgreement";
 import { TermsDetailSheet } from "./TermsDetailSheet";
 import { BottomButton } from "@/components/common/BottomButton";
 import { EmptyError } from "@/components/common/EmptyError";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { useTerms } from "@/hooks/useTerms";
 
 interface TermsPageBaseProps {
@@ -114,12 +115,7 @@ export function TermsPage({
 
   // termType 모드에서 로딩/에러 처리
   if (termType && isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-full gap-3">
-        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-text-secondary">약관을 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="약관을 불러오는 중..." />;
   }
 
   if (termType && isError) {

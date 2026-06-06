@@ -17,6 +17,7 @@ import { DashboardDetail } from "@/components/bizData/DashboardDetail";
 import { formatYearMonth } from "@/utils/format";
 import type { BizDashboardData } from "@/types/bizData";
 import { EmptyError } from "@/components/common/EmptyError";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import {
   checkMyBizConnected,
   fetchMyBizDashboard,
@@ -49,11 +50,7 @@ export default function BizDataPage() {
   }, []);
 
   if (isConnected === null) {
-    return (
-      <div className="flex items-center justify-center h-[calc(100dvh-64px)]">
-        <p className="text-sm text-text-secondary">불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="불러오는 중..." />;
   }
 
   if (!isConnected) {
@@ -164,11 +161,7 @@ function BizDashboard() {
   }
 
   if (!data) {
-    return (
-      <div className="flex items-center justify-center h-[calc(100dvh-64px)]">
-        <p className="text-sm text-text-secondary">자료를 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="자료를 불러오는 중..." />;
   }
 
   const currentMonth = availableMonths[0] ?? selectedMonth ?? "";

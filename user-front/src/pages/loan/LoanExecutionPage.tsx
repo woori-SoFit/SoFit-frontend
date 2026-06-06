@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import Lottie from "lottie-react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { EmptyError } from "@/components/common/EmptyError";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
 import { fetchLoanExecutionDetail } from "@/api/loanApi";
 import { LOAN_KEYS } from "@/constants/queryKeys";
@@ -31,11 +32,7 @@ export default function LoanExecutionPage() {
   });
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-text-secondary">실행 정보를 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="실행 정보를 불러오는 중..." />;
   }
 
   if (!data) {

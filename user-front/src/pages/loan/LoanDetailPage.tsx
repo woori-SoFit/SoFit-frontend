@@ -27,6 +27,7 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { BottomButton } from "@/components/common/BottomButton";
 import { DraftResumeModal } from "@/components/loan/DraftResumeModal";
 import { EmptyError } from "@/components/common/EmptyError";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProduct, checkLoanDraft, deleteLoanApplication } from "@/api/loanApi";
 import { formatMaxAmount, formatMaxTerm } from "@/utils/format";
@@ -114,8 +115,8 @@ export default function LoanDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-text-secondary">상품 정보를 불러오는 중...</p>
+      <div>
+        <CharacterLoadingSpinner text="상품 정보를 불러오는 중..." />
       </div>
     );
   }

@@ -17,8 +17,10 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { fetchLoanApplicationsInProgress, fetchLoanApplicationsCompleted } from "@/api/loanApi";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { CardSlider } from "@/components/loan/CardSlider";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import type { LoanApplication } from "@/types/loan";
-import wibee1 from "@/assets/icons/WIBEE1.png";
+import nonewibee1 from "@/assets/icons/None-BizData.svg";
+import nonewibee2 from "@/assets/icons/None-BizData2.svg"
 
 const POLL_INTERVAL = 5_000; // 5초
 
@@ -65,11 +67,7 @@ export default function LoanProgressPage() {
   };
 
   if (isLoadingInProgress && isLoadingCompleted) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-text-secondary">대출 현황을 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="대출 현황을 불러오는 중..." />;
   }
 
   return (
@@ -85,7 +83,7 @@ export default function LoanProgressPage() {
 
         {inProgress.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[230px] gap-1">
-            <img src={wibee1} alt="" aria-hidden="true" className="w-30 h-30 object-contain opacity-60" />
+            <img src={nonewibee1} alt="" aria-hidden="true" className="w-40 object-contain opacity-60" />
             <p className="text-text-secondary">심사 중인 대출이 없습니다.</p>
           </div>
         ) : (
@@ -104,7 +102,7 @@ export default function LoanProgressPage() {
 
         {completed.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[230px] gap-1">
-            <img src={wibee1} alt="" aria-hidden="true" className="w-30 h-30 object-contain opacity-60" />
+            <img src={nonewibee2} alt="" aria-hidden="true" className="w-40 object-contain opacity-60" />
             <p className="text-text-secondary">심사 완료된 대출이 없습니다.</p>
           </div>
         ) : (

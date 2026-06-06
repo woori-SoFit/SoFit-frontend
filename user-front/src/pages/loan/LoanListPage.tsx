@@ -10,6 +10,7 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProducts } from "@/api/loanApi";
 import { formatMaxAmount } from "@/utils/format";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 
 export default function LoanListPage() {
   const navigate = useNavigate();
@@ -24,11 +25,7 @@ export default function LoanListPage() {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-text-secondary">상품 목록을 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="상품 목록을 불러오는 중..." />;
   }
 
   if (products.length === 0) {
