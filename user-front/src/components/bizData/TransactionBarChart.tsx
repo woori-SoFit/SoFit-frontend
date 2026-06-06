@@ -23,6 +23,8 @@ function formatTooltip(value: number): string {
 }
 
 export function TransactionBarChart({ data }: TransactionBarChartProps) {
+  // 과거 → 최신 순으로 정렬 (왼쪽이 과거, 오른쪽이 최신)
+  const sortedData = [...data].reverse();
   const monthLabel = data.length > 0 ? `최근 ${data.length}개월` : "";
 
   return (
@@ -40,7 +42,7 @@ export function TransactionBarChart({ data }: TransactionBarChartProps) {
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={180}>
-          <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} barCategoryGap="30%">
+          <BarChart data={sortedData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} barCategoryGap="30%">
             <CartesianGrid strokeDasharray="4 2" stroke="var(--color-border-default)" vertical={false} />
             <XAxis
               dataKey="month"
@@ -53,7 +55,7 @@ export function TransactionBarChart({ data }: TransactionBarChartProps) {
               tick={{ fontSize: 10, fill: "var(--color-gray-500)" }}
               axisLine={false}
               tickLine={false}
-              width={40}
+              width={45}
             />
             <Tooltip
               formatter={(value: number, name: string) => [
@@ -67,10 +69,18 @@ export function TransactionBarChart({ data }: TransactionBarChartProps) {
               }}
             />
             <Legend
-              formatter={(value) => (value === "income" ? "입금" : "출금")}
-              iconType="square"
-              iconSize={10}
-              wrapperStyle={{ fontSize: "12px" }}
+              content={() => (
+                <div className="flex items-center justify-center gap-4 text-xs">
+                  <span className="flex items-center gap-1.5">
+                    <span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: "var(--color-primary)" }} />
+                    입금
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: "var(--color-gray-400)" }} />
+                    출금
+                  </span>
+                </div>
+              )}
             />
             <Bar dataKey="income" fill="var(--color-primary)" radius={[3, 3, 0, 0]} />
             <Bar dataKey="expense" fill="var(--color-gray-400)" radius={[3, 3, 0, 0]} />
