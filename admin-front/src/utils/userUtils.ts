@@ -110,7 +110,7 @@ export function buildUserListParams(
   size: number,
 ): UserListParams {
   const params: UserListParams = {
-    page,
+    page: page - 1,
     size,
     tab,
   };
