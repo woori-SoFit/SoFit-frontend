@@ -11,7 +11,7 @@ interface PaginationProps {
 
 /**
  * 공통 페이지네이션 컴포넌트.
- * 이전/다음 버튼과 현재 페이지 표시를 제공합니다.
+ * [<] [1] [2] [3] [4] [5] [>] 형태로 표시합니다.
  */
 export default function Pagination({
   currentPage,
@@ -19,28 +19,60 @@ export default function Pagination({
   onPageChange,
   className = '',
 }: PaginationProps) {
-  if (totalPages <= 1) return null;
+  const pages = Math.max(totalPages, 1);
+
+  // 표시할 페이지 번호 계산 (최대 5개)
+  const getPageNumbers = (): number[] => {
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    const end = Math.min(pages, start + maxVisible - 1);
+    start = Math.max(1, end - maxVisible + 1);
+
+    const numbers: number[] = [];
+    for (let i = start; i <= end; i++) {
+      numbers.push(i);
+    }
+    return numbers;
+  };
+
+  const pageNumbers = getPageNumbers();
 
   return (
-    <div className={`flex items-center justify-center gap-2 pt-4 ${className}`}>
+    <div className={`flex items-center justify-center gap-1 pt-4 ${className}`}>
+      {/* 이전 */}
       <button
         type="button"
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage <= 1}
-        className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+        className="w-8 h-8 flex items-center justify-center text-sm border border-border-default rounded-md disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50"
       >
-        이전
+        &lt;
       </button>
-      <span className="text-sm text-text-secondary">
-        {currentPage} / {totalPages}
-      </span>
+
+      {/* 페이지 번호 */}
+      {pageNumbers.map((num) => (
+        <button
+          key={num}
+          type="button"
+          onClick={() => onPageChange(num)}
+          className={`w-8 h-8 flex items-center justify-center text-sm rounded-md transition-all ${
+            num === currentPage
+              ? 'bg-primary text-white font-medium'
+              : 'border border-border-default text-text-secondary hover:bg-gray-50'
+          }`}
+        >
+          {num}
+        </button>
+      ))}
+
+      {/* 다음 */}
       <button
         type="button"
-        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-        disabled={currentPage >= totalPages}
-        className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+        onClick={() => onPageChange(Math.min(pages, currentPage + 1))}
+        disabled={currentPage >= pages}
+        className="w-8 h-8 flex items-center justify-center text-sm border border-border-default rounded-md disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50"
       >
-        다음
+        &gt;
       </button>
     </div>
   );
