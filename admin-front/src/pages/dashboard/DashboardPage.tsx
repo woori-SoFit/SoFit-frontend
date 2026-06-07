@@ -92,7 +92,7 @@ export default function DashboardPage() {
                     : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
                 }`}
               >
-                추가 심사 {statusCounts.managerReview}
+                최종 심사 {statusCounts.managerReview}
               </button>
               <button
                 type="button"

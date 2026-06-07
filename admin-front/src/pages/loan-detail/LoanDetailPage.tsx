@@ -105,9 +105,18 @@ export default function LoanDetailPage() {
   const userRole = authUser?.role;
   const status = summary?.status ?? 'SUBMITTED';
 
-  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && (status === 'SYSTEM_APPROVED' || status === 'SYSTEM_REJECTED');
+  // 담당자 본인 여부 확인 (userId가 있으면 ID 비교, 없으면 이름 비교로 fallback)
+  const isAssignedToMe = authUser
+    ? authUser.userId
+      ? summary?.assignedBankerId === authUser.userId
+      : summary?.assigneeName === authUser.name
+    : false;
+
+  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && isAssignedToMe && (status === 'SYSTEM_APPROVED' || status === 'SYSTEM_REJECTED');
   const canManagerAct = userRole === 'ADMIN_BANK_MANAGER' && status === 'MANAGER_REVIEW';
 
+  // 시스템 거절 시 은행원은 거절 확인만 가능
+  const isSystemRejected = status === 'SYSTEM_REJECTED';
   const showApproveReject = canTellerAct || canManagerAct;
   const isDecided = status === 'APPROVED' || status === 'REJECTED';
 
@@ -275,25 +284,26 @@ export default function LoanDetailPage() {
                       variant="outline-error"
                       onClick={() => handleSelectAction('reject')}
                     >
-                      {canTellerAct ? '거절 요청' : '거절'}
+                      {canTellerAct && isSystemRejected
+                        ? '거절 확인'
+                        : canTellerAct
+                          ? '거절 요청'
+                          : '최종 거절'}
                     </Button>
-                    <Button
-                      onClick={() => handleSelectAction('approve')}
-                      disabled={!approvalCondition}
-                    >
-                      {canTellerAct ? '승인 요청' : '승인'}
-                    </Button>
+                    {!isSystemRejected && (
+                      <Button
+                        onClick={() => handleSelectAction('approve')}
+                        disabled={!approvalCondition}
+                      >
+                        {canTellerAct ? '승인 요청' : '최종 승인'}
+                      </Button>
+                    )}
                   </div>
                 )}
 
                 {/* 의견 입력 영역 (액션 선택 후 표시) */}
                 {pendingAction && (
                   <div className="space-y-3">
-                    {canTellerAct && (
-                      <p className="rounded-md bg-info/10 px-3 py-2 text-xs text-info">
-                        제출 시 지점장 결재로 전달됩니다.
-                      </p>
-                    )}
                     <label htmlFor="reviewComment" className="block text-sm font-medium text-text-primary">
                       {pendingAction === 'approve' && '승인 의견 (필수)'}
                       {pendingAction === 'reject' && '거절 사유 (필수)'}
@@ -339,12 +349,14 @@ export default function LoanDetailPage() {
                           {isProcessing
                             ? '처리 중...'
                             : canTellerAct
-                              ? pendingAction === 'approve'
-                                ? '승인 요청'
-                                : '거절 요청'
+                              ? isSystemRejected
+                                ? '거절 확인'
+                                : pendingAction === 'approve'
+                                  ? '승인 요청'
+                                  : '거절 요청'
                               : pendingAction === 'approve'
-                                ? '승인 확인'
-                                : '거절 확인'}
+                                ? '최종 승인'
+                                : '최종 거절'}
                         </Button>
                       </div>
                     </div>

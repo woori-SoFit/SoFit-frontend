@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { LoanProductInfo, ApplicationInfo, RecommendationData, RepaymentMethod, ReviewDecision } from '@/types';
 import { formatCurrency, formatMonths, formatDateTime } from '@/utils/formatters';
 import { REPAYMENT_METHOD_LABELS, PURPOSE_LABELS } from '@/constants/loanLabels';
@@ -31,7 +31,7 @@ interface ConditionComparisonCardProps {
   editable?: boolean;
   /** 편집된 승인 조건 변경 콜백 (유효한 값일 때만 호출) */
   onConditionChange?: (condition: EditableApprovalCondition | null) => void;
-  /** 심사 이력 (은행원 → 지점장 순서) */
+  /** 결재 이력 (은행원 → 지점장 순서) */
   decisions?: ReviewDecision[];
   /** 카드 하단에 렌더링할 추가 콘텐츠 (의견 입력 + 버튼 등) */
   children?: React.ReactNode;
@@ -266,76 +266,157 @@ export default function ConditionComparisonCard({
 
       {children && <div className="mt-5">{children}</div>}
 
-      {/* 심사 이력 (최신순 스택) */}
+      {/* 결재 이력 (스텝퍼) */}
       {decisions.length > 0 && (
-        <div className="mt-5 border-t border-border-default pt-5">
-          <h4 className="mb-3 text-sm font-semibold text-text-primary">심사 이력</h4>
-          <div className="space-y-3">
-            {[...decisions].reverse().map((decision, idx) => {
-              const isApproved = decision.status === 'APPROVED';
-              const isRejected = decision.status === 'REJECTED';
-              const isHold = decision.status === 'SYSTEM_REJECTED';
-
-              const dotColor = isApproved || decision.status === 'SYSTEM_APPROVED'
-                ? 'bg-success'
-                : isRejected
-                  ? 'bg-error'
-                  : isHold
-                    ? 'bg-warning'
-                    : 'bg-info';
-
-              const roleLabel =
-                decision.reviewerRole === 'SYSTEM'
-                  ? '시스템'
-                  : decision.reviewerRole === 'ADMIN_BANK_TELLER'
-                    ? '은행원'
-                    : '지점장';
-
-              const statusLabel =
-                decision.status === 'SYSTEM_APPROVED'
-                  ? '자동 승인'
-                  : decision.status === 'SYSTEM_REJECTED'
-                    ? '자동 보류'
-                    : isApproved
-                      ? '승인'
-                      : isRejected
-                        ? '거절'
-                        : '추가 결재 요청';
-
-              return (
-                <div key={idx} className="flex gap-3">
-                  <span className={`mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full ${dotColor}`} />
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-text-primary">
-                        {decision.reviewerName}
-                      </span>
-                      <span className="text-xs text-text-disabled">({roleLabel})</span>
-                      <span className={`text-xs font-medium ${
-                        isApproved || decision.status === 'SYSTEM_APPROVED'
-                          ? 'text-success'
-                          : isRejected
-                            ? 'text-error'
-                            : isHold
-                              ? 'text-warning'
-                              : 'text-info'
-                      }`}>
-                        {statusLabel}
-                      </span>
-                      <span className="text-xs text-text-disabled">
-                        {formatDateTime(decision.decidedAt)}
-                      </span>
-                    </div>
-                    {decision.comment && (
-                      <p className="text-sm text-text-secondary">{decision.comment}</p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <DecisionStepper decisions={decisions} />
       )}
     </Card>
+  );
+}
+
+/** 결재 이력 스텝퍼 하위 컴포넌트 */
+function DecisionStepper({ decisions }: { decisions: ReviewDecision[] }) {
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+
+  const handleStepClick = useCallback((idx: number) => {
+    setSelectedIdx((prev) => (prev === idx ? null : idx));
+  }, []);
+
+  const selectedDecision = selectedIdx !== null ? decisions[selectedIdx] : null;
+
+  return (
+    <div className="mt-5 border-t border-border-default pt-5">
+      <h4 className="mb-5 text-sm font-semibold text-text-primary">심사 이력</h4>
+
+      {/* 스텝퍼 컨테이너 */}
+      <div className="flex items-center justify-start gap-4">
+        {decisions.map((decision, idx) => {
+          const isApproved = decision.status === 'SYSTEM_APPROVED'
+            || decision.status === 'TELLER_APPROVED'
+            || decision.status === 'MANAGER_APPROVED';
+          const isRejected = decision.status === 'TELLER_REJECTED'
+            || decision.status === 'MANAGER_REJECTED';
+          const isSystemRejected = decision.status === 'SYSTEM_REJECTED';
+          const isLast = idx === decisions.length - 1;
+          const isSelected = selectedIdx === idx;
+
+          const isSystem = decision.reviewerRole === 'SYSTEM';
+
+          const roleLabel =
+            decision.reviewerRole === 'ADMIN_BANK_TELLER'
+              ? '은행원'
+              : decision.reviewerRole === 'ADMIN_BANK_MANAGER'
+                ? '지점장'
+                : '';
+
+          const statusLabel =
+            decision.status === 'SYSTEM_APPROVED'
+              ? '자동 승인'
+              : decision.status === 'SYSTEM_REJECTED'
+                ? '자동 거절'
+                : isApproved
+                  ? '승인'
+                  : '거절';
+
+          const accentColor = isApproved
+            ? 'border-success bg-success'
+            : isRejected
+              ? 'border-error bg-error'
+              : 'border-warning bg-warning';
+
+          const textColor = isApproved
+            ? 'text-success'
+            : isRejected
+              ? 'text-error'
+              : 'text-warning';
+
+          const lineColor = isApproved
+            ? 'bg-success'
+            : isRejected
+              ? 'bg-error'
+              : 'bg-warning';
+
+          return (
+            <div key={idx} className="flex items-center">
+              {/* 스텝 노드 */}
+              <button
+                type="button"
+                onClick={() => handleStepClick(idx)}
+                className="group relative flex flex-col items-center gap-2"
+              >
+                {/* 원형 아이콘 */}
+                <div
+                  className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-shadow ${accentColor} ${
+                    isSelected ? 'shadow-md ring-2 ring-offset-2 ring-gray-200' : 'group-hover:shadow-sm'
+                  }`}
+                >
+                  {isApproved && (
+                    <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                  {isRejected && (
+                    <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  )}
+                  {isSystemRejected && (
+                    <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01" />
+                    </svg>
+                  )}
+                </div>
+                {/* 텍스트 정보 */}
+                <div className="flex flex-col items-center">
+                  <span className={`text-xs font-semibold ${textColor}`}>{statusLabel}</span>
+                  {isSystem ? (
+                    <span className="mt-0.5 text-[11px] font-medium text-text-primary">시스템</span>
+                  ) : (
+                    <>
+                      <span className="mt-0.5 text-[11px] font-medium text-text-primary">{decision.reviewerName}</span>
+                      <span className="text-[10px] text-text-disabled">{roleLabel}</span>
+                    </>
+                  )}
+                  <span className="mt-0.5 text-[10px] text-text-disabled">{formatDateTime(decision.decidedAt)}</span>
+                </div>
+              </button>
+
+              {/* 커넥터 (화살표) */}
+              {!isLast && (
+                <div className="ml-4 flex w-10 items-center">
+                  <div className={`h-0.5 flex-1 rounded-full ${lineColor} opacity-30`} />
+                  <svg className={`-ml-1 h-3 w-3 ${textColor} opacity-50`} fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 선택된 스텝의 의견 표시 영역 */}
+      {selectedDecision && (
+        <div className="mt-5 animate-[fadeIn_0.2s_ease-in-out] rounded-lg border border-border-default bg-gray-50/80 p-4">
+          {selectedDecision.comment ? (
+            <>
+              <div className="mb-2 flex items-center gap-2">
+                <span className="text-xs font-semibold text-text-primary">
+                  {selectedDecision.reviewerName}
+                </span>
+                <span className="text-[10px] text-text-disabled">
+                  {formatDateTime(selectedDecision.decidedAt)}
+                </span>
+              </div>
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-text-secondary">
+                {selectedDecision.comment}
+              </p>
+            </>
+          ) : (
+            <p className="text-center text-sm text-text-disabled">작성된 의견이 없습니다.</p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
