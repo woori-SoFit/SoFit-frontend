@@ -212,9 +212,9 @@ export default function LoanDetailPage() {
 
       {/* ─── 정보 탭 ─── */}
       {activeTab === 'info' && (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-6">
           {/* 1열: 고객 기본 정보 + 사업자 정보 (세로 스택) */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             <CustomerInfoCard data={infoTab.applicantInfo} />
             <BusinessInfoCard data={infoTab.businessInfo} />
           </div>
@@ -243,8 +243,8 @@ export default function LoanDetailPage() {
         isSGradeTabLoading
           ? <LoadingState />
           : sGradeTab ? (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <CBScoreCard score={sGradeTab.cbScore.score} />
                 <SGradeCard grade={sGradeTab.sGrade} />
                 <SCBScoreCard

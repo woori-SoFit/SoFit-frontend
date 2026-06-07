@@ -209,11 +209,6 @@ export default function ConditionComparisonCard({
 
   return (
     <Card>
-      {/* 심사 이력 스텝퍼 (상단 컴팩트 배치) */}
-      {decisions.length > 0 && (
-        <DecisionStepper decisions={decisions} />
-      )}
-
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-text-primary">{product.productName}</h3>
         <div className="flex items-center gap-2">
@@ -279,6 +274,11 @@ export default function ConditionComparisonCard({
       )}
 
       {children && <div className="mt-4">{children}</div>}
+
+      {/* 심사 이력 스텝퍼 (하단 배치) */}
+      {decisions.length > 0 && (
+        <DecisionStepper decisions={decisions} />
+      )}
     </Card>
   );
 }
@@ -412,9 +412,9 @@ function DecisionStepper({ decisions }: { decisions: ReviewDecision[] }) {
     : null;
 
   return (
-    <div className="mb-4 pb-4 border-b border-border-default">
+    <div className="mt-4 border-t border-border-default pt-4">
       <div className="mb-2 flex items-center justify-between">
-        <h4 className="text-xs font-semibold text-text-secondary">심사 이력</h4>
+        <h4 className="text-sm font-semibold text-text-primary">심사 이력</h4>
       </div>
 
       {/* 스텝퍼 컨테이너 (컴팩트) */}
@@ -441,39 +441,39 @@ function DecisionStepper({ decisions }: { decisions: ReviewDecision[] }) {
               >
                 {/* 아이콘 (작은 원) */}
                 <div
-                  className={`flex h-6 w-6 items-center justify-center rounded-full ${step.accentColor}`}
+                  className={`flex h-8 w-8 items-center justify-center rounded-full ${step.accentColor}`}
                 >
                   {step.icon === 'check' && (
-                    <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                   {step.icon === 'x' && (
-                    <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   )}
                   {step.icon === 'warn' && (
-                    <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01" />
                     </svg>
                   )}
                   {step.icon === 'none' && (
-                    <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
+                    <span className="h-2 w-2 rounded-full bg-gray-400" />
                   )}
                   {step.icon === 'active' && (
-                    <span className="relative flex h-2.5 w-2.5">
+                    <span className="relative flex h-3 w-3">
                       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-white" />
+                      <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
                     </span>
                   )}
                 </div>
                 {/* 인라인 텍스트 */}
                 <div className="flex flex-col">
-                  <span className={`text-[11px] font-semibold leading-tight ${step.textColor}`}>
+                  <span className={`text-xs font-semibold leading-tight ${step.textColor}`}>
                     {step.label}
                   </span>
-                  <span className="text-[10px] leading-tight text-text-disabled">
+                  <span className="text-[11px] leading-tight text-text-disabled">
                     {step.subLabel}{step.subRole ? ` · ${step.subRole}` : ''}
                   </span>
                 </div>
@@ -494,7 +494,7 @@ function DecisionStepper({ decisions }: { decisions: ReviewDecision[] }) {
       {selectedDecision && (
         <div className="mt-2 rounded-md bg-gray-50 px-3 py-2">
           {selectedDecision.comment ? (
-            <p className="text-xs leading-relaxed text-text-secondary">
+            <p className="text-sm leading-relaxed text-text-secondary">
               <span className="font-medium text-text-primary">{selectedDecision.reviewerName}</span>
               {' · '}
               <span className="text-text-disabled">{formatDateTime(selectedDecision.decidedAt)}</span>
@@ -502,7 +502,7 @@ function DecisionStepper({ decisions }: { decisions: ReviewDecision[] }) {
               {selectedDecision.comment}
             </p>
           ) : (
-            <p className="text-xs text-text-disabled">작성된 의견이 없습니다.</p>
+            <p className="text-sm text-text-disabled">작성된 의견이 없습니다.</p>
           )}
         </div>
       )}
