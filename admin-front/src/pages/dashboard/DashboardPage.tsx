@@ -52,10 +52,15 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="flex h-full flex-col p-6">
       {/* 상단: 제목 (왼쪽) + 필터 (오른쪽) */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-text-primary">대출 현황</h1>
+      <div className="mb-5 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-text-primary">대출 신청 현황</h1>
+          {data && (
+            <span className="text-sm text-text-secondary">총 {data.totalCount}건</span>
+          )}
+        </div>
 
         <div className="flex items-center gap-5">
           {/* 상태 — 미니 셰브론 스텝퍼 */}
@@ -71,7 +76,7 @@ export default function DashboardPage() {
                     type="button"
                     onClick={() => handleStatusChange(step.value)}
                     className={`
-                      relative h-7 flex items-center px-3 text-[11px] font-medium
+                      relative h-8 flex items-center px-4 text-xs font-medium
                       transition-all cursor-pointer whitespace-nowrap
                       ${index === 0 ? 'rounded-l-md' : ''}
                       ${isLast ? 'rounded-r-md' : ''}
@@ -102,7 +107,7 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={() => handleTabChange('mine')}
-                className={`px-3 py-1 text-[11px] font-medium rounded transition-all ${
+                className={`px-4 py-1.5 text-xs font-medium rounded transition-all ${
                   tab === 'mine'
                     ? 'bg-white text-text-primary shadow-sm'
                     : 'text-gray-500 hover:text-text-primary'
@@ -113,7 +118,7 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={() => handleTabChange('all')}
-                className={`px-3 py-1 text-[11px] font-medium rounded transition-all ${
+                className={`px-4 py-1.5 text-xs font-medium rounded transition-all ${
                   tab === 'all'
                     ? 'bg-white text-text-primary shadow-sm'
                     : 'text-gray-500 hover:text-text-primary'
@@ -134,18 +139,20 @@ export default function DashboardPage() {
 
       {/* 테이블 */}
       {!isLoading && !isError && data && (
-        <div className="min-h-[540px]">
+        <div className="flex-1">
           <LoanListView applications={data.contents} />
         </div>
       )}
 
-      {/* 페이지네이션 — 로딩 아닐 때만 */}
+      {/* 페이지네이션 — 하단 고정 */}
       {!isLoading && (
-        <Pagination
-          currentPage={page + 1}
-          totalPages={data?.totalPages ?? 1}
-          onPageChange={(p) => setPage(p - 1)}
-        />
+        <div className="mt-auto pt-4">
+          <Pagination
+            currentPage={page + 1}
+            totalPages={data?.totalPages ?? 1}
+            onPageChange={(p) => setPage(p - 1)}
+          />
+        </div>
       )}
     </div>
   );

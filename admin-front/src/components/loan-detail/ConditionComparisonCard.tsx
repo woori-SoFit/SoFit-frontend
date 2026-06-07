@@ -256,7 +256,7 @@ export default function ConditionComparisonCard({
                     ? 'text-text-disabled bg-gray-50'
                     : 'text-primary bg-primary/5'
                 }`}>
-                  {isRejected ? '거절됨' : isEditing ? '승인 조건 (수정 중)' : '승인 결과'}
+                  {isRejected ? '대출 거절' : isEditing ? '승인 조건 (수정 중)' : '승인 결과'}
                 </th>
               </tr>
             </thead>
