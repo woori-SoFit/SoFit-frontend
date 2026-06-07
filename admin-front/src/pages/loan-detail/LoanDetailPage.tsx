@@ -173,7 +173,6 @@ export default function LoanDetailPage() {
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
             {summary?.productName ?? '-'}
           </span>
-          {summary && <StatusBadge status={summary.status} />}
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-text-secondary">
@@ -182,6 +181,7 @@ export default function LoanDetailPage() {
           <span className="text-sm text-text-secondary">
             담당자: {summary?.assigneeName ?? '-'}
           </span>
+          {summary && <StatusBadge status={summary.status} />}
         </div>
       </div>
 
@@ -210,13 +210,15 @@ export default function LoanDetailPage() {
 
       {/* ─── 정보 탭 ─── */}
       {activeTab === 'info' && (
-        <div className="grid grid-cols-2 gap-4">
-          {/* 1행: 고객 기본 정보 | 사업자 정보 */}
-          <CustomerInfoCard data={infoTab.applicantInfo} />
-          <BusinessInfoCard data={infoTab.businessInfo} />
+        <div className="grid grid-cols-3 gap-4">
+          {/* 1열: 고객 기본 정보 + 사업자 정보 (세로 스택) */}
+          <div className="space-y-4">
+            <CustomerInfoCard data={infoTab.applicantInfo} />
+            <BusinessInfoCard data={infoTab.businessInfo} />
+          </div>
 
-          {/* 2행: 고객 신청 정보 (2열 전체) */}
-          <div className="col-span-2">
+          {/* 2~3열: 신청 정보 (1열과 높이 맞춤) */}
+          <div className="col-span-2 [&>*]:h-full">
             <ApplicationRequestCard
               applicationInfo={infoTab.applicationInfo}
               userInputInfo={infoTab.userInputInfo}
@@ -274,6 +276,7 @@ export default function LoanDetailPage() {
             editable={showApproveReject}
             onConditionChange={setApprovalCondition}
             decisions={reviewTab.decisions ?? []}
+            isRejected={status === 'REJECTED'}
           >
             {!isDecided && showApproveReject && (
               <>
@@ -281,8 +284,10 @@ export default function LoanDetailPage() {
                 {!pendingAction && (
                   <div className="flex items-center justify-end gap-2">
                     <Button
-                      variant="outline-error"
+                      variant="ghost"
+                      size="sm"
                       onClick={() => handleSelectAction('reject')}
+                      className="text-error hover:bg-error/5"
                     >
                       {canTellerAct && isSystemRejected
                         ? '거절 확인'
@@ -292,6 +297,7 @@ export default function LoanDetailPage() {
                     </Button>
                     {!isSystemRejected && (
                       <Button
+                        size="sm"
                         onClick={() => handleSelectAction('approve')}
                         disabled={!approvalCondition}
                       >
@@ -332,6 +338,7 @@ export default function LoanDetailPage() {
                       <div className="flex items-center gap-2">
                         <Button
                           variant="ghost"
+                          size="sm"
                           onClick={handleCancelAction}
                           disabled={isProcessing}
                         >
@@ -340,11 +347,13 @@ export default function LoanDetailPage() {
                         <Button
                           variant={
                             pendingAction === 'reject'
-                              ? 'outline-error'
+                              ? 'ghost'
                               : 'primary'
                           }
+                          size="sm"
                           onClick={handleSubmit}
                           disabled={!comment.trim() || isProcessing || (pendingAction === 'approve' && !approvalCondition)}
+                          className={pendingAction === 'reject' ? 'text-error hover:bg-error/5' : ''}
                         >
                           {isProcessing
                             ? '처리 중...'
