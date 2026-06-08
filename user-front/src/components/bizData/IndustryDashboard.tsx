@@ -36,11 +36,10 @@ export function IndustryDashboard({ data }: IndustryDashboardProps) {
   const overallRank = getOverallRank(salesRank, profitRank, stabilityRank);
   const overallEval = getRankEvaluation(overallRank);
 
-  // TODO: 전월 대비 변동은 현재 API에 없으므로 null로 처리
-  // 백엔드에서 industry_sales_rank_change 등 제공 시 교체
-  const salesChange: number | null = null;
-  const profitChange: number | null = null;
-  const stabilityChange: number | null = null;
+  // 전월 대비 변동
+  const salesChange = data.industryComparison.salesRankChange;
+  const profitChange = data.industryComparison.profitRankChange;
+  const stabilityChange = data.industryComparison.stabilityRankChange;
 
   const ranks = [
     { label: "매출", percent: salesRank, color: "bg-success", change: salesChange },

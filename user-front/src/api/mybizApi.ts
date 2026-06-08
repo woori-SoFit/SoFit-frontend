@@ -16,6 +16,9 @@ function mapToFrontendDashboard(res: MyBizDashboardResult): BizDashboardData {
     availableMonths: res.availableMonths ?? [],
     monthlyRevenue: res.monthlyRevenue,
     monthOverMonthChange: res.monthlyRevenueGrowthRate ?? null,
+    prevMonthRevenue: res.prevMonthRevenue ?? null,
+    monthlyTransactionCount: res.monthlyTransactionCount,
+    avgTransactionAmount: res.avgTransactionAmount,
     cashFlow: res.cashFlow,
     netProfit: res.estimatedProfit,
     industryComparison: {
@@ -23,6 +26,9 @@ function mapToFrontendDashboard(res: MyBizDashboardResult): BizDashboardData {
       revenue: Number(res.industryCompare.industrySalesRank),
       profitability: Number(res.industryCompare.industryProfitRank),
       stability: Number(res.industryCompare.industryStabilityRank),
+      salesRankChange: res.industryCompare.industrySalesRankChange ?? null,
+      profitRankChange: res.industryCompare.industryProfitRankChange ?? null,
+      stabilityRankChange: res.industryCompare.industryStabilityRankChange ?? null,
     },
     revenueTrend: res.revenueTrend.map((t) => ({
       month: toMonthLabel(t.referenceMonth),
@@ -42,6 +48,17 @@ function mapToFrontendDashboard(res: MyBizDashboardResult): BizDashboardData {
         month: toMonthLabel(t.referenceMonth),
         rating: Number(t.reviewRating),
       })),
+    },
+    customer: {
+      onlineReorderRate: res.onlineReorderRate,
+      onlineReplyRate: res.onlineReplyRate,
+      onlineInfoUpdateCount: res.onlineInfoUpdateCount,
+      positiveReviewRatio: res.positiveReviewRatio,
+      deliveryRating: res.deliveryRating,
+      deliveryOrderCount: res.deliveryOrderCount,
+      deliverySalesAmount: res.deliverySalesAmount,
+      hasOnlineReservation: res.hasOnlineReservation,
+      hasSns: res.hasSns,
     },
   };
 }

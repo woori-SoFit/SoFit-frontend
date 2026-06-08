@@ -18,18 +18,17 @@ interface CustomerDashboardProps {
 
 export function CustomerDashboard({ data }: CustomerDashboardProps) {
   const { averageRating, reviewCount, ratingTrend } = data.review;
-
-  // TODO: 백엔드에서 아래 필드 추가 시 실제 값으로 교체
-  // 현재는 API에 없으므로 placeholder 표시
-  const onlineReorderRate: number | null = null;       // online_reorder_rate
-  const onlineReplyRate: number | null = null;         // online_reply_rate
-  const onlineInfoUpdateCount: number | null = null;   // online_info_update_count
-  const positiveReviewRatio: number | null = null;     // positive_review_ratio
-  const deliveryRating: number | null = null;          // delivery_rating
-  const deliveryOrderCount: number | null = null;      // delivery_order_count
-  const deliverySalesAmount: number | null = null;     // delivery_sales_amount
-  const hasOnlineReservation: boolean | null = null;   // has_online_reservation
-  const hasSns: boolean | null = null;                 // has_sns
+  const {
+    onlineReorderRate,
+    onlineReplyRate,
+    onlineInfoUpdateCount,
+    positiveReviewRatio,
+    deliveryRating,
+    deliveryOrderCount,
+    deliverySalesAmount,
+    hasOnlineReservation,
+    hasSns,
+  } = data.customer;
 
   return (
     <div className="flex flex-col gap-4 px-5 py-4">
@@ -43,7 +42,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
             </div>
             <p className="text-xs text-text-secondary text-center">재구매율</p>
             <p className="text-sm font-bold text-text-primary">
-              {onlineReorderRate !== null ? `${onlineReorderRate}%` : "-"}
+              {`${onlineReorderRate}%`}
             </p>
           </div>
           <div className="flex flex-col items-center gap-1.5">
@@ -52,7 +51,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
             </div>
             <p className="text-xs text-text-secondary text-center">답글 비율</p>
             <p className="text-sm font-bold text-text-primary">
-              {onlineReplyRate !== null ? `${onlineReplyRate}%` : "-"}
+              {`${onlineReplyRate}%`}
             </p>
           </div>
           <div className="flex flex-col items-center gap-1.5">
@@ -61,7 +60,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
             </div>
             <p className="text-xs text-text-secondary text-center">정보 수정</p>
             <p className="text-sm font-bold text-text-primary">
-              {onlineInfoUpdateCount !== null ? `${onlineInfoUpdateCount}회` : "-"}
+              {`${onlineInfoUpdateCount}회`}
             </p>
           </div>
         </div>
@@ -79,7 +78,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
               <span className="text-xs text-text-secondary">/ 5.0</span>
             </div>
             <p className="text-xs text-text-secondary">리뷰 수 {reviewCount.toLocaleString()}개</p>
-            {positiveReviewRatio !== null && (
+            {positiveReviewRatio > 0 && (
               <div className="flex items-center gap-1 mt-2">
                 <ThumbsUp size={12} className="text-success" />
                 <span className="text-xs text-success font-medium">긍정 리뷰 {positiveReviewRatio}%</span>
@@ -103,7 +102,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
             </div>
             <p className="text-xs text-text-secondary text-center">평점</p>
             <p className="text-sm font-bold text-text-primary">
-              {deliveryRating !== null ? deliveryRating.toFixed(1) : "-"}
+              {deliveryRating.toFixed(1)}
             </p>
           </div>
           <div className="flex flex-col items-center gap-1.5">
@@ -112,7 +111,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
             </div>
             <p className="text-xs text-text-secondary text-center">주문 수</p>
             <p className="text-sm font-bold text-text-primary">
-              {deliveryOrderCount !== null ? `${deliveryOrderCount.toLocaleString()}건` : "-"}
+              {`${deliveryOrderCount.toLocaleString()}건`}
             </p>
           </div>
           <div className="flex flex-col items-center gap-1.5">
@@ -121,7 +120,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
             </div>
             <p className="text-xs text-text-secondary text-center">매출액</p>
             <p className="text-sm font-bold text-text-primary">
-              {deliverySalesAmount !== null ? `${formatCurrency(deliverySalesAmount)}원` : "-"}
+              {`${formatCurrency(deliverySalesAmount)}원`}
             </p>
           </div>
         </div>
@@ -136,8 +135,8 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
               <Globe size={16} className="text-purple-500" />
             </div>
             <p className="text-sm text-text-primary flex-1">온라인 예약</p>
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasOnlineReservation === null ? "bg-gray-100 text-text-disabled" : hasOnlineReservation ? "bg-success/10 text-success" : "bg-gray-100 text-text-disabled"}`}>
-              {hasOnlineReservation === null ? "확인 중" : hasOnlineReservation ? "운영 중" : "미운영"}
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasOnlineReservation ? "bg-success/10 text-success" : "bg-gray-100 text-text-disabled"}`}>
+              {hasOnlineReservation ? "운영 중" : "미운영"}
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -145,8 +144,8 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
               <Share2 size={16} className="text-pink-500" />
             </div>
             <p className="text-sm text-text-primary flex-1">SNS 운영</p>
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasSns === null ? "bg-gray-100 text-text-disabled" : hasSns ? "bg-success/10 text-success" : "bg-gray-100 text-text-disabled"}`}>
-              {hasSns === null ? "확인 중" : hasSns ? "운영 중" : "미운영"}
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasSns ? "bg-success/10 text-success" : "bg-gray-100 text-text-disabled"}`}>
+              {hasSns ? "운영 중" : "미운영"}
             </span>
           </div>
         </div>

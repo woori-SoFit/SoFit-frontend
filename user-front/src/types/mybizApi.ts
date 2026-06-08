@@ -13,6 +13,9 @@ export interface MyBizDashboardResult {
   referenceMonth: string;
   monthlyRevenue: number;
   monthlyRevenueGrowthRate: number | null;
+  prevMonthRevenue: number | null;
+  monthlyTransactionCount: number;
+  avgTransactionAmount: number;
   cashFlow: number;
   estimatedProfit: number;
   industryCompare: {
@@ -20,6 +23,9 @@ export interface MyBizDashboardResult {
     industrySalesRank: number;
     industryProfitRank: number;
     industryStabilityRank: number;
+    industrySalesRankChange: number | null;
+    industryProfitRankChange: number | null;
+    industryStabilityRankChange: number | null;
   };
   revenueTrend: Array<{ referenceMonth: string; monthlyRevenue: number }>;
   cashFlowTrend: Array<{
@@ -30,6 +36,15 @@ export interface MyBizDashboardResult {
   ratingTrend: Array<{ referenceMonth: string; reviewRating: number }>;
   reviewRating: number;
   reviewCount: number;
+  onlineReorderRate: number;
+  onlineReplyRate: number;
+  onlineInfoUpdateCount: number;
+  positiveReviewRatio: number;
+  deliveryRating: number;
+  deliveryOrderCount: number;
+  deliverySalesAmount: number;
+  hasOnlineReservation: boolean;
+  hasSns: boolean;
   availableMonths: string[];
 }
 

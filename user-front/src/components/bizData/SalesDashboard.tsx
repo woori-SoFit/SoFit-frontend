@@ -25,21 +25,15 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
         ? "text-info"
         : "text-error";
 
-  // 전월 매출 계산: 이번달 매출 / (1 + 증감률)
-  const prevMonthRevenue =
-    data.monthOverMonthChange !== null && data.monthOverMonthChange !== 0
-      ? Math.round(data.monthlyRevenue / (1 + data.monthOverMonthChange / 100))
-      : null;
+  // 전월 매출
+  const prevMonthRevenue = data.prevMonthRevenue;
 
   // 업종 내 위치 (매출 순위 %)
   const industrySalesRank = data.industryComparison.revenue;
 
-  // 거래 건수와 평균 결제액은 현재 API에 없으므로 매출에서 추정
-  // TODO: 백엔드에서 monthly_transaction_count, avg_transaction_amount 필드 추가 시 교체
-  const monthlyTransactionCount = data.review.reviewCount > 0 ? data.review.reviewCount : null;
-  const avgTransactionAmount = monthlyTransactionCount
-    ? Math.round(data.monthlyRevenue / monthlyTransactionCount)
-    : null;
+  // 거래 건수와 평균 결제액
+  const monthlyTransactionCount = data.monthlyTransactionCount;
+  const avgTransactionAmount = data.avgTransactionAmount;
 
   return (
     <div className="flex flex-col gap-4 px-5 py-4">
@@ -91,7 +85,7 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
           <div>
             <p className="text-xs text-text-secondary mb-0.5">월 거래 건수</p>
             <p className="text-sm font-bold text-text-primary">
-              {monthlyTransactionCount !== null ? `${monthlyTransactionCount.toLocaleString()}건` : "-"}
+              {`${monthlyTransactionCount.toLocaleString()}건`}
             </p>
           </div>
         </div>
@@ -108,7 +102,7 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
             <div>
               <p className="text-xs text-text-secondary">월 거래 건수</p>
               <p className="text-base font-bold text-text-primary">
-                {monthlyTransactionCount !== null ? `${monthlyTransactionCount.toLocaleString()}건` : "-"}
+                {`${monthlyTransactionCount.toLocaleString()}건`}
               </p>
             </div>
           </div>
@@ -119,7 +113,7 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
             <div>
               <p className="text-xs text-text-secondary">건당 평균 결제액</p>
               <p className="text-base font-bold text-text-primary">
-                {avgTransactionAmount !== null ? `${avgTransactionAmount.toLocaleString()}원` : "-"}
+                {`${Math.round(avgTransactionAmount).toLocaleString()}원`}
               </p>
             </div>
           </div>

@@ -7,7 +7,7 @@
  * - 월 입금액 / 월 출금액 (2열)
  * - 대출 잔액
  */
-import { Wallet, ArrowDownLeft, ArrowUpRight, Landmark } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Landmark } from "lucide-react";
 import { TransactionBarChart } from "./TransactionBarChart";
 import { formatCurrency, formatChangeRate } from "@/utils/format";
 import type { BizDashboardData } from "@/types/bizData";

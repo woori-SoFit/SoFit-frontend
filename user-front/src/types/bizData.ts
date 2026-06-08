@@ -49,6 +49,9 @@ export interface BizDashboardData {
   availableMonths: string[];
   monthlyRevenue: number;
   monthOverMonthChange: number | null;
+  prevMonthRevenue: number | null;
+  monthlyTransactionCount: number;
+  avgTransactionAmount: number;
   cashFlow: number;
   netProfit: number;
   industryComparison: {
@@ -56,6 +59,9 @@ export interface BizDashboardData {
     revenue: number;
     profitability: number;
     stability: number;
+    salesRankChange: number | null;
+    profitRankChange: number | null;
+    stabilityRankChange: number | null;
   };
   revenueTrend: Array<{
     month: string;
@@ -75,6 +81,17 @@ export interface BizDashboardData {
       month: string;
       rating: number;
     }>;
+  };
+  customer: {
+    onlineReorderRate: number;
+    onlineReplyRate: number;
+    onlineInfoUpdateCount: number;
+    positiveReviewRatio: number;
+    deliveryRating: number;
+    deliveryOrderCount: number;
+    deliverySalesAmount: number;
+    hasOnlineReservation: boolean;
+    hasSns: boolean;
   };
 }
 
