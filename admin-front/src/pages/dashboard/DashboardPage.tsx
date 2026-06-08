@@ -16,23 +16,26 @@ const STATUS_STEPS: { value: StatusFilterValue; label: string }[] = [
   { value: 'PENDING', label: '은행원 심사' },
   { value: 'MANAGER_REVIEW', label: '최종 심사' },
   { value: 'DECIDED', label: '승인/거절' },
+  { value: 'EXECUTED', label: '실행 완료' },
 ];
 
 /**
  * 대출 현황 페이지
  *
- * - 탭: 내 업무 / 전체
- * - 상태 드롭다운 필터
+ * - 탭: 내 업무 / 전체 (지점장에게는 숨김)
+ * - 상태 필터 (지점장은 기본 '최종 심사')
  * - 업무 컬럼 (심사하기, 결재하기, 조회)
  * - 페이지네이션
  */
 export default function DashboardPage() {
   const user = useAuthStore((s) => s.user);
+  const isManager = user?.role === 'ADMIN_BANK_MANAGER';
+
   const [page, setPage] = useState(0);
-  const [tab, setTab] = useState<TabMode>(
-    user?.role === 'ADMIN_DEV' ? 'all' : 'mine'
+  const [tab, setTab] = useState<TabMode>('all');
+  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>(
+    isManager ? 'MANAGER_REVIEW' : 'ALL'
   );
-  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>('ALL');
 
   const { data, isLoading, isError, refetch } = useLoanApplications({
     page,
@@ -100,7 +103,8 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* 담당자 — 탭 스타일 */}
+          {/* 담당자 — 탭 스타일 (지점장에게는 숨김) */}
+          {!isManager && (
           <div className="flex items-center">
             <span className="text-xs text-text-secondary mr-2">담당자</span>
             <div className="flex items-center bg-gray-100 rounded-md p-0.5">
@@ -128,6 +132,7 @@ export default function DashboardPage() {
               </button>
             </div>
           </div>
+          )}
         </div>
       </div>
 
@@ -140,7 +145,11 @@ export default function DashboardPage() {
       {/* 테이블 */}
       {!isLoading && !isError && data && (
         <div className="flex-1">
-          <LoanListView applications={data.contents} />
+          <LoanListView
+            applications={data.contents}
+            statusFilter={statusFilter}
+            onResetFilter={statusFilter !== 'ALL' ? () => handleStatusChange('ALL') : undefined}
+          />
         </div>
       )}
 

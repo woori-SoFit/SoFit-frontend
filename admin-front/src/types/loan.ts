@@ -10,7 +10,8 @@ export type ReviewStatus =
   'SYSTEM_REJECTED' | 
   'MANAGER_REVIEW' | 
   'APPROVED' | 
-  'REJECTED';
+  'REJECTED' |
+  'EXECUTED';
 
 
 // ─── 대출 신청 현황 API (GET /api/admin/loan-applications) ──────────
@@ -34,6 +35,10 @@ export interface LoanApplicationItem {
   applicantName: string;
   businessName: string;
   productName: string;
+  /** 대출 신청 금액 (원) */
+  requestedAmount: number;
+  /** 승인 금액 (원) — 승인/실행 완료 시에만 존재 */
+  approvedAmount?: number;
   status: ReviewStatus;
   assignedBankerId: number;
   assigneeName: string;

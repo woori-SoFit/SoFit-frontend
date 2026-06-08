@@ -37,12 +37,6 @@ export const ROUTE_CONFIG: RouteGroupConfig[] = [
         allowedRoles: ['ADMIN_DEV', 'ADMIN_BANK_TELLER', 'ADMIN_BANK_MANAGER'],
       },
       {
-        key: 'manager-approval',
-        label: '지점장 결재',
-        path: '/manager-approval',
-        allowedRoles: ['ADMIN_BANK_MANAGER'],
-      },
-      {
         key: 'loan-detail',
         label: '대출 상세',
         path: '/loan/:id',
