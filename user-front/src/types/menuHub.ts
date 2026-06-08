@@ -2,15 +2,14 @@
  * MenuHub 관련 타입 및 상수 정의
  */
 import type { LucideIcon } from "lucide-react";
-import { BarChart3, Wallet, Users, Trophy, ClipboardCheck } from "lucide-react";
+import { BarChart3, Wallet, Users, Trophy } from "lucide-react";
 
 /** 메뉴 카테고리 식별자 */
 export type MenuCategory =
   | "sales"
   | "profit"
   | "customer"
-  | "industry"
-  | "loan-check";
+  | "industry";
 
 /** 메뉴 카드 아이템 정의 */
 export interface MenuItem {
@@ -60,13 +59,5 @@ export const MENU_ITEMS: MenuItem[] = [
     icon: Trophy,
     iconBg: "bg-amber-50",
     iconColor: "text-amber-500",
-  },
-  {
-    id: "loan-check",
-    title: "지금 챙기면 좋을 것들",
-    description: "대출 심사 전에 살펴보면 좋은 항목을 정리해드려요.",
-    icon: ClipboardCheck,
-    iconBg: "bg-indigo-50",
-    iconColor: "text-indigo-500",
   },
 ];

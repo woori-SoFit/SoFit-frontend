@@ -6,6 +6,7 @@ import { MENU_ITEMS } from "@/types/menuHub";
 import { MonthNavigation } from "./MonthNavigation";
 import { MenuCard } from "./MenuCard";
 import { GrowthBanner } from "./GrowthBanner";
+import menuHubIllust from "@/assets/icons/Mybiz-MenuHub.png";
 
 /**
  * 마이 비즈 데이터 메뉴 선택 화면 루트 컴포넌트
@@ -35,19 +36,22 @@ export function MenuHub() {
     <div className="flex flex-col px-5 py-4 gap-4">
       {/* 헤더 영역 */}
       <div className="flex flex-col items-center gap-1 mb-1">
-        <h1 className="text-lg font-bold text-text-primary">
+        <MonthNavigation
+          availableMonths={availableMonths}
+          selectedMonth={selectedMonth || availableMonths[0] || ""}
+          onMonthChange={setSelectedMonth}
+        />
+        <h1 className="text-lg font-bold text-text-primary mt-2">
           사장님, 무엇이 궁금하세요?
         </h1>
         <p className="text-xs text-text-secondary">
           궁금한 항목을 선택하면 핵심 내용을 요약해드릴게요
         </p>
-        <div className="mt-2">
-          <MonthNavigation
-            availableMonths={availableMonths}
-            selectedMonth={selectedMonth || availableMonths[0] || ""}
-            onMonthChange={setSelectedMonth}
-          />
-        </div>
+        <img
+          src={menuHubIllust}
+          alt="마이 비즈 데이터 일러스트"
+          className="w-full max-w-[200px] mt-2"
+        />
       </div>
 
       {/* 메뉴 카드 리스트 */}

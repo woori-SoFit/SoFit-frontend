@@ -11,15 +11,29 @@ import { useSearchParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useMenuHubStore } from "@/stores/menuHubStore";
-import { useMe } from "@/hooks/useMe";
 import { DashboardSummary, formatCurrency, formatChangeRate } from "@/components/bizData/DashboardSummary";
 import { DashboardDetail } from "@/components/bizData/DashboardDetail";
+import { SalesDashboard } from "@/components/bizData/SalesDashboard";
+import { ProfitDashboard } from "@/components/bizData/ProfitDashboard";
+import { CustomerDashboard } from "@/components/bizData/CustomerDashboard";
+import { IndustryDashboard } from "@/components/bizData/IndustryDashboard";
 import { EmptyError } from "@/components/common/EmptyError";
 import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { formatYearMonth } from "@/utils/format";
 import { fetchMyBizDashboard, fetchLoanBalance } from "@/api/mybizApi";
 import type { BizDashboardData } from "@/types/bizData";
 import type { MenuCategory } from "@/types/menuHub";
+
+/** 카테고리별 페이지 타이틀 */
+function getCategoryTitle(category: MenuCategory): string {
+  const titles: Record<MenuCategory, string> = {
+    sales: "이번 달 장사는 어땠나요?",
+    profit: "실제로 얼마나 남았나요?",
+    customer: "손님들은 다시\n찾아오고 있나요?",
+    industry: "우리 가게는 다른 가게보다\n잘하고 있나요?",
+  };
+  return titles[category];
+}
 
 function findScrollParent(el: HTMLElement | null): HTMLElement {
   let curr = el?.parentElement ?? null;
@@ -35,9 +49,6 @@ export default function BizDashboardPage() {
   const [searchParams] = useSearchParams();
   const category = (searchParams.get("category") ?? "sales") as MenuCategory;
   const { selectedMonth: storeMonth } = useMenuHubStore();
-
-  const { me } = useMe();
-  const userName = me?.name ?? "";
 
   const [data, setData] = useState<BizDashboardData | null>(null);
   const [fetchError, setFetchError] = useState(false);
@@ -166,16 +177,11 @@ export default function BizDashboardPage() {
         </div>
       </div>
 
-      {/* 헤더: 사용자 인사 + 월 선택 */}
-      <div className="px-5 py-2 flex items-end justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-base font-semibold text-text-primary truncate">
-            {userName ? `${userName} 사장님,` : "사장님,"}
-          </p>
-          <p className="text-xs text-text-secondary mt-0.5">
-            사업 현황을 한눈에 확인해 보세요
-          </p>
-        </div>
+      {/* 헤더: 카테고리 제목 + 월 선택 */}
+      <div className="px-5 py-3 flex items-center justify-between gap-3">
+        <h2 className="text-lg font-bold text-text-primary whitespace-pre-line">
+          {getCategoryTitle(category)}
+        </h2>
 
         <div className="flex items-center gap-0 shrink-0">
           <button
@@ -214,13 +220,26 @@ export default function BizDashboardPage() {
         </div>
       )}
 
-      <DashboardSummary
-        data={data}
-        selectedMonth={selectedMonth}
-        currentMonth={currentMonth}
-        fullCardRef={fullCardRef}
-      />
-      <DashboardDetail data={data} />
+      {/* 카테고리별 콘텐츠 */}
+      {category === "sales" ? (
+        <SalesDashboard data={data} />
+      ) : category === "profit" ? (
+        <ProfitDashboard data={data} />
+      ) : category === "customer" ? (
+        <CustomerDashboard data={data} />
+      ) : category === "industry" ? (
+        <IndustryDashboard data={data} />
+      ) : (
+        <>
+          <DashboardSummary
+            data={data}
+            selectedMonth={selectedMonth}
+            currentMonth={currentMonth}
+            fullCardRef={fullCardRef}
+          />
+          <DashboardDetail data={data} />
+        </>
+      )}
     </div>
   );
 }
