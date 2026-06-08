@@ -6,6 +6,7 @@ import type { Column } from '@/components/common/DataTable';
 import type { LoanApplicationItem, ReviewStatus } from '@/types/loan';
 import { formatDate, formatCurrency } from '@/utils/formatters';
 import { useAuthStore } from '@/stores/authStore';
+import type { StatusFilterValue } from '@/hooks/useLoanApplications';
 
 function getActionLabel(status: ReviewStatus | string, canAct: boolean): string {
   if (!canAct) return '조회';
@@ -24,8 +25,6 @@ function isActionable(status: ReviewStatus | string, canAct: boolean): boolean {
   if (!canAct) return false;
   return status === 'SYSTEM_APPROVED' || status === 'SYSTEM_REJECTED' || status === 'MANAGER_REVIEW';
 }
-
-import type { StatusFilterValue } from '@/hooks/useLoanApplications';
 
 interface LoanListViewProps {
   applications: LoanApplicationItem[];
