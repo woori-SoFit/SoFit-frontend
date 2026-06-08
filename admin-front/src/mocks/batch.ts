@@ -1,9 +1,9 @@
-import type { BatchItem, BatchLatestInfo, BatchListParams, PaginatedBatchResponse } from '@/types/batch';
+import type { BatchItem, BatchLatestInfo, BatchListParams, BatchType, PaginatedBatchResponse } from '@/types/batch';
 
 /**
  * 배치 주기별 최신 실행 정보 mock 반환
  */
-export function getMockBatchLatest(): BatchLatestInfo[] {
+export function getMockBatchLatest(_batchType?: BatchType): BatchLatestInfo[] {
   return [
     {
       cycle: 'DAILY',

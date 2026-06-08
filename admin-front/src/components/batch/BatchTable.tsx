@@ -77,7 +77,7 @@ export default function BatchTable({ data }: BatchTableProps) {
                       {row.errorMessage ?? '-'}
                     </span>
                     {row.errorMessage && (
-                      <div className="absolute left-4 bottom-full mb-2 z-50 hidden group-hover:block max-w-sm px-3 py-2 text-xs text-red-700 bg-white border border-border-default rounded-lg shadow-md whitespace-pre-wrap">
+                      <div className="absolute left-4 bottom-full mb-2 z-50 hidden group-hover:block max-w-sm px-3 py-2 text-xs text-red-700 bg-white border border-border-default rounded-lg whitespace-pre-wrap">
                         {row.errorMessage}
                       </div>
                     )}

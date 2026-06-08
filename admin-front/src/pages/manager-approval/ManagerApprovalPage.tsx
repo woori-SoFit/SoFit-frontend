@@ -11,7 +11,7 @@ const columns: Column<ManagerApprovalItem>[] = [
   { header: '신청일', render: (row) => formatDate(row.applicationDate) },
   { header: '신청자명', render: (row) => row.applicantName },
   { header: '사업자명', render: (row) => row.businessName },
-  { header: '상품명', render: (row) => row.productName },
+  { header: '상품명', render: (row) => row.productName, width: '20%' },
   { header: '요청 은행원', render: (row) => row.requestedByName },
   { header: '신청 금액', render: (row) => formatCurrency(row.requestedAmount) },
   {
