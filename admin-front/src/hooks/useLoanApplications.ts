@@ -3,8 +3,8 @@ import { LOAN_KEYS } from '@/constants/queryKeys';
 import { fetchLoanApplications } from '@/api/loanApi';
 import type { ReviewStatus, LoanApplicationListRequest, LoanApplicationListResponse } from '@/types/loan';
 
-/** 필터 UI에서 사용하는 상태 타입 (ALL, PENDING은 UI 전용 가상 필터) */
-export type StatusFilterValue = ReviewStatus | 'ALL' | 'PENDING';
+/** 필터 UI에서 사용하는 상태 타입 (ALL, PENDING, DECIDED는 UI 전용 가상 필터) */
+export type StatusFilterValue = ReviewStatus | 'ALL' | 'PENDING' | 'DECIDED';
 
 export interface UseLoanApplicationsParams {
   page: number;
@@ -24,12 +24,14 @@ export interface UseLoanApplicationsReturn {
 /**
  * UI 필터 값을 API 요청 파라미터로 변환합니다.
  * - 'ALL': status 미지정 (전체 조회)
- * - 'PENDING': SYSTEM_APPROVED + SYSTEM_REJECTED (심사 대기 건)
+ * - 'PENDING': SYSTEM_APPROVED + SYSTEM_REJECTED (은행원 심사 대기 건)
+ * - 'DECIDED': APPROVED + REJECTED (심사 완료 건)
  * - 그 외: 해당 상태 단건 필터
  */
 function resolveStatusFilter(statusFilter: StatusFilterValue): ReviewStatus | ReviewStatus[] | undefined {
   if (statusFilter === 'ALL') return undefined;
   if (statusFilter === 'PENDING') return ['SYSTEM_APPROVED', 'SYSTEM_REJECTED'];
+  if (statusFilter === 'DECIDED') return ['APPROVED', 'REJECTED'];
   return statusFilter;
 }
 

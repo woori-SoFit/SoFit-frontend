@@ -1,5 +1,6 @@
 import type { BusinessInfo } from '@/types';
 import { formatBusinessNumber, displayValue, formatDate } from '@/utils/formatters';
+import { Building2 } from 'lucide-react';
 import Card from '@/components/common/Card';
 import InfoRow from '@/components/common/InfoRow';
 
@@ -28,7 +29,7 @@ export default function BusinessInfoCard({ data }: BusinessInfoCardProps) {
   ];
 
   return (
-    <Card title="사업자 정보">
+    <Card title="사업자 정보" titleIcon={<Building2 size={16} className="text-text-primary" />}>
       <dl className="space-y-3">
         {items.map((item) => (
           <InfoRow key={item.label} label={item.label} value={item.value} />

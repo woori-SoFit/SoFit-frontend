@@ -193,9 +193,18 @@ export interface RecommendationData {
   repaymentMethod: RepaymentMethod | null;
 }
 
+/** 심사 결정 상태 (decisions 배열에서 사용) */
+export type DecisionStatus =
+  | 'SYSTEM_APPROVED'
+  | 'SYSTEM_REJECTED'
+  | 'TELLER_APPROVED'
+  | 'TELLER_REJECTED'
+  | 'MANAGER_APPROVED'
+  | 'MANAGER_REJECTED';
+
 /** 심사 결정 정보 */
 export interface ReviewDecision {
-  status: ReviewStatus;
+  status: DecisionStatus;
   comment: string | null;
   reviewerName: string;
   reviewerRole: 'SYSTEM' | 'ADMIN_BANK_TELLER' | 'ADMIN_BANK_MANAGER';

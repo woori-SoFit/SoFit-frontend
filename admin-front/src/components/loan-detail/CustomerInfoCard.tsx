@@ -1,5 +1,6 @@
 import type { CustomerInfo } from '@/types';
 import { maskResidentNumber, formatPhoneNumber, displayValue, formatDateTime } from '@/utils/formatters';
+import { User } from 'lucide-react';
 import Card from '@/components/common/Card';
 import InfoRow from '@/components/common/InfoRow';
 
@@ -31,7 +32,7 @@ export default function CustomerInfoCard({ data }: CustomerInfoCardProps) {
   ];
 
   return (
-    <Card title="고객 기본 정보">
+    <Card title="고객 기본 정보" titleIcon={<User size={16} className="text-text-primary" />}>
       <dl className="space-y-3">
         {items.map((item) => (
           <InfoRow key={item.label} label={item.label} value={item.value} />

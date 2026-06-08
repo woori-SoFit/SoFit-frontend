@@ -105,9 +105,18 @@ export default function LoanDetailPage() {
   const userRole = authUser?.role;
   const status = summary?.status ?? 'SUBMITTED';
 
-  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && (status === 'SYSTEM_APPROVED' || status === 'SYSTEM_REJECTED');
+  // 담당자 본인 여부 확인 (userId가 있으면 ID 비교, 없으면 이름 비교로 fallback)
+  const isAssignedToMe = authUser
+    ? authUser.userId
+      ? summary?.assignedBankerId === authUser.userId
+      : summary?.assigneeName === authUser.name
+    : false;
+
+  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && isAssignedToMe && (status === 'SYSTEM_APPROVED' || status === 'SYSTEM_REJECTED');
   const canManagerAct = userRole === 'ADMIN_BANK_MANAGER' && status === 'MANAGER_REVIEW';
 
+  // 시스템 거절 시 은행원은 거절 확인만 가능
+  const isSystemRejected = status === 'SYSTEM_REJECTED';
   const showApproveReject = canTellerAct || canManagerAct;
   const isDecided = status === 'APPROVED' || status === 'REJECTED';
 
@@ -149,14 +158,16 @@ export default function LoanDetailPage() {
     <div className="p-6">
       {/* 헤더 */}
       <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/dashboard')}
-            className="text-sm text-text-secondary hover:text-text-primary transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-text-secondary hover:bg-gray-100 hover:text-text-primary transition-colors"
             aria-label="목록으로 돌아가기"
           >
-            ← 목록
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
           <h1 className="text-xl font-bold text-text-primary">
             {summary?.applicantName ?? '-'} / {summary?.businessName ?? '-'}
@@ -164,7 +175,6 @@ export default function LoanDetailPage() {
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
             {summary?.productName ?? '-'}
           </span>
-          {summary && <StatusBadge status={summary.status} />}
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-text-secondary">
@@ -173,6 +183,7 @@ export default function LoanDetailPage() {
           <span className="text-sm text-text-secondary">
             담당자: {summary?.assigneeName ?? '-'}
           </span>
+          {summary && <StatusBadge status={summary.status} />}
         </div>
       </div>
 
@@ -201,13 +212,15 @@ export default function LoanDetailPage() {
 
       {/* ─── 정보 탭 ─── */}
       {activeTab === 'info' && (
-        <div className="grid grid-cols-2 gap-4">
-          {/* 1행: 고객 기본 정보 | 사업자 정보 */}
-          <CustomerInfoCard data={infoTab.applicantInfo} />
-          <BusinessInfoCard data={infoTab.businessInfo} />
+        <div className="grid grid-cols-3 gap-6">
+          {/* 1열: 고객 기본 정보 + 사업자 정보 (세로 스택) */}
+          <div className="space-y-6">
+            <CustomerInfoCard data={infoTab.applicantInfo} />
+            <BusinessInfoCard data={infoTab.businessInfo} />
+          </div>
 
-          {/* 2행: 고객 신청 정보 (2열 전체) */}
-          <div className="col-span-2">
+          {/* 2~3열: 신청 정보 (1열과 높이 맞춤) */}
+          <div className="col-span-2 [&>*]:h-full">
             <ApplicationRequestCard
               applicationInfo={infoTab.applicationInfo}
               userInputInfo={infoTab.userInputInfo}
@@ -230,8 +243,8 @@ export default function LoanDetailPage() {
         isSGradeTabLoading
           ? <LoadingState />
           : sGradeTab ? (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <CBScoreCard score={sGradeTab.cbScore.score} />
                 <SGradeCard grade={sGradeTab.sGrade} />
                 <SCBScoreCard
@@ -265,6 +278,7 @@ export default function LoanDetailPage() {
             editable={showApproveReject}
             onConditionChange={setApprovalCondition}
             decisions={reviewTab.decisions ?? []}
+            isRejected={status === 'REJECTED'}
           >
             {!isDecided && showApproveReject && (
               <>
@@ -272,28 +286,32 @@ export default function LoanDetailPage() {
                 {!pendingAction && (
                   <div className="flex items-center justify-end gap-2">
                     <Button
-                      variant="outline-error"
+                      variant="ghost"
+                      size="sm"
                       onClick={() => handleSelectAction('reject')}
+                      className="text-error hover:bg-error/5"
                     >
-                      {canTellerAct ? '거절 요청' : '거절'}
+                      {canTellerAct && isSystemRejected
+                        ? '거절 확인'
+                        : canTellerAct
+                          ? '거절 요청'
+                          : '최종 거절'}
                     </Button>
-                    <Button
-                      onClick={() => handleSelectAction('approve')}
-                      disabled={!approvalCondition}
-                    >
-                      {canTellerAct ? '승인 요청' : '승인'}
-                    </Button>
+                    {!isSystemRejected && (
+                      <Button
+                        size="sm"
+                        onClick={() => handleSelectAction('approve')}
+                        disabled={!approvalCondition}
+                      >
+                        {canTellerAct ? '승인 요청' : '최종 승인'}
+                      </Button>
+                    )}
                   </div>
                 )}
 
                 {/* 의견 입력 영역 (액션 선택 후 표시) */}
                 {pendingAction && (
                   <div className="space-y-3">
-                    {canTellerAct && (
-                      <p className="rounded-md bg-info/10 px-3 py-2 text-xs text-info">
-                        제출 시 지점장 결재로 전달됩니다.
-                      </p>
-                    )}
                     <label htmlFor="reviewComment" className="block text-sm font-medium text-text-primary">
                       {pendingAction === 'approve' && '승인 의견 (필수)'}
                       {pendingAction === 'reject' && '거절 사유 (필수)'}
@@ -322,6 +340,7 @@ export default function LoanDetailPage() {
                       <div className="flex items-center gap-2">
                         <Button
                           variant="ghost"
+                          size="sm"
                           onClick={handleCancelAction}
                           disabled={isProcessing}
                         >
@@ -330,21 +349,25 @@ export default function LoanDetailPage() {
                         <Button
                           variant={
                             pendingAction === 'reject'
-                              ? 'outline-error'
+                              ? 'ghost'
                               : 'primary'
                           }
+                          size="sm"
                           onClick={handleSubmit}
                           disabled={!comment.trim() || isProcessing || (pendingAction === 'approve' && !approvalCondition)}
+                          className={pendingAction === 'reject' ? 'text-error hover:bg-error/5' : ''}
                         >
                           {isProcessing
                             ? '처리 중...'
                             : canTellerAct
-                              ? pendingAction === 'approve'
-                                ? '승인 요청'
-                                : '거절 요청'
+                              ? isSystemRejected
+                                ? '거절 확인'
+                                : pendingAction === 'approve'
+                                  ? '승인 요청'
+                                  : '거절 요청'
                               : pendingAction === 'approve'
-                                ? '승인 확인'
-                                : '거절 확인'}
+                                ? '최종 승인'
+                                : '최종 거절'}
                         </Button>
                       </div>
                     </div>

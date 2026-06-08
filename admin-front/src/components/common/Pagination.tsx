@@ -19,7 +19,7 @@ export default function Pagination({
   onPageChange,
   className = '',
 }: PaginationProps) {
-  if (totalPages <= 1) return null;
+  const pages = Math.max(totalPages, 1);
 
   return (
     <div className={`flex items-center justify-center gap-2 pt-4 ${className}`}>
@@ -31,13 +31,15 @@ export default function Pagination({
       >
         이전
       </button>
+
       <span className="text-sm text-text-secondary">
-        {currentPage} / {totalPages}
+        {currentPage} / {pages}
       </span>
+
       <button
         type="button"
-        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-        disabled={currentPage >= totalPages}
+        onClick={() => onPageChange(Math.min(pages, currentPage + 1))}
+        disabled={currentPage >= pages}
         className="px-3 py-1.5 text-sm border border-border-default rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
       >
         다음
