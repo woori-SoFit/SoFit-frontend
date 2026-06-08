@@ -51,7 +51,7 @@ export async function verifyPinForSignup(
   params: FinancialCertVerifyRequest
 ): Promise<FinancialCertVerifyResponse> {
   const { data } = await axiosInstance.post<FinancialCertVerifyResponse>(
-    "/auth/verify-pin",
+    "/auth/signup/verify-pin",
     params
   );
   return data;
