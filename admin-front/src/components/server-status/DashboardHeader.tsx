@@ -73,7 +73,7 @@ export default function DashboardHeader({
           type="button"
           onClick={onRefresh}
           disabled={isFetching}
-          className="inline-flex items-center gap-1.5 rounded-md border border-border-default bg-white px-3 py-1.5 text-sm font-medium text-text-primary shadow-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 rounded-md border border-border-default bg-white px-3 py-1.5 text-sm font-medium text-text-primary transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="새로고침"
         >
           <svg

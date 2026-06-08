@@ -113,7 +113,7 @@ export default function DashboardPage() {
                 onClick={() => handleTabChange('mine')}
                 className={`px-4 py-1.5 text-xs font-medium rounded transition-all ${
                   tab === 'mine'
-                    ? 'bg-white text-text-primary shadow-sm'
+                    ? 'bg-white text-text-primary'
                     : 'text-gray-500 hover:text-text-primary'
                 }`}
               >
@@ -124,7 +124,7 @@ export default function DashboardPage() {
                 onClick={() => handleTabChange('all')}
                 className={`px-4 py-1.5 text-xs font-medium rounded transition-all ${
                   tab === 'all'
-                    ? 'bg-white text-text-primary shadow-sm'
+                    ? 'bg-white text-text-primary'
                     : 'text-gray-500 hover:text-text-primary'
                 }`}
               >
