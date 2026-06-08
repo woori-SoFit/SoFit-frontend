@@ -124,21 +124,30 @@ export default function LoanApplyPage() {
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("대출 신청");
 
-    // 뒤로가기: 이탈 방지 모달 표시
-    useLayoutStore.getState().setOnBack(() => {
-      setExitModal("back");
-    });
-
-    // 홈 버튼: 이탈 방지 모달 표시
-    useLayoutStore.getState().setOnHome(() => {
-      setExitModal("home");
-    });
+    if (currentStep === "RESULT") {
+      // 대출 신청 완료 화면에서는 뒤로가기 비활성, 홈 버튼은 바로 이동
+      useLayoutStore.getState().setOnBack(() => {
+        // 뒤로가기 무시 (아무 동작 안 함)
+      });
+      useLayoutStore.getState().setOnHome(() => {
+        reset();
+        navigate("/");
+      });
+    } else {
+      // 일반 스텝: 이탈 방지 모달 표시
+      useLayoutStore.getState().setOnBack(() => {
+        setExitModal("back");
+      });
+      useLayoutStore.getState().setOnHome(() => {
+        setExitModal("home");
+      });
+    }
 
     return () => {
       useLayoutStore.getState().setOnBack(null);
       useLayoutStore.getState().setOnHome(null);
     };
-  }, [navigate]);
+  }, [currentStep, navigate]);
 
   // 대출 신청 스텝퍼 정의
   const LOAN_STEP_LABELS = ["약관동의", "본인인증", "사업자확인", "데이터동의", "조건입력"];
@@ -150,8 +159,6 @@ export default function LoanApplyPage() {
     BIZ_CONFIRM: 2,
     MYDATA_TERMS: 3,
     MYDATA_LOADING: 3,
-    BIZ_DATA_CHECK: 3,
-    BIZ_INTRO: 3,
     LOAN_CONDITIONS: 4,
   };
 
@@ -326,7 +333,7 @@ export default function LoanApplyPage() {
           }}
           onGoHome={() => {
             reset();
-            navigate("/");
+            navigate("/loan-applications");
           }}
         />
       );

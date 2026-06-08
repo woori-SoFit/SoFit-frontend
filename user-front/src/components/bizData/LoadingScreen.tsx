@@ -86,7 +86,7 @@ export function LoadingScreen({ title, description, steps, buttonLabel = "다음
 
   return (
     <div data-testid="loading-screen" className="flex flex-col h-full">
-      <div className="flex-1 flex flex-col items-center px-5 pt-6 pb-8 overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center px-5 pt-6 overflow-y-auto">
         {/* 타이틀 */}
         <h1 className="text-xl font-bold text-text-primary text-center leading-tight mb-1">
           {title}
@@ -103,12 +103,12 @@ export function LoadingScreen({ title, description, steps, buttonLabel = "다음
         {/* Step 목록 카드 */}
         {internalSteps.length > 0 && (
           <div className="w-full bg-bg-surface rounded-2xl shadow-card overflow-hidden">
-            <ul className="divide-y divide-gray-50">
+            <ul className="divide-gray-50">
               {internalSteps.map((step, index) => {
                 const StepIcon = step.icon;
 
                 return (
-                  <li key={index} className="flex items-center gap-3 px-4 py-3.5">
+                  <li key={index} className="flex items-center gap-3 px-4 py-3">
                     {/* 왼쪽 아이콘 */}
                     {StepIcon && (
                       <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-blue-50">
