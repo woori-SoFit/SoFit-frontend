@@ -173,7 +173,7 @@ export function ProductCardSlider({
                     src={WIBEE_IMAGES[(card.productId - 1) % WIBEE_IMAGES.length]}
                     alt=""
                     aria-hidden="true"
-                    className="w-36 h-36 object-contain"
+                    className="w-30 h-30 object-contain"
                   />
                 </div>
 

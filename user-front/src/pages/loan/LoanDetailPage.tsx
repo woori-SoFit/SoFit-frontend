@@ -182,7 +182,7 @@ export default function LoanDetailPage() {
                 </div>
                 <div>
                   <p className="text-xs text-text-secondary mb-0.5">대상</p>
-                  <p className="text-sm font-semibold text-text-primary">{product.targetSummary}</p>
+                  <p className="font-semibold text-text-primary">{product.targetSummary}</p>
                 </div>
               </li>
               <li className="flex items-center gap-4">
@@ -191,7 +191,7 @@ export default function LoanDetailPage() {
                 </div>
                 <div>
                   <p className="text-xs text-text-secondary mb-0.5">금액</p>
-                  <p className="text-sm font-semibold text-text-primary">{formatMaxAmount(product.maxLimit)}</p>
+                  <p className="font-semibold text-text-primary">{formatMaxAmount(product.maxLimit)}</p>
                 </div>
               </li>
               <li className="flex items-center gap-4">
@@ -200,7 +200,7 @@ export default function LoanDetailPage() {
                 </div>
                 <div>
                   <p className="text-xs text-text-secondary mb-0.5">기간</p>
-                  <p className="text-sm font-semibold text-text-primary">{formatMaxTerm(product.maxTerm)}</p>
+                  <p className="font-semibold text-text-primary">{formatMaxTerm(product.maxTerm)}</p>
                 </div>
               </li>
             </ul>
@@ -228,13 +228,13 @@ export default function LoanDetailPage() {
                 if (!value) return null;
                 return (
                   <li key={item.key} className="bg-white rounded-xl p-4 shadow-card">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mb-2">
                       <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
                         {item.icon}
                       </div>
                       <p className="text-sm font-semibold text-text-primary">{item.label}</p>
                     </div>
-                    <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-line pl-10">
+                    <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-line">
                       {value}
                     </p>
                   </li>
@@ -254,13 +254,13 @@ export default function LoanDetailPage() {
                 if (!value) return null;
                 return (
                   <li key={item.key} className="bg-white rounded-xl p-4 shadow-card">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mb-2">
                       <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
                         {item.icon}
                       </div>
                       <p className="text-sm font-semibold text-text-primary">{item.label}</p>
                     </div>
-                    <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-line pl-10">
+                    <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-line">
                       {value}
                     </p>
                   </li>
