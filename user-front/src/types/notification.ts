@@ -14,9 +14,10 @@ export interface NotificationItem {
   type: NotificationType;
   title: string;
   message: string;
-  createdAt: string;
+  referenceId: number;
+  referenceLabel: string;
   isRead: boolean;
-  applicationId: number;
+  createdAt: string;
 }
 
 /** 알림 목록 API 응답 */
