@@ -23,7 +23,13 @@ import mainLogo from "@/assets/mainLogo.svg";
 import iconLoanHistory from "@/assets/icons/menu-loan-history.svg";
 
 // ── 상품 카드 색상 팔레트 (productId 기준 순환) ──────────────────────────
-const CARD_PALETTE = ["#0EA5E9", "#2563EB", "#4F46E5", "#0891B2", "#7C3AED"];
+const CARD_PALETTE = [
+  "#8DD3FF", // blue
+  "#FFA8D0", // pink
+  "#FFD84D", // yellow
+  "#DDBB92", // beige
+  "#BEA0FF", // purple
+];
 
 /** LoanProductListItem → ProductCard 변환 */
 function toProductCard(product: LoanProductListItem, index: number): ProductCard {
