@@ -48,6 +48,14 @@ export function formatYearMonth(yyyyMM: string): string {
   return `${y}년 ${parseInt(m, 10)}월`;
 }
 
+/** 휴대폰 번호 포맷 (숫자만 → 010-0000-0000 형식) */
+export function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+}
+
 /** 금액 포맷 — 원화 단순 콤마 구분 (예: 1,234,567) */
 export function formatCurrency(amount: number): string {
   return amount.toLocaleString("ko-KR");

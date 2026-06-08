@@ -31,7 +31,34 @@ export interface MeResponse {
 /** 금융인증서 PIN 인증 요청 파라미터 */
 export interface FinancialCertVerifyRequest {
   phoneNumber: string;
+  holderName: string;
+  residentNumber: string;
   pin: string;
+}
+
+/** 금융인증서 조회 요청 */
+export interface FinancialCertLookupRequest {
+  holderName: string;
+  residentNumber: string;
+  phoneNumber: string;
+}
+
+/** 금융인증서 조회 응답 result */
+export interface FinancialCertLookupResult {
+  phoneNumber: string;
+  certNumber: string;
+  holderName: string;
+  status: string;
+  issuedAt: string;
+  expiresAt: string;
+}
+
+/** 금융인증서 조회 응답 */
+export interface FinancialCertLookupResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: FinancialCertLookupResult;
 }
 
 /** 금융인증서 PIN 인증 결과 */

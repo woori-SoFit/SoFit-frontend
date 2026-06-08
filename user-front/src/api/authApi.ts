@@ -2,7 +2,15 @@
  * 인증 도메인 API 함수
  */
 import axiosInstance from "./axiosInstance";
-import type { LoginRequest, LoginResponse, MeResponse, FinancialCertVerifyRequest, FinancialCertVerifyResponse } from "@/types/auth";
+import type {
+  LoginRequest,
+  LoginResponse,
+  MeResponse,
+  FinancialCertVerifyRequest,
+  FinancialCertVerifyResponse,
+  FinancialCertLookupRequest,
+  FinancialCertLookupResponse,
+} from "@/types/auth";
 
 /** 로그인 API 호출 */
 export async function postLogin(data: LoginRequest): Promise<LoginResponse> {
@@ -14,6 +22,17 @@ export async function postLogin(data: LoginRequest): Promise<LoginResponse> {
 export async function fetchMe(): Promise<MeResponse> {
   const res = await axiosInstance.get<MeResponse>("/users/me");
   return res.data;
+}
+
+/** 금융인증서 조회 API */
+export async function lookupFinancialCert(
+  params: FinancialCertLookupRequest
+): Promise<FinancialCertLookupResponse> {
+  const { data } = await axiosInstance.post<FinancialCertLookupResponse>(
+    "/financial-cert/lookup",
+    params
+  );
+  return data;
 }
 
 /** 금융인증서 PIN 인증 API */

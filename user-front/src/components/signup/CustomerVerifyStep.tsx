@@ -1,12 +1,11 @@
 import { useSignupStore } from "../../stores/signupStore";
 import { CustomerVerifyPage } from "../auth/CustomerVerifyPage";
-import { verifyPinForSignup } from "../../api/authApi";
-import { AxiosError } from "axios";
 import type { CustomerVerifyData } from "@/types/auth";
 
 /**
  * 회원가입 Step 2 — 고객 정보 입력 및 금융인증서 PIN 인증
  * CustomerVerifyPage 공통 컴포넌트를 재사용한다.
+ * 인증 성공 시 입력 정보를 signupStore에 저장하고 다음 스텝으로 이동.
  */
 export default function CustomerVerifyStep() {
   const { updateFormData, nextStep } = useSignupStore();
@@ -14,50 +13,12 @@ export default function CustomerVerifyStep() {
   return (
     <CustomerVerifyPage
       description="회원가입을 위해 본인 정보를 입력해주세요."
-      onVerify={async (data: CustomerVerifyData) => {
-        try {
-          const response = await verifyPinForSignup({
-            phoneNumber: data.phone,
-            pin: data.pin,
-          });
-          // 성공 시 이름/주민번호/연락처를 스토어에 저장
-          if (response.isSuccess) {
-            updateFormData({
-              name: data.name,
-              residentNumber: data.residentNumber,
-              phone: data.phone,
-            });
-          }
-          return {
-            success: response.isSuccess,
-            message: response.message,
-          };
-        } catch (err) {
-          const axiosErr = err as AxiosError<{ message?: string }>;
-          const status = axiosErr?.response?.status;
-
-          if (status === 404) {
-            return {
-              success: false,
-              message: "인증서를 찾을 수 없습니다. 정보를 다시 확인해주세요.",
-              resetToInfo: true,
-            };
-          }
-          if (status === 400) {
-            const serverMessage = axiosErr?.response?.data?.message;
-            return {
-              success: false,
-              message: serverMessage ?? "PIN이 일치하지 않습니다. 다시 입력해 주세요.",
-            };
-          }
-          // 네트워크 오류, 500 등
-          return {
-            success: false,
-            message: "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-          };
-        }
-      }}
-      onSuccess={() => {
+      onSuccess={(data: CustomerVerifyData) => {
+        updateFormData({
+          name: data.name,
+          residentNumber: data.residentNumber,
+          phone: data.phone,
+        });
         nextStep();
       }}
     />

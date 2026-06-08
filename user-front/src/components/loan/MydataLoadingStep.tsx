@@ -21,7 +21,7 @@ import {
   LockKeyhole,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import documentProcessing from "@/assets/lottie/Document-Processing.json";
+import files from "@/assets/lottie/Files.json";
 import { BottomButton } from "@/components/common/BottomButton";
 
 interface LoadingItem {
@@ -86,24 +86,35 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
     <div className="flex flex-col min-h-full">
       <div className="flex-1 px-5 pt-1">
       {/* 상단 안내 */}
-      <div className="mb-8">
-        <div className="w-14 h-14 mb-3">
-          <Lottie
-            animationData={documentProcessing}
-            loop={true}
-            className="w-full h-full"
-          />
+      <div className="mt-3 mb-5 mx-2">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 shrink-0">
+            <Lottie
+              animationData={files}
+              loop={!allDone}
+              className="w-full h-full"
+            />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-text-primary leading-tight">
+              {allDone ? (
+                <>
+                  필요한 서류를 모두 불러왔어요
+                </>
+              ) : (
+                <>
+                  대출 심사에 필요한 서류를
+                  <br />
+                  불러오고 있어요
+                </>
+              )}
+            </h1>
+          </div>
         </div>
-        <h1 className="text-xl font-bold text-text-primary leading-tight mb-2 ml-2">
-          {allDone
-            ? <>대출 심사에 필요한 추가 서류를<br />모두 불러왔어요</>
-            : <>대출 심사에 필요한 추가 서류를<br />불러오는 중이에요</>
-          }
-        </h1>
       </div>
 
       {/* 항목 목록 */}
-      <ul className="flex flex-col gap-5 flex-1">
+      <ul className="flex flex-col gap-7 flex-1 bg-white px-4 py-5 rounded-xl">
         {LOADING_ITEMS.map((item) => {
           const status = statuses[item.id];
           const Icon = item.icon;

@@ -30,14 +30,12 @@ import { BottomButton } from "@/components/common/BottomButton";
 import { ExitConfirmModal } from "@/components/loan/ExitConfirmModal";
 import { StepProgress } from "@/components/common/StepProgress";
 import { useNavigate, useLocation } from "react-router-dom";
-import { verifyFinancialCertificate } from "@/api/authApi";
 import { formatBusinessNumber } from "@/utils/signupValidation";
 import { checkMyBizConnected } from "@/api/mybizApi";
 import { submitLoanConsents, fetchLoanBizInfo, submitLoanMydata } from "@/api/loanApi";
 import { useTerms } from "@/hooks/useTerms";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
 import { formatAmount, formatDateTime } from "@/utils/format";
-import type { CustomerVerifyData } from "@/types/auth";
 import type { LoanApplyStep } from "@/types/loan";
 
 export default function LoanApplyPage() {
@@ -195,16 +193,6 @@ export default function LoanApplyPage() {
       return (
         <CustomerVerifyPage
           description="본인 확인을 위해 정보를 입력해 주세요."
-          onVerify={async (data: CustomerVerifyData) => {
-            const response = await verifyFinancialCertificate({
-              phoneNumber: data.phone,
-              pin: data.pin,
-            });
-            return {
-              success: response.isSuccess,
-              message: response.message,
-            };
-          }}
           onSuccess={() => {
             // PIN 인증 완료 → BIZ_CONFIRM으로 이동
             setStep("BIZ_CONFIRM");
