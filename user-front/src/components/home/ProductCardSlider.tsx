@@ -9,13 +9,21 @@
  * - 자동 슬라이드 (3초 간격)
  * - 좌우 버튼 / 일시정지
  * - 점프 카드 감지 → 즉시 이동 (어색한 가로질러 이동 방지)
+ * - 카드 클릭 → 상품 상세 페이지 이동 (onCardClick 콜백)
  */
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
-import iconMenuCard from "@/assets/icons/menu-card1.svg";
+import wibee1 from "@/assets/icons/WIBEE1.png";
+import wibee2 from "@/assets/icons/WIBEE2.png";
+import wibee3 from "@/assets/icons/WIBEE3.png";
+import wibee4 from "@/assets/icons/WIBEE4.png";
+
+const WIBEE_IMAGES = [wibee1, wibee2, wibee3, wibee4];
 
 export interface ProductCard {
   id: number;
+  /** 원본 상품 id (반복 복사 시에도 실제 productId를 유지) */
+  productId: number;
   bg: string;
   tag: string;
   rate: string;
@@ -26,11 +34,20 @@ export interface ProductCard {
 
 interface ProductCardSliderProps {
   cards: ProductCard[];
+  /** 원본 상품 총 개수 (인디케이터 표시용) */
+  originalCount: number;
+  /** 카드 클릭 콜백 */
+  onCardClick?: (productId: number) => void;
   /** 자동 슬라이드 간격 (ms, 기본 3000) */
   interval?: number;
 }
 
-export function ProductCardSlider({ cards, interval = 3000 }: ProductCardSliderProps) {
+export function ProductCardSlider({
+  cards,
+  originalCount,
+  onCardClick,
+  interval = 3000,
+}: ProductCardSliderProps) {
   const N = cards.length;
   const [displayIndex, setDisplayIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -57,6 +74,9 @@ export function ProductCardSlider({ cards, interval = 3000 }: ProductCardSliderP
 
   const handlePrev = () => advance(-1);
   const handleNext = () => advance(1);
+
+  // 인디케이터용: 현재 인덱스를 원본 상품 수 기준으로 환산
+  const indicatorIndex = originalCount > 0 ? displayIndex % originalCount : displayIndex;
 
   return (
     <section className="pb-3">
@@ -99,25 +119,33 @@ export function ProductCardSlider({ cards, interval = 3000 }: ProductCardSliderP
               }}
             >
               {/* 카드 본체 — 개별 그림자 + 글래스모피즘 */}
-              <div
-                className="rounded-2xl p-5 text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)] backdrop-blur-xl border border-white/20"
+              <button
+                type="button"
+                className="w-full text-left rounded-2xl p-5 text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)] backdrop-blur-xl border border-white/20 active:brightness-90 transition-[filter]"
                 style={{ backgroundColor: `${card.bg}cc` }}
+                onClick={() => onCardClick?.(card.productId)}
+                aria-label={`${card.title} 상세 보기`}
               >
-              <p className="text-sm text-white/80 leading-snug">{card.subtitle}</p>
-              <p className="mt-1 text-lg font-bold leading-snug">{card.title}</p>
+                <p className="text-sm text-white/80 leading-snug">{card.subtitle}</p>
+                <p className="mt-1 text-lg font-bold leading-snug">{card.title}</p>
 
-              {/* 중앙 일러스트 영역 */}
-              <div className="my-6 h-32 flex items-center justify-center">
-                <img src={iconMenuCard} alt="" aria-hidden="true" className="w-36 h-36 object-contain" />
-              </div>
+                {/* 중앙 일러스트 영역 */}
+                <div className="my-6 h-32 flex items-center justify-center">
+                  <img
+                    src={WIBEE_IMAGES[card.productId % WIBEE_IMAGES.length]}
+                    alt=""
+                    aria-hidden="true"
+                    className="w-40 h-40 object-contain"
+                  />
+                </div>
 
-              {/* 금리 정보 */}
-              <div>
-                <p className="text-xs text-white/70">{card.tag}</p>
-                <p className="text-3xl font-extrabold tracking-tight">{card.rate}</p>
-                <p className="mt-0.5 text-xs text-white/70">{card.desc}</p>
-              </div>
-              </div>
+                {/* 금리 정보 */}
+                <div>
+                  <p className="text-xs text-white/70">{card.tag}</p>
+                  <p className="text-3xl font-extrabold tracking-tight">{card.rate}</p>
+                  <p className="mt-0.5 text-xs text-white/70">{card.desc}</p>
+                </div>
+              </button>
             </div>
           );
         })}
@@ -128,7 +156,9 @@ export function ProductCardSlider({ cards, interval = 3000 }: ProductCardSliderP
         <button type="button" aria-label="이전" className="p-1" onClick={handlePrev}>
           <ChevronLeft size={16} />
         </button>
-        <span className="font-medium pt-0.5">{displayIndex + 1} / {cards.length}</span>
+        <span className="font-medium pt-0.5">
+          {indicatorIndex + 1} / {originalCount}
+        </span>
         <button type="button" aria-label="다음" className="p-1" onClick={handleNext}>
           <ChevronRight size={16} />
         </button>

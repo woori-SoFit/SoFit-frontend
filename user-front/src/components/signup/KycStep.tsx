@@ -110,7 +110,25 @@ export default function KycStep() {
   };
 
   const inputClass =
-    "h-10 px-2 min-w-0 border border-border-default rounded-lg text-center text-base font-medium text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-primary";
+    "h-10 px-2 min-w-0 bg-white border border-border-default rounded-lg text-center text-base font-medium placeholder:text-gray-300 focus:outline-none focus:border-primary";
+
+  /** 붙여넣기 처리 — 어느 칸에 붙여넣어도 10자리를 3-2-5로 분배 */
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const raw = e.clipboardData.getData("text").replace(/[^0-9]/g, "");
+    if (raw.length === 0) return;
+    e.preventDefault();
+    const p1 = raw.slice(0, 3);
+    const p2 = raw.slice(3, 5);
+    const p3 = raw.slice(5, 10);
+    setPart1(p1);
+    setPart2(p2);
+    setPart3(p3);
+    clearError();
+    // 포커스: 아직 덜 채워진 첫 번째 칸으로 이동
+    if (p1.length < 3) ref1.current?.focus();
+    else if (p2.length < 2) ref2.current?.focus();
+    else ref3.current?.focus();
+  };
 
   return (
     <div className="flex flex-col flex-1" data-testid="kyc-step">
@@ -130,6 +148,7 @@ export default function KycStep() {
               inputMode="numeric"
               value={part1}
               onChange={handlePart1Change}
+              onPaste={handlePaste}
               placeholder="000"
               maxLength={3}
               aria-label="사업자등록번호 앞 3자리"
@@ -142,6 +161,7 @@ export default function KycStep() {
               inputMode="numeric"
               value={part2}
               onChange={handlePart2Change}
+              onPaste={handlePaste}
               onKeyDown={(e) => handleKeyDown(e, part2, ref1)}
               placeholder="00"
               maxLength={2}
@@ -155,6 +175,7 @@ export default function KycStep() {
               inputMode="numeric"
               value={part3}
               onChange={handlePart3Change}
+              onPaste={handlePaste}
               onKeyDown={(e) => handleKeyDown(e, part3, ref2)}
               placeholder="00000"
               maxLength={5}

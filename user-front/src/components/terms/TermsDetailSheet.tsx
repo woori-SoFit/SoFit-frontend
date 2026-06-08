@@ -30,8 +30,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 interface TermsDetailSheetProps {
   term: TermsItem | null;
   isOpen: boolean;
-  /** 이미 동의한 항목인지 여부 — 버튼 상태에 반영 */
-  isAgreed?: boolean;
   onClose: () => void;
   /** 동의 버튼 클릭 시 호출 — 미전달 시 확인 버튼만 표시 */
   onAgree?: (term: TermsItem) => void;
@@ -40,7 +38,6 @@ interface TermsDetailSheetProps {
 export function TermsDetailSheet({
   term,
   isOpen,
-  isAgreed = false,
   onClose,
   onAgree,
 }: TermsDetailSheetProps) {
@@ -237,10 +234,9 @@ export function TermsDetailSheet({
             <button
               type="button"
               onClick={handleAgree}
-              disabled={isAgreed}
-              className="w-full h-12 rounded-xl text-base font-semibold transition-colors disabled:bg-bg-muted disabled:text-text-disabled bg-primary text-white hover:bg-primary-dark active:bg-primary-dark"
+              className="w-full h-12 rounded-xl text-base font-semibold bg-primary text-white hover:bg-primary-dark active:bg-primary-dark transition-colors"
             >
-              {isAgreed ? "동의 완료" : "동의"}
+              동의
             </button>
           ) : (
             <button

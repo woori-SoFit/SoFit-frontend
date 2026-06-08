@@ -10,10 +10,21 @@
  * 보안 규칙: 검증 요청 후 입력값 즉시 초기화
  * 6자리 입력 완료 시 자동으로 onSubmit 호출
  */
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { LockKeyhole, Delete } from "lucide-react";
 
 const PIN_LENGTH = 6;
+
+/** Fisher-Yates 셔플 (crypto 기반 보안 난수) */
+function shuffleArray<T>(arr: T[]): T[] {
+  const result = [...arr];
+  for (let i = result.length - 1; i > 0; i--) {
+    const randomValue = crypto.getRandomValues(new Uint32Array(1))[0];
+    const j = randomValue % (i + 1);
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
 
 interface PinInputProps {
   /** PIN 6자리 입력 완료 시 자동 호출 */
@@ -24,6 +35,14 @@ interface PinInputProps {
 
 export function PinInput({ onSubmit, isLoading = false, errorMessage }: PinInputProps) {
   const [pin, setPin] = useState("");
+
+  // 마운트 시 1회 숫자 0~9 셔플 → 키패드 배열 생성
+  const keypadLayout = useMemo(() => {
+    const shuffled = shuffleArray(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]);
+    const topNine = shuffled.slice(0, 9);
+    const lastOne = shuffled[9];
+    return [...topNine, "", lastOne, "del"];
+  }, []);
 
   /** 숫자 입력 — 6자리 완성 시 자동 제출 */
   const handlePress = useCallback(
@@ -81,7 +100,7 @@ export function PinInput({ onSubmit, isLoading = false, errorMessage }: PinInput
       {/* 숫자 키패드 */}
       <div className="flex-1 flex items-end w-full pb-4">
         <div className="grid grid-cols-3 gap-y-5 w-full">
-          {["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "del"].map(
+          {keypadLayout.map(
             (key) => {
               if (key === "") {
                 return <div key="empty" />;

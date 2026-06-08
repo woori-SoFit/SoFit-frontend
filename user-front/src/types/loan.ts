@@ -12,7 +12,6 @@ export type LoanApplicationStatus =
   | "SYSTEM_APPROVED"
   | "SYSTEM_REJECTED"
   | "MANAGER_REVIEW"
-  | "FINAL_REVIEW"
   | "APPROVED"
   | "REJECTED"
   | "CONTRACTED"
@@ -49,6 +48,18 @@ export interface ProductFilterConditions {
   incomeTypeCodeLimit: string | null;
 }
 
+/** 상품 상세 설명 */
+export interface LoanProductDescription {
+  targetDetail: string;
+  limitDescription: string;
+  termDescription: string;
+  rateDescription: string;
+  preferentialRateDescription: string;
+  repaymentDescription: string;
+  collateralDescription: string;
+  feeDescription: string;
+}
+
 /** API 응답 기준 대출 상품 상세 */
 export interface LoanProductDetail {
   productId: number;
@@ -58,12 +69,13 @@ export interface LoanProductDetail {
   minLimit: number;
   maxLimit: number;
   maxTerm: number;
-  targetDescription: string;
+  targetSummary: string;
   interestRate: {
     minRate: number;
     maxRate: number;
   };
   filterConditions: ProductFilterConditions;
+  productDescription?: LoanProductDescription;
 }
 
 /** 대출 상품 상세 API 응답 구조 */

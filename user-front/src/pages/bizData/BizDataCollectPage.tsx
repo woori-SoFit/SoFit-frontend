@@ -22,9 +22,7 @@ import { MOCK_BIZ_DATA_COLLECT_STEPS } from "@/mocks/bizData";
 import { connectMyBiz } from "@/api/mybizApi";
 import { completeLoanMybizData } from "@/api/loanApi";
 import { submitTermsConsents } from "@/api/termsApi";
-import { verifyFinancialCertificate } from "@/api/authApi";
 import { useTerms } from "@/hooks/useTerms";
-import type { CustomerVerifyData } from "@/types/auth";
 
 export default function BizDataCollectPage() {
   const currentStep = useBizDataCollectStore((s) => s.currentStep);
@@ -80,16 +78,6 @@ export default function BizDataCollectPage() {
       return (
         <CustomerVerifyPage
           description="본인 확인을 위해 정보를 입력해 주세요."
-          onVerify={async (data: CustomerVerifyData) => {
-            const response = await verifyFinancialCertificate({
-              phoneNumber: data.phone,
-              pin: data.pin,
-            });
-            return {
-              success: response.isSuccess,
-              message: response.message,
-            };
-          }}
           onSuccess={() => nextStep()}
         />
       );
@@ -118,8 +106,8 @@ export default function BizDataCollectPage() {
     case "LOADING":
       return (
         <LoadingScreen
-          title="사업 데이터를 분석하고 있어요"
-          description="AI가 다양한 데이터를 안전하게 수집 분석합니다."
+          title="성장 가능성까지 함께 평가하고 있어요."
+          description="수집된 사업 데이터는 S등급 분석 및 대출 심사에 활용됩니다."
           steps={MOCK_BIZ_DATA_COLLECT_STEPS}
           buttonLabel={loadingButtonLabel}
           onAllDone={async () => {

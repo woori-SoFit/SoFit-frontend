@@ -15,7 +15,7 @@ interface MenuItemProps {
 }
 
 export function MenuItem({ label, to, onClick, variant = "default" }: MenuItemProps) {
-  const textColor = variant === "danger" ? "text-red-500" : "text-text-primary";
+  const textColor = variant === "danger" ? "text-error" : "text-text-primary";
 
   const content = (
     <div className="flex items-center justify-between w-full px-5 py-4">

@@ -27,6 +27,8 @@ interface ConfirmPageProps {
   description?: ReactNode;
   /** 정보 테이블 데이터 (선택) */
   rows?: InfoRow[];
+  /** 정보 테이블 로딩 중 여부 — true면 스켈레톤 표시 */
+  isLoading?: boolean;
   /** 하단 버튼 레이블 (기본값: "확인하기") */
   buttonLabel?: string;
   /** 하단 버튼 클릭 시 호출 */
@@ -39,11 +41,37 @@ interface ConfirmPageProps {
   children?: ReactNode;
 }
 
+/** 정보 테이블 스켈레톤 — rows 개수만큼 플레이스홀더 행 표시 */
+function TableSkeleton({ rowCount }: { rowCount: number }) {
+  return (
+    <div className="mx-5 mb-4 border border-border-default bg-white rounded-lg overflow-hidden">
+      <table className="w-full">
+        <tbody>
+          {Array.from({ length: rowCount }).map((_, idx) => (
+            <tr
+              key={idx}
+              className={idx < rowCount - 1 ? "border-b border-border-default" : ""}
+            >
+              <td className="px-4 py-4.5 align-middle">
+                <div className="h-4 w-20 rounded bg-gray-200 animate-pulse" />
+              </td>
+              <td className="px-4 py-4.5 align-middle">
+                <div className="h-4 w-28 rounded bg-gray-200 animate-pulse ml-auto" />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function ConfirmPage({
   icon = checkIcon,
   title,
   description,
   rows,
+  isLoading = false,
   buttonLabel = "확인하기",
   onConfirm,
   secondaryButtonLabel,
@@ -71,8 +99,10 @@ export function ConfirmPage({
         )}
       </div>
 
-      {/* 정보 테이블 */}
-      {rows && rows.length > 0 && (
+      {/* 정보 테이블 — 로딩 중이면 스켈레톤 */}
+      {isLoading ? (
+        <TableSkeleton rowCount={rows?.length ?? 4} />
+      ) : rows && rows.length > 0 ? (
         <div className="mx-5 mb-4 border border-border-default bg-white rounded-lg overflow-hidden">
           <table className="w-full">
             <tbody>
@@ -92,7 +122,7 @@ export function ConfirmPage({
             </tbody>
           </table>
         </div>
-      )}
+      ) : null}
 
       {/* 추가 콘텐츠 */}
       {children && <div className="flex-1 px-5">{children}</div>}
@@ -114,7 +144,8 @@ export function ConfirmPage({
         <button
           type="button"
           onClick={onConfirm}
-          className="w-full h-12 rounded-lg text-base font-semibold bg-primary text-white hover:bg-primary-dark active:bg-primary-dark transition-colors cursor-pointer"
+          disabled={isLoading}
+          className="w-full h-12 rounded-lg text-base font-semibold bg-primary text-white hover:bg-primary-dark active:bg-primary-dark transition-colors cursor-pointer disabled:opacity-50"
         >
           {buttonLabel}
         </button>

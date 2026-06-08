@@ -16,7 +16,7 @@ export function AppHeader() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-bg-base">
-      <div className="flex items-center justify-between px-4 h-16">
+      <div className="flex items-center justify-between px-4 h-14">
         {/* 로고 */}
         <Link to="/" className="flex items-center">
           <img src={mainLogo} alt="SoFit" className="h-10" />

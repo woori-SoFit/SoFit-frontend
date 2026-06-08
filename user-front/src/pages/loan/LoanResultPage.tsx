@@ -12,6 +12,8 @@ import Lottie from "lottie-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useLayoutStore } from "@/stores/layoutStore";
+import { EmptyError } from "@/components/common/EmptyError";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
 import { fetchLoanApplicationCompletedDetail } from "@/api/loanApi";
 import { LOAN_KEYS } from "@/constants/queryKeys";
@@ -34,19 +36,11 @@ export default function LoanResultPage() {
   });
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-text-secondary">심사 결과를 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="심사 결과를 불러오는 중..." />;
   }
 
   if (!data) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-text-secondary">신청 정보를 찾을 수 없습니다.</p>
-      </div>
-    );
+    return <EmptyError message="신청 정보를 찾을 수 없습니다." />;
   }
 
   if (data.decisionInfo.decision === "APPROVED") {

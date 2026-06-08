@@ -4,6 +4,11 @@
  * Layout: StepLayout
  *
  * 심사 중 + 심사 완료 대출 목록을 API에서 조회하여 카드 슬라이더로 표시
+ *
+ * Polling 전략:
+ * - 심사 중인 대출이 있는 동안 5초마다 재조회 (은행원 심사 결과 반영)
+ * - 심사 중 목록이 비어지면 polling 자동 중단
+ * - 탭 포커스 복귀 시에도 최신 상태 반영 (refetchOnWindowFocus)
  */
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +17,12 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { fetchLoanApplicationsInProgress, fetchLoanApplicationsCompleted } from "@/api/loanApi";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { CardSlider } from "@/components/loan/CardSlider";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import type { LoanApplication } from "@/types/loan";
+import nonewibee1 from "@/assets/icons/None-BizData.svg";
+import nonewibee2 from "@/assets/icons/None-BizData2.svg"
+
+const POLL_INTERVAL = 5_000; // 5초
 
 export default function LoanProgressPage() {
   const navigate = useNavigate();
@@ -24,15 +34,28 @@ export default function LoanProgressPage() {
   const { data: inProgress = [], isLoading: isLoadingInProgress } = useQuery({
     queryKey: LOAN_KEYS.applicationsInProgress(),
     queryFn: fetchLoanApplicationsInProgress,
+    // 심사 중 항목이 하나라도 있으면 polling — APPROVED/REJECTED로 전환되면 목록에서 빠지므로 자동 중단
+    refetchInterval: (query) => {
+      const data = query.state.data as LoanApplication[] | undefined;
+      return (data?.length ?? 0) > 0 ? POLL_INTERVAL : false;
+    },
+    refetchOnWindowFocus: true,
   });
 
   const { data: completed = [], isLoading: isLoadingCompleted } = useQuery({
     queryKey: LOAN_KEYS.applicationsCompleted(),
     queryFn: fetchLoanApplicationsCompleted,
+    // inProgress가 있는 동안 함께 polling — 결과가 completed로 이동하므로
+    refetchInterval: () => {
+      return inProgress.length > 0 ? POLL_INTERVAL : false;
+    },
+    refetchOnWindowFocus: true,
   });
 
   const handleCardClick = (app: LoanApplication) => {
-    if (app.status === "APPROVED" || app.status === "REJECTED" || app.status === "CANCELLED") {
+    if (app.status === "APPROVED") {
+      navigate(`/loan/agreement/${app.id}`);
+    } else if (app.status === "REJECTED" || app.status === "CANCELLED") {
       navigate(`/loan/result/${app.id}`);
     } else if (app.status === "EXECUTED") {
       navigate(`/loan/execution/${app.id}`);
@@ -44,18 +67,14 @@ export default function LoanProgressPage() {
   };
 
   if (isLoadingInProgress && isLoadingCompleted) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-text-secondary">대출 현황을 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="대출 현황을 불러오는 중..." />;
   }
 
   return (
-    <div className="pb-8" data-testid="loan-progress-page">
+    <div className="flex flex-col gap-6" data-testid="loan-progress-page">
       {/* 심사 중인 대출 */}
-      <section className="pt-5">
-        <div className="px-5 flex items-center gap-2 mb-4">
+      <section className="pt-5 flex flex-col gap-3">
+        <div className="px-5 flex items-center gap-2">
           <h2 className="text-lg font-bold text-text-primary">심사 중인 대출</h2>
           <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center font-medium">
             {inProgress.length}
@@ -63,8 +82,9 @@ export default function LoanProgressPage() {
         </div>
 
         {inProgress.length === 0 ? (
-          <div className="px-5 flex items-center justify-center min-h-[200px]">
-            <p className="text-md text-text-secondary">심사 중인 대출이 없습니다.</p>
+          <div className="flex flex-col items-center justify-center min-h-[230px] gap-1">
+            <img src={nonewibee1} alt="" aria-hidden="true" className="w-40 object-contain opacity-60" />
+            <p className="text-text-secondary">심사 중인 대출이 없습니다.</p>
           </div>
         ) : (
           <CardSlider items={inProgress} onCardClick={handleCardClick} />
@@ -72,8 +92,8 @@ export default function LoanProgressPage() {
       </section>
 
       {/* 심사 완료된 대출 */}
-      <section className="mt-16">
-        <div className="px-5 flex items-center gap-2 mb-4">
+      <section className="pt-5 flex flex-col gap-4">
+        <div className="px-5 flex items-center gap-2">
           <h2 className="text-lg font-bold text-text-primary">심사 완료된 대출</h2>
           <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center font-medium">
             {completed.length}
@@ -81,8 +101,9 @@ export default function LoanProgressPage() {
         </div>
 
         {completed.length === 0 ? (
-          <div className="px-5 flex items-center justify-center min-h-[200px]">
-            <p className="text-md text-text-secondary">심사 완료된 대출이 없습니다.</p>
+          <div className="flex flex-col items-center justify-center min-h-[230px] gap-1">
+            <img src={nonewibee2} alt="" aria-hidden="true" className="w-40 object-contain opacity-60" />
+            <p className="text-text-secondary">심사 완료된 대출이 없습니다.</p>
           </div>
         ) : (
           <CardSlider items={completed} onCardClick={handleCardClick} />

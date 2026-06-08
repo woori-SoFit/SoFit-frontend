@@ -18,6 +18,8 @@ import type { TermsItem, TermType } from "@/types/common";
 import { TermsAgreement } from "./TermsAgreement";
 import { TermsDetailSheet } from "./TermsDetailSheet";
 import { BottomButton } from "@/components/common/BottomButton";
+import { EmptyError } from "@/components/common/EmptyError";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { useTerms } from "@/hooks/useTerms";
 
 interface TermsPageBaseProps {
@@ -91,20 +93,21 @@ export function TermsPage({
       setAgreedIds((prev) => [...prev, term.id]);
     }
 
-    // 전체 동의 큐에 다음 항목이 있으면 이어서 표시
     const queue = allAgreeQueueRef.current;
     if (queue.length > 0) {
+      // 큐에 다음 항목이 있으면 — 시트 닫힘 애니메이션(300ms) 후 다음 시트 열기
       const next = queue[0];
       allAgreeQueueRef.current = queue.slice(1);
-      // 약간의 딜레이로 시트 전환 자연스럽게
-      setTimeout(() => setDetailTerm(next), 200);
+      setDetailTerm(null); // 현재 시트 닫기 (큐는 건드리지 않음)
+      setTimeout(() => setDetailTerm(next), 350);
     } else {
-      // 큐 비었으면 시트 닫기
+      // 큐가 비었으면 그냥 닫기
       setDetailTerm(null);
+      allAgreeQueueRef.current = [];
     }
   };
 
-  /** 시트 닫기 (전체 동의 큐도 초기화) */
+  /** X 버튼 / 딤 클릭으로 닫기 — 큐도 함께 초기화 */
   const handleSheetClose = () => {
     setDetailTerm(null);
     allAgreeQueueRef.current = [];
@@ -112,22 +115,11 @@ export function TermsPage({
 
   // termType 모드에서 로딩/에러 처리
   if (termType && isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-full gap-3">
-        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-text-secondary">약관을 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="약관을 불러오는 중..." />;
   }
 
   if (termType && isError) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-full gap-3 px-5">
-        <p className="text-sm text-text-secondary text-center">
-          약관을 불러오지 못했습니다.<br />잠시 후 다시 시도해주세요.
-        </p>
-      </div>
-    );
+    return <EmptyError message="약관을 불러오지 못했습니다." />;
   }
 
   return (
@@ -167,7 +159,6 @@ export function TermsPage({
       <TermsDetailSheet
         term={detailTerm}
         isOpen={detailTerm !== null}
-        isAgreed={detailTerm !== null && agreedIds.includes(detailTerm.id)}
         onClose={handleSheetClose}
         onAgree={handleSheetAgree}
       />
