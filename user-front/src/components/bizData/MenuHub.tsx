@@ -34,24 +34,32 @@ export function MenuHub() {
   return (
     <div className="flex flex-col px-5 py-4 gap-4">
       {/* 헤더 영역 */}
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-1 mb-1">
         <h1 className="text-lg font-bold text-text-primary">
           사장님, 무엇이 궁금하세요?
         </h1>
-        <MonthNavigation
-          availableMonths={availableMonths}
-          selectedMonth={selectedMonth || availableMonths[0] || ""}
-          onMonthChange={setSelectedMonth}
-        />
+        <p className="text-xs text-text-secondary">
+          궁금한 항목을 선택하면 핵심 내용을 요약해드릴게요
+        </p>
+        <div className="mt-2">
+          <MonthNavigation
+            availableMonths={availableMonths}
+            selectedMonth={selectedMonth || availableMonths[0] || ""}
+            onMonthChange={setSelectedMonth}
+          />
+        </div>
       </div>
 
       {/* 메뉴 카드 리스트 */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         {MENU_ITEMS.map((item) => (
           <MenuCard
             key={item.id}
             title={item.title}
             description={item.description}
+            icon={item.icon}
+            iconBg={item.iconBg}
+            iconColor={item.iconColor}
             onPress={() => handleCardPress(item.id)}
           />
         ))}
