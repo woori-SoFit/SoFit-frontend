@@ -98,7 +98,7 @@ export function PinInput({ onSubmit, isLoading = false, errorMessage }: PinInput
       </div>
 
       {/* 숫자 키패드 */}
-      <div className="flex-1 flex items-end w-full pb-4">
+      <div className="flex-1 flex items-end w-full pb-6">
         <div className="grid grid-cols-3 gap-y-5 w-full">
           {keypadLayout.map(
             (key) => {

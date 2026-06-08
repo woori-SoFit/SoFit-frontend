@@ -181,7 +181,7 @@ export function ProductCardSlider({
                 <div>
                   <p className="text-xs">{card.tag}</p>
                   <p className="text-3xl font-extrabold tracking-tight">{card.rate}</p>
-                  <p className="mt-0.5 text-xs">{card.desc}</p>
+                  <p className="mt-0.5 text-xs">최저금리 연 % ~</p>
                 </div>
               </button>
             </div>

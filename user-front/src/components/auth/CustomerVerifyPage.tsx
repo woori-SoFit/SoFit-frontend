@@ -123,19 +123,6 @@ export function CustomerVerifyPage({ description, onSuccess, variant = "default"
             errorMessage={errorMessage}
           />
         </div>
-        <div className="px-5 pb-6 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              setStep("INFO");
-              setErrorMessage("");
-            }}
-            disabled={showSuccess}
-            className="w-full h-12 rounded-lg border border-border-default text-sm font-semibold text-text-primary hover:bg-gray-50 transition-colors disabled:opacity-50"
-          >
-            정보 다시 입력하기
-          </button>
-        </div>
         <VerifySuccessOverlay visible={showSuccess} />
       </div>
     );
