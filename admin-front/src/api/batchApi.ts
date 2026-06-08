@@ -1,12 +1,12 @@
-// import axiosInstance from '@/api/axiosInstance';
+import axiosInstance from '@/api/axiosInstance';
 import { getMockBatchList, getMockBatchLatest } from '@/mocks/batch';
-import type { BatchLatestInfo, BatchListParams, PaginatedBatchResponse } from '@/types/batch';
+import type { BatchLatestInfo, BatchListParams, BatchType, PaginatedBatchResponse } from '@/types/batch';
 
 /**
- * S등급 배치 실행 이력을 페이징으로 조회한다.
+ * 배치 실행 이력을 페이징으로 조회한다.
  *
  * TODO: 백엔드 연동 시 아래 목 데이터 반환을 제거하고 실제 API 호출로 교체
- * const { data } = await axiosInstance.get<PaginatedBatchResponse>('/api/admin/dev/batch/s-grade', { params });
+ * const { data } = await axiosInstance.get<PaginatedBatchResponse>('/api/admin/dev/batch', { params });
  * return data;
  */
 export async function fetchBatchList(params: BatchListParams): Promise<PaginatedBatchResponse> {
@@ -18,10 +18,26 @@ export async function fetchBatchList(params: BatchListParams): Promise<Paginated
  * 배치 주기별 최신 실행 정보를 조회한다. (카드용)
  *
  * TODO: 백엔드 연동 시 실제 API 호출로 교체
- * const { data } = await axiosInstance.get<BatchLatestInfo[]>('/api/admin/dev/batch/s-grade/latest');
+ * const { data } = await axiosInstance.get<BatchLatestInfo[]>('/api/admin/dev/batch/latest', { params: { batchType } });
  * return data;
  */
-export async function fetchBatchLatest(): Promise<BatchLatestInfo[]> {
+export async function fetchBatchLatest(batchType?: BatchType): Promise<BatchLatestInfo[]> {
   await new Promise((resolve) => setTimeout(resolve, 200));
-  return getMockBatchLatest();
+  return getMockBatchLatest(batchType);
 }
+
+/**
+ * 수동 배치를 실행한다.
+ *
+ * - S등급 산출: POST /api/admin/dev/batch/s-grade
+ * - 시스템 심사: POST /api/admin/dev/batch/loan-decision
+ */
+export async function triggerManualBatch(batchType: BatchType): Promise<{ message: string }> {
+  const endpoint = batchType === 'S_GRADE'
+    ? '/api/admin/dev/batch/s-grade'
+    : '/api/admin/dev/batch/loan-decision';
+
+  const { data } = await axiosInstance.post(endpoint);
+  return data;
+}
+

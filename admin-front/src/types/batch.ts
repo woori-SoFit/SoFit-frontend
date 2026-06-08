@@ -4,6 +4,9 @@ export type BatchStatus = 'SUCCESS' | 'FAILED' | 'RUNNING';
 /** 배치 주기 타입 */
 export type BatchCycle = 'DAILY' | 'MONTHLY';
 
+/** 배치 종류 */
+export type BatchType = 'S_GRADE' | 'SYSTEM_REVIEW';
+
 /** S등급 배치 실행 이력 항목 */
 export interface BatchItem {
   id: number;
@@ -36,6 +39,7 @@ export interface PaginatedBatchResponse {
 export interface BatchListParams {
   page: number;
   size: number;
+  batchType?: BatchType;
 }
 
 /** 배치 주기별 최신 실행 정보 (카드용) */

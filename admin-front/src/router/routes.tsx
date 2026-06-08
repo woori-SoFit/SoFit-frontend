@@ -5,7 +5,7 @@ import LoginPage from "@/pages/auth/LoginPage";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import UserManagementPage from "@/pages/user-management/UserManagementPage";
 import ServerStatusPage from "@/pages/server-status/ServerStatusPage";
-import BatchPage from "@/pages/placeholder/BatchPage";
+import BatchPage from "@/pages/batch/BatchPage";
 import LoanDetailPage from "@/pages/loan-detail/LoanDetailPage";
 import ErrorLogsPage from "@/pages/error-logs/ErrorLogsPage";
 import RoleGuard from "@/components/common/RoleGuard";

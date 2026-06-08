@@ -73,7 +73,7 @@ export const ROUTE_CONFIG: RouteGroupConfig[] = [
       },
       {
         key: 'batch',
-        label: 'S등급 배치 관리',
+        label: '배치 관리',
         path: '/batch',
         allowedRoles: ['ADMIN_DEV'],
       },
