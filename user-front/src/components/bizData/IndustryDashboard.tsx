@@ -6,7 +6,7 @@
  * - 매출/수익성/안정성 3개 순위 시각화 (GaugeBar 재활용)
  * - 순위별 의미 설명
  */
-import { Trophy, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { GaugeBar } from "./GaugeBar";
 import type { BizDashboardData } from "@/types/bizData";
 
@@ -36,15 +36,10 @@ export function IndustryDashboard({ data }: IndustryDashboardProps) {
   const overallRank = getOverallRank(salesRank, profitRank, stabilityRank);
   const overallEval = getRankEvaluation(overallRank);
 
-  // 전월 대비 변동
-  const salesChange = data.industryComparison.salesRankChange;
-  const profitChange = data.industryComparison.profitRankChange;
-  const stabilityChange = data.industryComparison.stabilityRankChange;
-
   const ranks = [
-    { label: "매출", percent: salesRank, color: "bg-success", change: salesChange },
-    { label: "수익성", percent: profitRank, color: "bg-primary", change: profitChange },
-    { label: "안정성", percent: stabilityRank, color: "bg-secondary", change: stabilityChange },
+    { label: "매출", percent: salesRank, color: "bg-success" },
+    { label: "수익성", percent: profitRank, color: "bg-primary" },
+    { label: "안정성", percent: stabilityRank, color: "bg-secondary" },
   ];
 
   return (
@@ -86,21 +81,6 @@ export function IndustryDashboard({ data }: IndustryDashboardProps) {
                       : undefined
                 }
               />
-              {/* 전월 대비 변동 */}
-              {rank.change !== null && (
-                <div className="flex items-center gap-1 mt-1 ml-[68px]">
-                  {rank.change > 0 ? (
-                    <TrendingUp size={12} className="text-success" />
-                  ) : rank.change < 0 ? (
-                    <TrendingDown size={12} className="text-error" />
-                  ) : (
-                    <Minus size={12} className="text-text-disabled" />
-                  )}
-                  <span className={`text-xs ${rank.change > 0 ? "text-success" : rank.change < 0 ? "text-error" : "text-text-disabled"}`}>
-                    전월 대비 {Math.abs(rank.change)}%p {rank.change > 0 ? "상승" : rank.change < 0 ? "하락" : "유지"}
-                  </span>
-                </div>
-              )}
             </div>
           ))}
         </div>

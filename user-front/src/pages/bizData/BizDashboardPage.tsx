@@ -35,6 +35,17 @@ function getCategoryTitle(category: MenuCategory): string {
   return titles[category];
 }
 
+/** 카테고리별 상단 라벨 */
+function getCategoryLabel(category: MenuCategory): string {
+  const labels: Record<MenuCategory, string> = {
+    sales: "매출 분석",
+    profit: "수익/현금 흐름",
+    customer: "고객/온라인 활동",
+    industry: "업종 비교",
+  };
+  return labels[category];
+}
+
 function findScrollParent(el: HTMLElement | null): HTMLElement {
   let curr = el?.parentElement ?? null;
   while (curr && curr !== document.body) {
@@ -179,9 +190,12 @@ export default function BizDashboardPage() {
 
       {/* 헤더: 카테고리 제목 + 월 선택 */}
       <div className="px-5 py-3 flex items-center justify-between gap-3">
-        <h2 className="text-lg font-bold text-text-primary whitespace-pre-line">
-          {getCategoryTitle(category)}
-        </h2>
+        <div>
+          <p className="text-xs text-text-secondary mb-0.5">{getCategoryLabel(category)}</p>
+          <h2 className="text-lg font-bold text-text-primary whitespace-pre-line">
+            {getCategoryTitle(category)}
+          </h2>
+        </div>
 
         <div className="flex items-center gap-0 shrink-0">
           <button
