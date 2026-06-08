@@ -25,6 +25,7 @@ import LoanProgressPage from "@/pages/loan/LoanProgressPage";
 // Biz Data
 import BizDataPage from "@/pages/bizData/BizDataPage";
 import BizDataCollectPage from "@/pages/bizData/BizDataCollectPage";
+import BizDashboardPage from "@/pages/bizData/BizDashboardPage";
 
 // Grade Report
 import GradeReportPage from "@/pages/grade/GradeReportPage";
@@ -78,6 +79,7 @@ export const router = createBrowserRouter([
 
       // My Biz Data 대시보드 + 수집
       { path: "/biz-data", element: <BizDataPage /> },
+      { path: "/biz-data/dashboard", element: <BizDashboardPage /> },
       { path: "/biz-data/collect", element: <BizDataCollectPage /> },
 
       // 대출 약정 (약관 동의 → PIN → 계좌 설정)
