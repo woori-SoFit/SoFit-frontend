@@ -22,6 +22,9 @@ export interface GradeDetailResult {
   strengthKeywords: string[];
   improvementKeywords: string[];
   advice: string;
+  /** GradeResult에서 병합되는 필드 (리포트 페이지에서 사용) */
+  comment?: string;
+  commentDetail?: string;
 }
 
 interface GradeApiResponse {

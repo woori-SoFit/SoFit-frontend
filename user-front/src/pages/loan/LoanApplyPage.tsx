@@ -333,7 +333,7 @@ export default function LoanApplyPage() {
           }}
           onGoHome={() => {
             reset();
-            navigate("/loan-applications");
+            navigate("/");
           }}
         />
       );
