@@ -79,11 +79,13 @@ export default function HomePage() {
     queryFn: fetchLoanProducts,
   });
 
-  // 임시저장 대출 목록 조회 (로그인 시에만)
+  // 임시저장 대출 목록 조회 (로그인 시에만, 매 진입 시 새로 조회)
   const { data: drafts = [] } = useQuery({
     queryKey: ["loanDrafts"],
     queryFn: fetchLoanDrafts,
     enabled: isLoggedIn,
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 
   // API 데이터 → ProductCard 변환 후 최소 6개 반복
