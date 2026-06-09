@@ -35,7 +35,12 @@ export default function LoginPage() {
       navigate(returnUrl || "/", { replace: true });
     },
     onError: (error: AxiosError) => {
-      if (error.response?.status === 401) {
+      const responseData = error.response?.data as { code?: string } | undefined;
+      const code = responseData?.code;
+
+      if (code === "AUTH4031") {
+        setServerError("탈퇴한 계정입니다. 다시 가입 후 이용해주세요.");
+      } else if (error.response?.status === 401) {
         setServerError("아이디 또는 비밀번호가 올바르지 않습니다");
       } else {
         setServerError("로그인에 실패했습니다. 잠시 후 다시 시도해주세요");

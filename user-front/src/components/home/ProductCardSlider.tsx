@@ -143,7 +143,7 @@ export function ProductCardSlider({
           return (
             <div
               key={card.id}
-              className="absolute top-0 left-1/2 w-[64%]"
+              className="absolute top-0 left-1/2 w-[62%]"
               style={{
                 transform: `translateX(calc(-50% + ${translateX}%)) rotate(${rotate}deg) scale(${scale})`,
                 transformOrigin: "center bottom",
@@ -168,7 +168,7 @@ export function ProductCardSlider({
                 <p className="mt-1 text-lg font-bold leading-snug">{card.title}</p>
 
                 {/* 중앙 일러스트 영역 */}
-                <div className="my-6 h-32 flex items-center justify-center">
+                <div className="mt-8 mb-5 h-32 flex items-center justify-center">
                   <img
                     src={PRODUCT_ICONS[(card.productId - 1) % PRODUCT_ICONS.length]}
                     alt=""

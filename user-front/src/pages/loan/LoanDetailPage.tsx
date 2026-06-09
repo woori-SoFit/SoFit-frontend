@@ -276,7 +276,7 @@ export default function LoanDetailPage() {
       </div>
 
       {/* 대출 신청 버튼 — 스냅 컨테이너 위에 fixed로 고정 */}
-      <div className="absolute bottom-0 left-0 right-0">
+      <div className="absolute bottom-0 left-0 right-0 z-10">
         <BottomButton
           label={isChecking ? "확인 중..." : "대출 신청"}
           onClick={handleApplyClick}
