@@ -13,6 +13,7 @@ export default function CustomerVerifyStep() {
   return (
     <CustomerVerifyPage
       description="회원가입을 위해 본인 정보를 입력해주세요."
+      variant="signup"
       onSuccess={(data: CustomerVerifyData) => {
         updateFormData({
           name: data.name,

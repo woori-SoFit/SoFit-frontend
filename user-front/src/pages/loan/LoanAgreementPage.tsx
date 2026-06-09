@@ -94,7 +94,7 @@ export default function LoanAgreementPage() {
             description="아래 대출 조건을 확인하고 약정을 진행해주세요."
             rows={[
               { label: "승인금액", value: formatAmount(approvedAmount) },
-              { label: "예정 금리(연)", value: `${approvedRate}%` },
+              { label: "금리(연)", value: `${approvedRate}%` },
               { label: "대출기간", value: termLabel },
               { label: "상환 방식", value: repaymentLabel },
             ]}
@@ -141,7 +141,8 @@ export default function LoanAgreementPage() {
       return (
         <AccountStep
           onSendVerification={async (accountNumber) => {
-            await requestAccountVerification(data.applicationId, accountNumber);
+            const result = await requestAccountVerification(data.applicationId, accountNumber);
+            return { authCode: result.authCode };
           }}
           onVerifyCode={async (code) => {
             const verified = await confirmAccountVerification(data.applicationId, code);

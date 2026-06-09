@@ -13,7 +13,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import { ProductCardSlider } from "@/components/home/ProductCardSlider";
 import type { ProductCard } from "@/components/home/ProductCardSlider";
-import { fetchLoanProducts } from "@/api/loanApi";
+import { DraftResumeCard } from "@/components/home/DraftResumeCard";
+import { fetchLoanProducts, fetchLoanDrafts } from "@/api/loanApi";
 import { useMe } from "@/hooks/useMe";
 import type { LoanProductListItem } from "@/types/loan";
 import { HOME_MENU_ITEMS } from "@/constants/homeMenuItems";
@@ -23,7 +24,13 @@ import mainLogo from "@/assets/mainLogo.svg";
 import iconLoanHistory from "@/assets/icons/menu-loan-history.svg";
 
 // ── 상품 카드 색상 팔레트 (productId 기준 순환) ──────────────────────────
-const CARD_PALETTE = ["#0EA5E9", "#2563EB", "#4F46E5", "#0891B2", "#7C3AED"];
+const CARD_PALETTE = [
+  "#8DD3FF", // blue
+  "#FFA8D0", // pink
+  "#FFD84D", // yellow
+  "#DDBB92", // beige
+  "#BEA0FF", // purple
+];
 
 /** LoanProductListItem → ProductCard 변환 */
 function toProductCard(product: LoanProductListItem, index: number): ProductCard {
@@ -61,7 +68,7 @@ function repeatCards(cards: ProductCard[], minCount = 6): ProductCard[] {
 // ── 메뉴 그리드 아이템 → @/constants/homeMenuItems.ts 로 분리 ──
 
 export default function HomePage() {
-  const { me } = useMe();
+  const { me, isLoggedIn } = useMe();
   const userName = me?.name ?? "";
   const navigate = useNavigate();
 
@@ -69,6 +76,13 @@ export default function HomePage() {
   const { data: loanProducts = [] } = useQuery({
     queryKey: ["loanProducts"],
     queryFn: fetchLoanProducts,
+  });
+
+  // 임시저장 대출 목록 조회 (로그인 시에만)
+  const { data: drafts = [] } = useQuery({
+    queryKey: ["loanDrafts"],
+    queryFn: fetchLoanDrafts,
+    enabled: isLoggedIn,
   });
 
   // API 데이터 → ProductCard 변환 후 최소 6개 반복
@@ -96,6 +110,9 @@ export default function HomePage() {
         originalCount={loanProducts.length}
         onCardClick={(productId) => navigate(`/loan/${productId}`)}
       />
+
+      {/* ── 대출 신청 이어하기 카드 ── */}
+      <DraftResumeCard drafts={drafts} />
 
       {/* ── 대출진행관리 배너 ── */}
       <section className="px-5 mt-2">

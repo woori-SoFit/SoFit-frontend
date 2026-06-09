@@ -114,7 +114,7 @@ export function ConfirmPage({
                   <td className="px-4 py-4.5 text-sm text-text-secondary whitespace-nowrap align-middle">
                     {row.label}
                   </td>
-                  <td className="px-4 py-4.5 text-sm font-medium text-text-primary text-right align-middle">
+                  <td className="px-4 py-4.5 text-sm font-semibold text-text-primary text-right align-middle">
                     {row.value}
                   </td>
                 </tr>
@@ -136,7 +136,7 @@ export function ConfirmPage({
           <button
             type="button"
             onClick={onSecondary}
-            className="w-full h-12 rounded-lg text-base font-semibold border border-primary text-primary bg-white hover:bg-blue-50 active:bg-blue-50 transition-colors cursor-pointer"
+            className="w-full h-12 rounded-lg text-base font-semibold bg-gray-150 cursor-pointer"
           >
             {secondaryButtonLabel}
           </button>

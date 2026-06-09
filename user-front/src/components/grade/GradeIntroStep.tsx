@@ -11,15 +11,21 @@ import gradeReportIntroImg from "@/assets/icons/S-Report.svg";
 
 interface GradeIntroStepProps {
   onNext: () => void;
+  isLoading?: boolean;
 }
 
-export function GradeIntroStep({ onNext }: GradeIntroStepProps) {
+export function GradeIntroStep({ onNext, isLoading = false }: GradeIntroStepProps) {
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden relative">
+      {/* 배경 그라데이션 */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-sky-100/60 blur-3xl" />
+      </div>
+
       {/* 컨텐츠 영역 */}
-      <div className="flex flex-1 flex-col items-center justify-center px-5">
+      <div className="flex flex-1 flex-col items-center justify-center px-5 relative z-1">
         {/* 메인 타이틀 */}
-        <h1 className="text-3xl font-bold text-text-primary text-center">
+        <h1 className="text-2xl font-bold text-text-primary text-center">
           SOFIT
           <br />
           <span className="text-primary">성장등급 리포트</span>
@@ -34,7 +40,7 @@ export function GradeIntroStep({ onNext }: GradeIntroStepProps) {
         <img
           src={gradeReportIntroImg}
           alt="SOFIT 성장등급 리포트 서비스 소개 일러스트레이션"
-          className="my-7 w-full max-w-[280px] object-contain"
+          className="mt-7 mb-12 w-full max-w-[260px] object-contain"
           onError={(e) => {
             e.currentTarget.style.visibility = "hidden";
           }}
@@ -44,7 +50,7 @@ export function GradeIntroStep({ onNext }: GradeIntroStepProps) {
         <div className="flex w-full flex-col gap-3">
           <FeatureCard
             icon={
-              <BarChart3 size={30} className="text-green-700" aria-hidden="true" />
+              <BarChart3 size={24} className="text-green-700" aria-hidden="true" />
             }
             iconAlt="성장 분석 아이콘"
             title="입체적 성장 분석"
@@ -53,7 +59,7 @@ export function GradeIntroStep({ onNext }: GradeIntroStepProps) {
 
           <FeatureCard
             icon={
-              <Trophy size={30} className="text-primary" aria-hidden="true" />
+              <Trophy size={24} className="text-primary" aria-hidden="true" />
             }
             iconAlt="우대 혜택 아이콘"
             title="맞춤형 우대 혜택"
@@ -64,8 +70,9 @@ export function GradeIntroStep({ onNext }: GradeIntroStepProps) {
 
       {/* 하단 버튼 — 컨텐츠 영역 밖에서 full width 유지 */}
       <BottomButton
-        label="S분석 리포트 시작하기"
+        label={isLoading ? "확인 중..." : "S분석 리포트 시작하기"}
         onClick={onNext}
+        disabled={isLoading}
       />
     </div>
   );

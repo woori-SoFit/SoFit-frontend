@@ -18,6 +18,8 @@ import type {
   SubmitLoanApplicationRequest,
   SubmitLoanApplicationResponse,
   CheckDraftResponse,
+  LoanDraftItem,
+  LoanDraftsResponse,
   LoanConsentsRequest,
   LoanBizInfoResponse,
   LoanExecutionDetailResponse,
@@ -123,6 +125,12 @@ export async function submitLoanApplication(
     body
   );
   return res.data;
+}
+
+/** 대출 신청 임시저장(draft) 목록 조회 */
+export async function fetchLoanDrafts(): Promise<LoanDraftItem[]> {
+  const res = await axiosInstance.get<LoanDraftsResponse>("/loan-applications/drafts");
+  return res.data?.result?.drafts ?? [];
 }
 
 /** 대출 신청 임시저장(draft) 삭제 */

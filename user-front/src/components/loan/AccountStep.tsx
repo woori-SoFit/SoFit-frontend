@@ -14,8 +14,8 @@ import { AccountVerifyStep } from "./AccountVerifyStep";
 interface AccountStepProps {
   /** 계좌 인증 완료 시 호출 */
   onSubmit: () => void;
-  /** 1원 송금 요청 API (계좌번호 전달) */
-  onSendVerification: (accountNumber: string) => Promise<void>;
+  /** 1원 송금 요청 API (계좌번호 전달, authCode 반환) */
+  onSendVerification: (accountNumber: string) => Promise<{ authCode: string }>;
   /** 인증코드 검증 API (인증코드 전달) */
   onVerifyCode: (verificationCode: string) => Promise<{ success: boolean; message?: string }>;
 }
@@ -26,6 +26,7 @@ export function AccountStep({ onSubmit, onSendVerification, onVerifyCode }: Acco
   const [step, setStep] = useState<Step>("ACCOUNT");
   const [accountNumber, setAccountNumber] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
+  const [authCode, setAuthCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -46,7 +47,8 @@ export function AccountStep({ onSubmit, onSendVerification, onVerifyCode }: Acco
     setError("");
 
     try {
-      await onSendVerification(accountNumber);
+      const result = await onSendVerification(accountNumber);
+      setAuthCode(result.authCode);
       setStep("VERIFY");
     } catch {
       setError("1원 송금에 실패했습니다. 계좌번호를 확인해주세요.");
@@ -82,6 +84,7 @@ export function AccountStep({ onSubmit, onSendVerification, onVerifyCode }: Acco
     return (
       <AccountVerifyStep
         accountNumber={accountNumber}
+        authCode={authCode}
         verificationCode={verificationCode}
         onChangeCode={(value) => {
           setVerificationCode(value);
