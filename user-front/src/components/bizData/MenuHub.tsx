@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAvailableMonths } from "@/hooks/useAvailableMonths";
 import { useMenuHubStore } from "@/stores/menuHubStore";
 import { MENU_ITEMS } from "@/types/menuHub";
-import { MonthNavigation } from "./MonthNavigation";
 import { MenuCard } from "./MenuCard";
 import { GrowthBanner } from "./GrowthBanner";
 import menuHubIllust from "@/assets/icons/Mybiz-MenuHub.png";
@@ -33,19 +32,19 @@ export function MenuHub() {
   };
 
   return (
-    <div className="flex flex-col px-5 py-4 gap-4">
+    <div className="flex flex-col px-5 py-5 gap-4">
       {/* 헤더 영역 */}
-      <div className="flex flex-col items-center gap-1 mb-1">
-        <h1 className="text-lg font-bold text-text-primary">
+      <div className="flex flex-col items-center gap-1 mb-2">
+        <h1 className="text-xl font-bold text-text-primary">
           사장님, 무엇이 궁금하세요?
         </h1>
-        <p className="text-xs text-text-secondary">
+        <p className="text-sm text-text-secondary">
           궁금한 항목을 선택하면 핵심 내용을 요약해드릴게요
         </p>
         <img
           src={menuHubIllust}
           alt="마이 비즈 데이터 일러스트"
-          className="w-full max-w-[200px] mt-2"
+          className="w-full max-w-[220px] mt-2"
         />
       </div>
 

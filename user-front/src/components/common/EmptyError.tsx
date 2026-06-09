@@ -33,8 +33,8 @@ export function EmptyError({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-[calc(100dvh-64px)] gap-2">
-      <img src={noneBizData} alt="" aria-hidden="true" className="w-54 object-contain" />
+    <div className="fixed inset-0 z-40 flex flex-col items-center justify-center gap-2">
+      <img src={noneBizData} alt="" aria-hidden="true" className="w-40 object-contain" />
       <p className="text-base text-text-secondary text-center">{message}</p>
       <button
         type="button"

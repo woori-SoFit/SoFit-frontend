@@ -10,7 +10,7 @@
  */
 import { Star, MessageCircle, Truck, ShoppingBag, ThumbsUp, Edit3, Globe, Share2 } from "lucide-react";
 import { RatingLineChart } from "./RatingLineChart";
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency, formatCount, formatPercent } from "@/utils/format";
 import type { BizDashboardData } from "@/types/bizData";
 
 interface CustomerDashboardProps {
@@ -45,12 +45,12 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
                 cx="18" cy="18" r="14" fill="none"
                 stroke="var(--color-primary)"
                 strokeWidth="4"
-                strokeDasharray={`${onlineReorderRate * 0.88} 88`}
+                strokeDasharray={`${(onlineReorderRate ?? 0) * 0.88} 88`}
                 strokeLinecap="round"
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-lg font-bold text-text-primary">{onlineReorderRate}%</span>
+              <span className="text-lg font-bold text-text-primary">{formatPercent(onlineReorderRate)}</span>
             </div>
           </div>
         </div>
@@ -60,7 +60,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
           <p className="text-xs text-text-secondary mb-2 self-start font-medium">평균 평점</p>
           <div className="flex items-center gap-1 mb-1">
             <Star size={20} className="text-warning fill-warning" />
-            <span className="text-2xl font-bold text-text-primary">{averageRating}</span>
+            <span className="text-2xl font-bold text-text-primary">{formatCount(averageRating)}</span>
             <span className="text-xs text-text-secondary">/ 5.0</span>
           </div>
           <div className="flex items-center gap-0.5 mb-1">
@@ -68,11 +68,11 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
               <Star
                 key={i}
                 size={12}
-                className={i < Math.round(averageRating) ? "text-warning fill-warning" : "text-gray-200"}
+                className={i < Math.round(averageRating ?? 0) ? "text-warning fill-warning" : "text-gray-200"}
               />
             ))}
           </div>
-          {deliveryRating > 0 && (
+          {deliveryRating != null && deliveryRating > 0 && (
             <p className="text-xs text-text-disabled mt-1">배달앱 {deliveryRating.toFixed(1)}</p>
           )}
         </div>
@@ -80,16 +80,16 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
 
       {/* 3열 지표: 리뷰 수, 배달 주문, 배달 매출 */}
       <div className="grid grid-cols-3 gap-2">
-        <StatCard icon={MessageCircle} iconBg="bg-blue-50" iconColor="text-primary" label="리뷰 수" value={`${reviewCount.toLocaleString()}건`} />
-        <StatCard icon={Truck} iconBg="bg-blue-50" iconColor="text-primary" label="배달 주문" value={`${deliveryOrderCount.toLocaleString()}건`} />
-        <StatCard icon={ShoppingBag} iconBg="bg-blue-50" iconColor="text-primary" label="배달 매출" value={`${formatCurrency(deliverySalesAmount)}원`} />
+        <StatCard icon={MessageCircle} iconBg="bg-blue-50" iconColor="text-primary" label="리뷰 수" value={formatCount(reviewCount, "건")} />
+        <StatCard icon={Truck} iconBg="bg-blue-50" iconColor="text-primary" label="배달 주문" value={formatCount(deliveryOrderCount, "건")} />
+        <StatCard icon={ShoppingBag} iconBg="bg-blue-50" iconColor="text-primary" label="배달 매출" value={deliverySalesAmount == null ? "-" : `${formatCurrency(deliverySalesAmount)}원`} />
       </div>
 
       {/* 3열 지표: 답글 비율, 정보 수정, 긍정 리뷰 */}
       <div className="grid grid-cols-3 gap-2">
-        <StatCard icon={MessageCircle} iconBg="bg-blue-50" iconColor="text-primary" label="답글 비율" value={`${onlineReplyRate}%`} />
-        <StatCard icon={Edit3} iconBg="bg-blue-50" iconColor="text-primary" label="정보 수정" value={`${onlineInfoUpdateCount}회`} />
-        <StatCard icon={ThumbsUp} iconBg="bg-blue-50" iconColor="text-primary" label="긍정 리뷰" value={`${positiveReviewRatio}%`} />
+        <StatCard icon={MessageCircle} iconBg="bg-blue-50" iconColor="text-primary" label="답글 비율" value={formatPercent(onlineReplyRate)} />
+        <StatCard icon={Edit3} iconBg="bg-blue-50" iconColor="text-primary" label="정보 수정" value={formatCount(onlineInfoUpdateCount, "회")} />
+        <StatCard icon={ThumbsUp} iconBg="bg-blue-50" iconColor="text-primary" label="긍정 리뷰" value={formatPercent(positiveReviewRatio)} />
       </div>
 
       {/* 평점 추이 차트 */}

@@ -29,7 +29,7 @@ function getCategoryTitle(category: MenuCategory): string {
   const titles: Record<MenuCategory, string> = {
     sales: "이번 달 장사는 어땠나요?",
     profit: "실제로 얼마나 남았나요?",
-    customer: "손님들은 다시\n찾아오고 있나요?",
+    customer: "손님들은 다시 찾아오고 있나요?",
     industry: "우리 가게는 다른 가게보다\n잘하고 있나요?",
   };
   return titles[category];
@@ -197,7 +197,7 @@ export default function BizDashboardPage() {
           </h2>
         </div>
 
-        <div className="flex items-center gap-0 shrink-0">
+        <div className="flex items-center shrink-0">
           <button
             type="button"
             onClick={() => {
@@ -210,7 +210,7 @@ export default function BizDashboardPage() {
           >
             <ChevronLeft size={18} className="text-text-primary" />
           </button>
-          <span className="text-sm font-medium text-text-primary min-w-[80px] text-center">
+          <span className="text-sm font-medium text-text-primary min-w-[60px] text-center">
             {selectedMonth === currentMonth ? "이번 달" : formatYearMonth(selectedMonth)}
           </span>
           <button

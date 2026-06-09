@@ -25,7 +25,7 @@ export function MenuCard({ title, description, icon: Icon, iconBg, iconColor, on
       role="button"
       aria-label={title}
       onClick={onPress}
-      className="w-full flex items-center gap-3 px-4 py-4 bg-bg-surface rounded-xl border border-gray-200 active:bg-gray-100 transition-colors text-left"
+      className="w-full flex items-center gap-3 px-4 py-4 bg-bg-surface rounded-lg border border-gray-200 active:bg-gray-100 transition-colors text-left"
     >
       {/* 아이콘 영역 */}
       {Icon && (

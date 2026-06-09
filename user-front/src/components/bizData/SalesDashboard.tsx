@@ -73,7 +73,7 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
             <div>
               <p className="text-xs text-text-secondary">월 거래 건수</p>
               <p className="text-base font-bold text-text-primary">
-                {`${monthlyTransactionCount.toLocaleString()}건`}
+                {`${(monthlyTransactionCount ?? 0).toLocaleString()}건`}
               </p>
             </div>
           </div>
@@ -84,8 +84,7 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
             <div>
               <p className="text-xs text-text-secondary">건당 평균 결제액</p>
               <p className="text-base font-bold text-text-primary">
-                {`${Math.round(avgTransactionAmount).toLocaleString()}원`}
-              </p>
+              {`${Math.round(avgTransactionAmount ?? 0).toLocaleString()}원`}              </p>
             </div>
           </div>
         </div>
