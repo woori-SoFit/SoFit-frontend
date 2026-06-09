@@ -20,6 +20,7 @@ import { LOAN_KEYS } from "@/constants/queryKeys";
 import { formatAmount } from "@/utils/format";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
 import confettiAnimation from "@/assets/lottie/Flex-Confetti.json";
+import alert from "@/assets/lottie/Alert-Circle.json";
 
 export default function LoanResultPage() {
   const navigate = useNavigate();
@@ -102,13 +103,11 @@ function RejectedView({
   navigate: ReturnType<typeof useNavigate>;
 }) {
   return (
-    <div className="h-full pt-30">
+    <div className="h-full pt-28">
       <ConfirmPage
         icon={
-          <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+          <div className="w-18 h-18 mb-2">
+            <Lottie animationData={alert} loop={1} />
           </div>
         }
         title={<>아쉽지만 대출을<br />이용하실 수 없습니다.</>}

@@ -39,9 +39,9 @@ export function CharacterLoadingSpinner({ text, fullScreen = true }: CharacterLo
   }, []);
 
   const spinner = (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-3">
       {/* 캐릭터 영역 — 겹쳐 배치 */}
-      <div className="relative w-54 h-54">
+      <div className="relative w-32 h-32">
         {WIBEE_IMAGES.map((src, i) => {
           const isActive = i === activeIndex;
           return (
@@ -82,7 +82,7 @@ export function CharacterLoadingSpinner({ text, fullScreen = true }: CharacterLo
   if (!fullScreen) return spinner;
 
   return (
-    <div className="flex items-center justify-center h-dvh">
+    <div className="fixed inset-0 z-40 flex items-center justify-center">
       {spinner}
     </div>
   );
