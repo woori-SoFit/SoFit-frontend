@@ -70,6 +70,14 @@ export function formatChangeRate(rate: number | null): { text: string; isPositiv
   return { text: `${isPositive ? "+" : ""}${rate.toFixed(1)}%`, isPositive };
 }
 
+/** 숫자 포맷 — null/undefined/NaN 시 "-" 반환 */
+export const formatCount = (value?: number | null, unit = ""): string =>
+  value == null || Number.isNaN(value) ? "-" : `${value.toLocaleString()}${unit}`;
+
+/** 퍼센트 포맷 — null/undefined/NaN 시 "-" 반환 */
+export const formatPercent = (value?: number | null): string =>
+  value == null || Number.isNaN(value) ? "-" : `${value}%`;
+
 /** 계좌번호 마스킹 (예: 1002940540000 → 1002-****-40000) */
 export function maskAccountNumber(accountNumber: string): string {
   if (accountNumber.length < 8) return accountNumber;
