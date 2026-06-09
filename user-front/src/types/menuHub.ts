@@ -34,7 +34,7 @@ export const MENU_ITEMS: MenuItem[] = [
     description: "매출 흐름과 주요 변화를 한눈에 요약해드려요.",
     icon: BarChart3,
     iconBg: "bg-blue-50",
-    iconColor: "text-blue-500",
+    iconColor: "text-primary",
   },
   {
     id: "profit",
@@ -42,7 +42,7 @@ export const MENU_ITEMS: MenuItem[] = [
     description: "수익과 현금 흐름을 정리해 핵심만 보여드려요.",
     icon: Wallet,
     iconBg: "bg-blue-50",
-    iconColor: "text-blue-500",
+    iconColor: "text-primary",
   },
   {
     id: "customer",
@@ -50,7 +50,7 @@ export const MENU_ITEMS: MenuItem[] = [
     description: "재방문과 고객 반응이 어떤지 요약해드려요.",
     icon: Users,
     iconBg: "bg-blue-50",
-    iconColor: "text-blue-500",
+    iconColor: "text-primary",
   },
   {
     id: "industry",
@@ -58,6 +58,6 @@ export const MENU_ITEMS: MenuItem[] = [
     description: "업종 안에서 우리 가게 위치를 쉽게 보여드려요.",
     icon: Trophy,
     iconBg: "bg-blue-50",
-    iconColor: "text-blue-500",
+    iconColor: "text-primary",
   },
 ];

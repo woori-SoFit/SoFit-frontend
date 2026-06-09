@@ -76,7 +76,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-2">
           <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-            <ArrowDownLeft size={18} className="text-blue-500" />
+            <ArrowDownLeft size={18} className="text-primary" />
           </div>
           <div>
             <p className="text-xs text-text-secondary mb-0.5">월 입금액</p>
@@ -86,8 +86,8 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
           </div>
         </div>
         <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
-            <ArrowUpRight size={18} className="text-gray-500" />
+          <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+            <ArrowUpRight size={18} className="text-primary" />
           </div>
           <div>
             <p className="text-xs text-text-secondary mb-0.5">월 출금액</p>
@@ -100,8 +100,8 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
 
       {/* 대출 잔액 */}
       <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-3">
-        <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-          <Landmark size={18} className="text-amber-600" />
+        <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+          <Landmark size={18} className="text-primary" />
         </div>
         <div>
           <p className="text-xs text-text-secondary mb-0.5">대출 잔액</p>

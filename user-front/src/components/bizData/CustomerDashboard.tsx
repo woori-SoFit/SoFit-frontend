@@ -80,16 +80,16 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
 
       {/* 3열 지표: 리뷰 수, 배달 주문, 배달 매출 */}
       <div className="grid grid-cols-3 gap-2">
-        <StatCard icon={MessageCircle} iconBg="bg-blue-50" iconColor="text-blue-500" label="리뷰 수" value={`${reviewCount.toLocaleString()}건`} />
-        <StatCard icon={Truck} iconBg="bg-indigo-50" iconColor="text-indigo-500" label="배달 주문" value={`${deliveryOrderCount.toLocaleString()}건`} />
-        <StatCard icon={ShoppingBag} iconBg="bg-green-50" iconColor="text-green-500" label="배달 매출" value={`${formatCurrency(deliverySalesAmount)}원`} />
+        <StatCard icon={MessageCircle} iconBg="bg-blue-50" iconColor="text-primary" label="리뷰 수" value={`${reviewCount.toLocaleString()}건`} />
+        <StatCard icon={Truck} iconBg="bg-blue-50" iconColor="text-primary" label="배달 주문" value={`${deliveryOrderCount.toLocaleString()}건`} />
+        <StatCard icon={ShoppingBag} iconBg="bg-blue-50" iconColor="text-primary" label="배달 매출" value={`${formatCurrency(deliverySalesAmount)}원`} />
       </div>
 
       {/* 3열 지표: 답글 비율, 정보 수정, 긍정 리뷰 */}
       <div className="grid grid-cols-3 gap-2">
-        <StatCard icon={MessageCircle} iconBg="bg-purple-50" iconColor="text-purple-500" label="답글 비율" value={`${onlineReplyRate}%`} />
-        <StatCard icon={Edit3} iconBg="bg-amber-50" iconColor="text-amber-500" label="정보 수정" value={`${onlineInfoUpdateCount}회`} />
-        <StatCard icon={ThumbsUp} iconBg="bg-green-50" iconColor="text-green-500" label="긍정 리뷰" value={`${positiveReviewRatio}%`} />
+        <StatCard icon={MessageCircle} iconBg="bg-blue-50" iconColor="text-primary" label="답글 비율" value={`${onlineReplyRate}%`} />
+        <StatCard icon={Edit3} iconBg="bg-blue-50" iconColor="text-primary" label="정보 수정" value={`${onlineInfoUpdateCount}회`} />
+        <StatCard icon={ThumbsUp} iconBg="bg-blue-50" iconColor="text-primary" label="긍정 리뷰" value={`${positiveReviewRatio}%`} />
       </div>
 
       {/* 평점 추이 차트 */}
@@ -103,8 +103,8 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
         <h3 className="text-sm font-semibold text-text-primary mb-3">온라인 활동</h3>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center shrink-0">
-              <Globe size={16} className="text-purple-500" />
+            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+              <Globe size={16} className="text-primary" />
             </div>
             <p className="text-sm text-text-primary flex-1">온라인 예약</p>
             <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasOnlineReservation ? "bg-success/10 text-success" : "bg-gray-100 text-text-disabled"}`}>
@@ -112,8 +112,8 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-pink-50 flex items-center justify-center shrink-0">
-              <Share2 size={16} className="text-pink-500" />
+            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+              <Share2 size={16} className="text-primary" />
             </div>
             <p className="text-sm text-text-primary flex-1">SNS 운영</p>
             <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasSns ? "bg-success/10 text-success" : "bg-gray-100 text-text-disabled"}`}>

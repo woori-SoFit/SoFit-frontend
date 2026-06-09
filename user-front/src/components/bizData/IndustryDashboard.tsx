@@ -46,8 +46,8 @@ export function IndustryDashboard({ data }: IndustryDashboardProps) {
     <div className="flex flex-col gap-4 px-5 py-4">
       {/* 종합 한줄 요약 */}
       <div className="bg-bg-surface rounded-xl p-5 border border-border-default text-center">
-        <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center mx-auto mb-3">
-          <Trophy size={24} className="text-amber-500" />
+        <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-3">
+          <Trophy size={24} className="text-primary" />
         </div>
         <p className="text-lg font-bold text-text-primary mb-1">
           업종 내 상위 {overallRank}%

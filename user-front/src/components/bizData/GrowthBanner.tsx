@@ -18,7 +18,7 @@ export function GrowthBanner() {
       role="button"
       aria-label="내 성장 S 등급 보러가기"
       onClick={() => navigate("/grade-report")}
-      className="w-full flex items-center gap-3 px-4 py-4 bg-blue-100 rounded-xl active:bg-gray-100 transition-colors text-left"
+      className="w-full flex items-center gap-3 px-4 py-4 bg-blue-100 rounded-xl border border-gray-200 active:bg-gray-100 transition-colors text-left"
     >
       {/* 아이콘 */}
       <div className="w-11 h-11 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">

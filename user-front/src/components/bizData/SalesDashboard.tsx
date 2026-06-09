@@ -35,10 +35,10 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
   return (
     <div className="flex flex-col gap-4 px-5 py-4">
       {/* 매출 메인 카드 */}
-      <div className="bg-bg-surface rounded-xl p-5">
+      <div className="bg-bg-surface rounded-xl p-5 border border-gray-200">
         <div className="flex items-center gap-2 mb-3">
           <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
-            <BarChart3 size={18} className="text-blue-500" />
+            <BarChart3 size={18} className="text-primary" />
           </div>
           <div className="flex-1">
             <p className="text-xs text-text-secondary">이번 달 매출</p>
@@ -63,12 +63,12 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
       </div>
 
       {/* 거래 현황 */}
-      <div className="bg-bg-surface rounded-xl p-5">
+      <div className="bg-bg-surface rounded-xl p-5 border border-gray-200">
         <h3 className="text-sm font-semibold text-text-primary mb-3">거래 현황</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-              <Receipt size={16} className="text-blue-500" />
+              <Receipt size={16} className="text-primary" />
             </div>
             <div>
               <p className="text-xs text-text-secondary">월 거래 건수</p>
@@ -78,8 +78,8 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-              <CreditCard size={16} className="text-amber-500" />
+            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+              <CreditCard size={16} className="text-primary" />
             </div>
             <div>
               <p className="text-xs text-text-secondary">건당 평균 결제액</p>
@@ -93,15 +93,15 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
       </div>
 
       {/* 최근 6개월 매출 추이 (기존 RevenueLineChart 재활용) */}
-      <div className="bg-bg-surface rounded-xl p-4">
+      <div className="bg-bg-surface rounded-xl p-4 border border-gray-200">
         <RevenueLineChart data={data.revenueTrend} />
       </div>
 
       {/* 업종 내 위치 */}
-      <div className="bg-bg-surface rounded-xl p-5">
+      <div className="bg-bg-surface rounded-xl p-5 border border-gray-200">
         <h3 className="text-sm font-semibold text-text-primary mb-3">업종 내 위치</h3>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
             <TrendingUp size={20} className="text-primary" />
           </div>
           <div className="flex-1">
