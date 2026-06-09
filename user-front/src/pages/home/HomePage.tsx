@@ -21,15 +21,15 @@ import { HOME_MENU_ITEMS } from "@/constants/homeMenuItems";
 import { formatAmount } from "@/utils/format";
 import mainLogo from "@/assets/mainLogo.svg";
 
-import iconLoanHistory from "@/assets/icons/menu-loan-history.svg";
+import icon1 from "@/assets/icons/menu1.svg";
 
 // ── 상품 카드 색상 팔레트 (productId 기준 순환) ──────────────────────────
 const CARD_PALETTE = [
-  "#8DD3FF", // blue
-  "#FFA8D0", // pink
-  "#FFD84D", // yellow
-  "#DDBB92", // beige
-  "#BEA0FF", // purple
+  "#0EA5E9",
+  "#2563EB",
+  "#4F46E5",
+  "#0EA5E9",
+  "#2563EB",
 ];
 
 /** LoanProductListItem → ProductCard 변환 */
@@ -79,11 +79,13 @@ export default function HomePage() {
     queryFn: fetchLoanProducts,
   });
 
-  // 임시저장 대출 목록 조회 (로그인 시에만)
+  // 임시저장 대출 목록 조회 (로그인 시에만, 매 진입 시 새로 조회)
   const { data: drafts = [] } = useQuery({
     queryKey: ["loanDrafts"],
     queryFn: fetchLoanDrafts,
     enabled: isLoggedIn,
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 
   // API 데이터 → ProductCard 변환 후 최소 6개 반복
@@ -129,7 +131,7 @@ export default function HomePage() {
               신청중인 대출 바로 확인하기
             </p>
           </div>
-          <img src={iconLoanHistory} alt="" aria-hidden="true" className="w-14 h-14 object-contain" />
+          <img src={icon1} alt="" aria-hidden="true" className="w-12 h-12 object-contain" />
         </Link>
       </section>
 
@@ -140,10 +142,10 @@ export default function HomePage() {
             <Link
               key={item.id}
               to={item.to}
-              className="flex items-center justify-between bg-white rounded-2xl px-2.5 py-4 shadow-[--shadow-card] border border-border-default active:scale-[0.97] transition-transform"
+              className="flex items-center justify-between bg-white rounded-2xl px-3 py-4 shadow-[--shadow-card] border border-border-default active:scale-[0.97] transition-transform"
             >
-              <div className="flex items-center gap-1">
-                <img src={item.icon} alt="" aria-hidden="true" className="w-9 h-9 object-contain" />
+              <div className="flex items-center gap-2">
+                <img src={item.icon} alt="" aria-hidden="true" className="w-6.5 h-6.5 object-contain" />
                 <span className="text-[15px] font-semibold text-text-primary">
                   {item.label}
                 </span>

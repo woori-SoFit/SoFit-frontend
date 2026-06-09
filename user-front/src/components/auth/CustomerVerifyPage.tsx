@@ -135,86 +135,13 @@ export function CustomerVerifyPage({ description, onSuccess, variant = "default"
     const expiresDate = certInfo ? formatDate(certInfo.expiresAt) : "—";
     const certNumber = certInfo?.certNumber || "—";
 
-    return (
-      <div className="flex flex-col min-h-full">
-        <div className="flex-1 px-5 pt-8 pb-4 flex flex-col items-center">
-          {/* 타이틀 */}
-          <p className="text-sm text-primary font-medium mb-1">
-            {holderName}님의 금융인증서
-          </p>
-          <h2 className="text-lg font-bold text-text-primary mb-8">
-            인증서를 확인해주세요
-          </h2>
-
-          {/* 인증서 카드 — 세로 직사각형, 등장 시 Y축 한바퀴 회전 */}
-          <div style={{ perspective: "800px" }}>
-            <div className="w-[220px] rounded-2xl bg-linear-to-br from-[#2563EB] to-[#1d4ed8] px-5 py-7 text-white shadow-[0_20px_60px_rgba(37,99,235,0.4),0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden animate-[card-flip_0.8s_ease-out_both]">
-            {/* 배경 장식 원 */}
-            <div className="absolute -left-8 -bottom-8 w-36 h-36 rounded-full bg-white/10" />
-            <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full bg-white/5" />
-
-            {/* 상단: 이름 + 별 */}
-            <div className="relative z-10">
-              <p className="text-base font-bold mb-0.5">
-                {holderName} <span className="text-yellow-300">★</span>
-              </p>
-              <p className="text-[11px] text-white/70">금융인증서</p>
-            </div>
-
-            {/* 인증서 번호 */}
-            <div className="relative z-10 mt-6">
-              <p className="text-[10px] text-white/60 mb-0.5">인증서 번호</p>
-              <p className="text-xs font-mono tracking-wide">{certNumber}</p>
-            </div>
-
-            {/* 발급일 */}
-            <div className="relative z-10 mt-5">
-              <p className="text-[10px] text-white/60 mb-0.5">발급일</p>
-              <p className="text-xs font-medium">{issuedDate}</p>
-            </div>
-
-            {/* 만료일 */}
-            <div className="relative z-10 mt-3">
-              <p className="text-[10px] text-white/60 mb-0.5">만료일</p>
-              <p className="text-xs font-medium">{expiresDate}</p>
-            </div>
-
-            {/* 발급기관 */}
-            <div className="relative z-10 mt-6 pt-3 border-t border-white/20">
-              <p className="text-[10px] text-white/50 text-center">발급기관: 금융결제원</p>
-            </div>
-          </div>
-          </div>
-
-          {/* 안내 문구 */}
-          <div className="flex flex-col gap-3 text-text-secondary mt-10 w-4/5">
-            <div className="flex items-start gap-2">
-              <ShieldCheck size={16} className="shrink-0 mt-0.5" />
-              <p className="text-xs">본인 명의의 금융인증서만 사용 가능합니다.</p>
-            </div>
-            <div className="flex items-start gap-2">
-              <Lock size={16} className="shrink-0 mt-0.5" />
-              <p className="text-xs">타인의 금융인증서를 사용하거나 대여 시 관련 법률에 따라 처벌받을 수 있습니다.</p>
-            </div>
-          </div>
-        </div>
-
-        {/* PIN 입력하기 버튼 */}
-        <BottomButton
-          label="PIN 입력하기"
-          onClick={() => setStep("PIN")}
-        />
-
-        {/* 카드 플립 애니메이션 */}
-        <style>{`
-          @keyframes card-flip {
-            0% { transform: rotateY(-180deg); opacity: 0; }
-            40% { opacity: 1; }
-            100% { transform: rotateY(0deg); opacity: 1; }
-          }
-        `}</style>
-      </div>
-    );
+    return <CertConfirmView
+      holderName={holderName}
+      certNumber={certNumber}
+      issuedDate={issuedDate}
+      expiresDate={expiresDate}
+      onNext={() => setStep("PIN")}
+    />;
   }
 
   // ── 정보 입력 화면 ──
@@ -254,6 +181,95 @@ export function CustomerVerifyPage({ description, onSuccess, variant = "default"
         onClick={handleLookup}
         disabled={!isInfoValid || isLoading}
       />
+    </div>
+  );
+}
+
+/** 금융인증서 확인 화면 — 등장 + 터치 시 Y축 회전 */
+function CertConfirmView({
+  holderName,
+  certNumber,
+  issuedDate,
+  expiresDate,
+  onNext,
+}: {
+  holderName: string;
+  certNumber: string;
+  issuedDate: string;
+  expiresDate: string;
+  onNext: () => void;
+}) {
+  const [flipKey, setFlipKey] = useState(0);
+
+  return (
+    <div className="flex flex-col min-h-full">
+      <div className="flex-1 px-5 pt-8 pb-4 flex flex-col items-center">
+        <p className="text-sm text-primary font-medium mb-1">
+          {holderName}님의 금융인증서
+        </p>
+        <h2 className="text-lg font-bold text-text-primary mb-8">
+          인증서를 확인해주세요
+        </h2>
+
+        {/* 인증서 카드 — 터치할 때마다 key 변경으로 회전 재트리거 */}
+        <div style={{ perspective: "800px" }}>
+          <div
+            key={flipKey}
+            onClick={() => setFlipKey((k) => k + 1)}
+            className="w-[220px] rounded-2xl bg-linear-to-br from-[#2563EB] to-[#1d4ed8] px-5 py-7 text-white shadow-[0_20px_60px_rgba(37,99,235,0.4),0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden cursor-pointer animate-[cert-flip_0.8s_ease-out_both]"
+          >
+            <div className="absolute -left-8 -bottom-8 w-36 h-36 rounded-full bg-white/10" />
+            <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full bg-white/5" />
+
+            <div className="relative z-10">
+              <p className="text-base font-bold mb-0.5">
+                {holderName} <span className="text-yellow-300">★</span>
+              </p>
+              <p className="text-[11px] text-white/70">금융인증서</p>
+            </div>
+
+            <div className="relative z-10 mt-6">
+              <p className="text-[10px] text-white/60 mb-0.5">인증서 번호</p>
+              <p className="text-xs font-mono tracking-wide">{certNumber}</p>
+            </div>
+
+            <div className="relative z-10 mt-5">
+              <p className="text-[10px] text-white/60 mb-0.5">발급일</p>
+              <p className="text-xs font-medium">{issuedDate}</p>
+            </div>
+
+            <div className="relative z-10 mt-3">
+              <p className="text-[10px] text-white/60 mb-0.5">만료일</p>
+              <p className="text-xs font-medium">{expiresDate}</p>
+            </div>
+
+            <div className="relative z-10 mt-6 pt-3 border-t border-white/20">
+              <p className="text-[10px] text-white/50 text-center">발급기관: 금융결제원</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 text-text-secondary mt-10 w-4/5">
+          <div className="flex items-start gap-2">
+            <ShieldCheck size={16} className="shrink-0 mt-0.5" />
+            <p className="text-xs">본인 명의의 금융인증서만 사용 가능합니다.</p>
+          </div>
+          <div className="flex items-start gap-2">
+            <Lock size={16} className="shrink-0 mt-0.5" />
+            <p className="text-xs">타인의 금융인증서를 사용하거나 대여 시 관련 법률에 따라 처벌받을 수 있습니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <BottomButton label="PIN 입력하기" onClick={onNext} />
+
+      <style>{`
+        @keyframes cert-flip {
+          0% { transform: rotateY(-180deg); opacity: 0; }
+          40% { opacity: 1; }
+          100% { transform: rotateY(0deg); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 }

@@ -11,7 +11,7 @@ import Lottie from "lottie-react";
 import { ConfirmPage } from "@/components/common/ConfirmPage";
 import type { InfoRow } from "@/components/common/ConfirmPage";
 import type { ReactNode } from "react";
-import checkAnimation from "@/assets/lottie/Check.json";
+import verification from "@/assets/lottie/Verification.json";
 
 // InfoRow 타입 re-export (기존 import 호환)
 export type { InfoRow };
@@ -41,7 +41,7 @@ export function BizInfoConfirm({
 }: BizInfoConfirmProps) {
   return (
     <ConfirmPage
-      icon={<Lottie animationData={checkAnimation} loop={1} className="w-42" />}
+      icon={<Lottie animationData={verification} loop={1} className="w-28 mt-5" />}
       title={title}
       description={description}
       rows={rows}

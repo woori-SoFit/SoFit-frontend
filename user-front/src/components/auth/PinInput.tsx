@@ -76,7 +76,7 @@ export function PinInput({ onSubmit, isLoading = false, errorMessage }: PinInput
 
         {/* 타이틀 */}
         <h2 className="text-lg font-bold text-text-primary mb-10">
-          공동인증서 PIN을 입력해주세요
+          금융인증서 PIN을 입력해주세요
         </h2>
 
         {/* PIN 도트 표시 */}

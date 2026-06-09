@@ -31,8 +31,12 @@ import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpi
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProduct, checkLoanDraft, deleteLoanApplication } from "@/api/loanApi";
 import { formatMaxAmount, formatMaxTerm } from "@/utils/format";
-import loanProductIcon from "@/assets/icons/loan-product.svg";
+import product1Icon from "@/assets/icons/Product1.svg";
+import product2Icon from "@/assets/icons/Product2.svg";
+import product3Icon from "@/assets/icons/Product3.svg";
 import type { LoanProductDescription } from "@/types/loan";
+
+const PRODUCT_ICONS = [product1Icon, product2Icon, product3Icon];
 
 // ── 상세 섹션 정의 ──────────────────────────────────────────────
 interface DescItem {
@@ -160,17 +164,17 @@ export default function LoanDetailPage() {
           </div>
 
           <div className="flex flex-col items-center pt-20 pb-2 px-5 z-1">
-            <p className="text-sm font-medium text-primary mb-3">{product.productName}</p>
+            <p className="text-sm font-medium text-primary mb-3">{product.title}</p>
             <h1 className="text-2xl font-bold text-text-primary text-center leading-tight mb-3 whitespace-pre-line">
-              {product.title}
+              {product.productName}
             </h1>
             <p className="text-sm text-text-secondary text-center whitespace-pre-line">
               {product.subtitle}
             </p>
           </div>
 
-          <div className="flex items-center justify-center py-16 z-1">
-            <img src={loanProductIcon} alt="" aria-hidden="true" className="w-44 h-44 object-contain" />
+          <div className="flex items-center justify-center py-8 z-1">
+            <img src={PRODUCT_ICONS[(product.productId - 1) % PRODUCT_ICONS.length]} alt="" aria-hidden="true" className="w-62 h-62 object-contain" />
           </div>
 
           {/* 요약 정보 카드 */}
@@ -272,7 +276,7 @@ export default function LoanDetailPage() {
       </div>
 
       {/* 대출 신청 버튼 — 스냅 컨테이너 위에 fixed로 고정 */}
-      <div className="absolute bottom-0 left-0 right-0">
+      <div className="absolute bottom-0 left-0 right-0 z-10">
         <BottomButton
           label={isChecking ? "확인 중..." : "대출 신청"}
           onClick={handleApplyClick}
