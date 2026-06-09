@@ -1,10 +1,10 @@
 /**
  * 홈 화면 2×2 메뉴 그리드 아이템 정의
  */
-import iconLoanList from "@/assets/icons/menu-loan-list.svg";
-import iconBizData from "@/assets/icons/menu-mybiz-data.svg";
-import iconSReport from "@/assets/icons/menu-s-report.svg";
-import iconCalculator from "@/assets/icons/menu-calculator.svg";
+import icon2 from "@/assets/icons/menu2.svg";
+import icon3 from "@/assets/icons/menu3.svg";
+import icon4 from "@/assets/icons/menu4.svg";
+import icon5 from "@/assets/icons/menu5.svg";
 
 export interface MenuItem {
   id: string;
@@ -18,24 +18,24 @@ export const HOME_MENU_ITEMS: MenuItem[] = [
     id: "loan-list",
     label: "대출 상품",
     to: "/loan",
-    icon: iconLoanList,
+    icon: icon2,
+  },
+  {
+    id: "calculator",
+    label: "대출 관리",
+    to: "/calculate",
+    icon: icon5,
   },
   {
     id: "biz-data",
     label: "마이 비즈 데이터",
     to: "/biz-data",
-    icon: iconBizData,
+    icon: icon3,
   },
   {
     id: "grade-report",
     label: "S 분석 리포트",
     to: "/grade-report",
-    icon: iconSReport,
-  },
-  {
-    id: "calculator",
-    label: "사전 계산기",
-    to: "/calculate",
-    icon: iconCalculator,
+    icon: icon4,
   },
 ];

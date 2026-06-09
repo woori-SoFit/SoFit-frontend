@@ -8,8 +8,9 @@
  */
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, FileText } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import type { LoanDraftItem } from "@/types/loan";
+import draftIcon from "@/assets/icons/draft.svg";
 
 interface DraftResumeCardProps {
   drafts: LoanDraftItem[];
@@ -35,8 +36,8 @@ export function DraftResumeCard({ drafts }: DraftResumeCardProps) {
     <section className="px-5 mt-2">
       <div className="relative bg-linear-to-br from-blue-50 to-white rounded-2xl p-5 border border-border-default overflow-hidden">
         {/* 우측 상단 일러스트 */}
-        <div className="absolute top-6 right-2 w-14 h-14 opacity-60">
-          <FileText size={40} className="text-primary/30" />
+        <div className="absolute top-4 right-5 w-16 h-16">
+          <img src={draftIcon} alt="" aria-hidden="true" className="w-full h-full object-contain" />
         </div>
 
         {/* 태그 배지 */}
@@ -73,7 +74,7 @@ export function DraftResumeCard({ drafts }: DraftResumeCardProps) {
                   },
                 })
               }
-              className="flex items-center gap-3 min-w-[240px] shrink-0 snap-start px-4 py-3 rounded-xl bg-white border border-border-default active:bg-gray-50 transition-colors"
+              className="flex items-center gap-3 min-w-full shrink-0 snap-start px-4 py-3 rounded-lg bg-white border border-border-default active:bg-gray-50 transition-colors"
             >
               <span className="text-sm font-medium text-text-primary flex-1 text-left truncate">
                 {draft.productName}

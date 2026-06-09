@@ -13,12 +13,11 @@
  */
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
-import wibee1 from "@/assets/icons/WIBEE1.png";
-import wibee2 from "@/assets/icons/WIBEE2.png";
-import wibee3 from "@/assets/icons/WIBEE3.png";
-import wibee4 from "@/assets/icons/WIBEE4.png";
+import product1Icon from "@/assets/icons/Product1.svg";
+import product2Icon from "@/assets/icons/Product2.svg";
+import product3Icon from "@/assets/icons/Product3.svg";
 
-const WIBEE_IMAGES = [wibee1, wibee2, wibee3, wibee4];
+const PRODUCT_ICONS = [product1Icon, product2Icon, product3Icon];
 
 export interface ProductCard {
   id: number;
@@ -160,7 +159,7 @@ export function ProductCardSlider({
               {/* 카드 본체 — 개별 그림자 + 글래스모피즘 */}
               <button
                 type="button"
-                className="w-full text-left rounded-2xl p-5 text-[#1E293B] backdrop-blur-md border border-white/20 active:brightness-90 transition-[filter]"
+                className="w-full text-left rounded-2xl p-5 text-white backdrop-blur-3xl border border-white/20 active:brightness-90 transition-[filter]"
                 style={{ backgroundColor: `${card.bg}99` }}
                 onClick={() => onCardClick?.(card.productId)}
                 aria-label={`${card.title} 상세 보기`}
@@ -171,10 +170,10 @@ export function ProductCardSlider({
                 {/* 중앙 일러스트 영역 */}
                 <div className="my-6 h-32 flex items-center justify-center">
                   <img
-                    src={WIBEE_IMAGES[(card.productId - 1) % WIBEE_IMAGES.length]}
+                    src={PRODUCT_ICONS[(card.productId - 1) % PRODUCT_ICONS.length]}
                     alt=""
                     aria-hidden="true"
-                    className="w-30 h-30 object-contain"
+                    className="w-40 h-40 object-contain"
                   />
                 </div>
 
