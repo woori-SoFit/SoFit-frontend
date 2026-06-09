@@ -1,52 +1,55 @@
 /**
- * My Biz Data 인트로 섹션
+ * ServiceIntroPage — 서비스 인트로 공통 컴포넌트
  *
- * 마이 비즈 데이터 서비스의 가치를 소개하는 인트로 화면.
- * 공통 ServiceIntroPage 컴포넌트를 활용합니다.
+ * 마이 비즈 데이터, S등급 성장 리포트 등 서비스 진입 시
+ * 공통된 레이아웃(하늘색 그라데이션 배경 + 일러스트 + 특징 카드 + CTA 버튼)을 제공합니다.
  *
- * 주의: BizDataPage에서 하단 버튼을 직접 렌더링하므로
- * ServiceIntroPage의 버튼 영역은 외부에서 제어합니다.
+ * 정보 항목 패턴: 회색 원형 아이콘 컨테이너 + 두 줄 텍스트 (볼드 타이틀 + 설명)
  */
-import { Link2, BarChart3, ShieldCheck } from "lucide-react";
-import type { IntroFeatureItem } from "@/components/common/ServiceIntroPage";
 import { BottomButton } from "@/components/common/BottomButton";
-import bizDataIllust from "@/assets/icons/myBizData.svg";
+import type { LucideIcon } from "lucide-react";
 
-const FEATURES: IntroFeatureItem[] = [
-  {
-    icon: Link2,
-    iconColor: "text-primary",
-    title: "다양한 데이터를 연결",
-    description: "흩어진 데이터를 한곳에 연결·관리",
-  },
-  {
-    icon: BarChart3,
-    iconColor: "text-primary",
-    title: "사업을 더 깊이 분석",
-    description: "매출, 지출, 수익성을 한눈에 파악",
-  },
-  {
-    icon: ShieldCheck,
-    iconColor: "text-primary",
-    title: "금융 활용 기회 확대",
-    description: "데이터 기반 금융 심사 우대 활용",
-  },
-];
+/** 특징 항목 데이터 */
+export interface IntroFeatureItem {
+  /** lucide 아이콘 컴포넌트 */
+  icon: LucideIcon;
+  /** 아이콘 색상 클래스 (예: "text-blue-500") */
+  iconColor: string;
+  /** 볼드 타이틀 (첫째 줄) */
+  title: string;
+  /** 설명 텍스트 (둘째 줄, 간결히 한 줄) */
+  description: string;
+}
 
-interface IntroSectionProps {
+interface ServiceIntroPageProps {
+  /** 메인 타이틀 (ReactNode로 줄바꿈/강조색 지원) */
+  title: React.ReactNode;
+  /** 서브 타이틀 */
+  subtitle: string;
+  /** 중앙 일러스트 이미지 src */
+  illustSrc: string;
+  /** 일러스트 alt 텍스트 */
+  illustAlt: string;
+  /** 특징 항목 목록 */
+  features: IntroFeatureItem[];
   /** CTA 버튼 레이블 */
-  buttonLabel?: string;
+  buttonLabel: string;
   /** CTA 버튼 클릭 핸들러 */
-  onButtonClick?: () => void;
+  onButtonClick: () => void;
   /** 버튼 비활성 여부 */
   buttonDisabled?: boolean;
 }
 
-export function IntroSection({
-  buttonLabel = "데이터 연결 시작하기",
+export function ServiceIntroPage({
+  title,
+  subtitle,
+  illustSrc,
+  illustAlt,
+  features,
+  buttonLabel,
   onButtonClick,
   buttonDisabled = false,
-}: IntroSectionProps) {
+}: ServiceIntroPageProps) {
   return (
     <div className="flex flex-col h-full relative">
       {/* 배경 그라데이션 */}
@@ -58,21 +61,19 @@ export function IntroSection({
       <div className="flex-1 overflow-y-auto flex flex-col items-center pt-6 px-5 pb-4 relative z-1">
         {/* 메인 타이틀 */}
         <h1 className="text-2xl font-bold text-text-primary text-center leading-tight">
-          SOFIT
-          <br />
-          <span className="text-primary">마이 비즈 데이터</span>
+          {title}
         </h1>
 
         {/* 서브 타이틀 */}
-        <p className="mt-2 mb-4 text-sm text-text-secondary text-center">
-          흩어진 정보를 연결하면 사업 분석과 금융 활용이 수월합니다.
+        <p className="mt-2 text-sm text-text-secondary text-center">
+          {subtitle}
         </p>
 
         {/* 중앙 일러스트레이션 */}
         <img
-          src={bizDataIllust}
-          alt="마이 비즈 데이터 일러스트"
-          className="mt-7 mb-12 w-full max-w-[260px] object-contain"
+          src={illustSrc}
+          alt={illustAlt}
+          className="mt-7 mb-10 w-full max-w-[260px] object-contain"
           onError={(e) => {
             e.currentTarget.style.visibility = "hidden";
           }}
@@ -80,7 +81,7 @@ export function IntroSection({
 
         {/* 특징 카드 — 각각 개별 카드 */}
         <div className="w-full flex flex-col gap-3">
-          {FEATURES.map((item) => {
+          {features.map((item) => {
             const Icon = item.icon;
             return (
               <div key={item.title} className="flex items-center gap-4 bg-white rounded-2xl p-5">
@@ -98,15 +99,13 @@ export function IntroSection({
       </div>
 
       {/* 하단 CTA 버튼 — 항상 하단 고정 */}
-      {onButtonClick && (
-        <div className="shrink-0">
-          <BottomButton
-            label={buttonLabel}
-            onClick={onButtonClick}
-            disabled={buttonDisabled}
-          />
-        </div>
-      )}
+      <div className="shrink-0">
+        <BottomButton
+          label={buttonLabel}
+          onClick={onButtonClick}
+          disabled={buttonDisabled}
+        />
+      </div>
     </div>
   );
 }

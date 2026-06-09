@@ -46,18 +46,11 @@ export default function BizDataPage() {
   if (!isConnected) {
     return (
       <div data-testid="biz-data-page" className="flex flex-col h-[calc(100dvh-64px)]">
-        <IntroSection />
-        <div className="px-5 pb-6 pt-3 bg-bg-base">
-          <button
-            type="button"
-            onClick={() => navigate("/biz-data/collect", {
-              state: returnTo ? { returnTo } : undefined,
-            })}
-            className="w-full h-12 rounded-lg text-base font-semibold bg-primary text-white hover:bg-primary-dark active:bg-primary-dark transition-colors"
-          >
-            데이터 연결 시작하기
-          </button>
-        </div>
+        <IntroSection
+          onButtonClick={() => navigate("/biz-data/collect", {
+            state: returnTo ? { returnTo } : undefined,
+          })}
+        />
       </div>
     );
   }
