@@ -7,7 +7,7 @@ import Lottie from "lottie-react";
 import { useNavigate } from "react-router-dom";
 import { useSignupStore } from "../../stores/signupStore";
 import { ConfirmPage } from "../common/ConfirmPage";
-import confettiAnimation from "@/assets/lottie/Flex-Confetti.json";
+import checkAnimation from "@/assets/lottie/Check.json";
 
 export default function ConfirmStep() {
   const navigate = useNavigate();
@@ -24,17 +24,8 @@ export default function ConfirmStep() {
 
   return (
     <div className="relative h-full mt-28">
-      {/* Lottie 축하 애니메이션 */}
-      <div className="absolute inset-0 pointer-events-none z-10 flex items-start">
-        <Lottie
-          animationData={confettiAnimation}
-          loop={3}
-          className="w-full max-w-sm -translate-y-35"
-        />
-      </div>
-
-      {/* 기존 ConfirmPage */}
       <ConfirmPage
+        icon={<Lottie animationData={checkAnimation} loop={1} className="w-42" />}
         title="가입이 완료되었습니다!"
         description="SoFit 회원가입을 환영합니다"
         rows={[
