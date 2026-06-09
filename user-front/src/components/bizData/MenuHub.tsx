@@ -36,12 +36,7 @@ export function MenuHub() {
     <div className="flex flex-col px-5 py-4 gap-4">
       {/* 헤더 영역 */}
       <div className="flex flex-col items-center gap-1 mb-1">
-        <MonthNavigation
-          availableMonths={availableMonths}
-          selectedMonth={selectedMonth || availableMonths[0] || ""}
-          onMonthChange={setSelectedMonth}
-        />
-        <h1 className="text-lg font-bold text-text-primary mt-2">
+        <h1 className="text-lg font-bold text-text-primary">
           사장님, 무엇이 궁금하세요?
         </h1>
         <p className="text-xs text-text-secondary">
