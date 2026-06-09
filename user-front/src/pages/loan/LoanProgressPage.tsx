@@ -34,7 +34,8 @@ export default function LoanProgressPage() {
   const { data: inProgress = [], isLoading: isLoadingInProgress } = useQuery({
     queryKey: LOAN_KEYS.applicationsInProgress(),
     queryFn: fetchLoanApplicationsInProgress,
-    // 심사 중 항목이 하나라도 있으면 polling — APPROVED/REJECTED로 전환되면 목록에서 빠지므로 자동 중단
+    staleTime: 0,
+    refetchOnMount: "always",
     refetchInterval: (query) => {
       const data = query.state.data as LoanApplication[] | undefined;
       return (data?.length ?? 0) > 0 ? POLL_INTERVAL : false;
@@ -45,7 +46,8 @@ export default function LoanProgressPage() {
   const { data: completed = [], isLoading: isLoadingCompleted } = useQuery({
     queryKey: LOAN_KEYS.applicationsCompleted(),
     queryFn: fetchLoanApplicationsCompleted,
-    // inProgress가 있는 동안 함께 polling — 결과가 completed로 이동하므로
+    staleTime: 0,
+    refetchOnMount: "always",
     refetchInterval: () => {
       return inProgress.length > 0 ? POLL_INTERVAL : false;
     },

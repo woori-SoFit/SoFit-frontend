@@ -44,6 +44,7 @@ function toProductCard(product: LoanProductListItem, index: number): ProductCard
     desc: product.title,
     title: product.productName,
     subtitle: product.title,
+    minRate: product.minRate,
   };
 }
 

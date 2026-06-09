@@ -24,6 +24,7 @@ export interface LoanProductListItem {
   productName: string;
   title: string;
   maxLimit: number;
+  minRate: number;
 }
 
 /** 대출 상품 목록 API 응답 구조 */

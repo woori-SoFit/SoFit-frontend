@@ -25,12 +25,11 @@ import { requestAccountVerification, confirmAccountVerification, fetchLoanApplic
 import { submitTermsConsents } from "@/api/termsApi";
 import { useTerms } from "@/hooks/useTerms";
 import { LOAN_KEYS } from "@/constants/queryKeys";
-import confettiAnimation from "@/assets/lottie/Success-Celebration.json";
 import handshakeAnimation from "@/assets/lottie/Handshake.json";
 import { EmptyError } from "@/components/common/EmptyError";
 import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 
-type AgreementStep = "CONFIRM" | "TERMS" | "CERT" | "ACCOUNT" | "COMPLETE";
+type AgreementStep = "CONFIRM" | "TERMS" | "CERT" | "ACCOUNT";
 
 export default function LoanAgreementPage() {
   const navigate = useNavigate();
@@ -151,37 +150,8 @@ export default function LoanAgreementPage() {
               message: verified ? undefined : "인증코드가 일치하지 않습니다.",
             };
           }}
-          onSubmit={() => setStep("COMPLETE")}
+          onSubmit={() => navigate(`/loan/execution/${applicationId}`, { replace: true })}
         />
-      );
-
-    // 5. 대출 실행 완료
-    case "COMPLETE":
-      return (
-        <div className="relative h-full pt-15 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none z-10 flex items-start justify-center">
-            <Lottie
-              animationData={confettiAnimation}
-              loop={3}
-              className="w-full max-w-sm -translate-y-25"
-            />
-          </div>
-          <ConfirmPage
-            title="대출이 실행되었습니다!"
-            description="입금까지 영업일 기준 1~2일 소요됩니다."
-            rows={[
-              { label: "상품명", value: data.productName },
-              { label: "실행금액", value: formatAmount(approvedAmount) },
-              { label: "금리(연)", value: `${approvedRate}%` },
-              { label: "대출기간", value: termLabel },
-              { label: "상환방식", value: repaymentLabel },
-            ]}
-            buttonLabel="홈으로 이동"
-            onConfirm={() => navigate("/")}
-            secondaryButtonLabel="대출 진행 관리"
-            onSecondary={() => navigate("/loan-applications")}
-          />
-        </div>
       );
 
     default:
