@@ -50,12 +50,12 @@ export default function LoanListPage() {
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   {/* 상품명 */}
-                  <p className="text-sm text-text-secondary mb-2">
-                    {product.productName}
+                  <p className="text-sm text-text-secondary mb-1">
+                    {product.title}
                   </p>
                   {/* 소개 문구 */}
-                  <h3 className="text-base font-semibold text-text-primary">
-                    {product.title}
+                  <h3 className="text-md font-semibold text-text-primary">
+                    {product.productName}
                   </h3>
                 </div>
                 {/* 한도 정보 */}

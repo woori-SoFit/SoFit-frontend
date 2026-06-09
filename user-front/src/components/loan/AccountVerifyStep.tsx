@@ -2,14 +2,16 @@
  * 계좌 인증번호 입력 화면
  * AccountStep 내부에서 사용
  */
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { ShieldCheck, Info } from "lucide-react";
 import { BottomButton } from "@/components/common/BottomButton";
 import { useMe } from "@/hooks/useMe";
+import { maskAccountNumber } from "@/utils/format";
 import signatureIcon from "@/assets/ba-1400-symbol.png";
 
 interface AccountVerifyStepProps {
   accountNumber: string;
+  authCode: string;
   verificationCode: string;
   onChangeCode: (value: string) => void;
   error: string;
@@ -20,6 +22,7 @@ interface AccountVerifyStepProps {
 
 export function AccountVerifyStep({
   accountNumber,
+  authCode,
   verificationCode,
   onChangeCode,
   error,
@@ -29,6 +32,15 @@ export function AccountVerifyStep({
 }: AccountVerifyStepProps) {
   const { me } = useMe();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [showBanner, setShowBanner] = useState(true);
+
+  // 5초 후 배너 자동 숨김
+  useEffect(() => {
+    if (!authCode) return;
+    setShowBanner(true);
+    const timer = setTimeout(() => setShowBanner(false), 5000);
+    return () => clearTimeout(timer);
+  }, [authCode]);
 
   // 마운트 시 자동 포커스
   useEffect(() => {
@@ -42,13 +54,29 @@ export function AccountVerifyStep({
     }
   }, [verificationCode, error]);
 
-  /** 계좌번호 마스킹 (예: 1002940540000 → 1002-****-40000) */
-  const maskedAccount = accountNumber.length >= 8
-    ? `${accountNumber.slice(0, 4)}-****-${accountNumber.slice(-5)}`
-    : accountNumber;
+  const maskedAccount = maskAccountNumber(accountNumber);
 
   return (
     <div className="flex flex-col min-h-full">
+      {/* 인증번호 푸시 알림 스타일 토스트 — 헤더 위에 fixed */}
+      {authCode && (
+        <div
+          className={`fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-100 px-4 pt-2 transition-transform duration-500 ease-out ${
+            showBanner ? "translate-y-0" : "-translate-y-full"
+          }`}
+        >
+          <div className="bg-white rounded-xl px-5 py-4 border border-border-default flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <ShieldCheck size={18} className="text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-text-secondary">[SOFIT] 계좌확인 인증번호</p>
+              <p className="text-base font-bold text-primary tracking-[0.3em] mt-0.5">{authCode}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 px-5 pt-8">
         {/* 상단 아이콘 + 타이틀 */}
         <div className="flex flex-col items-center mb-12">

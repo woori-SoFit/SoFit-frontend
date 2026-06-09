@@ -54,6 +54,11 @@ export function ProductCardSlider({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const prevIndexRef = useRef(0);
 
+  // 터치 스와이프 상태
+  const touchStartX = useRef(0);
+  const touchDeltaX = useRef(0);
+  const isSwiping = useRef(false);
+
   // 자동 슬라이드
   useEffect(() => {
     if (isPaused || N <= 1) return;
@@ -75,22 +80,54 @@ export function ProductCardSlider({
   const handlePrev = () => advance(-1);
   const handleNext = () => advance(1);
 
+  // 터치 핸들러
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchDeltaX.current = 0;
+    isSwiping.current = true;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isSwiping.current) return;
+    touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
+  };
+
+  const handleTouchEnd = () => {
+    if (!isSwiping.current) return;
+    isSwiping.current = false;
+    const threshold = 50; // 최소 스와이프 거리
+    if (touchDeltaX.current < -threshold) {
+      advance(1); // 왼쪽 스와이프 → 다음
+    } else if (touchDeltaX.current > threshold) {
+      advance(-1); // 오른쪽 스와이프 → 이전
+    }
+  };
+
   // 인디케이터용: 현재 인덱스를 원본 상품 수 기준으로 환산
   const indicatorIndex = originalCount > 0 ? displayIndex % originalCount : displayIndex;
 
   return (
     <section className="pb-3">
-      <div className="relative h-[340px] overflow-hidden">
+      <div
+        className="relative h-[340px] overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {cards.map((card, i) => {
-          // 현재 active 기준 offset 계산
+          // 현재 active 기준 shortest distance offset 계산
           let offset = i - displayIndex;
-          if (offset > 1) offset -= N;
-          if (offset < -1) offset += N;
+          // 순환 보정: shortest path
+          if (offset > N / 2) offset -= N;
+          if (offset < -N / 2) offset += N;
 
           // 이전 active 기준 offset (점프 감지용)
           let prevOffset = i - prevIndexRef.current;
-          if (prevOffset > 1) prevOffset -= N;
-          if (prevOffset < -1) prevOffset += N;
+          if (prevOffset > N / 2) prevOffset -= N;
+          if (prevOffset < -N / 2) prevOffset += N;
+
+          // offset이 -1, 0, 1 범위 밖이면 숨김
+          const isHidden = offset < -1 || offset > 1;
 
           // 점프 감지: 양쪽 끝을 넘어가는 카드
           const isJumping =
@@ -110,40 +147,41 @@ export function ProductCardSlider({
               style={{
                 transform: `translateX(calc(-50% + ${translateX}%)) rotate(${rotate}deg) scale(${scale})`,
                 transformOrigin: "center bottom",
-                zIndex,
-                opacity: isJumping ? 0 : 1,
+                zIndex: isHidden ? 0 : zIndex,
+                opacity: isHidden ? 0 : isJumping ? 0 : 1,
                 transition: isJumping
                   ? "none"
-                  : "transform 500ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms ease 300ms",
+                  : "transform 500ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms ease",
                 pointerEvents: offset === 0 ? "auto" : "none",
               }}
             >
+              {/* 카드 본체 */}
               {/* 카드 본체 — 개별 그림자 + 글래스모피즘 */}
               <button
                 type="button"
-                className="w-full text-left rounded-2xl p-5 text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)] backdrop-blur-xl border border-white/20 active:brightness-90 transition-[filter]"
-                style={{ backgroundColor: `${card.bg}cc` }}
+                className="w-full text-left rounded-2xl p-5 text-[#1E293B] backdrop-blur-md border border-white/20 active:brightness-90 transition-[filter]"
+                style={{ backgroundColor: `${card.bg}99` }}
                 onClick={() => onCardClick?.(card.productId)}
                 aria-label={`${card.title} 상세 보기`}
               >
-                <p className="text-sm text-white/80 leading-snug">{card.subtitle}</p>
+                <p className="text-sm leading-snug">{card.subtitle}</p>
                 <p className="mt-1 text-lg font-bold leading-snug">{card.title}</p>
 
                 {/* 중앙 일러스트 영역 */}
                 <div className="my-6 h-32 flex items-center justify-center">
                   <img
-                    src={WIBEE_IMAGES[card.productId % WIBEE_IMAGES.length]}
+                    src={WIBEE_IMAGES[(card.productId - 1) % WIBEE_IMAGES.length]}
                     alt=""
                     aria-hidden="true"
-                    className="w-40 h-40 object-contain"
+                    className="w-30 h-30 object-contain"
                   />
                 </div>
 
                 {/* 금리 정보 */}
                 <div>
-                  <p className="text-xs text-white/70">{card.tag}</p>
+                  <p className="text-xs">{card.tag}</p>
                   <p className="text-3xl font-extrabold tracking-tight">{card.rate}</p>
-                  <p className="mt-0.5 text-xs text-white/70">{card.desc}</p>
+                  <p className="mt-0.5 text-xs">최저금리 연 % ~</p>
                 </div>
               </button>
             </div>

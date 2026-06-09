@@ -23,6 +23,7 @@ import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { BizInfoConfirm } from "@/components/loan/BizInfoConfirm";
 import { MydataLoadingStep } from "@/components/loan/MydataLoadingStep";
 import { LoanConditionsStep } from "@/components/loan/LoanConditionsStep";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { LoanApplyResult } from "@/components/loan/LoanApplyResult";
 import { BizDataCheckStep } from "@/components/grade/BizDataCheckStep";
 import { IntroSection } from "@/components/bizData/IntroSection";
@@ -92,6 +93,13 @@ export default function LoanApplyPage() {
     const params = new URLSearchParams(location.search);
     const stepParam = params.get("step");
     if (stepParam === "LOAN_CONDITIONS") {
+      // state에서 productId/applicationId가 있으면 설정 (BizDataCollect에서 전달)
+      if (state?.productId) {
+        useLoanApplyStore.getState().setProductId(state.productId);
+      }
+      if (state?.applicationId) {
+        useLoanApplyStore.getState().setApplicationId(state.applicationId);
+      }
       setStep("LOAN_CONDITIONS");
       return;
     }
@@ -289,9 +297,10 @@ export default function LoanApplyPage() {
       );
 
     case "LOAN_CONDITIONS":
+      if (!productId) return <CharacterLoadingSpinner text="상품 정보를 불러오는 중..." />;
       return (
         <LoanConditionsStep
-          productId={productId ?? 0}
+          productId={productId}
           applicationId={applicationId ?? 0}
           onSubmit={(data) => {
             updateFormData({
@@ -333,7 +342,7 @@ export default function LoanApplyPage() {
           }}
           onGoHome={() => {
             reset();
-            navigate("/loan-applications");
+            navigate("/");
           }}
         />
       );

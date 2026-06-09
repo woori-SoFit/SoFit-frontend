@@ -11,17 +11,14 @@
  *   6-b. 실패 → 에러 메시지 + 재입력
  */
 import { useState, useCallback } from "react";
-import Lottie from "lottie-react";
 import { ShieldCheck, Lock } from "lucide-react";
 import { PinInput } from "./PinInput";
 import { CustomerInfoForm } from "./CustomerInfoForm";
 import { VerifySuccessOverlay } from "./VerifySuccessOverlay";
-import { ConfirmPage } from "@/components/common/ConfirmPage";
 import { BottomButton } from "@/components/common/BottomButton";
-import { lookupFinancialCert, verifyFinancialCertificate } from "@/api/authApi";
+import { lookupFinancialCert, verifyFinancialCertificate, verifyPinForSignup } from "@/api/authApi";
 import { formatDate } from "@/utils/format";
 import type { CustomerVerifyData, FinancialCertLookupResult } from "@/types/auth";
-import documentAnimation from "@/assets/lottie/Document.json";
 
 export type { CustomerVerifyData };
 
@@ -30,11 +27,13 @@ interface CustomerVerifyPageProps {
   description?: string;
   /** PIN 검증 성공 후 호출 (입력 정보 전달) */
   onSuccess: (data: CustomerVerifyData) => void;
+  /** "signup"이면 회원가입용 엔드포인트 사용 */
+  variant?: "default" | "signup";
 }
 
 type Step = "INFO" | "CERT_CONFIRM" | "PIN";
 
-export function CustomerVerifyPage({ description, onSuccess }: CustomerVerifyPageProps) {
+export function CustomerVerifyPage({ description, onSuccess, variant = "default" }: CustomerVerifyPageProps) {
   const [step, setStep] = useState<Step>("INFO");
   const [name, setName] = useState("");
   const [rrnFront, setRrnFront] = useState("");
@@ -78,12 +77,17 @@ export function CustomerVerifyPage({ description, onSuccess }: CustomerVerifyPag
       setIsLoading(true);
       setErrorMessage("");
       try {
-        await verifyFinancialCertificate({
+        const verifyParams = {
           phoneNumber: phone.replace(/\D/g, ""),
           holderName: name.trim(),
           residentNumber: rrnFront + rrnBack,
           pin,
-        });
+        };
+        if (variant === "signup") {
+          await verifyPinForSignup(verifyParams);
+        } else {
+          await verifyFinancialCertificate(verifyParams);
+        }
         setShowSuccess(true);
         setTimeout(() => {
           onSuccess({
@@ -119,19 +123,6 @@ export function CustomerVerifyPage({ description, onSuccess }: CustomerVerifyPag
             errorMessage={errorMessage}
           />
         </div>
-        <div className="px-5 pb-6 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              setStep("INFO");
-              setErrorMessage("");
-            }}
-            disabled={showSuccess}
-            className="w-full h-12 rounded-lg border border-border-default text-sm font-semibold text-text-primary hover:bg-gray-50 transition-colors disabled:opacity-50"
-          >
-            정보 다시 입력하기
-          </button>
-        </div>
         <VerifySuccessOverlay visible={showSuccess} />
       </div>
     );
@@ -139,39 +130,90 @@ export function CustomerVerifyPage({ description, onSuccess }: CustomerVerifyPag
 
   // ── 금융인증서 확인 화면 ──
   if (step === "CERT_CONFIRM") {
-    const certRows = certInfo
-      ? [
-          { label: "인증서 종류", value: "금융인증서" },
-          { label: "인증서 번호", value: certInfo.certNumber },
-          { label: "사용자", value: certInfo.holderName },
-          { label: "발급일", value: formatDate(certInfo.issuedAt) },
-          { label: "만료일", value: formatDate(certInfo.expiresAt) },
-        ]
-      : [
-          { label: "인증서 종류", value: "금융인증서" },
-          { label: "사용자", value: name.trim() || "—" },
-        ];
+    const holderName = certInfo?.holderName || name.trim();
+    const issuedDate = certInfo ? formatDate(certInfo.issuedAt) : "—";
+    const expiresDate = certInfo ? formatDate(certInfo.expiresAt) : "—";
+    const certNumber = certInfo?.certNumber || "—";
 
     return (
-      <ConfirmPage
-        icon={<Lottie animationData={documentAnimation} loop={3} className="w-40 h-40" />}
-        title="금융인증서를 불러왔어요"
-        description="아래 정보를 확인 후 인증을 진행해 주세요."
-        rows={certRows}
-        buttonLabel="PIN 입력하기"
-        onConfirm={() => setStep("PIN")}
-      >
-        <div className="flex flex-col gap-3 text-text-secondary mt-4">
-          <div className="flex items-start gap-2">
-            <ShieldCheck size={18} className="shrink-0" />
-            <p className="text-sm">본인 명의의 금융인증서만 사용 가능합니다.</p>
+      <div className="flex flex-col min-h-full">
+        <div className="flex-1 px-5 pt-8 pb-4 flex flex-col items-center">
+          {/* 타이틀 */}
+          <p className="text-sm text-primary font-medium mb-1">
+            {holderName}님의 금융인증서
+          </p>
+          <h2 className="text-lg font-bold text-text-primary mb-8">
+            인증서를 확인해주세요
+          </h2>
+
+          {/* 인증서 카드 — 세로 직사각형, 등장 시 Y축 한바퀴 회전 */}
+          <div style={{ perspective: "800px" }}>
+            <div className="w-[220px] rounded-2xl bg-linear-to-br from-[#2563EB] to-[#1d4ed8] px-5 py-7 text-white shadow-[0_20px_60px_rgba(37,99,235,0.4),0_8px_24px_rgba(0,0,0,0.15)] relative overflow-hidden animate-[card-flip_0.8s_ease-out_both]">
+            {/* 배경 장식 원 */}
+            <div className="absolute -left-8 -bottom-8 w-36 h-36 rounded-full bg-white/10" />
+            <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full bg-white/5" />
+
+            {/* 상단: 이름 + 별 */}
+            <div className="relative z-10">
+              <p className="text-base font-bold mb-0.5">
+                {holderName} <span className="text-yellow-300">★</span>
+              </p>
+              <p className="text-[11px] text-white/70">금융인증서</p>
+            </div>
+
+            {/* 인증서 번호 */}
+            <div className="relative z-10 mt-6">
+              <p className="text-[10px] text-white/60 mb-0.5">인증서 번호</p>
+              <p className="text-xs font-mono tracking-wide">{certNumber}</p>
+            </div>
+
+            {/* 발급일 */}
+            <div className="relative z-10 mt-5">
+              <p className="text-[10px] text-white/60 mb-0.5">발급일</p>
+              <p className="text-xs font-medium">{issuedDate}</p>
+            </div>
+
+            {/* 만료일 */}
+            <div className="relative z-10 mt-3">
+              <p className="text-[10px] text-white/60 mb-0.5">만료일</p>
+              <p className="text-xs font-medium">{expiresDate}</p>
+            </div>
+
+            {/* 발급기관 */}
+            <div className="relative z-10 mt-6 pt-3 border-t border-white/20">
+              <p className="text-[10px] text-white/50 text-center">발급기관: 금융결제원</p>
+            </div>
           </div>
-          <div className="flex items-start gap-2">
-            <Lock size={18} className="shrink-0" />
-            <p className="text-sm">타인의 금융인증서를 사용하거나 대여 시 관련 법률에 따라 처벌받을 수 있습니다.</p>
+          </div>
+
+          {/* 안내 문구 */}
+          <div className="flex flex-col gap-3 text-text-secondary mt-10 w-4/5">
+            <div className="flex items-start gap-2">
+              <ShieldCheck size={16} className="shrink-0 mt-0.5" />
+              <p className="text-xs">본인 명의의 금융인증서만 사용 가능합니다.</p>
+            </div>
+            <div className="flex items-start gap-2">
+              <Lock size={16} className="shrink-0 mt-0.5" />
+              <p className="text-xs">타인의 금융인증서를 사용하거나 대여 시 관련 법률에 따라 처벌받을 수 있습니다.</p>
+            </div>
           </div>
         </div>
-      </ConfirmPage>
+
+        {/* PIN 입력하기 버튼 */}
+        <BottomButton
+          label="PIN 입력하기"
+          onClick={() => setStep("PIN")}
+        />
+
+        {/* 카드 플립 애니메이션 */}
+        <style>{`
+          @keyframes card-flip {
+            0% { transform: rotateY(-180deg); opacity: 0; }
+            40% { opacity: 1; }
+            100% { transform: rotateY(0deg); opacity: 1; }
+          }
+        `}</style>
+      </div>
     );
   }
 

@@ -271,6 +271,24 @@ export interface CheckDraftResponse {
   };
 }
 
+/** 임시저장(draft) 목록 아이템 */
+export interface LoanDraftItem {
+  applicationId: number;
+  productId: number;
+  productName: string;
+  resumeStep: string;
+}
+
+/** 임시저장(draft) 목록 조회 API 응답 */
+export interface LoanDraftsResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    drafts: LoanDraftItem[];
+  };
+}
+
 /** 대출 약관 동의 요청 */
 export interface LoanConsentsRequest {
   termType: string;

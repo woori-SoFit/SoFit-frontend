@@ -22,7 +22,7 @@ export function VerifySuccessOverlay({
   if (!visible) return null;
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/30 animate-fade-in">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/30 animate-fade-in">
       <div className="bg-white rounded-2xl p-8 flex flex-col items-center gap-3 shadow-modal">
         <div className="w-24 h-24">
           <Lottie animationData={verificationAnimation} loop={false} className="w-full h-full" />
