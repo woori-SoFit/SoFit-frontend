@@ -110,7 +110,7 @@ export default function LoginPage() {
             value={loginId}
             onChange={handleLoginIdChange}
             placeholder="아이디를 입력하세요"
-            className="w-full px-4 py-3 border border-border-default rounded-lg text-base text-text-primary placeholder:text-gray-400 focus:outline-none focus:border-border-focus"
+            className="w-full px-4 py-3 bg-white border border-border-default rounded-lg text-base text-text-primary placeholder:text-gray-400 focus:outline-none focus:border-border-focus"
           />
           <p className="text-xs text-error min-h-4">
             {validationErrors.loginId ?? "\u00A0"}
@@ -130,7 +130,7 @@ export default function LoginPage() {
               value={password}
               onChange={handlePasswordChange}
               placeholder="비밀번호를 입력하세요"
-              className="w-full px-4 py-3 border border-border-default rounded-lg text-base text-text-primary placeholder:text-gray-400 focus:outline-none focus:border-border-focus pr-12"
+              className="w-full px-4 py-3 bg-white border border-border-default rounded-lg text-base text-text-primary placeholder:text-gray-400 focus:outline-none focus:border-border-focus pr-12"
             />
             <button
               type="button"

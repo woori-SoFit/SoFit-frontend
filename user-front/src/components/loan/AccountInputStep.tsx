@@ -82,12 +82,12 @@ export function AccountInputStep({
               <p className="text-sm font-medium text-text-primary mb-1.5">
                 본인 명의 계좌만 등록할 수 있어요.
               </p>
-              <ul className="text-xs text-text-secondary space-y-1">
-                <li>• 타인 명의 계좌는 입력할 수 없습니다.</li>
-                <li>• 계좌 확인 시 예금주명이 자동으로 확인됩니다.</li>
-              </ul>
             </div>
           </div>
+          <ul className="text-xs text-text-secondary space-y-1">
+            <li>• 타인 명의 계좌는 입력할 수 없습니다.</li>
+            <li>• 계좌 확인 시 예금주명이 자동으로 확인됩니다.</li>
+          </ul>
         </div>
       </div>
 

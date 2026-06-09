@@ -69,3 +69,9 @@ export function formatChangeRate(rate: number | null): { text: string; isPositiv
   const isPositive = rate >= 0;
   return { text: `${isPositive ? "+" : ""}${rate.toFixed(1)}%`, isPositive };
 }
+
+/** 계좌번호 마스킹 (예: 1002940540000 → 1002-****-40000) */
+export function maskAccountNumber(accountNumber: string): string {
+  if (accountNumber.length < 8) return accountNumber;
+  return `${accountNumber.slice(0, 4)}-****-${accountNumber.slice(-5)}`;
+}
