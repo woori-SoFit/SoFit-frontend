@@ -102,7 +102,7 @@ export function LoadingScreen({ title, description, steps, buttonLabel = "다음
 
         {/* Step 목록 카드 */}
         {internalSteps.length > 0 && (
-          <div className="w-full bg-bg-surface rounded-2xl shadow-card overflow-hidden">
+          <div className="w-full bg-bg-surface rounded-2xl overflow-hidden">
             <ul className="divide-gray-50">
               {internalSteps.map((step, index) => {
                 const StepIcon = step.icon;
