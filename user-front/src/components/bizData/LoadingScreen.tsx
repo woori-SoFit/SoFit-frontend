@@ -116,10 +116,21 @@ export function LoadingScreen({ title, description, steps, buttonLabel = "다음
                       </div>
                     )}
 
-                    {/* 라벨 */}
-                    <span className={`flex-1 text-sm font-medium ${step.status === "pending" ? "text-gray-400" : "text-text-primary"}`}>
-                      {step.label}
-                    </span>
+                    {/* 라벨 + 상태 텍스트 */}
+                    <div className="flex-1">
+                      <span className={`text-sm font-medium ${step.status === "pending" ? "text-gray-400" : "text-text-primary"}`}>
+                        {step.label}
+                      </span>
+                      <p className={`text-xs mt-0.5 ${
+                        step.status === "done" ? "text-success" :
+                        step.status === "loading" ? "text-primary" :
+                        "text-gray-300"
+                      }`}>
+                        {step.status === "done" && "완료"}
+                        {step.status === "loading" && "불러오는 중"}
+                        {step.status === "pending" && "대기"}
+                      </p>
+                    </div>
 
                     {/* 오른쪽 상태 아이콘 */}
                     <div className="shrink-0">

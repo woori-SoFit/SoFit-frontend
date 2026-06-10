@@ -51,7 +51,7 @@ export function ServiceIntroPage({
   buttonDisabled = false,
 }: ServiceIntroPageProps) {
   return (
-    <div className="flex flex-col h-full relative">
+    <div className="flex flex-col h-full relative overflow-x-hidden">
       {/* 배경 그라데이션 */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-sky-100/60 blur-3xl" />

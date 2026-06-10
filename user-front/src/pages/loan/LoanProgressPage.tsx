@@ -84,8 +84,8 @@ export default function LoanProgressPage() {
         </div>
 
         {inProgress.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[230px] gap-1">
-            <img src={nonewibee1} alt="" aria-hidden="true" className="w-40 object-contain opacity-60" />
+          <div className="flex flex-col items-center justify-center min-h-[230px] gap-2">
+            <img src={nonewibee1} alt="" aria-hidden="true" className="w-32 object-contain opacity-60" />
             <p className="text-text-secondary">심사 중인 대출이 없습니다.</p>
           </div>
         ) : (
@@ -103,8 +103,8 @@ export default function LoanProgressPage() {
         </div>
 
         {completed.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[230px] gap-1">
-            <img src={nonewibee2} alt="" aria-hidden="true" className="w-40 object-contain opacity-60" />
+          <div className="flex flex-col items-center justify-center min-h-[230px] gap-2">
+            <img src={nonewibee2} alt="" aria-hidden="true" className="w-32 object-contain opacity-60" />
             <p className="text-text-secondary">심사 완료된 대출이 없습니다.</p>
           </div>
         ) : (

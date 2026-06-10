@@ -112,7 +112,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="bg-gray-50 py-5" data-testid="notifications-page">
+    <div className="bg-gray-50" data-testid="notifications-page">
       {/* 에러 토스트 */}
       {errorMessage && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 rounded-lg bg-red-500 px-4 py-2 text-sm text-white shadow-lg">
@@ -121,8 +121,12 @@ export default function NotificationsPage() {
       )}
 
       {!notifications || notifications.length === 0 ? (
-        <div className="flex items-center justify-center py-20">
-          <p className="text-gray-500">알림이 없습니다</p>
+        <div className="flex items-center justify-center h-[calc(100dvh-56px)]">
+          <EmptyError
+            message="알림이 없습니다"
+            buttonLabel="홈으로 가기"
+            navigateTo="/"
+          />
         </div>
       ) : (
         <div className="divide-y divide-gray-100 px-5">

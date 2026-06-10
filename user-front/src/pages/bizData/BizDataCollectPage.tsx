@@ -106,7 +106,7 @@ export default function BizDataCollectPage() {
     case "LOADING":
       return (
         <LoadingScreen
-          title="성장 가능성까지 함께 평가하고 있어요."
+          title="사업 데이터를 수집하고 있어요"
           description="수집된 사업 데이터는 S등급 분석 및 대출 심사에 활용됩니다."
           steps={MOCK_BIZ_DATA_COLLECT_STEPS}
           buttonLabel={loadingButtonLabel}
