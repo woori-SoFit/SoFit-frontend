@@ -37,12 +37,12 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
       <div className="grid grid-cols-2 gap-3">
         {/* 재구매율 — 도넛 시각화 */}
         <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex flex-col items-center">
-          <p className="text-xs text-text-secondary pb-3 self-start font-medium">재방문율</p>
+          <p className="text-sm text-text-secondary pb-3 self-start font-medium">재방문율</p>
           <div className="relative w-20 h-20 mb-2">
             <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-              <circle cx="18" cy="18" r="14" fill="none" stroke="var(--color-gray-200)" strokeWidth="4" />
+              <circle cx="18" cy="18" r="16" fill="none" stroke="var(--color-gray-200)" strokeWidth="4" />
               <circle
-                cx="18" cy="18" r="14" fill="none"
+                cx="18" cy="18" r="16" fill="none"
                 stroke="var(--color-primary)"
                 strokeWidth="4"
                 strokeDasharray={`${(onlineReorderRate ?? 0) * 0.88} 88`}
@@ -57,7 +57,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
 
         {/* 평점 */}
         <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex flex-col items-center">
-          <p className="text-xs text-text-secondary pb-4 self-start font-medium">평균 평점</p>
+          <p className="text-sm text-text-secondary pb-4 self-start font-medium">평균 평점</p>
           <div className="flex items-center gap-1 mb-1">
             <Star size={20} className="text-warning fill-warning" />
             <span className="text-2xl font-bold text-text-primary">{formatCount(averageRating)}</span>
@@ -94,13 +94,13 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
 
       {/* 평점 추이 차트 */}
       <div className="bg-bg-surface rounded-xl p-4 border border-border-default">
-        <h3 className="text-sm font-semibold text-text-primary mb-2">평점 추이</h3>
+        <h3 className="font-semibold mb-2">평점 추이</h3>
         <RatingLineChart data={ratingTrend} />
       </div>
 
       {/* 부가 정보 */}
       <div className="bg-bg-surface rounded-xl p-4 border border-border-default">
-        <h3 className="text-sm font-semibold text-text-primary mb-3">온라인 활동</h3>
+        <h3 className="font-semibold text-text-primary mb-3">온라인 활동</h3>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
@@ -138,9 +138,9 @@ function StatCard({ icon: Icon, label, value }: {
         <div className={`w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center shrink-0`}>
           <Icon size={12} className="text-primary" />
         </div>
-        <p className="text-xs text-text-secondary font-semibold whitespace-nowrap">{label}</p>
+        <p className="text-sm text-text-secondary font-semibold whitespace-nowrap">{label}</p>
       </div>
-      <p className="text-sm font-bold text-text-primary whitespace-nowrap">{value}</p>
+      <p className="font-bold text-text-primary whitespace-nowrap">{value}</p>
     </div>
   );
 }

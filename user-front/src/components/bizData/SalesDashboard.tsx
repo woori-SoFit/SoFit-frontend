@@ -2,12 +2,12 @@
  * "이번 달 장사는 어땠나요?" 카테고리 상세 화면
  *
  * 표시 데이터:
- * - 거래 현황: 월 거래 건수, 건당 평균 결제액
+ * - 거래 현황: 월 결제 건수, 건당 평균 결제액
  * - 매출: 이번 달 매출, 전월 매출액, 전월 대비 증감률
  * - 최근 6개월 매출 추이 차트 (기존 RevenueLineChart 재활용)
  * - 업종 내 위치: 매출 상위 %, 전월 대비 순위 변동
  */
-import { BarChart3, ArrowUpRight, ArrowDownRight, Receipt, CreditCard, TrendingUp } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Receipt, CreditCard, TrendingUp } from "lucide-react";
 import { RevenueLineChart } from "./RevenueLineChart";
 import { formatCurrency, formatChangeRate } from "@/utils/format";
 import type { BizDashboardData } from "@/types/bizData";
@@ -38,10 +38,10 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
       <div className="bg-bg-surface rounded-xl p-5 border border-gray-200">
         <div className="flex items-center gap-2 mb-3">
           <div className="flex-1">
-            <p className="text-sm font-semibold text-text-secondary">이번 달 매출</p>
+            <p className="font-semibold text-text-secondary">이번 달 매출</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-text-secondary">전월 대비</p>
+            <p className="text-xs font-semibold text-text-secondary">전월 대비</p>
           </div>
         </div>
         <div className="flex justify-between">
@@ -61,14 +61,14 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
 
       {/* 거래 현황 */}
       <div className="bg-bg-surface rounded-xl p-5 border border-gray-200">
-        <h3 className="text-sm font-semibold text-text-primary mb-3">거래 현황</h3>
+        <h3 className="font-semibold text-text-primary mb-3">월 결제 현황</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
               <Receipt size={16} className="text-primary" />
             </div>
             <div>
-              <p className="text-xs text-text-secondary">월 거래 건수</p>
+              <p className="text-sm font-semibold text-text-secondary">월 결제 건수</p>
               <p className="text-base font-bold text-text-primary">
                 {`${(monthlyTransactionCount ?? 0).toLocaleString()}건`}
               </p>
@@ -79,13 +79,12 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
               <CreditCard size={16} className="text-primary" />
             </div>
             <div>
-              <p className="text-xs text-text-secondary">건당 평균 결제액</p>
+              <p className="text-sm font-semibold text-text-secondary">건당 평균 결제액</p>
               <p className="text-base font-bold text-text-primary">
-              {`${Math.round(avgTransactionAmount ?? 0).toLocaleString()}원`}              </p>
+              {`${Math.round(avgTransactionAmount ?? 0).toLocaleString()}원`}</p>
             </div>
           </div>
         </div>
-        <p className="text-xs text-text-disabled mt-3">이번 달 결제 패턴을 한눈에 확인하세요.</p>
       </div>
 
       {/* 최근 6개월 매출 추이 */}
@@ -95,14 +94,14 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
 
       {/* 업종 내 위치 */}
       <div className="bg-bg-surface rounded-xl p-5 border border-gray-200">
-        <h3 className="text-sm font-semibold text-text-primary mb-3">업종 내 위치</h3>
+        <h3 className="font-semibold text-text-primary mb-3">업종 내 위치</h3>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
             <TrendingUp size={20} className="text-primary" />
           </div>
           <div className="flex-1">
             <p className="text-base font-bold text-text-primary">
-              업종 내 매출 상위 {industrySalesRank}%
+              업종 내 매출 상위 <span className="text-primary-dark">{industrySalesRank}%</span>
             </p>
             <p className="text-xs text-text-secondary mt-0.5">
               같은 업종 안에서 경쟁력이 좋은 편이에요.

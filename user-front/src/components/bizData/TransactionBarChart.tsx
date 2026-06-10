@@ -28,8 +28,8 @@ export function TransactionBarChart({ data }: TransactionBarChartProps) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-semibold text-text-primary">
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="font-semibold text-text-primary">
           계좌 입출금{monthLabel ? ` (${monthLabel})` : ""}
         </h4>
         <span className="text-xs text-text-secondary">(단위: 원)</span>
