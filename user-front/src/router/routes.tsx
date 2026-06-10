@@ -30,8 +30,8 @@ import BizDashboardPage from "@/pages/bizData/BizDashboardPage";
 // Grade Report
 import GradeReportPage from "@/pages/grade/GradeReportPage";
 
-// Calculate
-import CalculatePage from "@/pages/calculator/CalculatorPage";
+// Loan Management
+import LoanManagementPage from "@/pages/loan/LoanManagementPage";
 
 // Mypage
 import MyPage from "@/pages/mypage/MyPage";
@@ -104,8 +104,8 @@ export const router = createBrowserRouter([
       { path: "/grade-report", element: <GradeReportPage /> },
       { path: "/grade-report/detail", element: <GradeReportDetailPage /> },
 
-      // 사전계산기
-      { path: "/calculate", element: <CalculatePage />},
+      // 대출 관리
+      { path: "/loan-management", element: <LoanManagementPage />},
     ],
   },
 

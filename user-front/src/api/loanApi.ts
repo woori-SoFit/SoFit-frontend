@@ -24,6 +24,8 @@ import type {
   LoanBizInfoResponse,
   LoanExecutionDetailResponse,
   LoanExecutionDetail,
+  LoanManagementItem,
+  LoanManagementListResponse,
   AccountVerificationResponse,
   AccountVerificationConfirmResponse,
 } from "@/types/loan";
@@ -218,4 +220,12 @@ export async function confirmAccountVerification(
     { verificationCode }
   );
   return res.data.result.accountVerified;
+}
+
+/** 대출 관리 — 실행 완료된 대출 목록 조회 */
+export async function fetchLoanManagementList(): Promise<LoanManagementItem[]> {
+  const res = await axiosInstance.get<LoanManagementListResponse>(
+    "/loan-executions"
+  );
+  return res.data?.result?.executions ?? [];
 }

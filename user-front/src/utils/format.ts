@@ -83,3 +83,41 @@ export function maskAccountNumber(accountNumber: string): string {
   if (accountNumber.length < 8) return accountNumber;
   return `${accountNumber.slice(0, 4)}-****-${accountNumber.slice(-5)}`;
 }
+
+/** 날짜를 YYYY.MM.DD 형식으로 표시 */
+export function formatDotDate(dateStr: string): string {
+  const dateOnly = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
+  const [y, m, d] = dateOnly.split("-");
+  if (!y || !m || !d) return dateStr;
+  return `${y}.${m.padStart(2, "0")}.${d.padStart(2, "0")}`;
+}
+
+/** 날짜 문자열에서 요일을 반환 (일, 월, 화, ...) */
+export function getDayOfWeek(dateStr: string): string {
+  const dateOnly = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
+  const date = new Date(dateOnly);
+  const days = ["일", "월", "화", "수", "목", "금", "토"];
+  return days[date.getDay()];
+}
+
+/** 실행일 기준으로 다음 상환일(매월 동일 일자)을 YYYY-MM-DD로 반환 */
+export function getNextRepaymentDate(executedAt: string): string {
+  const now = new Date();
+  const dateOnly = executedAt.includes("T") ? executedAt.split("T")[0] : executedAt;
+  const [, , dayStr] = dateOnly.split("-");
+  const repayDay = parseInt(dayStr, 10);
+
+  const thisMonth = new Date(now.getFullYear(), now.getMonth(), repayDay);
+  if (thisMonth > now) {
+    return toISODate(thisMonth);
+  }
+  return toISODate(new Date(now.getFullYear(), now.getMonth() + 1, repayDay));
+}
+
+/** Date 객체를 YYYY-MM-DD 문자열로 변환 */
+export function toISODate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
