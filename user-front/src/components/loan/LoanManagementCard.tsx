@@ -3,52 +3,12 @@
  * 실행 완료된 대출 정보를 카드 형태로 표시
  *
  * - 월 납부 금액: loanCalc 유틸로 상환방식/기간 기반 계산
- * - 다음 상환일: 실행일 기준 매월 동일 일자로 계산
+ * - 다음 상환일: format 유틸로 실행일 기준 계산
  */
-import { formatCurrency, formatDotDate, getDayOfWeek } from "@/utils/format";
-import { getFirstMonthPayment } from "@/utils/loanCalc";
+import { formatCurrency, formatDotDate, getDayOfWeek, getNextRepaymentDate } from "@/utils/format";
+import { getFirstMonthPayment, getRepaymentLabel } from "@/utils/loanCalc";
 import type { RepaymentMethod } from "@/utils/loanCalc";
 import type { LoanManagementItem } from "@/types/loan";
-
-/** 상환방식 라벨 변환 */
-function getRepaymentLabel(method: string): string {
-  switch (method) {
-    case "EQUAL_PRINCIPAL_AND_INTEREST":
-      return "원리금균등";
-    case "EQUAL_PRINCIPAL":
-      return "원금균등";
-    case "BULLET":
-      return "만기일시";
-    default:
-      return method;
-  }
-}
-
-/** 실행일 기준으로 다음 상환일(매월 동일 일자) 계산 */
-function getNextRepaymentDate(executedAt: string): string {
-  const now = new Date();
-  const dateOnly = executedAt.includes("T") ? executedAt.split("T")[0] : executedAt;
-  const [, , dayStr] = dateOnly.split("-");
-  const repayDay = parseInt(dayStr, 10);
-
-  // 이번 달 상환일
-  const thisMonth = new Date(now.getFullYear(), now.getMonth(), repayDay);
-
-  // 이번 달 상환일이 오늘 이후면 이번 달, 아니면 다음 달
-  if (thisMonth > now) {
-    return toISODate(thisMonth);
-  }
-  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, repayDay);
-  return toISODate(nextMonth);
-}
-
-/** Date → YYYY-MM-DD 문자열 */
-function toISODate(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
 
 interface LoanManagementCardProps {
   item: LoanManagementItem;

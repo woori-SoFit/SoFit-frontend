@@ -1,13 +1,30 @@
 /**
  * 대출 납부 금액 계산 유틸리티
  *
- * 상환방식:
+ * 상환방식 (백엔드 응답 기준):
  *   - EQUAL_PRINCIPAL: 원금균등 (매월 원금 동일, 이자 감소)
  *   - EQUAL_PAYMENT:   원리금균등 (매월 납부액 동일)
  *   - BULLET:          만기일시 (매월 이자만, 만기 시 원금 상환)
  */
 
-export type RepaymentMethod = "EQUAL_PRINCIPAL" | "EQUAL_PAYMENT" | "BULLET";
+export type RepaymentMethod =
+  | "EQUAL_PRINCIPAL"
+  | "EQUAL_PAYMENT"
+  | "BULLET";
+
+/** 상환방식 코드 → 한글 라벨 변환 */
+export function getRepaymentLabel(method: string): string {
+  switch (method) {
+    case "EQUAL_PAYMENT":
+      return "원리금균등";
+    case "EQUAL_PRINCIPAL":
+      return "원금균등";
+    case "BULLET":
+      return "만기일시";
+    default:
+      return method;
+  }
+}
 
 interface MonthlyPaymentParams {
   /** 대출 원금 (원) */
