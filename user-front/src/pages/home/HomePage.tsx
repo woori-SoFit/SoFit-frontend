@@ -128,7 +128,7 @@ export default function HomePage() {
               나의 대출 현황
             </p>
             <p className="mt-0.5 text-sm text-[--color-text-secondary]">
-              신청중인 대출 바로 확인하기
+              심사중인 대출 바로 확인하기
             </p>
           </div>
           <img src={icon1} alt="" aria-hidden="true" className="w-12 h-12 object-contain" />

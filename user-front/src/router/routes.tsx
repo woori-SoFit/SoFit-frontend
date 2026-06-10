@@ -103,6 +103,9 @@ export const router = createBrowserRouter([
       // S분석 리포트 — step 기반 흐름
       { path: "/grade-report", element: <GradeReportPage /> },
       { path: "/grade-report/detail", element: <GradeReportDetailPage /> },
+
+      // 사전계산기
+      { path: "/calculate", element: <CalculatePage />},
     ],
   },
 
@@ -114,9 +117,6 @@ export const router = createBrowserRouter([
     children: [
       // 홈
       { path: "/", element: <HomePage /> },
-
-      // 사전계산기
-      { path: "/calculate", element: <CalculatePage />},
     ],
   },
 
