@@ -17,6 +17,7 @@ export const LOAN_KEYS = {
   applicationsCompleted: () => [...LOAN_KEYS.all, "applications", "completed"] as const,
   application: (id: number) =>
     [...LOAN_KEYS.all, "application", id] as const,
+  management: () => [...LOAN_KEYS.all, "management"] as const,
 } as const;
 
 export const GRADE_KEYS = {

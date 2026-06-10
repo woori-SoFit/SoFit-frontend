@@ -337,6 +337,29 @@ export interface LoanExecutionDetail {
   repaymentMethod: string;
 }
 
+/** 대출 관리 — 실행 완료된 대출 목록 아이템 */
+export interface LoanManagementItem {
+  executionId: number;
+  applicationId: number;
+  productId: number;
+  productName: string;
+  executedAmount: number;
+  approvedRate: number;
+  approvedTerm: number;
+  repaymentMethod: string;
+  executedAt: string;
+}
+
+/** 대출 관리 목록 API 응답 */
+export interface LoanManagementListResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    executions: LoanManagementItem[];
+  };
+}
+
 /** 1원 송금 요청 API 응답 */
 export interface AccountVerificationResponse {
   isSuccess: boolean;

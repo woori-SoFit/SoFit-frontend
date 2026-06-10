@@ -83,3 +83,19 @@ export function maskAccountNumber(accountNumber: string): string {
   if (accountNumber.length < 8) return accountNumber;
   return `${accountNumber.slice(0, 4)}-****-${accountNumber.slice(-5)}`;
 }
+
+/** 날짜를 YYYY.MM.DD 형식으로 표시 */
+export function formatDotDate(dateStr: string): string {
+  const dateOnly = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
+  const [y, m, d] = dateOnly.split("-");
+  if (!y || !m || !d) return dateStr;
+  return `${y}.${m.padStart(2, "0")}.${d.padStart(2, "0")}`;
+}
+
+/** 날짜 문자열에서 요일을 반환 (일, 월, 화, ...) */
+export function getDayOfWeek(dateStr: string): string {
+  const dateOnly = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
+  const date = new Date(dateOnly);
+  const days = ["일", "월", "화", "수", "목", "금", "토"];
+  return days[date.getDay()];
+}

@@ -21,9 +21,9 @@ export const HOME_MENU_ITEMS: MenuItem[] = [
     icon: icon2,
   },
   {
-    id: "calculator",
+    id: "loan-management",
     label: "대출 관리",
-    to: "/calculate",
+    to: "/loan-management",
     icon: icon5,
   },
   {
