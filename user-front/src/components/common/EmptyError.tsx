@@ -39,7 +39,7 @@ export function EmptyError({
       <button
         type="button"
         onClick={handleClick}
-        className="px-6 py-2 rounded-lg bg-blue-200 text-white text-sm font-semibold hover:bg-primary-dark transition-colors"
+        className="px-6 py-2 rounded-lg bg-primary-light text-white text-sm font-semibold hover:bg-primary-dark transition-colors"
       >
         {buttonLabel}
       </button>

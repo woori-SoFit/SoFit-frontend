@@ -3,7 +3,7 @@
  */
 import icon2 from "@/assets/icons/menu2.svg";
 import icon3 from "@/assets/icons/menu3.svg";
-import icon4 from "@/assets/icons/menu4.svg";
+import icon4 from "@/assets/icons/s-grade.svg";
 import icon5 from "@/assets/icons/menu5.svg";
 
 export interface MenuItem {

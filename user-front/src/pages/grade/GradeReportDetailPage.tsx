@@ -17,6 +17,7 @@ import {
   Sprout,
 } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
+import { EmptyError } from "@/components/common/EmptyError";
 import Lottie from "lottie-react";
 import rocketLaunchAnimation from "@/assets/lottie/Rocket-Launch.json";
 import type { GradeDetailResult } from "@/api/gradeApi";
@@ -48,18 +49,11 @@ export default function GradeReportDetailPage() {
 
   if (!detail) {
     return (
-      <div className="flex flex-col items-center justify-center h-full px-5 gap-4">
-        <p className="text-text-secondary text-center">
-          상세 리포트 데이터를 불러올 수 없습니다.
-        </p>
-        <button
-          type="button"
-          onClick={() => navigate("/grade-report")}
-          className="px-6 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition-colors"
-        >
-          돌아가기
-        </button>
-      </div>
+      <EmptyError
+        message="상세 리포트를 불러올 수 없습니다."
+        buttonLabel="돌아가기"
+        navigateTo="/grade-report"
+      />
     );
   }
 
