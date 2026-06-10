@@ -49,8 +49,6 @@ pipeline {
 
                         docker build -t $REGISTRY/sofit-admin-front:latest -f admin-front/Dockerfile .
                         docker push $REGISTRY/sofit-admin-front:latest
-
-                        docker image prune -f || true
                     '''
                 }
             }
@@ -73,11 +71,8 @@ pipeline {
     }
 
     post {
-        success {
-            echo '프론트 배포 성공'
-        }
-        failure {
-            echo '프론트 배포 실패'
-        }
+        always { sh 'docker image prune -a -f --filter "until=72h"' }
+        success { echo '프론트 배포 성공' }
+        failure { echo '프론트 배포 실패' }
     }
 }
