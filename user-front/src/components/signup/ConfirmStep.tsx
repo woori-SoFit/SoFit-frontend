@@ -19,7 +19,7 @@ export default function ConfirmStep() {
 
   const handleGoToLogin = () => {
     reset();
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   return (

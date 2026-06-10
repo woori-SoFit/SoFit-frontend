@@ -61,9 +61,9 @@ export default function LoanExecutionPage() {
           { label: "상환 방식", value: REPAYMENT_LABELS[data.repaymentMethod] ?? data.repaymentMethod },
         ]}
         buttonLabel="홈으로 이동"
-        onConfirm={() => navigate("/")}
+        onConfirm={() => navigate("/", { replace: true })}
         secondaryButtonLabel="대출 진행 관리"
-        onSecondary={() => navigate("/loan-applications")}
+        onSecondary={() => navigate("/loan-applications", { replace: true })}
       />
     </div>
   );

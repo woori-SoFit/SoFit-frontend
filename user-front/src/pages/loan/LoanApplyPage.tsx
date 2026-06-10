@@ -338,11 +338,11 @@ export default function LoanApplyPage() {
           rows={resultRows}
           onViewApplications={() => {
             reset();
-            navigate("/loan-applications");
+            navigate("/loan-applications", { replace: true });
           }}
           onGoHome={() => {
             reset();
-            navigate("/");
+            navigate("/", { replace: true });
           }}
         />
       );
