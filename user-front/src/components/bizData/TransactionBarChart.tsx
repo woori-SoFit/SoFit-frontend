@@ -23,8 +23,7 @@ function formatTooltip(value: number): string {
 }
 
 export function TransactionBarChart({ data }: TransactionBarChartProps) {
-  // 과거 → 최신 순으로 정렬 (왼쪽이 과거, 오른쪽이 최신)
-  const sortedData = [...data].reverse();
+  const sortedData = [...data];
   const monthLabel = data.length > 0 ? `최근 ${data.length}개월` : "";
 
   return (

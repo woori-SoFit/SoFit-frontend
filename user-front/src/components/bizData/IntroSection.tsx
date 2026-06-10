@@ -83,7 +83,7 @@ export function IntroSection({
           {FEATURES.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.title} className="flex items-center gap-4 bg-white rounded-2xl p-5">
+              <div key={item.title} className="flex items-center gap-4 bg-white rounded-2xl p-4">
                 <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
                   <Icon size={20} className={item.iconColor} aria-hidden="true" />
                 </div>

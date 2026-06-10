@@ -30,7 +30,7 @@ export interface DashboardSearchParams {
 export const MENU_ITEMS: MenuItem[] = [
   {
     id: "sales",
-    title: "이번 달 장사는 어땠나요?",
+    title: "매출 분석",
     description: "매출 흐름과 주요 변화를 한눈에 요약해드려요.",
     icon: BarChart3,
     iconBg: "bg-blue-50",
@@ -38,7 +38,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: "profit",
-    title: "실제로 얼마나 남았나요?",
+    title: "수익/현금 흐름",
     description: "수익과 현금 흐름을 정리해 핵심만 보여드려요.",
     icon: Wallet,
     iconBg: "bg-blue-50",
@@ -46,7 +46,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: "customer",
-    title: "손님들은 다시 찾아오고 있나요?",
+    title: "고객/온라인 활동",
     description: "재방문과 고객 반응이 어떤지 요약해드려요.",
     icon: Users,
     iconBg: "bg-blue-50",
@@ -54,7 +54,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: "industry",
-    title: "우리 가게는 다른 가게보다 잘하고 있나요?",
+    title: "업종 비교",
     description: "업종 안에서 우리 가게 위치를 쉽게 보여드려요.",
     icon: Trophy,
     iconBg: "bg-blue-50",

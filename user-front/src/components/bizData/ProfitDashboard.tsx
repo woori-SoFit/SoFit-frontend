@@ -74,7 +74,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
 
       {/* 월 입금액 / 월 출금액 */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-2">
+        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
             <ArrowDownLeft size={18} className="text-primary" />
           </div>
@@ -85,7 +85,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
             </p>
           </div>
         </div>
-        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-2">
+        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
             <ArrowUpRight size={18} className="text-primary" />
           </div>

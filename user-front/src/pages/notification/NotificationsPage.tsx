@@ -44,7 +44,7 @@ function NotificationItemRow({
       type="button"
       onClick={() => onClickItem(notification)}
       disabled={isPending}
-      className="flex items-center gap-3 rounded-lg mb-2 px-5 py-5 bg-white border-b border-gray-100 last:border-b-0 w-full text-left hover:bg-gray-50 transition-colors disabled:opacity-50"
+      className="flex items-center gap-4 rounded-lg mb-2 px-5 py-5 bg-white border-b border-gray-100 last:border-b-0 w-full text-left hover:bg-gray-50 transition-colors disabled:opacity-50"
     >
       {/* 아이콘 */}
       <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${bg}`}>
@@ -54,12 +54,12 @@ function NotificationItemRow({
       {/* 내용 */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
-          {!notification.isRead && (
-            <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
-          )}
           <span className="text-sm font-bold text-gray-900 truncate">
             {notification.title}
           </span>
+          {!notification.isRead && (
+            <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
+          )}
         </div>
         {notification.referenceLabel && (
           <span className="mt-1 inline-block text-xs font-medium text-primary bg-primary/10 rounded px-1.5 py-0.5">
@@ -112,7 +112,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="bg-gray-50 pt-5" data-testid="notifications-page">
+    <div className="bg-gray-50 py-5" data-testid="notifications-page">
       {/* 에러 토스트 */}
       {errorMessage && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 rounded-lg bg-red-500 px-4 py-2 text-sm text-white shadow-lg">

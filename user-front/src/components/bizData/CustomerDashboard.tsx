@@ -37,7 +37,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
       <div className="grid grid-cols-2 gap-3">
         {/* 재구매율 — 도넛 시각화 */}
         <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex flex-col items-center">
-          <p className="text-xs text-text-secondary mb-2 self-start font-medium">재방문율</p>
+          <p className="text-xs text-text-secondary pb-3 self-start font-medium">재방문율</p>
           <div className="relative w-20 h-20 mb-2">
             <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
               <circle cx="18" cy="18" r="14" fill="none" stroke="var(--color-gray-200)" strokeWidth="4" />
@@ -57,7 +57,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
 
         {/* 평점 */}
         <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex flex-col items-center">
-          <p className="text-xs text-text-secondary mb-2 self-start font-medium">평균 평점</p>
+          <p className="text-xs text-text-secondary pb-4 self-start font-medium">평균 평점</p>
           <div className="flex items-center gap-1 mb-1">
             <Star size={20} className="text-warning fill-warning" />
             <span className="text-2xl font-bold text-text-primary">{formatCount(averageRating)}</span>
@@ -80,16 +80,16 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
 
       {/* 3열 지표: 리뷰 수, 배달 주문, 배달 매출 */}
       <div className="grid grid-cols-3 gap-2">
-        <StatCard icon={MessageCircle} iconBg="bg-blue-50" iconColor="text-primary" label="리뷰 수" value={formatCount(reviewCount, "건")} />
-        <StatCard icon={Truck} iconBg="bg-blue-50" iconColor="text-primary" label="배달 주문" value={formatCount(deliveryOrderCount, "건")} />
-        <StatCard icon={ShoppingBag} iconBg="bg-blue-50" iconColor="text-primary" label="배달 매출" value={deliverySalesAmount == null ? "-" : `${formatCurrency(deliverySalesAmount)}원`} />
+        <StatCard icon={MessageCircle} label="리뷰 수" value={formatCount(reviewCount, "건")} />
+        <StatCard icon={Truck} label="배달 주문" value={formatCount(deliveryOrderCount, "건")} />
+        <StatCard icon={ShoppingBag} label="배달 매출" value={deliverySalesAmount == null ? "-" : `${formatCurrency(deliverySalesAmount)}원`} />
       </div>
 
       {/* 3열 지표: 답글 비율, 정보 수정, 긍정 리뷰 */}
       <div className="grid grid-cols-3 gap-2">
-        <StatCard icon={MessageCircle} iconBg="bg-blue-50" iconColor="text-primary" label="답글 비율" value={formatPercent(onlineReplyRate)} />
-        <StatCard icon={Edit3} iconBg="bg-blue-50" iconColor="text-primary" label="정보 수정" value={formatCount(onlineInfoUpdateCount, "회")} />
-        <StatCard icon={ThumbsUp} iconBg="bg-blue-50" iconColor="text-primary" label="긍정 리뷰" value={formatPercent(positiveReviewRatio)} />
+        <StatCard icon={MessageCircle} label="답글 비율" value={formatPercent(onlineReplyRate)} />
+        <StatCard icon={Edit3} label="정보 수정" value={formatCount(onlineInfoUpdateCount, "회")} />
+        <StatCard icon={ThumbsUp} label="긍정 리뷰" value={formatPercent(positiveReviewRatio)} />
       </div>
 
       {/* 평점 추이 차트 */}
@@ -127,20 +127,18 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
 }
 
 /** 작은 지표 카드 컴포넌트 — 아이콘 좌상단, 라벨 옆, 값 아래 */
-function StatCard({ icon: Icon, iconBg, iconColor, label, value }: {
+function StatCard({ icon: Icon, label, value }: {
   icon: typeof Star;
-  iconBg: string;
-  iconColor: string;
   label: string;
   value: string;
 }) {
   return (
-    <div className="bg-bg-surface rounded-xl px-3 py-4 border border-border-default">
+    <div className="bg-bg-surface rounded-xl p-3 border border-border-default">
       <div className="flex items-center gap-1.5 mb-2">
-        <div className={`w-6 h-6 rounded-md ${iconBg} flex items-center justify-center shrink-0`}>
-          <Icon size={12} className={iconColor} />
+        <div className={`w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center shrink-0`}>
+          <Icon size={12} className="text-primary" />
         </div>
-        <p className="text-xs text-text-secondary whitespace-nowrap">{label}</p>
+        <p className="text-xs text-text-secondary font-semibold whitespace-nowrap">{label}</p>
       </div>
       <p className="text-sm font-bold text-text-primary whitespace-nowrap">{value}</p>
     </div>
