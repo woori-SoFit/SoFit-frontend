@@ -48,9 +48,15 @@ export default function BizDataPage() {
     return (
       <div data-testid="biz-data-page" className="flex flex-col h-[calc(100dvh-64px)]">
         <IntroSection
-          onButtonClick={() => navigate("/biz-data/collect", {
-            state: returnTo ? { returnTo } : undefined,
-          })}
+          onButtonClick={() => {
+            if (!isLoggedIn) {
+              navigate(`/login?returnUrl=${encodeURIComponent("/biz-data")}`, { replace: true });
+              return;
+            }
+            navigate("/biz-data/collect", {
+              state: returnTo ? { returnTo } : undefined,
+            });
+          }}
         />
       </div>
     );

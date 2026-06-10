@@ -23,14 +23,13 @@ function formatTooltip(value: number): string {
 }
 
 export function TransactionBarChart({ data }: TransactionBarChartProps) {
-  // 과거 → 최신 순으로 정렬 (왼쪽이 과거, 오른쪽이 최신)
-  const sortedData = [...data].reverse();
+  const sortedData = [...data];
   const monthLabel = data.length > 0 ? `최근 ${data.length}개월` : "";
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-semibold text-text-primary">
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="font-semibold text-text-primary">
           계좌 입출금{monthLabel ? ` (${monthLabel})` : ""}
         </h4>
         <span className="text-xs text-text-secondary">(단위: 원)</span>

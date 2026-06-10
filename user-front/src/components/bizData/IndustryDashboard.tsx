@@ -62,8 +62,8 @@ export function IndustryDashboard({ data }: IndustryDashboardProps) {
 
       {/* 3개 순위 시각화 */}
       <div className="bg-bg-surface rounded-xl p-5 border border-border-default">
-        <h3 className="text-sm font-semibold text-text-primary mb-1">업종 평균과 비교</h3>
-        <p className="text-xs text-text-secondary mb-5">
+        <h3 className="font-semibold text-text-primary mb-1">업종 평균과 비교</h3>
+        <p className="text-sm text-text-secondary mb-5">
           사장님 업종({industryName}) 평균과 비교했어요
         </p>
         <div className="flex flex-col gap-6">
@@ -88,7 +88,7 @@ export function IndustryDashboard({ data }: IndustryDashboardProps) {
 
       {/* 순위별 의미 설명 */}
       <div className="bg-bg-surface rounded-xl p-5 border border-border-default">
-        <h3 className="text-sm font-semibold text-text-primary mb-3">순위가 의미하는 것</h3>
+        <h3 className="font-semibold text-text-primary mb-3">순위가 의미하는 것</h3>
         <div className="flex flex-col gap-4">
           <div className="flex items-start gap-3">
             <div className="w-6 h-6 rounded-full bg-success/10 flex items-center justify-center shrink-0 mt-0.5">

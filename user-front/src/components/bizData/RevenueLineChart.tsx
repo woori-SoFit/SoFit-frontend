@@ -34,7 +34,7 @@ export function RevenueLineChart({ data }: RevenueLineChartProps) {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-semibold text-text-primary">월별 매출</h4>
+        <h4 className="font-semibold text-text-primary">월별 매출</h4>
         <span className="text-xs text-text-secondary">(단위: 원)</span>
       </div>
       {data.length < 2 ? (

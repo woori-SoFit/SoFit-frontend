@@ -33,13 +33,13 @@ export function EmptyError({
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col items-center justify-center gap-2">
+    <div className="flex flex-col items-center justify-center h-full min-h-[calc(100dvh-56px)] gap-2">
       <img src={noneBizData} alt="" aria-hidden="true" className="w-40 object-contain" />
       <p className="text-base text-text-secondary text-center">{message}</p>
       <button
         type="button"
         onClick={handleClick}
-        className="px-6 py-2 rounded-lg bg-blue-200 text-white text-sm font-semibold hover:bg-primary-dark transition-colors"
+        className="px-6 py-2 rounded-lg bg-primary-light text-white text-sm font-semibold hover:bg-primary-dark transition-colors"
       >
         {buttonLabel}
       </button>

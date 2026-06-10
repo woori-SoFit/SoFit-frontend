@@ -189,9 +189,9 @@ export default function BizDashboardPage() {
       </div>
 
       {/* 헤더: 카테고리 제목 + 월 선택 */}
-      <div className="px-5 py-3 flex items-center justify-between gap-3">
+      <div className="px-5 pt-2 flex items-center justify-between gap-3">
         <div>
-          <p className="text-xs text-text-secondary mb-0.5">{getCategoryLabel(category)}</p>
+          <p className="text-sm text-text-secondary mb-0.5">{getCategoryLabel(category)}</p>
           <h2 className="text-lg font-bold text-text-primary whitespace-pre-line">
             {getCategoryTitle(category)}
           </h2>
@@ -210,7 +210,7 @@ export default function BizDashboardPage() {
           >
             <ChevronLeft size={18} className="text-text-primary" />
           </button>
-          <span className="text-sm font-medium text-text-primary min-w-[60px] text-center">
+          <span className="text-sm font-medium text-text-primary min-w-[70px] text-center">
             {selectedMonth === currentMonth ? "이번 달" : formatYearMonth(selectedMonth)}
           </span>
           <button

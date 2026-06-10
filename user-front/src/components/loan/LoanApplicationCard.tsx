@@ -2,7 +2,7 @@
  * 대출 신청 카드 컴포넌트
  * 대출 진행 관리 페이지에서 사용
  */
-import { CircleCheckBig, Info } from "lucide-react";
+import { CircleCheckBig, Info, ChevronsRight } from "lucide-react";
 import { formatAmount, formatDate } from "@/utils/format";
 import type { LoanApplication } from "@/types/loan";
 import { STATUS_BADGE, STATUS_STEP_INDEX } from "@/constants/loanStatus";
@@ -74,6 +74,15 @@ export function LoanApplicationCard({ app, onClick }: LoanApplicationCardProps) 
         <span className={`px-2.5 py-1 rounded-md text-xs font-medium ${badge.color}`}>
           {badge.label}
         </span>
+        {/* 승인 상태: 약정 체결 버튼 + Shine Effect */}
+        {app.status === "APPROVED" && (
+          <div className="relative px-2.5 py-0.5 rounded-md bg-primary-dark text-white text-xs font-semibold flex items-center justify-center overflow-hidden">
+            약정 체결하기<ChevronsRight className="w-5 pl-1"/>
+            <div className="absolute inset-0 animate-[shine_2.5s_ease-in-out_infinite]">
+              <div className="absolute inset-y-0 -left-full w-1/2 bg-linear-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg]" />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 상품명 */}

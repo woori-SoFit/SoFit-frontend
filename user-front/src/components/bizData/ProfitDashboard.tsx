@@ -37,7 +37,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
       <div className="grid grid-cols-2 gap-3">
         {/* 추정 순이익 */}
         <div className="bg-bg-surface rounded-xl p-4 border border-border-default">
-          <p className="text-xs text-text-secondary mb-1">추정 순이익</p>
+          <p className="text-sm text-text-secondary mb-1">추정 순이익</p>
           <p className="text-xl font-bold text-text-primary">
             {formatCurrency(data.netProfit)}원
           </p>
@@ -45,7 +45,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
 
         {/* 현금 흐름 */}
         <div className="bg-bg-surface rounded-xl p-4 border border-border-default">
-          <p className="text-xs text-text-secondary mb-1">현금 흐름</p>
+          <p className="text-sm text-text-secondary mb-1">현금 흐름</p>
           <p className="text-xl font-bold text-text-primary">
             {formatCurrency(data.cashFlow)}원
           </p>
@@ -74,23 +74,23 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
 
       {/* 월 입금액 / 월 출금액 */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-2">
+        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
             <ArrowDownLeft size={18} className="text-primary" />
           </div>
           <div>
-            <p className="text-xs text-text-secondary mb-0.5">월 입금액</p>
+            <p className="text-sm text-text-secondary mb-0.5">월 입금액</p>
             <p className="text-sm font-bold text-text-primary">
               {latestFlow ? `${formatCurrency(latestFlow.income)}원` : "-"}
             </p>
           </div>
         </div>
-        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-2">
+        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
             <ArrowUpRight size={18} className="text-primary" />
           </div>
           <div>
-            <p className="text-xs text-text-secondary mb-0.5">월 출금액</p>
+            <p className="text-sm text-text-secondary mb-0.5">월 출금액</p>
             <p className="text-sm font-bold text-text-primary">
               {latestFlow ? `${formatCurrency(latestFlow.expense)}원` : "-"}
             </p>
@@ -104,7 +104,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
           <Landmark size={18} className="text-primary" />
         </div>
         <div>
-          <p className="text-xs text-text-secondary mb-0.5">대출 잔액</p>
+          <p className="text-sm text-text-secondary mb-0.5">대출 잔액</p>
           <p className="text-lg font-bold text-text-primary">
             {formatCurrency(data.loanBalance)}원
           </p>

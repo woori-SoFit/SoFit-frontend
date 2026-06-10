@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import sGradeIcon from "@/assets/icons/s-grade.png";
+import sGradeIcon from "@/assets/icons/s-grade.svg";
 
 /**
  * 성장 S등급 배너 CTA
