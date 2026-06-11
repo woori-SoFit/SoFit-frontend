@@ -127,3 +127,9 @@ export function formatYAxis(value: number): string {
   const man = Math.round(value / 10000);
   return man === 0 ? "0" : `${man.toLocaleString()}만`;
 }
+
+/** "YYYY-MM" → "M월" 형식으로 변환 */
+export function toMonthLabel(yyyyMM: string): string {
+  const month = parseInt(yyyyMM.split("-")[1], 10);
+  return `${month}월`;
+}

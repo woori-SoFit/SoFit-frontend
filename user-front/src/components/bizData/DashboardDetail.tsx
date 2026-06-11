@@ -1,12 +1,7 @@
 import type { BizDashboardData } from "@/types/bizData";
+import { toMonthLabel } from "@/utils/format";
 import { RevenueLineChart } from "./RevenueLineChart";
 import { TransactionBarChart } from "./TransactionBarChart";
-
-/** "yyyy-MM" → "M월" */
-function toMonthLabel(yyyyMM: string): string {
-  const month = parseInt(yyyyMM.split("-")[1], 10);
-  return `${month}월`;
-}
 
 interface DashboardDetailProps {
   data: BizDashboardData;

@@ -10,7 +10,7 @@
  */
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { RevenueLineChart } from "./RevenueLineChart";
-import { formatCurrency, formatChangeRate } from "@/utils/format";
+import { formatCurrency, formatChangeRate, formatYAxis, toMonthLabel } from "@/utils/format";
 import type { BizDashboardData } from "@/types/bizData";
 import {
   ResponsiveContainer,
@@ -25,17 +25,6 @@ import {
 
 interface SalesDashboardProps {
   data: BizDashboardData;
-}
-
-/** "yyyy-MM" → "M월" */
-function toMonthLabel(yyyyMM: string): string {
-  const month = parseInt(yyyyMM.split("-")[1], 10);
-  return `${month}월`;
-}
-
-function formatYAxis(value: number): string {
-  const man = Math.round(value / 10000);
-  return man === 0 ? "0" : `${man.toLocaleString()}만`;
 }
 
 export function SalesDashboard({ data }: SalesDashboardProps) {
@@ -85,7 +74,7 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
           <p className="text-3xl font-bold text-text-primary">
             {formatCurrency(data.monthlyRevenue)}원
           </p>
-          <div className="flex flex-col items-end px-2.5 py-1.5">
+          <div className="flex flex-col items-end">
             <span className="text-xs text-text-secondary">전월 대비</span>
             <div className="flex items-center gap-0.5">
               {changeRate.isPositive !== null && (
@@ -93,7 +82,7 @@ export function SalesDashboard({ data }: SalesDashboardProps) {
                   ? <ArrowUpRight size={15} className="text-info" />
                   : <ArrowDownRight size={15} className="text-error" />
               )}
-              <span className={`text-base font-bold ${changeColor}`}>{changeRate.text}</span>
+              <span className={`text-lg font-bold ${changeColor}`}>{changeRate.text}</span>
             </div>
           </div>
         </div>

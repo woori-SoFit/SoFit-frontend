@@ -140,7 +140,7 @@ export function IndustryDashboard({ data }: IndustryDashboardProps) {
   ];
 
   return (
-    <div className="flex flex-col gap-4 px-5 py-4">
+    <div className="flex flex-col gap-3 px-5 py-4">
       {/* 업종 / 상권 탭 */}
       <div className="flex bg-gray-100 rounded-xl p-1 gap-1">
         <button
@@ -256,11 +256,11 @@ export function IndustryDashboard({ data }: IndustryDashboardProps) {
               },
             ].map((row, idx, arr) => (
               <tr key={row.label} className={idx < arr.length - 1 ? "border-b border-border-default" : ""}>
-                <td className="px-5 py-3.5 text-sm font-medium text-text-primary">{row.label}</td>
-                <td className={`px-4 py-3.5 text-right text-sm font-bold ${row.isPositive ? "text-primary" : "text-error"}`}>
+                <td className="px-5 py-4 text-sm font-medium text-text-primary">{row.label}</td>
+                <td className={`px-4 py-4 text-right text-sm font-bold ${row.isPositive ? "text-primary" : "text-error"}`}>
                   {row.mine}
                 </td>
-                <td className="px-5 py-3.5 text-right text-sm text-text-secondary">{row.avg}</td>
+                <td className="px-5 py-4 text-right text-sm text-text-secondary">{row.avg}</td>
               </tr>
             ))}
           </tbody>
