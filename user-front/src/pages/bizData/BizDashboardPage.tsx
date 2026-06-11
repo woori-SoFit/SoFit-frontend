@@ -19,16 +19,16 @@ import { CustomerDashboard } from "@/components/bizData/CustomerDashboard";
 import { IndustryDashboard } from "@/components/bizData/IndustryDashboard";
 import { EmptyError } from "@/components/common/EmptyError";
 import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
-import { formatYearMonth } from "@/utils/format";
+import { formatYearMonth, toMonthLabel } from "@/utils/format";
 import { fetchMyBizDashboard } from "@/api/mybizApi";
 import type { BizDashboardData } from "@/types/bizData";
 import type { MenuCategory } from "@/types/menuHub";
 
 /** 카테고리별 페이지 타이틀 */
-function getCategoryTitle(category: MenuCategory): string {
+function getCategoryTitle(category: MenuCategory, monthLabel: string): string {
   const titles: Record<MenuCategory, string> = {
-    sales: "이번 달 장사는 어땠나요?",
-    profit: "수익 흐름은 어떤가요?",
+    sales: `${monthLabel} 장사는 어땠나요?`,
+    profit: `${monthLabel} 수익 흐름은 어떤가요?`,
     customer: "온라인에서 좋은 인상을\n주고 있나요?",
     industry: "우리 가게는 다른 가게보다\n잘하고 있나요?",
   };
@@ -151,8 +151,7 @@ export default function BizDashboardPage() {
   const currentMonth = availableMonths[0] ?? selectedMonth ?? "";
   const displayMonths = availableMonths.length > 0 ? availableMonths : (selectedMonth ? [selectedMonth] : []);
   const changeRate = formatChangeRate(data.monthlyRevenueGrowthRate);
-  const revenueLabel =
-    selectedMonth === currentMonth ? "이번 달 매출" : `${formatYearMonth(selectedMonth)} 매출`;
+  const revenueLabel = `${formatYearMonth(selectedMonth)} 매출`;
   const changeColor =
     changeRate.isPositive === null
       ? "text-text-secondary"
@@ -186,7 +185,7 @@ export default function BizDashboardPage() {
         <div>
           <p className="text-sm text-text-secondary mb-0.5">{getCategoryLabel(category)}</p>
           <h2 className="text-lg font-bold text-text-primary whitespace-pre-line">
-            {getCategoryTitle(category)}
+            {getCategoryTitle(category, toMonthLabel(selectedMonth))}
           </h2>
         </div>
 
@@ -204,7 +203,7 @@ export default function BizDashboardPage() {
             <ChevronLeft size={18} className="text-text-primary" />
           </button>
           <span className="text-sm font-medium text-text-primary min-w-[70px] text-center">
-            {selectedMonth === currentMonth ? "이번 달" : formatYearMonth(selectedMonth)}
+            {formatYearMonth(selectedMonth)}
           </span>
           <button
             type="button"
