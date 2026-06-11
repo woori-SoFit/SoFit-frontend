@@ -20,7 +20,7 @@ import { IndustryDashboard } from "@/components/bizData/IndustryDashboard";
 import { EmptyError } from "@/components/common/EmptyError";
 import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { formatYearMonth } from "@/utils/format";
-import { fetchMyBizDashboard, fetchLoanBalance } from "@/api/mybizApi";
+import { fetchMyBizDashboard } from "@/api/mybizApi";
 import type { BizDashboardData } from "@/types/bizData";
 import type { MenuCategory } from "@/types/menuHub";
 
@@ -86,15 +86,8 @@ export default function BizDashboardPage() {
       .then((dashboard) => {
         if (cancelled) return;
         setData(dashboard);
-        setSelectedMonth(dashboard.currentMonth);
+        setSelectedMonth(dashboard.referenceMonth);
         setAvailableMonths(dashboard.availableMonths);
-
-        fetchLoanBalance().then((loan) => {
-          if (cancelled) return;
-          setData((prev) =>
-            prev ? { ...prev, loanBalance: loan.loanBalance, loanRepaymentDate: loan.loanRepaymentDate } : prev
-          );
-        });
       })
       .catch(() => {
         if (!cancelled) setFetchError(true);
@@ -110,11 +103,7 @@ export default function BizDashboardPage() {
     setMonthError(null);
     fetchMyBizDashboard(month)
       .then((dashboard) => {
-        setData((prev) =>
-          prev
-            ? { ...dashboard, loanBalance: prev.loanBalance, loanRepaymentDate: prev.loanRepaymentDate }
-            : dashboard
-        );
+        setData(dashboard);
       })
       .catch((err: unknown) => {
         const status = (err as { response?: { status?: number } })?.response?.status;
@@ -157,7 +146,7 @@ export default function BizDashboardPage() {
 
   const currentMonth = availableMonths[0] ?? selectedMonth ?? "";
   const displayMonths = availableMonths.length > 0 ? availableMonths : (selectedMonth ? [selectedMonth] : []);
-  const changeRate = formatChangeRate(data.monthOverMonthChange);
+  const changeRate = formatChangeRate(data.monthlyRevenueGrowthRate);
   const revenueLabel =
     selectedMonth === currentMonth ? "이번 달 매출" : `${formatYearMonth(selectedMonth)} 매출`;
   const changeColor =
