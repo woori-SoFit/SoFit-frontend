@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBatchList } from '@/hooks/useBatchList';
-import { useBatchLatest } from '@/hooks/useBatchLatest';
 import { triggerManualBatch } from '@/api/batchApi';
 import { BATCH_KEYS } from '@/constants/queryKeys';
 import BatchTable from '@/components/batch/BatchTable';
@@ -29,7 +28,6 @@ export default function BatchPage() {
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
 
-  const { data: latestData, isLoading: latestLoading } = useBatchLatest(batchType);
   const { data, isLoading, isError, refetch } = useBatchList({
     page,
     size: PAGE_SIZE,
@@ -73,76 +71,90 @@ export default function BatchPage() {
             ))}
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            if (manualBatch.isSuccess) {
-              manualBatch.reset();
-            } else {
-              manualBatch.mutate();
-            }
-          }}
-          disabled={manualBatch.isPending}
-          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-            manualBatch.isSuccess
-              ? 'bg-success text-white'
-              : 'bg-primary text-white hover:bg-primary-dark'
-          }`}
-        >
-          {manualBatch.isPending ? '실행 중...' : manualBatch.isSuccess ? '완료' : '수동 실행'}
-        </button>
-      </div>
-
-      {/* 자동 배치 현황 카드 */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <h2 className="text-base font-semibold text-text-primary">자동 배치 현황</h2>
-        </div>
-        {latestLoading ? (
-          <div className="flex gap-4">
-            <div className="flex-1 h-40 bg-gray-50 rounded-lg animate-pulse" />
-            <div className="flex-1 h-40 bg-gray-50 rounded-lg animate-pulse" />
-          </div>
-        ) : (
-          <div className="flex gap-4">
-            {latestData?.map((latest) => (
-              <BatchScheduleCard key={latest.cycle} latest={latest} />
-            ))}
-          </div>
+        {batchType === 'S_GRADE' && (
+          <button
+            type="button"
+            onClick={() => {
+              if (manualBatch.isSuccess) {
+                manualBatch.reset();
+              } else {
+                manualBatch.mutate();
+              }
+            }}
+            disabled={manualBatch.isPending}
+            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+              manualBatch.isSuccess
+                ? 'bg-success text-white'
+                : 'bg-primary text-white hover:bg-primary-dark'
+            }`}
+          >
+            {manualBatch.isPending ? '실행 중...' : manualBatch.isSuccess ? '완료' : '수동 실행'}
+          </button>
         )}
       </div>
 
-      {/* 실행 이력 섹션 */}
-      <div className="flex items-center gap-3 mb-4">
-        <h2 className="text-base font-semibold text-text-primary">실행 이력</h2>
-        {!isLoading && data && (
-          <span className="text-sm text-text-secondary">
-            총 {data.totalCount}건
-          </span>
-        )}
-      </div>
-
-      {/* 로딩 상태 */}
-      {isLoading && <LoadingState />}
-
-      {/* 에러 상태 */}
-      {isError && <ErrorState onRetry={() => refetch()} />}
-
-      {/* 테이블 */}
-      {!isLoading && !isError && data && (
-        <div className="flex-1">
-          <BatchTable data={data.batches} />
+      {/* 시스템 심사 탭: 준비 중 안내 */}
+      {batchType === 'SYSTEM_REVIEW' && (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-lg font-medium text-text-secondary mb-2">준비 중입니다</p>
+            <p className="text-sm text-text-disabled">시스템 심사 배치 기능은 추후 제공될 예정입니다.</p>
+          </div>
         </div>
       )}
 
-      {/* 페이지네이션 */}
-      {!isLoading && !isError && data && data.totalPages > 1 && (
-        <Pagination
-          currentPage={page}
-          totalPages={data.totalPages}
-          onPageChange={setPage}
-          className="mt-auto"
-        />
+      {/* S등급 산출 탭: 배치 현황 + 이력 */}
+      {batchType === 'S_GRADE' && (
+        <>
+          {/* 자동 배치 현황 카드 */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <h2 className="text-base font-semibold text-text-primary">자동 배치 현황</h2>
+            </div>
+            {isLoading ? (
+              <div className="flex gap-4">
+                <div className="flex-1 h-40 bg-gray-50 rounded-lg animate-pulse" />
+              </div>
+            ) : data && data.batches.length > 0 ? (
+              <div className="flex gap-4">
+                <BatchScheduleCard latestBatch={data.batches[0]} />
+              </div>
+            ) : null}
+          </div>
+
+          {/* 실행 이력 섹션 */}
+          <div className="flex items-center gap-3 mb-4">
+            <h2 className="text-base font-semibold text-text-primary">실행 이력</h2>
+            {!isLoading && data && (
+              <span className="text-sm text-text-secondary">
+                총 {data.totalCount}건
+              </span>
+            )}
+          </div>
+
+          {/* 로딩 상태 */}
+          {isLoading && <LoadingState />}
+
+          {/* 에러 상태 */}
+          {isError && <ErrorState onRetry={() => refetch()} />}
+
+          {/* 테이블 */}
+          {!isLoading && !isError && data && (
+            <div className="flex-1">
+              <BatchTable data={data.batches} />
+            </div>
+          )}
+
+          {/* 페이지네이션 */}
+          {!isLoading && !isError && data && data.totalPages > 1 && (
+            <Pagination
+              currentPage={page}
+              totalPages={data.totalPages}
+              onPageChange={setPage}
+              className="mt-auto"
+            />
+          )}
+        </>
       )}
     </div>
   );
