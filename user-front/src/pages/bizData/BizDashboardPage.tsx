@@ -65,7 +65,7 @@ export default function BizDashboardPage() {
   const [fetchError, setFetchError] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>(storeMonth);
   const [availableMonths, setAvailableMonths] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [monthError, setMonthError] = useState<string | null>(null);
   const [isCompact, setIsCompact] = useState(false);
   const fullCardRef = useRef<HTMLDivElement>(null);
@@ -91,6 +91,9 @@ export default function BizDashboardPage() {
       })
       .catch(() => {
         if (!cancelled) setFetchError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
       });
     return () => { cancelled = true; };
   }, [storeMonth]);

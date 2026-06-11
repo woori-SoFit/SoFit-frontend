@@ -1,8 +1,12 @@
 import type { BizDashboardData } from "@/types/bizData";
-import { formatCurrency } from "./DashboardSummary";
 import { RevenueLineChart } from "./RevenueLineChart";
 import { TransactionBarChart } from "./TransactionBarChart";
-import { RatingLineChart } from "./RatingLineChart";
+
+/** "yyyy-MM" → "M월" */
+function toMonthLabel(yyyyMM: string): string {
+  const month = parseInt(yyyyMM.split("-")[1], 10);
+  return `${month}월`;
+}
 
 interface DashboardDetailProps {
   data: BizDashboardData;
@@ -59,65 +63,44 @@ function SingleStar({ fillRatio }: { fillRatio: number }) {
 }
 
 export function DashboardDetail({ data }: DashboardDetailProps) {
-  const hasRevenueTrend = data.revenueTrend.length > 0;
-  const hasTransactionFlow = data.transactionFlow.length > 0;
+  const revenueTrendChart = data.revenueTrend.map((t) => ({
+    month: toMonthLabel(t.referenceMonth),
+    amount: t.monthlyRevenue,
+  }));
+  const transactionFlowChart = data.paymentFlowTrend.map((t) => ({
+    month: toMonthLabel(t.referenceMonth),
+    income: t.monthlyRevenue,
+    expense: t.monthlyOutflow,
+  }));
 
   return (
     <section className="px-5 pb-8 flex flex-col gap-5">
       {/* 월별 매출 — 자료가 없으면 박스 자체 숨김 */}
-      {hasRevenueTrend && (
+      {revenueTrendChart.length > 0 && (
         <div className="bg-bg-surface rounded-xl shadow-card p-4">
-          <RevenueLineChart data={data.revenueTrend} />
+          <RevenueLineChart data={revenueTrendChart} />
         </div>
       )}
 
       {/* 계좌 입출금 — 자료가 없으면 박스 자체 숨김 */}
-      {hasTransactionFlow && (
+      {transactionFlowChart.length > 0 && (
         <div className="bg-bg-surface rounded-xl shadow-card p-4">
-          <TransactionBarChart data={data.transactionFlow} />
+          <TransactionBarChart data={transactionFlowChart} />
         </div>
       )}
 
-      {/* 대출 현황 — 2열 */}
+      {/* 리뷰/평점 현황 */}
       <div className="bg-bg-surface rounded-xl shadow-card p-4">
-        <h3 className="text-sm font-semibold text-text-primary mb-3">대출 현황</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-xs text-text-secondary mb-1">대출 잔액</p>
-            <p className="text-sm font-bold text-text-primary">{formatCurrency(data.loanBalance)}원</p>
-          </div>
-          <div>
-            <p className="text-xs text-text-secondary mb-1">다음 상환일</p>
-            <p className="text-sm font-bold text-text-primary">{data.loanRepaymentDate}</p>
-          </div>
+        <h3 className="text-sm font-semibold text-text-primary mb-2">리뷰/평점 현황</h3>
+        <p className="text-xs text-text-secondary mb-1">평균 평점</p>
+        <div className="flex items-baseline gap-1 mb-1">
+          <span className="text-2xl font-bold text-text-primary">{data.reviewRating.toFixed(1)}</span>
+          <span className="text-xs text-text-secondary">/ 5.0</span>
         </div>
-      </div>
-
-      {/* 리뷰/평점 현황 + 평점 추이 — 나란히 */}
-      <div className="bg-bg-surface rounded-xl shadow-card p-4">
-        <div className="flex gap-4">
-          {/* 왼쪽: 평점 정보 */}
-          <div className="flex-1">
-            <h3 className="text-sm font-semibold text-text-primary mb-2">리뷰/평점 현황</h3>
-            <p className="text-xs text-text-secondary mb-1">평균 평점</p>
-            <div className="flex items-baseline gap-1 mb-1">
-              <span className="text-2xl font-bold text-text-primary">{data.review.averageRating}</span>
-              <span className="text-xs text-text-secondary">/ 5.0</span>
-            </div>
-            <StarRating rating={data.review.averageRating} />
-            <p className="text-xs text-text-secondary mt-2">
-              리뷰 수 {formatCurrency(data.review.reviewCount)}개
-            </p>
-          </div>
-
-          {/* 오른쪽: 평점 추이 차트 */}
-          <div className="flex-1 flex flex-col">
-            <h3 className="text-sm font-semibold text-text-primary mb-2">평점 추이</h3>
-            <div className="flex-1">
-              <RatingLineChart data={data.review.ratingTrend} />
-            </div>
-          </div>
-        </div>
+        <StarRating rating={data.reviewRating} />
+        <p className="text-xs text-text-secondary mt-2">
+          리뷰 수 {data.reviewCount.toLocaleString()}개
+        </p>
       </div>
     </section>
   );
