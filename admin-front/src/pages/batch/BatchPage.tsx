@@ -20,8 +20,6 @@ const BATCH_TABS: { value: BatchType; label: string }[] = [
 /**
  * 배치 관리 페이지 — DEV_ADMIN 전용
  * 탭: S등급 산출 / 시스템 심사
- * 상단: 자동 배치 현황 카드
- * 하단: 배치 실행 이력 테이블 + 페이지네이션
  */
 export default function BatchPage() {
   const [batchType, setBatchType] = useState<BatchType>('S_GRADE');
@@ -49,7 +47,7 @@ export default function BatchPage() {
 
   return (
     <div className="flex flex-col h-full p-6">
-      {/* 헤더 + 탭 */}
+      {/* 헤더 + 탭 + 수동 실행 버튼 */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-text-primary">배치 관리</h1>
@@ -71,34 +69,32 @@ export default function BatchPage() {
             ))}
           </div>
         </div>
-        {batchType === 'S_GRADE' && (
-          <button
-            type="button"
-            onClick={() => {
-              if (manualBatch.isSuccess) {
-                manualBatch.reset();
-              } else {
-                manualBatch.mutate();
-              }
-            }}
-            disabled={manualBatch.isPending}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-              manualBatch.isSuccess
-                ? 'bg-success text-white'
-                : 'bg-primary text-white hover:bg-primary-dark'
-            }`}
-          >
-            {manualBatch.isPending ? '실행 중...' : manualBatch.isSuccess ? '완료' : '수동 실행'}
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => {
+            if (manualBatch.isSuccess) {
+              manualBatch.reset();
+            } else {
+              manualBatch.mutate();
+            }
+          }}
+          disabled={manualBatch.isPending}
+          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+            manualBatch.isSuccess
+              ? 'bg-success text-white'
+              : 'bg-primary text-white hover:bg-primary-dark'
+          }`}
+        >
+          {manualBatch.isPending ? '실행 중...' : manualBatch.isSuccess ? '완료' : '수동 실행'}
+        </button>
       </div>
 
-      {/* 시스템 심사 탭: 준비 중 안내 */}
+      {/* 시스템 심사 탭: 안내 문구 */}
       {batchType === 'SYSTEM_REVIEW' && (
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg font-medium text-text-secondary mb-2">준비 중입니다</p>
-            <p className="text-sm text-text-disabled">시스템 심사 배치 기능은 추후 제공될 예정입니다.</p>
+            <p className="text-lg font-medium text-text-secondary mb-2">시스템 심사 배치</p>
+            <p className="text-sm text-text-disabled">대출 신청 건에 대해 시스템 심사를 수동으로 실행합니다.</p>
           </div>
         </div>
       )}

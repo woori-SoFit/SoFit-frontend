@@ -24,12 +24,12 @@ export async function fetchBatchList(params: BatchListParams): Promise<Paginated
 /**
  * 수동 배치를 실행한다.
  *
- * - S등급 산출: POST /api/admin/dev/batch/s-grade
+ * - S등급 산출: POST /api/admin/dev/batch/s-grade/trigger
  * - 시스템 심사: POST /api/admin/dev/batch/loan-decision
  */
 export async function triggerManualBatch(batchType: BatchType): Promise<{ message: string }> {
   const endpoint = batchType === 'S_GRADE'
-    ? '/api/admin/dev/batch/s-grade'
+    ? '/api/admin/dev/batch/s-grade/trigger'
     : '/api/admin/dev/batch/loan-decision';
 
   const { data } = await axiosInstance.post(endpoint);
