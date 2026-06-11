@@ -9,6 +9,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useMenuHubStore } from "@/stores/menuHubStore";
 import { DashboardSummary, formatCurrency, formatChangeRate } from "@/components/bizData/DashboardSummary";
@@ -21,7 +22,7 @@ import { EmptyError } from "@/components/common/EmptyError";
 import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { formatYearMonth, toMonthLabel } from "@/utils/format";
 import { fetchMyBizDashboard } from "@/api/mybizApi";
-import type { BizDashboardData } from "@/types/bizData";
+import { BIZ_DATA_KEYS } from "@/constants/queryKeys";
 import type { MenuCategory } from "@/types/menuHub";
 
 /** 카테고리별 페이지 타이틀 */
@@ -61,11 +62,7 @@ export default function BizDashboardPage() {
   const category = (searchParams.get("category") ?? "sales") as MenuCategory;
   const { selectedMonth: storeMonth } = useMenuHubStore();
 
-  const [data, setData] = useState<BizDashboardData | null>(null);
-  const [fetchError, setFetchError] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>(storeMonth);
-  const [availableMonths, setAvailableMonths] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [monthError, setMonthError] = useState<string | null>(null);
   const [isCompact, setIsCompact] = useState(false);
   const fullCardRef = useRef<HTMLDivElement>(null);
@@ -78,43 +75,26 @@ export default function BizDashboardPage() {
     };
   }, []);
 
-  // 최초 로드: store의 월 또는 최신 월 데이터 + 대출 잔액 병렬 조회
-  useEffect(() => {
-    let cancelled = false;
-    const month = storeMonth || undefined;
-    setIsLoading(true);
-    fetchMyBizDashboard(month)
-      .then((dashboard) => {
-        if (cancelled) return;
-        setData(dashboard);
-        setSelectedMonth(dashboard.referenceMonth);
-        setAvailableMonths(dashboard.availableMonths);
-      })
-      .catch(() => {
-        if (!cancelled) setFetchError(true);
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-    return () => { cancelled = true; };
-  }, [storeMonth]);
+  // React Query로 대시보드 데이터 캐싱 (월별 queryKey로 자동 캐싱)
+  const { data, isLoading, isError } = useQuery({
+    queryKey: BIZ_DATA_KEYS.dashboard(selectedMonth || undefined),
+    queryFn: () => fetchMyBizDashboard(selectedMonth || undefined),
+    staleTime: 5 * 60 * 1000,
+    refetchOnMount: false,
+  });
 
-  // 월 변경 시 해당 월 데이터 조회
+  // 최초 데이터 로드 시 selectedMonth 동기화
+  useEffect(() => {
+    if (data && !selectedMonth) {
+      setSelectedMonth(data.referenceMonth);
+    }
+  }, [data, selectedMonth]);
+
+  // 월 변경 핸들러 (queryKey가 바뀌면 React Query가 자동 fetch/캐시 체크)
   const handleMonthChange = (month: string) => {
     if (month === selectedMonth) return;
     setSelectedMonth(month);
-    setIsLoading(true);
     setMonthError(null);
-    fetchMyBizDashboard(month)
-      .then((dashboard) => {
-        setData(dashboard);
-      })
-      .catch((err: unknown) => {
-        const status = (err as { response?: { status?: number } })?.response?.status;
-        if (status === 404) setMonthError(`${formatYearMonth(month)} 자료가 없어요`);
-        else setMonthError("자료를 불러오지 못했어요");
-      })
-      .finally(() => setIsLoading(false));
   };
 
   // 풀 카드 상단이 뷰포트 위로 사라지면 compact 활성
@@ -129,7 +109,7 @@ export default function BizDashboardPage() {
     return () => scrollEl.removeEventListener("scroll", handleScroll);
   }, [data]);
 
-  if (fetchError || (!data && !isLoading)) {
+  if (isError) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
         <EmptyError />
@@ -144,10 +124,11 @@ export default function BizDashboardPage() {
     );
   }
 
-  if (!data) {
+  if (!data || isLoading) {
     return <CharacterLoadingSpinner text="자료를 불러오는 중..." />;
   }
 
+  const availableMonths = data.availableMonths ?? [];
   const currentMonth = availableMonths[0] ?? selectedMonth ?? "";
   const displayMonths = availableMonths.length > 0 ? availableMonths : (selectedMonth ? [selectedMonth] : []);
   const changeRate = formatChangeRate(data.monthlyRevenueGrowthRate);
