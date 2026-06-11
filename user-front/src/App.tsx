@@ -9,6 +9,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./router/routes";
 import { useSSE } from "@/hooks/useSSE";
 import { useUnreadCount } from "@/hooks/useUnreadCount";
+import { SessionExpiredModal } from "@/components/common/SessionExpiredModal";
 
 export function App() {
   // SSE 실시간 알림 연결 (로그인 시에만 활성화, 로그아웃 시 종료)
@@ -16,5 +17,10 @@ export function App() {
   // 미읽음 알림 개수 초기화
   useUnreadCount();
 
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <SessionExpiredModal />
+    </>
+  );
 }

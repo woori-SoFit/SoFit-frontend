@@ -15,6 +15,10 @@ import type {
 /** 로그인 API 호출 */
 export async function postLogin(data: LoginRequest): Promise<LoginResponse> {
   const res = await axiosInstance.post<LoginResponse>("/auth/login", data);
+  // 로그인 성공 시 세션 만료 감지용 플래그 설정
+  if (res.data.isSuccess) {
+    sessionStorage.setItem("wasLoggedIn", "true");
+  }
   return res.data;
 }
 

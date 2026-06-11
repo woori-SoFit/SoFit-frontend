@@ -47,7 +47,7 @@ export default function GradeReportPage() {
   }, [location.state, setStep]);
 
   useEffect(() => {
-    useLayoutStore.getState().setStepTitle("성장 S등급 분석 리포트");
+    useLayoutStore.getState().setStepTitle(currentStep === "INTRO" ? "" : "성장 S등급 분석 리포트");
 
     // 커스텀 뒤로가기: RESULT이면 홈으로, INTRO이면 실제 뒤로가기, 그 외는 이전 step
     useLayoutStore.getState().setOnBack(() => {
@@ -64,7 +64,7 @@ export default function GradeReportPage() {
     return () => {
       useLayoutStore.getState().setOnBack(null);
     };
-  }, [navigate]);
+  }, [navigate, currentStep]);
 
   /** INTRO 스텝에서 "S분석 리포트 시작하기" 클릭 시 로그인 확인 + 마이비즈 연동 확인 */
   const handleIntroNext = useCallback(async () => {

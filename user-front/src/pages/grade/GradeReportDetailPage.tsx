@@ -31,7 +31,7 @@ function getIcon(keyword: string) {
   if (keyword.includes("매출 비율") || keyword.includes("매출증가율")) return <TrendingUp size={22} />;
   if (keyword.includes("직원당")) return <Users size={22} />;
   if (keyword.includes("업력")) return <TrendingDown size={22} />;
-  return <Store size={22} className="text-primary" />;
+  return <Store size={22} />;
 }
 
 export default function GradeReportDetailPage() {
@@ -41,9 +41,8 @@ export default function GradeReportDetailPage() {
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("성장 S등급 분석 리포트");
-    useLayoutStore.getState().setOverlayHeader(true);
     return () => {
-      useLayoutStore.getState().setOverlayHeader(false);
+      useLayoutStore.getState().setStepTitle("");
     };
   }, []);
 
@@ -60,28 +59,8 @@ export default function GradeReportDetailPage() {
   const grade = detail.sGrade;
 
   return (
-    <div className="relative flex flex-col h-full">
-      {/* 투명 오버레이 헤더 */}
-      <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-2 h-14 pointer-events-none">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          aria-label="뒤로가기"
-          className="w-10 h-10 flex items-center justify-center rounded-full pointer-events-auto"
-        >
-          <ChevronLeft size={26} className="text-gray-700 drop-shadow-sm" />
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate("/")}
-          aria-label="홈으로"
-          className="w-10 h-10 flex items-center justify-center rounded-full pointer-events-auto"
-        >
-          <House size={22} className="text-gray-700 drop-shadow-sm" />
-        </button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto scrollbar-none px-5 pt-16 pb-24">
+    <div className="relative flex flex-col h-full">      
+      <div className="flex-1 overflow-y-auto scrollbar-none px-5 pt-2 pb-24">
 
         {/* ── 종합 등급 카드 ── */}
         <section className="relative rounded-2xl px-6 py-5 bg-white shadow-card border border-border-default overflow-hidden mb-3">
@@ -115,7 +94,7 @@ export default function GradeReportDetailPage() {
           </div>
 
           {/* 등급 바 */}
-          <div className="grid grid-cols-10 gap-0.5 mb-3">
+          <div className="grid grid-cols-10 gap-0.5 mb-5">
             {ALL_GRADES.map((g) => (
               <div
                 key={g}
@@ -146,11 +125,7 @@ export default function GradeReportDetailPage() {
         {/* ── 성장 인사이트 ── */}
         <section className="mb-4">
           <h3 className="text-base font-bold text-text-primary mb-3">성장 인사이트</h3>
-          <div className="bg-white rounded-xl p-5 shadow-card border border-border-default">
-            {/* <div className="flex items-center gap-2 mb-3">
-              <img src={wibeeIcon} alt="" className="w-8 h-8 object-contain" />
-              <span className="text-sm font-medium text-primary">위비의 분석</span>
-            </div> */}
+          <div className="bg-white rounded-xl p-5 border border-border-default">
             <ul className="flex flex-col gap-2.5">
               {detail.advice.split(/[.\n]/).filter((s) => s.trim()).map((sentence, i) => (
                 <li key={i} className="flex items-start gap-2 list-none">
@@ -171,9 +146,9 @@ export default function GradeReportDetailPage() {
               {detail.strengthKeywords.map((keyword) => (
                 <div
                   key={keyword}
-                  className="flex items-center bg-white text-success rounded-xl p-4 shadow-card border border-border-default"
+                  className="flex items-center bg-white rounded-xl p-4 border border-border-default"
                 >
-                  <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-full text-success bg-success/10 flex items-center justify-center shrink-0">
                     {getIcon(keyword)}
                   </div>
                   <p className="ml-4 text-sm font-semibold text-text-primary">{keyword}</p>
@@ -191,9 +166,9 @@ export default function GradeReportDetailPage() {
               {detail.improvementKeywords.map((keyword) => (
                 <div
                   key={keyword}
-                  className="flex items-center bg-white text-error rounded-xl p-4 shadow-card border border-border-default"
+                  className="flex items-center bg-white rounded-xl p-4 border border-border-default"
                 >
-                  <div className="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-full text-error bg-error/10 flex items-center justify-center shrink-0">
                     {getIcon(keyword)}
                   </div>
                   <p className="ml-4 text-sm font-semibold text-text-primary">{keyword}</p>
