@@ -20,20 +20,21 @@ interface CustomerDashboardProps {
 }
 
 export function CustomerDashboard({ data }: CustomerDashboardProps) {
-  // null 방어
-  const reviewRating = data.reviewRating ?? 0;
-  const reviewCount = data.reviewCount ?? 0;
-  const positiveReviewRatio = data.positiveReviewRatio ?? 0;
-  const negativeReviewRatio = data.negativeReviewRatio ?? 0;
-  const deliveryRating = data.deliveryRating ?? 0;
-  const onlineReplyRate = data.onlineReplyRate ?? 0;
-  const hasOnlineReservation = data.hasOnlineReservation ?? false;
-  const hasSns = data.hasSns ?? false;
+  const {
+    reviewRating,
+    reviewCount,
+    positiveReviewRatio,
+    negativeReviewRatio,
+    deliveryRating,
+    onlineReplyRate,
+    hasOnlineReservation,
+    hasSns,
+  } = data;
 
   return (
     <div className="flex flex-col gap-4 px-5 py-4">
       {/* 평균 평점 카드 */}
-      <div className="bg-bg-surface rounded-2xl p-5 border border-border-default">
+      <div className="bg-bg-surface rounded-xl p-5 border border-border-default">
         <p className="text-sm font-medium text-text-secondary mb-3">평균 평점</p>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -41,7 +42,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
             <span className="text-4xl font-bold text-text-primary">{reviewRating.toFixed(1)}</span>
             <span className="text-sm text-text-secondary self-end mb-1">/ 5.0</span>
           </div>
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-0.5 pr-2">
             {Array.from({ length: 5 }).map((_, i) => {
               // 소수점 반영: 4.7이면 i=0~3은 full, i=4는 70% 채움
               const fill = Math.min(1, Math.max(0, reviewRating - i));
@@ -91,7 +92,7 @@ export function CustomerDashboard({ data }: CustomerDashboardProps) {
       </div>
 
       {/* 온라인 활동 카드 */}
-      <div className="bg-bg-surface rounded-2xl p-5 border border-border-default">
+      <div className="bg-bg-surface rounded-xl p-5 border border-border-default">
         <h3 className="font-semibold text-text-primary mb-4">온라인 활동</h3>
         <div className="flex flex-col gap-4">
           {/* 답글 비율 */}

@@ -25,24 +25,15 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { formatCurrency, formatChangeRate } from "@/utils/format";
+import { formatCurrency, formatChangeRate, formatYAxis } from "@/utils/format";
 import type { BizDashboardData } from "@/types/bizData";
 
 interface ProfitDashboardProps {
   data: BizDashboardData;
 }
 
-/** Y축 만원 단위 포맷 */
-function formatYAxis(value: number): string {
-  const man = Math.round(value / 10000);
-  return man === 0 ? "0" : `${man.toLocaleString()}만`;
-}
-
 export function ProfitDashboard({ data }: ProfitDashboardProps) {
-  // null 방어: API 응답에서 필드가 null로 올 수 있음
-  const estimatedProfit = data.estimatedProfit ?? 0;
-  const monthlyProfitGrowthRate = data.monthlyProfitGrowthRate ?? null;
-  const paymentFlowTrend = data.paymentFlowTrend ?? [];
+  const { estimatedProfit, monthlyProfitGrowthRate, paymentFlowTrend } = data;
 
   // 순이익 증감률
   const profitChange = formatChangeRate(monthlyProfitGrowthRate);
@@ -50,13 +41,12 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
 
   // 차트 데이터 변환
   const chartData = paymentFlowTrend.map((item) => {
-    // referenceMonth: "2025-03" → "3월"
     const monthNum = parseInt(item.referenceMonth.split("-")[1], 10);
     return {
       month: `${monthNum}월`,
-      매출: item.monthlyRevenue ?? 0,
-      비용: item.monthlyOutflow ?? 0,
-      순이익: item.estimatedProfit ?? 0,
+      매출: item.monthlyRevenue,
+      비용: item.monthlyOutflow,
+      순이익: item.estimatedProfit,
     };
   });
 
@@ -67,7 +57,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
 
   // 전월 순이익 (증감 배너 부연설명용)
   const prevProfit = paymentFlowTrend.length >= 2
-    ? paymentFlowTrend[paymentFlowTrend.length - 2].estimatedProfit ?? 0
+    ? paymentFlowTrend[paymentFlowTrend.length - 2].estimatedProfit
     : null;
   const profitDiff = prevProfit !== null
     ? estimatedProfit - prevProfit
@@ -76,7 +66,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
   return (
     <div className="flex flex-col gap-4 px-5 py-4">
       {/* 이번 달 순이익 메인 카드 */}
-      <div className="bg-bg-surface rounded-2xl p-5 border border-border-default">
+      <div className="bg-bg-surface rounded-xl p-5 border border-border-default">
         <p className="text-sm text-text-secondary text-center mb-1">이번 달 순이익</p>
         <p className="text-3xl font-bold text-text-primary text-center mb-1">
           {formatCurrency(estimatedProfit)}원
@@ -121,7 +111,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
 
       {/* 최근 N개월 손익 흐름 차트 */}
       {chartData.length > 0 && (
-        <div className="bg-bg-surface rounded-2xl p-4 border border-border-default">
+        <div className="bg-bg-surface rounded-xl px-4 py-5 border border-border-default">
           <div className="flex items-center justify-between mb-4">
             <h4 className="font-semibold text-text-primary">
               최근 {chartData.length}개월 손익 흐름
@@ -206,7 +196,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
 
       {/* 순이익 증감 배너 */}
       {isPositive !== null && (
-        <div className={`rounded-2xl p-4 flex items-start gap-3 ${isPositive ? "bg-primary/5" : "bg-error/5"}`}>
+        <div className={`rounded-xl p-4 flex items-start gap-3 ${isPositive ? "bg-primary/5" : "bg-error/5"}`}>
           <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${isPositive ? "bg-primary/10" : "bg-error/10"}`}>
             {isPositive
               ? <TrendingUp size={18} className="text-primary" />
@@ -223,7 +213,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
             <p className="text-xs text-text-secondary mt-0.5">
               {latest && (
                 <>
-                  {parseInt(latest.referenceMonth.split("-")[1], 10)}월 순이익은 {formatCurrency(estimatedProfit)}원
+                  {parseInt(latest.referenceMonth.split("-")[1], 10)}월 순이익은 <span className="font-bold">{formatCurrency(estimatedProfit)}원</span>
                   {profitDiff !== null ? (
                     <>으로,<br />지난달보다 {formatCurrency(Math.abs(profitDiff))}원 {isPositive ? "증가" : "감소"}했어요.</>
                   ) : (
