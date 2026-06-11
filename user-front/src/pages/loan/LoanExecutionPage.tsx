@@ -62,8 +62,8 @@ export default function LoanExecutionPage() {
         ]}
         buttonLabel="홈으로 이동"
         onConfirm={() => navigate("/", { replace: true })}
-        secondaryButtonLabel="대출 진행 관리"
-        onSecondary={() => navigate("/loan-applications", { replace: true })}
+        secondaryButtonLabel="실행 대출 관리"
+        onSecondary={() => navigate("/loan-management", { replace: true })}
       />
     </div>
   );
