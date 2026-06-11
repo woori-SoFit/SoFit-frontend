@@ -3,8 +3,8 @@ import { formatDateTime } from '@/utils/formatters';
 import { getBatchStatusBadge } from '@/utils/batchUtils';
 
 interface BatchScheduleCardProps {
-  /** 가장 최근 실행된 배치 항목 (이력 배열의 0번) */
-  latestBatch: BatchItem;
+  /** 가장 최근 실행된 배치 항목 (이력 배열의 0번, 없으면 null) */
+  latestBatch: BatchItem | null;
 }
 
 /**
@@ -12,7 +12,7 @@ interface BatchScheduleCardProps {
  * 마지막 실행 일시, 상태, 처리 건수는 실행 이력의 최신 항목에서 가져온다.
  */
 export default function BatchScheduleCard({ latestBatch }: BatchScheduleCardProps) {
-  const statusBadge = getBatchStatusBadge(latestBatch.status);
+  const statusBadge = latestBatch ? getBatchStatusBadge(latestBatch.status) : null;
 
   return (
     <div className="bg-white border border-border-default rounded-lg p-5 flex-1">
@@ -21,7 +21,7 @@ export default function BatchScheduleCard({ latestBatch }: BatchScheduleCardProp
         <h3 className="text-sm font-semibold text-text-secondary">
           월단위 배치
         </h3>
-        <span className="text-xs text-text-secondary bg-gray-100 px-2 py-0.5 rounded">
+        <span className="text-xs text-text-disabled bg-gray-100 px-2 py-0.5 rounded">
           30일 주기
         </span>
       </div>
@@ -37,21 +37,25 @@ export default function BatchScheduleCard({ latestBatch }: BatchScheduleCardProp
         {/* 마지막 실행 */}
         <div>
           <p className="text-xs text-text-disabled mb-1">마지막 실행</p>
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-medium text-text-primary pt-1">
-              {formatDateTime(latestBatch.startedAt)}
-            </p>
-            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${statusBadge.className}`}>
-              {statusBadge.label}
-            </span>
-          </div>
+          {latestBatch && statusBadge ? (
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-text-primary">
+                {formatDateTime(latestBatch.startedAt)}
+              </p>
+              <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${statusBadge.className}`}>
+                {statusBadge.label}
+              </span>
+            </div>
+          ) : (
+            <p className="text-sm text-text-disabled">실행 이력 없음</p>
+          )}
         </div>
 
         {/* 처리 건수 */}
         <div>
           <p className="text-xs text-text-disabled mb-1">처리 건수</p>
           <p className="text-lg font-bold text-text-primary">
-            {latestBatch.processedCount.toLocaleString('ko-KR')}건
+            {latestBatch ? `${latestBatch.processedCount.toLocaleString('ko-KR')}건` : '-'}
           </p>
         </div>
       </div>

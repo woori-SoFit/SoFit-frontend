@@ -111,11 +111,11 @@ export default function BatchPage() {
               <div className="flex gap-4">
                 <div className="flex-1 h-40 bg-gray-50 rounded-lg animate-pulse" />
               </div>
-            ) : data && data.batches.length > 0 ? (
+            ) : (
               <div className="flex gap-4">
-                <BatchScheduleCard latestBatch={data.batches[0]} />
+                <BatchScheduleCard latestBatch={data?.batches[0] ?? null} />
               </div>
-            ) : null}
+            )}
           </div>
 
           {/* 실행 이력 섹션 */}
