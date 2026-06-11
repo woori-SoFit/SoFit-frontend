@@ -34,7 +34,7 @@ export const HOME_MENU_ITEMS: MenuItem[] = [
   },
   {
     id: "grade-report",
-    label: "S 분석 리포트",
+    label: "성장 등급 리포트",
     to: "/grade-report",
     icon: icon4,
   },

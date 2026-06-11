@@ -8,7 +8,6 @@ import { Link2, BarChart3, ShieldCheck } from "lucide-react";
 import { ServiceIntroPage } from "@/components/common/ServiceIntroPage";
 import type { IntroFeatureItem } from "@/components/common/ServiceIntroPage";
 import bizDataIllust from "@/assets/icons/myBizData.svg";
-import mainLogo from "@/assets/mainLogo.svg";
 
 const FEATURES: IntroFeatureItem[] = [
   {
@@ -47,13 +46,7 @@ export function IntroSection({
 }: IntroSectionProps) {
   return (
     <ServiceIntroPage
-      title={
-        <>
-          <img src={mainLogo} alt="SoFit" className="inline h-9" />
-          <br />
-          <span className="text-primary">마이 비즈 데이터</span>
-        </>
-      }
+      title={<span className="text-primary">마이 비즈 데이터</span>}
       subtitle="흩어진 정보를 연결하면 사업 분석과 금융 활용이 수월합니다."
       illustSrc={bizDataIllust}
       illustAlt="마이 비즈 데이터 일러스트"
