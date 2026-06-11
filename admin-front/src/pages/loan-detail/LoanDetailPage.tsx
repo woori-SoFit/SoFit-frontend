@@ -188,7 +188,7 @@ export default function LoanDetailPage() {
       </div>
 
       {/* 탭 네비게이션 */}
-      <div className="mb-6 border-b border-border-default">
+      <div className="mb-6 flex items-center justify-between border-b border-border-default">
         <nav className="flex gap-0" aria-label="상세 탭">
           {TABS.map((tab) => (
             <button
@@ -208,6 +208,11 @@ export default function LoanDetailPage() {
             </button>
           ))}
         </nav>
+        {activeTab === 'mybizdata' && (
+          <span className="pr-1 text-sm text-text-secondary">
+            기준 월: 2025.05
+          </span>
+        )}
       </div>
 
       {/* ─── 정보 탭 ─── */}
@@ -235,7 +240,7 @@ export default function LoanDetailPage() {
       {activeTab === 'mybizdata' && (
         isMyBizDataLoading
           ? <LoadingState />
-          : <MyBizDataCard data={myBizData} />
+          : <MyBizDataCard data={myBizData} businessName={summary?.businessName} />
       )}
 
       {/* ─── S등급 분석 탭 ─── */}

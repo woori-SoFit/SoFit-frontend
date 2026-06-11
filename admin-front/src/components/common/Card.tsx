@@ -21,7 +21,7 @@ export default function Card({ title, titleIcon, titleRight, children, className
         <div className="mb-4 flex items-center gap-2">
           {titleIcon}
           <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
-          {titleRight}
+          {titleRight && <div className="flex flex-1 items-center gap-2">{titleRight}</div>}
         </div>
       )}
       {children}
