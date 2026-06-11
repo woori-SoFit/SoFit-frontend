@@ -34,11 +34,11 @@ export default function BizDataPage() {
   const returnTo = (location.state as { returnTo?: string } | null)?.returnTo;
 
   useEffect(() => {
-    useLayoutStore.getState().setStepTitle("마이 비즈 데이터");
+    useLayoutStore.getState().setStepTitle(isConnected ? "마이 비즈 데이터" : "");
     return () => {
       useLayoutStore.getState().setStepTitle("");
     };
-  }, []);
+  }, [isConnected]);
 
   if (isAuthLoading || (isLoggedIn && isBizLoading)) {
     return <CharacterLoadingSpinner text="불러오는 중..." />;

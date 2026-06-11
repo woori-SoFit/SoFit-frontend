@@ -1,4 +1,5 @@
 import axios, { type AxiosError } from "axios";
+import { useSessionStore } from "@/stores/sessionStore";
 
 /**
  * 공통 Axios 인스턴스
@@ -7,7 +8,6 @@ import axios, { type AxiosError } from "axios";
  * - withCredentials: true — Session-Cookie 기반 인증 필수 설정
  */
 const axiosInstance = axios.create({
-  // baseURL: "/api",
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
   headers: {
@@ -21,10 +21,15 @@ axiosInstance.interceptors.response.use(
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       const requestUrl = error.config?.url ?? "";
-      const noRedirectPaths = ["/auth/login", "/users/me", "/report/mybiz-status"];
-      if (!noRedirectPaths.includes(requestUrl)) {
-        const currentPath = window.location.pathname + window.location.search;
-        window.location.href = `/login?returnUrl=${encodeURIComponent(currentPath)}`;
+      // 로그인/me 요청은 세션 만료 모달 대상에서 제외
+      const noModalPaths = ["/auth/login", "/users/me", "/report/mybiz-status"];
+      if (!noModalPaths.includes(requestUrl)) {
+        // 이전에 로그인한 적이 있을 때만 세션 만료 모달 표시
+        const wasLoggedIn = sessionStorage.getItem("wasLoggedIn");
+        if (wasLoggedIn) {
+          sessionStorage.removeItem("wasLoggedIn");
+          useSessionStore.getState().setSessionExpired();
+        }
       }
     }
     return Promise.reject(error);

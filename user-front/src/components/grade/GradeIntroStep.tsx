@@ -10,7 +10,6 @@ import { BarChart3, Trophy } from "lucide-react";
 import { ServiceIntroPage } from "@/components/common/ServiceIntroPage";
 import type { IntroFeatureItem } from "@/components/common/ServiceIntroPage";
 import gradeReportIntroImg from "@/assets/icons/S-Report.svg";
-import mainLogo from "@/assets/mainLogo.svg";
 
 const FEATURES: IntroFeatureItem[] = [
   {
@@ -35,13 +34,7 @@ interface GradeIntroStepProps {
 export function GradeIntroStep({ onNext, isLoading = false }: GradeIntroStepProps) {
   return (
     <ServiceIntroPage
-      title={
-        <>
-          <img src={mainLogo} alt="SoFit" className="inline h-9" />
-          <br />
-          <span className="text-primary">성장등급 리포트</span>
-        </>
-      }
+      title={<span className="text-primary">성장등급 리포트</span>}
       subtitle="사장님의 성장 가능성을 봅니다."
       illustSrc={gradeReportIntroImg}
       illustAlt="SOFIT 성장등급 리포트 서비스 소개 일러스트레이션"
