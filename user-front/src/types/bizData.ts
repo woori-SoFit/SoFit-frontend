@@ -45,54 +45,63 @@ export interface BusinessInfo {
 
 /** 대시보드 데이터 */
 export interface BizDashboardData {
-  currentMonth: string;
+  referenceMonth: string;
   availableMonths: string[];
+  /** 매출 관련 */
   monthlyRevenue: number;
-  monthOverMonthChange: number | null;
-  prevMonthRevenue: number | null;
-  monthlyTransactionCount: number;
-  avgTransactionAmount: number;
-  cashFlow: number;
-  netProfit: number;
-  industryComparison: {
-    industryName: string;
-    revenue: number;
-    profitability: number;
-    stability: number;
-    salesRankChange: number | null;
-    profitRankChange: number | null;
-    stabilityRankChange: number | null;
-  };
+  posSalesAmount: number;
+  deliverySalesAmount: number;
+  monthlyRevenueGrowthRate: number;
+  monthlyPaymentCount: number;
+  avgPaymentAmount: number;
   revenueTrend: Array<{
-    month: string;
-    amount: number;
+    referenceMonth: string;
+    monthlyRevenue: number;
   }>;
-  transactionFlow: Array<{
-    month: string;
-    income: number;
-    expense: number;
+  /** 요일별 평균 매출 */
+  avgRevenueMon: number;
+  avgRevenueTue: number;
+  avgRevenueWed: number;
+  avgRevenueThu: number;
+  avgRevenueFri: number;
+  avgRevenueSat: number;
+  avgRevenueSun: number;
+  /** 수익/지출 */
+  estimatedProfit: number;
+  monthlyOutflow: number;
+  paymentFlowTrend: Array<{
+    referenceMonth: string;
+    monthlyRevenue: number;
+    monthlyOutflow: number;
+    estimatedProfit: number;
   }>;
-  loanBalance: number;
-  loanRepaymentDate: string;
-  review: {
-    averageRating: number;
-    reviewCount: number;
-    ratingTrend: Array<{
-      month: string;
-      rating: number;
-    }>;
-  };
-  customer: {
-    onlineReorderRate: number;
-    onlineReplyRate: number;
-    onlineInfoUpdateCount: number;
-    positiveReviewRatio: number;
-    deliveryRating: number;
-    deliveryOrderCount: number;
-    deliverySalesAmount: number;
-    hasOnlineReservation: boolean;
-    hasSns: boolean;
-  };
+  monthlyProfitGrowthRate: number;
+  /** 리뷰/평점 */
+  reviewRating: number;
+  reviewCount: number;
+  positiveReviewRatio: number;
+  negativeReviewRatio: number;
+  deliveryRating: number;
+  hasOnlineReservation: boolean;
+  hasSns: boolean;
+  onlineReplyRate: number;
+  /** 업종 비교 */
+  industryName: string;
+  industrySalesRank: number;
+  industryProfitRank: number;
+  industrySatisfactionRank: number;
+  /** 상권 비교 */
+  districtSalesRank: number;
+  districtProfitRank: number;
+  districtSatisfactionRank: number;
+  /** 수익률/업종평균/상권평균 */
+  monthlyProfitRate: number;
+  industryAvgRevenue: number;
+  industryAvgProfitRate: number;
+  industryAvgReviewRating: number;
+  districtAvgRevenue: number;
+  districtAvgProfitRate: number;
+  districtAvgReviewRating: number;
 }
 
 /** 데이터 수집 단계 아이템 */
