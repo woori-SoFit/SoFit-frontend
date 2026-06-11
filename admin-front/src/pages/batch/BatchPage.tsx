@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBatchList } from '@/hooks/useBatchList';
-import { useBatchLatest } from '@/hooks/useBatchLatest';
 import { triggerManualBatch } from '@/api/batchApi';
 import { BATCH_KEYS } from '@/constants/queryKeys';
 import BatchTable from '@/components/batch/BatchTable';
@@ -21,15 +20,12 @@ const BATCH_TABS: { value: BatchType; label: string }[] = [
 /**
  * 배치 관리 페이지 — DEV_ADMIN 전용
  * 탭: S등급 산출 / 시스템 심사
- * 상단: 자동 배치 현황 카드
- * 하단: 배치 실행 이력 테이블 + 페이지네이션
  */
 export default function BatchPage() {
   const [batchType, setBatchType] = useState<BatchType>('S_GRADE');
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
 
-  const { data: latestData, isLoading: latestLoading } = useBatchLatest(batchType);
   const { data, isLoading, isError, refetch } = useBatchList({
     page,
     size: PAGE_SIZE,
@@ -51,7 +47,7 @@ export default function BatchPage() {
 
   return (
     <div className="flex flex-col h-full p-6">
-      {/* 헤더 + 탭 */}
+      {/* 헤더 + 탭 + 수동 실행 버튼 */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-text-primary">배치 관리</h1>
@@ -93,56 +89,68 @@ export default function BatchPage() {
         </button>
       </div>
 
-      {/* 자동 배치 현황 카드 */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <h2 className="text-base font-semibold text-text-primary">자동 배치 현황</h2>
-        </div>
-        {latestLoading ? (
-          <div className="flex gap-4">
-            <div className="flex-1 h-40 bg-gray-50 rounded-lg animate-pulse" />
-            <div className="flex-1 h-40 bg-gray-50 rounded-lg animate-pulse" />
+      {/* 시스템 심사 탭: 안내 문구 */}
+      {batchType === 'SYSTEM_REVIEW' && (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-lg font-medium text-text-secondary mb-2">시스템 심사 배치</p>
+            <p className="text-sm text-text-disabled">대출 신청 건에 대해 시스템 심사를 수동으로 실행합니다.</p>
           </div>
-        ) : (
-          <div className="flex gap-4">
-            {latestData?.map((latest) => (
-              <BatchScheduleCard key={latest.cycle} latest={latest} />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* 실행 이력 섹션 */}
-      <div className="flex items-center gap-3 mb-4">
-        <h2 className="text-base font-semibold text-text-primary">실행 이력</h2>
-        {!isLoading && data && (
-          <span className="text-sm text-text-secondary">
-            총 {data.totalCount}건
-          </span>
-        )}
-      </div>
-
-      {/* 로딩 상태 */}
-      {isLoading && <LoadingState />}
-
-      {/* 에러 상태 */}
-      {isError && <ErrorState onRetry={() => refetch()} />}
-
-      {/* 테이블 */}
-      {!isLoading && !isError && data && (
-        <div className="flex-1">
-          <BatchTable data={data.batches} />
         </div>
       )}
 
-      {/* 페이지네이션 */}
-      {!isLoading && !isError && data && data.totalPages > 1 && (
-        <Pagination
-          currentPage={page}
-          totalPages={data.totalPages}
-          onPageChange={setPage}
-          className="mt-auto"
-        />
+      {/* S등급 산출 탭: 배치 현황 + 이력 */}
+      {batchType === 'S_GRADE' && (
+        <>
+          {/* 자동 배치 현황 카드 */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <h2 className="text-base font-semibold text-text-primary">자동 배치 현황</h2>
+            </div>
+            {isLoading ? (
+              <div className="flex gap-4">
+                <div className="flex-1 h-40 bg-gray-50 rounded-lg animate-pulse" />
+              </div>
+            ) : data && data.batches.length > 0 ? (
+              <div className="flex gap-4">
+                <BatchScheduleCard latestBatch={data.batches[0]} />
+              </div>
+            ) : null}
+          </div>
+
+          {/* 실행 이력 섹션 */}
+          <div className="flex items-center gap-3 mb-4">
+            <h2 className="text-base font-semibold text-text-primary">실행 이력</h2>
+            {!isLoading && data && (
+              <span className="text-sm text-text-secondary">
+                총 {data.totalCount}건
+              </span>
+            )}
+          </div>
+
+          {/* 로딩 상태 */}
+          {isLoading && <LoadingState />}
+
+          {/* 에러 상태 */}
+          {isError && <ErrorState onRetry={() => refetch()} />}
+
+          {/* 테이블 */}
+          {!isLoading && !isError && data && (
+            <div className="flex-1">
+              <BatchTable data={data.batches} />
+            </div>
+          )}
+
+          {/* 페이지네이션 */}
+          {!isLoading && !isError && data && data.totalPages > 1 && (
+            <Pagination
+              currentPage={page}
+              totalPages={data.totalPages}
+              onPageChange={setPage}
+              className="mt-auto"
+            />
+          )}
+        </>
       )}
     </div>
   );

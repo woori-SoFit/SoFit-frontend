@@ -1,7 +1,7 @@
 /** 배치 상태별 배지 스타일 */
 export function getBatchStatusBadge(status: string) {
   switch (status) {
-    case 'SUCCESS':
+    case 'COMPLETED':
       return { className: 'bg-green-100 text-green-700', label: '성공' };
     case 'FAILED':
       return { className: 'bg-red-100 text-red-700', label: '실패' };

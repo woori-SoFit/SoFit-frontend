@@ -36,6 +36,5 @@ export const ERROR_LOG_KEYS = {
 
 export const BATCH_KEYS = {
   all: ["batch"] as const,
-  latest: () => [...BATCH_KEYS.all, "latest"] as const,
   list: (params?: unknown) => [...BATCH_KEYS.all, "list", params] as const,
 };
