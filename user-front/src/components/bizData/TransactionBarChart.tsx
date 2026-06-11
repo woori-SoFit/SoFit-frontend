@@ -8,14 +8,10 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { formatYAxis } from "@/utils/format";
 
 interface TransactionBarChartProps {
   data: Array<{ month: string; income: number; expense: number }>;
-}
-
-function formatYAxis(value: number): string {
-  const man = Math.round(value / 10000);
-  return man === 0 ? "0" : `${man.toLocaleString()}만`;
 }
 
 function formatTooltip(value: number): string {

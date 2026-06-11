@@ -7,14 +7,10 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
+import { formatYAxis } from "@/utils/format";
 
 interface RevenueLineChartProps {
   data: Array<{ month: string; amount: number }>;
-}
-
-function formatYAxis(value: number): string {
-  const man = Math.round(value / 10000);
-  return man === 0 ? "0" : `${man.toLocaleString()}만`;
 }
 
 function formatTooltip(value: number): string {
