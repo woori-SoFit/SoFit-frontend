@@ -138,18 +138,51 @@ export type InsurancePaymentStatus = 'PAID' | 'PENDING' | 'OVERDUE';
 
 /** 시스템 수집 정보 (마이비즈데이터) */
 export interface MyBizData {
-  annualIncome: number;
   existingLoanCount: number;
-  monthlyRevenue: number;
-  monthlyRevenueGrowthRate: number;
-  cashFlow: number;
-  accountBalance: number;
+  /** DSR 관련 */
+  annualIncome: number;
+  annualRepayment: number;
+  monthlyRepayment: number;
+  /** 보유 대출 잔액 */
+  totalLoanBalance: number;
+  /** 운영 신뢰도 */
   businessAgeMonths: number;
   vatFilingStatus: VatFilingStatus;
   taxOverdue: boolean;
   insurancePaymentStatus: InsurancePaymentStatus;
-  industrySalesRank: number;
-  industryProfitRank: number;
+  /** 부가세 최근 신고일 (ISO 8601) */
+  vatFilingDate: string | null;
+  /** 매출 추이 (최근 6개월) */
+  revenueTrend: Array<{
+    referenceMonth: string;
+    monthlyRevenue: number;
+  }>;
+  /** 업종 평균 매출 추이 (최근 6개월) */
+  industryAvgRevenueTrend: Array<{
+    referenceMonth: string;
+    monthlyRevenue: number;
+  }>;
+  /** 수익 추이 (최근 6개월) */
+  profitTrend: Array<{
+    referenceMonth: string;
+    profit: number;
+  }>;
+  /** 업종/상권 비교 */
+  industryComparison: {
+    myRevenue: number;
+    industryAvgRevenue: number;
+    districtAvgRevenue: number;
+    myProfitRate: number;
+    industryAvgProfitRate: number;
+    districtAvgProfitRate: number;
+    /** 순위 (상위 %) */
+    industrySalesRank: number;
+    industryProfitRank: number;
+    industrySatisfactionRank: number;
+    districtSalesRank: number;
+    districtProfitRank: number;
+    districtSatisfactionRank: number;
+  };
 }
 
 /** SHAP 분석 결과 */
