@@ -121,3 +121,15 @@ export function toISODate(date: Date): string {
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
+
+/** 차트 Y축 만원 단위 포맷 (예: 5000000 → "500만") */
+export function formatYAxis(value: number): string {
+  const man = Math.round(value / 10000);
+  return man === 0 ? "0" : `${man.toLocaleString()}만`;
+}
+
+/** "YYYY-MM" → "M월" 형식으로 변환 */
+export function toMonthLabel(yyyyMM: string): string {
+  const month = parseInt(yyyyMM.split("-")[1], 10);
+  return `${month}월`;
+}

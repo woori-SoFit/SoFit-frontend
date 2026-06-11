@@ -18,9 +18,9 @@ import type { NotificationItem as NotificationItemType } from "@/types/notificat
 function getNotificationRoute(notification: NotificationItemType): string | null {
   switch (notification.type) {
     case "LOAN_SUBMITTED":
-      return `/loan/review/${notification.referenceId}`;
+      return `/loan-applications`;
     case "LOAN_DECIDED":
-      return `/loan/result/${notification.referenceId}`;
+      return `/loan-applications`;
     case "LOAN_EXECUTED":
       return `/loan/execution/${notification.referenceId}`;
     default:

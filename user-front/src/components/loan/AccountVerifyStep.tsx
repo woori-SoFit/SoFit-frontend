@@ -8,6 +8,7 @@ import { BottomButton } from "@/components/common/BottomButton";
 import { useMe } from "@/hooks/useMe";
 import { maskAccountNumber } from "@/utils/format";
 import signatureIcon from "@/assets/ba-1400-symbol.png";
+import wooriWonIcon from "@/assets/icons/woori-won.png";
 
 interface AccountVerifyStepProps {
   accountNumber: string;
@@ -32,14 +33,17 @@ export function AccountVerifyStep({
 }: AccountVerifyStepProps) {
   const { me } = useMe();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [showBanner, setShowBanner] = useState(true);
+  const [showBanner, setShowBanner] = useState(false);
 
-  // 5초 후 배너 자동 숨김
+  // 마운트 직후 딜레이 → 위에서 아래로 슬라이드, 5초 후 다시 위로 사라짐
   useEffect(() => {
     if (!authCode) return;
-    setShowBanner(true);
-    const timer = setTimeout(() => setShowBanner(false), 5000);
-    return () => clearTimeout(timer);
+    const showTimer = setTimeout(() => setShowBanner(true), 100);
+    const hideTimer = setTimeout(() => setShowBanner(false), 5000);
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    };
   }, [authCode]);
 
   // 마운트 시 자동 포커스
@@ -61,17 +65,26 @@ export function AccountVerifyStep({
       {/* 인증번호 푸시 알림 스타일 토스트 — 헤더 위에 fixed */}
       {authCode && (
         <div
-          className={`fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-100 px-4 pt-2 transition-transform duration-500 ease-out ${
+          className={`fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-100 px-3 pt-2 transition-transform duration-500 ease-out ${
             showBanner ? "translate-y-0" : "-translate-y-full"
           }`}
         >
-          <div className="bg-white rounded-xl px-5 py-4 border border-border-default flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <ShieldCheck size={18} className="text-primary" />
-            </div>
+          <div className="bg-[#f2f2f7]/80 backdrop-blur-xl rounded-2xl px-4 py-4 flex items-start gap-3">
+            {/* 앱 아이콘 */}
+            <img
+              src={wooriWonIcon}
+              alt="우리WON뱅킹"
+              className="w-10 h-10 rounded-lg shrink-0"
+            />
+            {/* 내용 */}
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-text-secondary">[SOFIT] 계좌확인 인증번호</p>
-              <p className="text-base font-bold text-primary tracking-[0.3em] mt-0.5">{authCode}</p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-gray-900">SOFIT 입출금알림</span>
+                <span className="text-xs text-gray-400">지금</span>
+              </div>
+              <p className="text-sm text-gray-700 mt-0.5 leading-relaxed">
+                [입금] <span className="font-bold">{authCode}</span> 1원 {maskedAccount} 계좌
+              </p>
             </div>
           </div>
         </div>

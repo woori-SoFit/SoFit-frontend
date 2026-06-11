@@ -8,7 +8,7 @@
  *   3. 대출진행관리 배너
  *   4. 2×2 메뉴 그리드
  */
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import { ProductCardSlider } from "@/components/home/ProductCardSlider";
@@ -119,9 +119,16 @@ export default function HomePage() {
 
       {/* ── 대출진행관리 배너 ── */}
       <section className="px-5 mt-2">
-        <Link
-          to="/loan-applications"
-          className="flex items-center justify-between w-full bg-white rounded-2xl px-5 py-4 shadow-[--shadow-card] border border-border-default active:scale-[0.98] transition-transform"
+        <button
+          type="button"
+          onClick={() => {
+            if (!isLoggedIn) {
+              navigate(`/login?returnUrl=${encodeURIComponent("/loan-applications")}`, { replace: true });
+            } else {
+              navigate("/loan-applications");
+            }
+          }}
+          className="flex items-center justify-between w-full bg-white rounded-2xl px-5 py-4 shadow-[--shadow-card] border border-border-default active:scale-[0.98] transition-transform text-left"
         >
           <div>
             <p className="text-base font-bold text-[--color-text-primary]">
@@ -132,26 +139,37 @@ export default function HomePage() {
             </p>
           </div>
           <img src={icon1} alt="" aria-hidden="true" className="w-12 h-12 object-contain" />
-        </Link>
+        </button>
       </section>
 
       {/* ── 2×2 메뉴 그리드 ── */}
       <section className="px-5 mt-2">
         <div className="grid grid-cols-2 gap-2">
-          {HOME_MENU_ITEMS.map((item) => (
-            <Link
-              key={item.id}
-              to={item.to}
-              className="flex items-center justify-between bg-white rounded-2xl px-3 py-4 shadow-[--shadow-card] border border-border-default active:scale-[0.97] transition-transform"
-            >
-              <div className="flex items-center gap-2">
-                <img src={item.icon} alt="" aria-hidden="true" className="w-6.5 h-6.5 object-contain" />
-                <span className="text-[15px] font-semibold text-text-primary">
-                  {item.label}
-                </span>
-              </div>
-            </Link>
-          ))}
+          {HOME_MENU_ITEMS.map((item) => {
+            // 로그인 필요한 메뉴
+            const requiresAuth = item.id === "loan-management";
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => {
+                  if (requiresAuth && !isLoggedIn) {
+                    navigate(`/login?returnUrl=${encodeURIComponent(item.to)}`, { replace: true });
+                  } else {
+                    navigate(item.to);
+                  }
+                }}
+                className="flex items-center justify-between bg-white rounded-2xl px-3 py-4 shadow-[--shadow-card] border border-border-default active:scale-[0.97] transition-transform text-left"
+              >
+                <div className="flex items-center gap-2">
+                  <img src={item.icon} alt="" aria-hidden="true" className="w-6.5 h-6.5 object-contain" />
+                  <span className="text-[15px] font-semibold text-text-primary">
+                    {item.label}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </section>
     </div>
