@@ -21,7 +21,7 @@ export function GaugeBar({ label, percent, color, tooltip }: GaugeBarProps) {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex items-center gap-1 w-14 shrink-0">
+      <div className="flex items-center gap-1 w-20 shrink-0">
         <span className="text-sm font-medium text-text-primary">{label}</span>
         {tooltip && <InfoTooltip ariaLabel={`${label} 설명`} message={tooltip} />}
       </div>

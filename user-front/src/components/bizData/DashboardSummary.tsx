@@ -15,7 +15,7 @@ interface DashboardSummaryProps {
 }
 
 export function DashboardSummary({ data, selectedMonth, currentMonth, fullCardRef }: DashboardSummaryProps) {
-  const changeRate = formatChangeRate(data.monthOverMonthChange);
+  const changeRate = formatChangeRate(data.monthlyRevenueGrowthRate);
   const revenueLabel =
     selectedMonth === currentMonth ? "이번 달 매출" : `${formatYearMonth(selectedMonth)} 매출`;
   // 양수: info(파란색) / 음수: error(빨강) — 브랜드 primary 및 success(매출 게이지)와 분리
@@ -48,7 +48,7 @@ export function DashboardSummary({ data, selectedMonth, currentMonth, fullCardRe
       <div className="grid grid-cols-2 gap-3 mb-5">
         <div className="bg-bg-surface rounded-xl shadow-card p-4">
           <p className="text-xs text-text-secondary mb-1">현금 흐름</p>
-          <p className="text-base font-bold text-text-primary">{formatCurrency(data.cashFlow)}원</p>
+          <p className="text-base font-bold text-text-primary">{formatCurrency(data.monthlyRevenue - data.monthlyOutflow)}원</p>
         </div>
         <div className="bg-bg-surface rounded-xl shadow-card p-4">
           <div className="flex items-center gap-1 mb-1">
@@ -58,7 +58,7 @@ export function DashboardSummary({ data, selectedMonth, currentMonth, fullCardRe
               message="매출에서 추정 비용을 뺀 예상 순이익이에요. 실제 회계 결산값과는 차이가 있을 수 있어요."
             />
           </div>
-          <p className="text-base font-bold text-text-primary">{formatCurrency(data.netProfit)}원</p>
+          <p className="text-base font-bold text-text-primary">{formatCurrency(data.estimatedProfit)}원</p>
         </div>
       </div>
 
@@ -66,21 +66,21 @@ export function DashboardSummary({ data, selectedMonth, currentMonth, fullCardRe
       <div className="bg-bg-surface rounded-xl shadow-card p-5">
         <h3 className="text-base font-semibold text-text-primary mb-1">업종 평균과 비교</h3>
         <p className="text-xs text-text-secondary mb-4">
-          사장님 업종({data.industryComparison.industryName}) 평균과 비교했어요
+          사장님 업종({data.industryName}) 평균과 비교했어요
         </p>
         <div className="flex flex-col gap-4">
-          <GaugeBar label="매출" percent={data.industryComparison.revenue} color="bg-success" />
+          <GaugeBar label="매출" percent={data.industrySalesRank} color="bg-success" />
           <GaugeBar
             label="수익성"
-            percent={data.industryComparison.profitability}
+            percent={data.industryProfitRank}
             color="bg-primary"
             tooltip="매출 대비 이익이 얼마나 남는지를 업종 평균과 비교해 보여줘요."
           />
           <GaugeBar
-            label="안정성"
-            percent={data.industryComparison.stability}
+            label="고객만족도"
+            percent={data.industrySatisfactionRank}
             color="bg-secondary"
-            tooltip="매출과 현금 흐름이 얼마나 꾸준한지를 업종 평균과 비교해 보여줘요."
+            tooltip="리뷰 평점을 업종 평균과 비교해 보여줘요."
           />
         </div>
       </div>
