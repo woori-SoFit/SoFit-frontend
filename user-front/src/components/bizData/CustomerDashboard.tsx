@@ -1,16 +1,18 @@
 /**
  * "손님들은 다시 찾아오고 있나요?" 카테고리 상세 화면
  *
- * 기존 데이터 활용하여 풍성한 UI 구성:
- * - 상단 2열: 재구매율(도넛 시각화) + 평점(별점)
- * - 3열 지표 카드: 리뷰 수, 배달 주문 수, 배달 매출
- * - 3열 지표 카드: 답글 비율, 정보 수정, 긍정 리뷰
- * - 평점 추이 차트 (기존 RatingLineChart 재활용)
- * - 부가 정보: 온라인 예약, SNS
+ * 사용 데이터:
+ * - reviewRating: 평균 평점
+ * - reviewCount: 리뷰 수
+ * - positiveReviewRatio: 긍정 리뷰 비율
+ * - negativeReviewRatio: 부정 리뷰 비율
+ * - deliveryRating: 배달앱 평점
+ * - hasOnlineReservation: 온라인 예약 여부
+ * - hasSns: SNS 운영 여부
+ * - onlineReplyRate: 리뷰 답글 비율
  */
-import { Star, MessageCircle, Truck, ShoppingBag, ThumbsUp, Edit3, Globe, Share2 } from "lucide-react";
-import { RatingLineChart } from "./RatingLineChart";
-import { formatCurrency, formatCount, formatPercent } from "@/utils/format";
+import { Star, ThumbsUp, MessageCircle, ThumbsDown, Globe, Share2 } from "lucide-react";
+import { formatCount, formatPercent } from "@/utils/format";
 import type { BizDashboardData } from "@/types/bizData";
 
 interface CustomerDashboardProps {
@@ -18,129 +20,121 @@ interface CustomerDashboardProps {
 }
 
 export function CustomerDashboard({ data }: CustomerDashboardProps) {
-  const { averageRating, reviewCount, ratingTrend } = data.review;
-  const {
-    onlineReorderRate,
-    onlineReplyRate,
-    onlineInfoUpdateCount,
-    positiveReviewRatio,
-    deliveryRating,
-    deliveryOrderCount,
-    deliverySalesAmount,
-    hasOnlineReservation,
-    hasSns,
-  } = data.customer;
+  // null 방어
+  const reviewRating = data.reviewRating ?? 0;
+  const reviewCount = data.reviewCount ?? 0;
+  const positiveReviewRatio = data.positiveReviewRatio ?? 0;
+  const negativeReviewRatio = data.negativeReviewRatio ?? 0;
+  const deliveryRating = data.deliveryRating ?? 0;
+  const onlineReplyRate = data.onlineReplyRate ?? 0;
+  const hasOnlineReservation = data.hasOnlineReservation ?? false;
+  const hasSns = data.hasSns ?? false;
 
   return (
     <div className="flex flex-col gap-4 px-5 py-4">
-      {/* 상단 2열: 재방문율 + 평점 */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* 재구매율 — 도넛 시각화 */}
-        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex flex-col items-center">
-          <p className="text-sm text-text-secondary pb-3 self-start font-medium">재방문율</p>
-          <div className="relative w-20 h-20 mb-2">
-            <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-              <circle cx="18" cy="18" r="16" fill="none" stroke="var(--color-gray-200)" strokeWidth="4" />
-              <circle
-                cx="18" cy="18" r="16" fill="none"
-                stroke="var(--color-primary)"
-                strokeWidth="4"
-                strokeDasharray={`${(onlineReorderRate ?? 0) * 0.88} 88`}
-                strokeLinecap="round"
-              />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-lg font-bold text-text-primary">{formatPercent(onlineReorderRate)}</span>
-            </div>
+      {/* 평균 평점 카드 */}
+      <div className="bg-bg-surface rounded-2xl p-5 border border-border-default">
+        <p className="text-sm font-medium text-text-secondary mb-3">평균 평점</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Star size={28} className="text-warning fill-warning" />
+            <span className="text-4xl font-bold text-text-primary">{reviewRating.toFixed(1)}</span>
+            <span className="text-sm text-text-secondary self-end mb-1">/ 5.0</span>
+          </div>
+          <div className="flex items-center gap-0.5">
+            {Array.from({ length: 5 }).map((_, i) => {
+              // 소수점 반영: 4.7이면 i=0~3은 full, i=4는 70% 채움
+              const fill = Math.min(1, Math.max(0, reviewRating - i));
+              return (
+                <div key={i} className="relative w-5 h-5">
+                  {/* 빈 별 (배경) */}
+                  <Star size={20} className="absolute inset-0 text-gray-200" />
+                  {/* 채워진 별 (clip으로 비율 조절) */}
+                  {fill > 0 && (
+                    <div className="absolute inset-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
+                      <Star size={20} className="text-warning fill-warning" />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
+        {deliveryRating > 0 && (
+          <p className="text-sm text-text-disabled mt-3">배달앱 {deliveryRating.toFixed(1)}</p>
+        )}
+      </div>
 
-        {/* 평점 */}
-        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex flex-col items-center">
-          <p className="text-sm text-text-secondary pb-4 self-start font-medium">평균 평점</p>
-          <div className="flex items-center gap-1 mb-1">
-            <Star size={20} className="text-warning fill-warning" />
-            <span className="text-2xl font-bold text-text-primary">{formatCount(averageRating)}</span>
-            <span className="text-xs text-text-secondary">/ 5.0</span>
+      {/* 3열 지표: 리뷰 수, 긍정 리뷰, 부정 리뷰 */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-bg-surface rounded-xl p-3 border border-border-default flex flex-col items-center">
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+            <MessageCircle size={16} className="text-primary" />
           </div>
-          <div className="flex items-center gap-0.5 mb-1">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                size={12}
-                className={i < Math.round(averageRating ?? 0) ? "text-warning fill-warning" : "text-gray-200"}
-              />
-            ))}
+          <p className="text-xs text-text-secondary font-medium mb-1">리뷰 수</p>
+          <p className="text-base font-bold text-text-primary">{formatCount(reviewCount, "건")}</p>
+        </div>
+        <div className="bg-bg-surface rounded-xl p-3 border border-border-default flex flex-col items-center">
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+            <ThumbsUp size={16} className="text-primary" />
           </div>
-          {deliveryRating != null && deliveryRating > 0 && (
-            <p className="text-xs text-text-disabled mt-1">배달앱 {deliveryRating.toFixed(1)}</p>
-          )}
+          <p className="text-xs text-text-secondary font-medium mb-1">긍정 리뷰</p>
+          <p className="text-base font-bold text-text-primary">{formatPercent(positiveReviewRatio)}</p>
+        </div>
+        <div className="bg-bg-surface rounded-xl p-3 border border-border-default flex flex-col items-center">
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+            <ThumbsDown size={16} className="text-primary" />
+          </div>
+          <p className="text-xs text-text-secondary font-medium mb-1">부정 리뷰</p>
+          <p className="text-base font-bold text-text-primary">{formatPercent(negativeReviewRatio)}</p>
         </div>
       </div>
 
-      {/* 3열 지표: 리뷰 수, 배달 주문, 배달 매출 */}
-      <div className="grid grid-cols-3 gap-2">
-        <StatCard icon={MessageCircle} label="리뷰 수" value={formatCount(reviewCount, "건")} />
-        <StatCard icon={Truck} label="배달 주문" value={formatCount(deliveryOrderCount, "건")} />
-        <StatCard icon={ShoppingBag} label="배달 매출" value={deliverySalesAmount == null ? "-" : `${formatCurrency(deliverySalesAmount)}원`} />
-      </div>
-
-      {/* 3열 지표: 답글 비율, 정보 수정, 긍정 리뷰 */}
-      <div className="grid grid-cols-3 gap-2">
-        <StatCard icon={MessageCircle} label="답글 비율" value={formatPercent(onlineReplyRate)} />
-        <StatCard icon={Edit3} label="정보 수정" value={formatCount(onlineInfoUpdateCount, "회")} />
-        <StatCard icon={ThumbsUp} label="긍정 리뷰" value={formatPercent(positiveReviewRatio)} />
-      </div>
-
-      {/* 평점 추이 차트 */}
-      <div className="bg-bg-surface rounded-xl p-4 border border-border-default">
-        <h3 className="font-semibold mb-2">평점 추이</h3>
-        <RatingLineChart data={ratingTrend} />
-      </div>
-
-      {/* 부가 정보 */}
-      <div className="bg-bg-surface rounded-xl p-4 border border-border-default">
-        <h3 className="font-semibold text-text-primary mb-3">온라인 활동</h3>
-        <div className="flex flex-col gap-3">
+      {/* 온라인 활동 카드 */}
+      <div className="bg-bg-surface rounded-2xl p-5 border border-border-default">
+        <h3 className="font-semibold text-text-primary mb-4">온라인 활동</h3>
+        <div className="flex flex-col gap-4">
+          {/* 답글 비율 */}
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-              <Globe size={16} className="text-primary" />
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <MessageCircle size={18} className="text-primary" />
             </div>
-            <p className="text-sm text-text-primary flex-1">온라인 예약</p>
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasOnlineReservation ? "bg-success/10 text-success" : "bg-gray-100 text-text-disabled"}`}>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-text-primary">답글 비율</p>
+              <p className="text-xs text-text-disabled">손님 문의에 대한 답변 비율</p>
+            </div>
+            <span className="text-base font-bold text-text-primary">{formatPercent(onlineReplyRate)}</span>
+          </div>
+
+          {/* 온라인 예약 */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Globe size={18} className="text-primary" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-text-primary">온라인 예약</p>
+              <p className="text-xs text-text-disabled">온라인 예약 운영 여부</p>
+            </div>
+            <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${hasOnlineReservation ? "bg-success/10 text-success" : "bg-gray-100 text-text-disabled"}`}>
               {hasOnlineReservation ? "운영 중" : "미운영"}
             </span>
           </div>
+
+          {/* SNS 운영 */}
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-              <Share2 size={16} className="text-primary" />
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Share2 size={18} className="text-primary" />
             </div>
-            <p className="text-sm text-text-primary flex-1">SNS 운영</p>
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasSns ? "bg-success/10 text-success" : "bg-gray-100 text-text-disabled"}`}>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-text-primary">SNS 운영</p>
+              <p className="text-xs text-text-disabled">SNS 운영 여부</p>
+            </div>
+            <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${hasSns ? "bg-success/10 text-success" : "bg-gray-100 text-text-disabled"}`}>
               {hasSns ? "운영 중" : "미운영"}
             </span>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-/** 작은 지표 카드 컴포넌트 — 아이콘 좌상단, 라벨 옆, 값 아래 */
-function StatCard({ icon: Icon, label, value }: {
-  icon: typeof Star;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="bg-bg-surface rounded-xl p-3 border border-border-default">
-      <div className="flex items-center gap-1.5 mb-2">
-        <div className={`w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center shrink-0`}>
-          <Icon size={12} className="text-primary" />
-        </div>
-        <p className="text-sm text-text-secondary font-semibold whitespace-nowrap">{label}</p>
-      </div>
-      <p className="font-bold text-text-primary whitespace-nowrap">{value}</p>
     </div>
   );
 }

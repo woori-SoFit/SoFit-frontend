@@ -28,8 +28,8 @@ import type { MenuCategory } from "@/types/menuHub";
 function getCategoryTitle(category: MenuCategory): string {
   const titles: Record<MenuCategory, string> = {
     sales: "이번 달 장사는 어땠나요?",
-    profit: "실제로 얼마나 남았나요?",
-    customer: "손님들은 다시 찾아오고 있나요?",
+    profit: "수익 흐름은 어떤가요?",
+    customer: "온라인에서 좋은 인상을 주고 있나요?",
     industry: "우리 가게는 다른 가게보다\n잘하고 있나요?",
   };
   return titles[category];
@@ -39,7 +39,7 @@ function getCategoryTitle(category: MenuCategory): string {
 function getCategoryLabel(category: MenuCategory): string {
   const labels: Record<MenuCategory, string> = {
     sales: "매출 분석",
-    profit: "수익/현금 흐름",
+    profit: "손익 현황",
     customer: "고객/온라인 활동",
     industry: "업종 비교",
   };
@@ -65,7 +65,7 @@ export default function BizDashboardPage() {
   const [fetchError, setFetchError] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>(storeMonth);
   const [availableMonths, setAvailableMonths] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [monthError, setMonthError] = useState<string | null>(null);
   const [isCompact, setIsCompact] = useState(false);
   const fullCardRef = useRef<HTMLDivElement>(null);
@@ -82,6 +82,7 @@ export default function BizDashboardPage() {
   useEffect(() => {
     let cancelled = false;
     const month = storeMonth || undefined;
+    setIsLoading(true);
     fetchMyBizDashboard(month)
       .then((dashboard) => {
         if (cancelled) return;
@@ -91,6 +92,9 @@ export default function BizDashboardPage() {
       })
       .catch(() => {
         if (!cancelled) setFetchError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
       });
     return () => { cancelled = true; };
   }, [storeMonth]);

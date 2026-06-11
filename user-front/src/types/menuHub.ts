@@ -38,8 +38,8 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: "profit",
-    title: "수익/현금 흐름",
-    description: "수익과 현금 흐름을 정리해 핵심만 보여드려요.",
+    title: "손익 현황",
+    description: "순이익과 손익 흐름을 보여드려요.",
     icon: Wallet,
     iconBg: "bg-blue-50",
     iconColor: "text-primary",
@@ -47,7 +47,7 @@ export const MENU_ITEMS: MenuItem[] = [
   {
     id: "customer",
     title: "고객/온라인 활동",
-    description: "재방문과 고객 반응이 어떤지 요약해드려요.",
+    description: "고객 평가와 온라인 활동을 한눈에 보여드려요.",
     icon: Users,
     iconBg: "bg-blue-50",
     iconColor: "text-primary",

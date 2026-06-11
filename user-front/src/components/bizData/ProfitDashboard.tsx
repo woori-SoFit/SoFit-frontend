@@ -1,14 +1,30 @@
 /**
  * "실제로 얼마나 남았나요?" 카테고리 상세 화면
  *
- * 표시 데이터:
- * - 추정 순이익 + 현금 흐름 (2열 메인 카드)
- * - 최근 6개월 입출금 흐름 차트 (기존 TransactionBarChart 재활용)
- * - 월 입금액 / 월 출금액 (2열)
- * - 대출 잔액
+ * 사용 데이터 (BizDashboardData):
+ * - estimatedProfit: 추정 순이익
+ * - monthlyRevenue: 매출 (paymentFlowTrend 마지막 항목)
+ * - monthlyOutflow: 비용
+ * - paymentFlowTrend: 최근 N개월 매출/비용/순이익 흐름
+ * - monthlyProfitGrowthRate: 순이익 전월 대비 증감률
+ *
+ * UI 구성:
+ * 1. 이번 달 순이익 (큰 숫자) + 매출/비용 하위 행
+ * 2. 최근 N개월 손익 흐름 차트 (매출 Bar + 비용 Bar + 순이익 Line)
+ * 3. 순이익 증감 배너 (전월 대비)
  */
-import { ArrowDownLeft, ArrowUpRight, Landmark } from "lucide-react";
-import { TransactionBarChart } from "./TransactionBarChart";
+import { Store, Coins, TrendingUp, TrendingDown } from "lucide-react";
+import {
+  ResponsiveContainer,
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
 import { formatCurrency, formatChangeRate } from "@/utils/format";
 import type { BizDashboardData } from "@/types/bizData";
 
@@ -16,100 +32,209 @@ interface ProfitDashboardProps {
   data: BizDashboardData;
 }
 
-export function ProfitDashboard({ data }: ProfitDashboardProps) {
-  // 현금 흐름 전월 대비 (매출 증감률을 근사치로 사용)
-  const cashFlowChange = formatChangeRate(data.monthOverMonthChange);
-  const cashFlowChangeColor =
-    cashFlowChange.isPositive === null
-      ? "text-text-secondary"
-      : cashFlowChange.isPositive
-        ? "text-success"
-        : "text-error";
+/** Y축 만원 단위 포맷 */
+function formatYAxis(value: number): string {
+  const man = Math.round(value / 10000);
+  return man === 0 ? "0" : `${man.toLocaleString()}만`;
+}
 
-  // 최근 월의 입금/출금 (transactionFlow 마지막 항목)
-  const latestFlow = data.transactionFlow.length > 0
-    ? data.transactionFlow[data.transactionFlow.length - 1]
+export function ProfitDashboard({ data }: ProfitDashboardProps) {
+  // null 방어: API 응답에서 필드가 null로 올 수 있음
+  const estimatedProfit = data.estimatedProfit ?? 0;
+  const monthlyProfitGrowthRate = data.monthlyProfitGrowthRate ?? null;
+  const paymentFlowTrend = data.paymentFlowTrend ?? [];
+
+  // 순이익 증감률
+  const profitChange = formatChangeRate(monthlyProfitGrowthRate);
+  const isPositive = profitChange.isPositive;
+
+  // 차트 데이터 변환
+  const chartData = paymentFlowTrend.map((item) => {
+    // referenceMonth: "2025-03" → "3월"
+    const monthNum = parseInt(item.referenceMonth.split("-")[1], 10);
+    return {
+      month: `${monthNum}월`,
+      매출: item.monthlyRevenue ?? 0,
+      비용: item.monthlyOutflow ?? 0,
+      순이익: item.estimatedProfit ?? 0,
+    };
+  });
+
+  // 최근(마지막) 항목에서 매출/비용 표시
+  const latest = paymentFlowTrend.length > 0
+    ? paymentFlowTrend[paymentFlowTrend.length - 1]
+    : null;
+
+  // 전월 순이익 (증감 배너 부연설명용)
+  const prevProfit = paymentFlowTrend.length >= 2
+    ? paymentFlowTrend[paymentFlowTrend.length - 2].estimatedProfit ?? 0
+    : null;
+  const profitDiff = prevProfit !== null
+    ? estimatedProfit - prevProfit
     : null;
 
   return (
     <div className="flex flex-col gap-4 px-5 py-4">
-      {/* 추정 순이익 + 현금 흐름 2열 */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* 추정 순이익 */}
-        <div className="bg-bg-surface rounded-xl p-4 border border-border-default">
-          <p className="text-sm text-text-secondary mb-1">추정 순이익</p>
-          <p className="text-xl font-bold text-text-primary">
-            {formatCurrency(data.netProfit)}원
+      {/* 이번 달 순이익 메인 카드 */}
+      <div className="bg-bg-surface rounded-2xl p-5 border border-border-default">
+        <p className="text-sm text-text-secondary text-center mb-1">이번 달 순이익</p>
+        <p className="text-3xl font-bold text-text-primary text-center mb-1">
+          {formatCurrency(estimatedProfit)}원
+        </p>
+        {profitChange.isPositive !== null && (
+          <p className={`text-sm font-medium text-center mb-4 ${profitChange.isPositive ? "text-success" : "text-orange-500"}`}>
+            전월 대비 {profitChange.text}
           </p>
-        </div>
+        )}
+        {profitChange.isPositive === null && <div className="mb-4" />}
 
-        {/* 현금 흐름 */}
-        <div className="bg-bg-surface rounded-xl p-4 border border-border-default">
-          <p className="text-sm text-text-secondary mb-1">현금 흐름</p>
-          <p className="text-xl font-bold text-text-primary">
-            {formatCurrency(data.cashFlow)}원
-          </p>
-          {cashFlowChange.isPositive !== null && (
-            <div className="flex items-center gap-1 mt-1">
-              <div className={`w-4 h-4 rounded-full flex items-center justify-center ${cashFlowChange.isPositive ? "bg-success/10" : "bg-error/10"}`}>
-                {cashFlowChange.isPositive
-                  ? <ArrowUpRight size={10} className="text-success" />
-                  : <ArrowDownLeft size={10} className="text-error" />
-                }
+        {/* 매출 / 비용 하위 행 */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-bg-base">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Store size={16} className="text-primary" />
               </div>
-              <span className={`text-xs font-medium ${cashFlowChangeColor}`}>
-                전월 대비 {cashFlowChange.text} 증가
-              </span>
+              <span className="text-sm font-medium text-text-primary">매출</span>
             </div>
-          )}
+            <span className="text-sm font-bold text-text-primary">
+              {latest ? `${formatCurrency(latest.monthlyRevenue)}원` : "-"}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-bg-base">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Coins size={16} className="text-primary" />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-text-primary">비용</span>
+                <p className="text-xs text-text-disabled">고정비 포함</p>
+              </div>
+            </div>
+            <span className="text-sm font-bold text-text-primary">
+              {latest ? `${formatCurrency(latest.monthlyOutflow)}원` : "-"}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* 최근 6개월 입출금 흐름 차트 (기존 TransactionBarChart 재활용) */}
-      {data.transactionFlow.length > 0 && (
-        <div className="bg-bg-surface rounded-xl p-4 border border-border-default">
-          <TransactionBarChart data={data.transactionFlow} />
+      {/* 최근 N개월 손익 흐름 차트 */}
+      {chartData.length > 0 && (
+        <div className="bg-bg-surface rounded-2xl p-4 border border-border-default">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="font-semibold text-text-primary">
+              최근 {chartData.length}개월 손익 흐름
+            </h4>
+            <span className="text-xs text-text-secondary">금액(원)</span>
+          </div>
+
+          <ResponsiveContainer width="100%" height={200}>
+            <ComposedChart data={chartData} margin={{ top: 20, right: 0, left: 0, bottom: 0 }} barCategoryGap="25%">
+              <CartesianGrid strokeDasharray="4 2" stroke="var(--color-border-default)" vertical={false} />
+              <XAxis
+                dataKey="month"
+                tick={{ fontSize: 12, fill: "var(--color-gray-500)" }}
+                axisLine={false}
+                tickLine={false}
+              />
+              {/* 왼쪽 Y축: 매출/비용 */}
+              <YAxis
+                yAxisId="left"
+                tickFormatter={formatYAxis}
+                tick={{ fontSize: 10, fill: "var(--color-gray-700, #374151)" }}
+                axisLine={false}
+                tickLine={false}
+                width={50}
+              />
+              {/* 오른쪽 Y축: 순이익 */}
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                tickFormatter={formatYAxis}
+                tick={{ fontSize: 10, fill: "#374151" }}
+                axisLine={false}
+                tickLine={false}
+                width={50}
+              />
+              <Tooltip
+                formatter={(value: number, name: string) => [
+                  <span style={{ color: "#111", fontWeight: 600 }}>{formatCurrency(value)}원</span>,
+                  name,
+                ]}
+                labelStyle={{ fontWeight: 700, color: "#111" }}
+                itemStyle={{ fontWeight: 600, color: "#111" }}
+                contentStyle={{
+                  borderRadius: "8px",
+                  border: "1px solid var(--color-border-default)",
+                  fontSize: "12px",
+                }}
+              />
+              <Legend
+                content={() => (
+                  <div className="flex items-center justify-center gap-4 mt-2 text-xs">
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: "var(--color-primary)" }} />
+                      매출
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: "var(--color-gray-300)" }} />
+                      비용
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-block w-2 h-0.5 rounded" style={{ background: "var(--color-secondary)" }} />
+                      순이익
+                    </span>
+                  </div>
+                )}
+              />
+              <Bar yAxisId="left" dataKey="매출" fill="var(--color-primary)" radius={[3, 3, 0, 0]} />
+              <Bar yAxisId="left" dataKey="비용" fill="var(--color-gray-300)" radius={[3, 3, 0, 0]} />
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="순이익"
+                stroke="var(--color-secondary)"
+                strokeWidth={2}
+                dot={{ r: 4, fill: "var(--color-bg-surface)", stroke: "var(--color-secondary)", strokeWidth: 2 }}
+                activeDot={{ r: 5, fill: "var(--color-secondary)" }}
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
         </div>
       )}
 
-      {/* 월 입금액 / 월 출금액 */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-            <ArrowDownLeft size={18} className="text-primary" />
+      {/* 순이익 증감 배너 */}
+      {isPositive !== null && (
+        <div className={`rounded-2xl p-4 flex items-start gap-3 ${isPositive ? "bg-primary/5" : "bg-error/5"}`}>
+          <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${isPositive ? "bg-primary/10" : "bg-error/10"}`}>
+            {isPositive
+              ? <TrendingUp size={18} className="text-primary" />
+              : <TrendingDown size={18} className="text-error" />
+            }
           </div>
-          <div>
-            <p className="text-sm text-text-secondary mb-0.5">월 입금액</p>
-            <p className="text-sm font-bold text-text-primary">
-              {latestFlow ? `${formatCurrency(latestFlow.income)}원` : "-"}
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-text-primary">
+              {profitDiff !== null
+                ? <>순이익이 지난달보다 {isPositive ? "증가" : "감소"}했어요</>
+                : <>이번 달 순이익이 발생했어요</>
+              }
+            </p>
+            <p className="text-xs text-text-secondary mt-0.5">
+              {latest && (
+                <>
+                  {parseInt(latest.referenceMonth.split("-")[1], 10)}월 순이익은 {formatCurrency(estimatedProfit)}원
+                  {profitDiff !== null ? (
+                    <>으로,<br />지난달보다 {formatCurrency(Math.abs(profitDiff))}원 {isPositive ? "증가" : "감소"}했어요.</>
+                  ) : (
+                    <>이에요. 좋은 출발이에요!</>
+                  )}
+                </>
+              )}
             </p>
           </div>
         </div>
-        <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-            <ArrowUpRight size={18} className="text-primary" />
-          </div>
-          <div>
-            <p className="text-sm text-text-secondary mb-0.5">월 출금액</p>
-            <p className="text-sm font-bold text-text-primary">
-              {latestFlow ? `${formatCurrency(latestFlow.expense)}원` : "-"}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 대출 잔액 */}
-      <div className="bg-bg-surface rounded-xl p-4 border border-border-default flex items-center gap-3">
-        <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-          <Landmark size={18} className="text-primary" />
-        </div>
-        <div>
-          <p className="text-sm text-text-secondary mb-0.5">대출 잔액</p>
-          <p className="text-lg font-bold text-text-primary">
-            {formatCurrency(data.loanBalance)}원
-          </p>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
