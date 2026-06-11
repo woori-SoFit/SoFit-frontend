@@ -24,6 +24,7 @@ import {
   Receipt,
 } from "lucide-react";
 import { useLayoutStore } from "@/stores/layoutStore";
+import { useMe } from "@/hooks/useMe";
 import { BottomButton } from "@/components/common/BottomButton";
 import { DraftResumeModal } from "@/components/loan/DraftResumeModal";
 import { EmptyError } from "@/components/common/EmptyError";
@@ -72,6 +73,8 @@ export default function LoanDetailPage() {
     enabled: !!productId,
   });
 
+  const { isLoggedIn } = useMe();
+
   const onBack = useLayoutStore((s) => s.onBack);
   const onHome = useLayoutStore((s) => s.onHome);
 
@@ -101,6 +104,14 @@ export default function LoanDetailPage() {
 
   const handleApplyClick = async () => {
     if (!product || isChecking) return;
+
+    // 비로그인 상태면 로그인 페이지로 이동
+    if (!isLoggedIn) {
+      const returnUrl = `/loan/${product.productId}`;
+      navigate(`/login?returnUrl=${encodeURIComponent(returnUrl)}`, { replace: true });
+      return;
+    }
+
     setIsChecking(true);
     try {
       const result = await checkLoanDraft(product.productId);
