@@ -28,7 +28,7 @@ export function BizDataCheckStep({ onNext, isLoading = false, heading = "성장 
         <h2 className="text-xl font-bold text-text-primary text-center leading-snug whitespace-pre-line">
           {heading}
           <br />
-          <span className="text-primary">마이 비즈 데이터</span>를 불러와야 해요.
+          <span className="text-primary">마이 비즈 데이터</span>를 불러와야 해요
         </h2>
 
         {/* 보조 설명 */}
