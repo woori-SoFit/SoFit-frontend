@@ -13,11 +13,11 @@
  */
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
-import product1Icon from "@/assets/icons/Product1.png";
 import product2Icon from "@/assets/icons/Product2.png";
 import product3Icon from "@/assets/icons/Product3.png";
 
-const PRODUCT_ICONS = [product1Icon, product2Icon, product3Icon];
+// 첫 번째 아이콘은 preload된 public 경로 사용
+const PRODUCT_ICONS = ["/Product1.png", product2Icon, product3Icon];
 
 export interface ProductCard {
   id: number;
@@ -176,6 +176,8 @@ export function ProductCardSlider({
                     height={160}
                     aria-hidden="true"
                     className="w-40 h-40 object-contain"
+                    fetchPriority={i === 0 ? "high" : undefined}
+                    loading={i === 0 ? undefined : "lazy"}
                   />
                 </div>
 
