@@ -349,6 +349,13 @@ function DecisionStepper({ decisions }: { decisions: ReviewDecision[] }) {
     decisions.length > 0 ? decisions.length - 1 : null
   );
 
+  // decisions가 갱신되면 최신 항목(현재 상태)으로 포커스
+  useEffect(() => {
+    if (decisions.length > 0) {
+      setSelectedIdx(decisions.length - 1);
+    }
+  }, [decisions.length]);
+
   const handleStepClick = useCallback((idx: number) => {
     setSelectedIdx((prev) => (prev === idx ? null : idx));
   }, []);
@@ -431,7 +438,7 @@ function DecisionStepper({ decisions }: { decisions: ReviewDecision[] }) {
                 type="button"
                 onClick={() => isCompleted && handleStepClick(idx)}
                 disabled={!isCompleted}
-                className={`group flex items-center gap-2 rounded-full px-2.5 py-1 transition-colors ${
+                className={`group flex items-center gap-2 rounded-full pl-2 pr-3 py-1 transition-colors ${
                   isSelected && isCompleted
                     ? 'bg-gray-100 ring-1 ring-gray-200'
                     : isCompleted
