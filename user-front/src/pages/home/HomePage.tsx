@@ -18,6 +18,7 @@ import { fetchLoanProducts, fetchLoanDrafts } from "@/api/loanApi";
 import { useMe } from "@/hooks/useMe";
 import type { LoanProductListItem } from "@/types/loan";
 import { HOME_MENU_ITEMS } from "@/constants/homeMenuItems";
+import { FALLBACK_CARDS } from "@/constants/fallbackProducts";
 import { formatAmount } from "@/utils/format";
 import mainLogo from "@/assets/mainLogo.svg";
 
@@ -88,9 +89,12 @@ export default function HomePage() {
     refetchOnMount: "always",
   });
 
-  // API 데이터 → ProductCard 변환 후 최소 6개 반복
-  const baseCards = loanProducts.map((product, i) => toProductCard(product, i));
+  // API 데이터 → ProductCard 변환, 응답 전에는 fallback 사용
+  const baseCards = loanProducts.length > 0
+    ? loanProducts.map((product, i) => toProductCard(product, i))
+    : FALLBACK_CARDS;
   const productCards = repeatCards(baseCards, 6);
+  const originalCount = loanProducts.length > 0 ? loanProducts.length : FALLBACK_CARDS.length;
 
   return (
     <div className="pb-8">
@@ -110,7 +114,7 @@ export default function HomePage() {
       {/* ── 상품 카드 슬라이더 ── */}
       <ProductCardSlider
         cards={productCards}
-        originalCount={loanProducts.length}
+        originalCount={originalCount}
         onCardClick={(productId) => navigate(`/loan/${productId}`)}
       />
 
