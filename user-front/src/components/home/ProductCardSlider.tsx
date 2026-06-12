@@ -13,9 +13,9 @@
  */
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
-import product1Icon from "@/assets/icons/Product1.svg";
-import product2Icon from "@/assets/icons/Product2.svg";
-import product3Icon from "@/assets/icons/Product3.svg";
+import product1Icon from "@/assets/icons/Product1.png";
+import product2Icon from "@/assets/icons/Product2.png";
+import product3Icon from "@/assets/icons/Product3.png";
 
 const PRODUCT_ICONS = [product1Icon, product2Icon, product3Icon];
 
@@ -172,6 +172,8 @@ export function ProductCardSlider({
                   <img
                     src={PRODUCT_ICONS[(card.productId - 1) % PRODUCT_ICONS.length]}
                     alt=""
+                    width={160}
+                    height={160}
                     aria-hidden="true"
                     className="w-40 h-40 object-contain"
                   />
