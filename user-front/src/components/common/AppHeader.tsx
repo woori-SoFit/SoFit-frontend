@@ -30,7 +30,7 @@ export function AppHeader({ visible = true }: AppHeaderProps) {
       <div className="flex items-center justify-between px-4 h-14">
         {/* 로고 */}
         <Link to="/" className="flex items-center">
-          <img src={mainLogo} alt="SoFit" className="h-10" />
+          <img src={mainLogo} alt="SoFit" width={72} height={40} />
         </Link>
 
         {/* 우측 액션 */}

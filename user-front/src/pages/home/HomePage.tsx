@@ -162,7 +162,7 @@ export default function HomePage() {
                 className="flex items-center justify-between bg-white rounded-2xl px-3 py-4 shadow-[--shadow-card] border border-border-default active:scale-[0.97] transition-transform text-left"
               >
                 <div className="flex items-center gap-2">
-                  <img src={item.icon} alt="" aria-hidden="true" className="w-6.5 h-6.5 object-contain" />
+                  <img src={item.icon} alt="" aria-hidden="true" className="w-6.5 h-6.5 object-contain" width={26} height={26} />
                   <span className="text-[15px] font-semibold text-text-primary">
                     {item.label}
                   </span>

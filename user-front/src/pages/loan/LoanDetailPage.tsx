@@ -32,9 +32,9 @@ import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpi
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProduct, checkLoanDraft, deleteLoanApplication } from "@/api/loanApi";
 import { formatMaxAmount, formatMaxTerm } from "@/utils/format";
-import product1Icon from "@/assets/icons/Product1.svg";
-import product2Icon from "@/assets/icons/Product2.svg";
-import product3Icon from "@/assets/icons/Product3.svg";
+import product1Icon from "@/assets/icons/Product1.png";
+import product2Icon from "@/assets/icons/Product2.png";
+import product3Icon from "@/assets/icons/Product3.png";
 import type { LoanProductDescription } from "@/types/loan";
 
 const PRODUCT_ICONS = [product1Icon, product2Icon, product3Icon];
@@ -185,7 +185,7 @@ export default function LoanDetailPage() {
           </div>
 
           <div className="flex items-center justify-center py-8 z-1">
-            <img src={PRODUCT_ICONS[(product.productId - 1) % PRODUCT_ICONS.length]} alt="" aria-hidden="true" className="w-62 h-62 object-contain" />
+            <img src={PRODUCT_ICONS[(product.productId - 1) % PRODUCT_ICONS.length]} width={160} height={160} alt="" aria-hidden="true" className="w-62 h-62 object-contain" />
           </div>
 
           {/* 요약 정보 카드 */}
