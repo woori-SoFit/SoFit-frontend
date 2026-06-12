@@ -30,8 +30,8 @@ function getCategoryTitle(category: MenuCategory, monthLabel: string): string {
   const titles: Record<MenuCategory, string> = {
     sales: `${monthLabel} 장사는 어땠나요?`,
     profit: `${monthLabel} 수익 흐름은 어떤가요?`,
-    customer: "온라인에서 좋은 인상을\n주고 있나요?",
-    industry: "우리 가게는 다른 가게보다\n잘하고 있나요?",
+    customer: "온라인 평판을 분석했어요",
+    industry: "우리 가게는 상위 몇 %일까요?",
   };
   return titles[category];
 }

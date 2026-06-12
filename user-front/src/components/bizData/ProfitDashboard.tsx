@@ -215,7 +215,7 @@ export function ProfitDashboard({ data }: ProfitDashboardProps) {
                 <>
                   {parseInt(latest.referenceMonth.split("-")[1], 10)}월 순이익은 <span className="font-bold">{formatCurrency(estimatedProfit)}원</span>
                   {profitDiff !== null ? (
-                    <>으로,<br />지난달보다 {formatCurrency(Math.abs(profitDiff))}원 {isPositive ? "증가" : "감소"}했어요.</>
+                    <>으로,<br />지난달보다 <span className="font-bold">{formatCurrency(Math.abs(profitDiff))}원</span> {isPositive ? "증가" : "감소"}했어요.</>
                   ) : (
                     <>이에요. 좋은 출발이에요!</>
                   )}
