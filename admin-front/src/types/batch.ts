@@ -1,5 +1,5 @@
 /** 배치 실행 상태 */
-export type BatchStatus = 'COMPLETED' | 'FAILED' | 'RUNNING';
+export type BatchStatus = 'COMPLETED' | 'FAILED' | 'RUNNING' | 'SUCCESS' | 'FAIL';
 
 /** 배치 종류 */
 export type BatchType = 'S_GRADE' | 'SYSTEM_REVIEW';

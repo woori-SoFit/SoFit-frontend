@@ -5,6 +5,7 @@ import { triggerManualBatch } from '@/api/batchApi';
 import { BATCH_KEYS } from '@/constants/queryKeys';
 import BatchTable from '@/components/batch/BatchTable';
 import BatchScheduleCard from '@/components/batch/BatchScheduleCard';
+import LoanDecisionScheduleCard from '@/components/batch/LoanDecisionScheduleCard';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
 import Pagination from '@/components/common/Pagination';
@@ -89,68 +90,57 @@ export default function BatchPage() {
         </button>
       </div>
 
-      {/* 시스템 심사 탭: 안내 문구 */}
-      {batchType === 'SYSTEM_REVIEW' && (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-lg font-medium text-text-secondary mb-2">시스템 심사 배치</p>
-            <p className="text-sm text-text-disabled">대출 신청 건에 대해 시스템 심사를 수동으로 실행합니다.</p>
+      {/* 자동 배치 현황 카드 */}
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <h2 className="text-base font-semibold text-text-primary">자동 배치 현황</h2>
+        </div>
+        {isLoading ? (
+          <div className="flex gap-4">
+            <div className="flex-1 h-40 bg-gray-50 rounded-lg animate-pulse" />
           </div>
+        ) : (
+          <div className="flex gap-4">
+            {batchType === 'S_GRADE' ? (
+              <BatchScheduleCard latestBatch={data?.batches[0] ?? null} />
+            ) : (
+              <LoanDecisionScheduleCard latestBatch={data?.batches[0] ?? null} />
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* 실행 이력 섹션 */}
+      <div className="flex items-center gap-3 mb-4">
+        <h2 className="text-base font-semibold text-text-primary">실행 이력</h2>
+        {!isLoading && data && (
+          <span className="text-sm text-text-secondary">
+            총 {data.totalCount}건
+          </span>
+        )}
+      </div>
+
+      {/* 로딩 상태 */}
+      {isLoading && <LoadingState />}
+
+      {/* 에러 상태 */}
+      {isError && <ErrorState onRetry={() => refetch()} />}
+
+      {/* 테이블 */}
+      {!isLoading && !isError && data && (
+        <div className="flex-1">
+          <BatchTable data={data.batches} />
         </div>
       )}
 
-      {/* S등급 산출 탭: 배치 현황 + 이력 */}
-      {batchType === 'S_GRADE' && (
-        <>
-          {/* 자동 배치 현황 카드 */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <h2 className="text-base font-semibold text-text-primary">자동 배치 현황</h2>
-            </div>
-            {isLoading ? (
-              <div className="flex gap-4">
-                <div className="flex-1 h-40 bg-gray-50 rounded-lg animate-pulse" />
-              </div>
-            ) : (
-              <div className="flex gap-4">
-                <BatchScheduleCard latestBatch={data?.batches[0] ?? null} />
-              </div>
-            )}
-          </div>
-
-          {/* 실행 이력 섹션 */}
-          <div className="flex items-center gap-3 mb-4">
-            <h2 className="text-base font-semibold text-text-primary">실행 이력</h2>
-            {!isLoading && data && (
-              <span className="text-sm text-text-secondary">
-                총 {data.totalCount}건
-              </span>
-            )}
-          </div>
-
-          {/* 로딩 상태 */}
-          {isLoading && <LoadingState />}
-
-          {/* 에러 상태 */}
-          {isError && <ErrorState onRetry={() => refetch()} />}
-
-          {/* 테이블 */}
-          {!isLoading && !isError && data && (
-            <div className="flex-1">
-              <BatchTable data={data.batches} />
-            </div>
-          )}
-
-          {/* 페이지네이션 */}
-          {!isLoading && !isError && data && data.totalPages > 1 && (
-            <Pagination
-              currentPage={page}
-              totalPages={data.totalPages}
-              onPageChange={setPage}
-              className="mt-auto"
-            />
-          )}
-        </>
+      {/* 페이지네이션 */}
+      {!isLoading && !isError && data && data.totalPages > 1 && (
+        <Pagination
+          currentPage={page}
+          totalPages={data.totalPages}
+          onPageChange={setPage}
+          className="mt-auto"
+        />
       )}
     </div>
   );
