@@ -32,7 +32,7 @@ export default function LoanResultPage() {
   }, []);
 
   const { data, isLoading } = useQuery({
-    queryKey: LOAN_KEYS.application(Number(applicationId)),
+    queryKey: LOAN_KEYS.applicationCompleted(Number(applicationId)),
     queryFn: () => fetchLoanApplicationCompletedDetail(Number(applicationId)),
     enabled: !!applicationId,
   });

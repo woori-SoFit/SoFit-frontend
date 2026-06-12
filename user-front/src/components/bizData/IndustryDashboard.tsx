@@ -226,12 +226,12 @@ export function IndustryDashboard({ data }: IndustryDashboardProps) {
         <div className="px-5 pt-4 pb-3">
           <h3 className="text-sm font-semibold text-text-primary">{compareLabel} 평균 비교</h3>
         </div>
-        <table className="w-full">
+        <table className="w-full table-fixed">
           <thead>
             <tr className="bg-gray-50 border-y border-border-default">
-              <th className="text-left text-xs font-medium text-text-secondary px-5 py-2.5">지표</th>
-              <th className="text-right text-xs font-medium text-text-secondary px-4 py-2.5">내 가게</th>
-              <th className="text-right text-xs font-medium text-text-secondary px-5 py-2.5">{isIndustry ? "업종" : "상권"} 평균</th>
+              <th className="w-1/3 text-left text-xs font-medium text-text-secondary px-5 py-2.5">지표</th>
+              <th className="w-1/3 text-right text-xs font-medium text-text-secondary px-4 py-2.5">내 가게</th>
+              <th className="w-1/3 text-right text-xs font-medium text-text-secondary px-5 py-2.5">{isIndustry ? "업종" : "상권"} 평균</th>
             </tr>
           </thead>
           <tbody>

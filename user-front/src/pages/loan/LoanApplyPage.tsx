@@ -27,7 +27,6 @@ import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpi
 import { LoanApplyResult } from "@/components/loan/LoanApplyResult";
 import { BizDataCheckStep } from "@/components/grade/BizDataCheckStep";
 import { IntroSection } from "@/components/bizData/IntroSection";
-import { BottomButton } from "@/components/common/BottomButton";
 import { ExitConfirmModal } from "@/components/loan/ExitConfirmModal";
 import { StepProgress } from "@/components/common/StepProgress";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -130,7 +129,12 @@ export default function LoanApplyPage() {
   }, []);
 
   useEffect(() => {
-    useLayoutStore.getState().setStepTitle("대출 신청");
+    // BIZ_INTRO에서는 헤더 타이틀 숨김
+    if (currentStep === "BIZ_INTRO") {
+      useLayoutStore.getState().setStepTitle("");
+    } else {
+      useLayoutStore.getState().setStepTitle("대출 신청");
+    }
 
     if (currentStep === "RESULT") {
       // 대출 신청 완료 화면에서는 뒤로가기 비활성, 홈 버튼은 바로 이동
@@ -281,19 +285,14 @@ export default function LoanApplyPage() {
 
     case "BIZ_INTRO":
       return (
-        <div className="flex flex-col h-full">
-          <div className="flex-1">
-            <IntroSection />
-          </div>
-          <BottomButton
-            label="데이터 불러오기"
-            onClick={() => {
-              navigate("/biz-data/collect", {
-                state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "TERMS", buttonLabel: "대출 조건 입력하기", applicationId },
-              });
-            }}
-          />
-        </div>
+        <IntroSection
+          buttonLabel="데이터 불러오기"
+          onButtonClick={() => {
+            navigate("/biz-data/collect", {
+              state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "TERMS", buttonLabel: "대출 조건 입력하기", applicationId },
+            });
+          }}
+        />
       );
 
     case "LOAN_CONDITIONS":

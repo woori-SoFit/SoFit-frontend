@@ -64,12 +64,14 @@ export const ROUTE_CONFIG: RouteGroupConfig[] = [
         label: '서버 상태 확인',
         path: '/server-status',
         allowedRoles: ['ADMIN_DEV'],
+        showInMenu: false,
       },
       {
         key: 'error-logs',
         label: '에러 로그',
         path: '/error-logs',
         allowedRoles: ['ADMIN_DEV'],
+        showInMenu: false,
       },
       {
         key: 'batch',

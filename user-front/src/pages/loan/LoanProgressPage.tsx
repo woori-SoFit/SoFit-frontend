@@ -5,9 +5,8 @@
  *
  * 심사 중 + 심사 완료 대출 목록을 API에서 조회하여 카드 슬라이더로 표시
  *
- * Polling 전략:
- * - 심사 중인 대출이 있는 동안 5초마다 재조회 (은행원 심사 결과 반영)
- * - 심사 중 목록이 비어지면 polling 자동 중단
+ * 실시간 업데이트 전략:
+ * - SSE(useSSE 훅)를 통해 LOAN_DECIDED 이벤트 수신 시 자동 refetch
  * - 탭 포커스 복귀 시에도 최신 상태 반영 (refetchOnWindowFocus)
  */
 import { useEffect } from "react";
@@ -20,9 +19,7 @@ import { CardSlider } from "@/components/loan/CardSlider";
 import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import type { LoanApplication } from "@/types/loan";
 import nonewibee1 from "@/assets/icons/None-BizData.svg";
-import nonewibee2 from "@/assets/icons/None-BizData2.svg"
-
-const POLL_INTERVAL = 5_000; // 5초
+import nonewibee2 from "@/assets/icons/None-BizData2.svg";
 
 export default function LoanProgressPage() {
   const navigate = useNavigate();
@@ -36,10 +33,6 @@ export default function LoanProgressPage() {
     queryFn: fetchLoanApplicationsInProgress,
     staleTime: 0,
     refetchOnMount: "always",
-    refetchInterval: (query) => {
-      const data = query.state.data as LoanApplication[] | undefined;
-      return (data?.length ?? 0) > 0 ? POLL_INTERVAL : false;
-    },
     refetchOnWindowFocus: true,
   });
 
@@ -48,9 +41,6 @@ export default function LoanProgressPage() {
     queryFn: fetchLoanApplicationsCompleted,
     staleTime: 0,
     refetchOnMount: "always",
-    refetchInterval: () => {
-      return inProgress.length > 0 ? POLL_INTERVAL : false;
-    },
     refetchOnWindowFocus: true,
   });
 

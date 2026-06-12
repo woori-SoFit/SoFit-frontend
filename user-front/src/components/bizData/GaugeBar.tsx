@@ -20,8 +20,8 @@ export function GaugeBar({ label, percent, color, tooltip }: GaugeBarProps) {
   }, [fillPercent]);
 
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex items-center gap-1 w-20 shrink-0">
+    <div className="flex items-center">
+      <div className="flex items-center gap-1 w-18 shrink-0">
         <span className="text-sm font-medium text-text-primary">{label}</span>
         {tooltip && <InfoTooltip ariaLabel={`${label} 설명`} message={tooltip} />}
       </div>
@@ -31,7 +31,7 @@ export function GaugeBar({ label, percent, color, tooltip }: GaugeBarProps) {
           style={{ width: `${width}%` }}
         />
       </div>
-      <span className={`text-sm font-medium shrink-0 ${color.replace("bg-", "text-")}`}>
+      <span className={`w-18 text-right text-sm font-medium shrink-0 ${color.replace("bg-", "text-")}`}>
         상위 {clampedPercent}%
       </span>
     </div>

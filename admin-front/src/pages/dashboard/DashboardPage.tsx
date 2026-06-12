@@ -68,7 +68,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-5">
           {/* 상태 — 미니 셰브론 스텝퍼 */}
           <div className="flex items-center">
-            <span className="text-xs text-text-secondary mr-2">상태</span>
+            <span className="text-xs text-text-secondary font-semibold mr-3">상태</span>
             <div className="flex items-center">
               {STATUS_STEPS.map((step, index) => {
                 const isActive = statusFilter === step.value;
@@ -85,7 +85,7 @@ export default function DashboardPage() {
                       ${isLast ? 'rounded-r-md' : ''}
                       ${isActive
                         ? 'bg-primary text-white'
-                        : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                        : 'bg-gray-150 text-gray-500 hover:bg-gray-200'
                       }
                     `}
                     style={{
@@ -106,8 +106,8 @@ export default function DashboardPage() {
           {/* 담당자 — 탭 스타일 (지점장에게는 숨김) */}
           {!isManager && (
           <div className="flex items-center">
-            <span className="text-xs text-text-secondary mr-2">담당자</span>
-            <div className="flex items-center bg-gray-100 rounded-md p-0.5">
+            <span className="text-xs text-text-secondary font-semibold mr-3">담당자</span>
+            <div className="flex items-center bg-gray-150 rounded-md p-0.5">
               <button
                 type="button"
                 onClick={() => handleTabChange('mine')}
