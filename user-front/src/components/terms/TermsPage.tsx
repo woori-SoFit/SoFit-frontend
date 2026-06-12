@@ -13,14 +13,18 @@
  * termType을 전달하면 API에서 약관 목록을 자동 조회합니다.
  * terms를 직접 전달하면 기존처럼 정적 데이터를 사용합니다.
  */
-import { useState, useRef } from "react";
+import { useState, useRef, lazy, Suspense } from "react";
 import type { TermsItem, TermType } from "@/types/common";
 import { TermsAgreement } from "./TermsAgreement";
-import { TermsDetailSheet } from "./TermsDetailSheet";
 import { BottomButton } from "@/components/common/BottomButton";
 import { EmptyError } from "@/components/common/EmptyError";
 import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { useTerms } from "@/hooks/useTerms";
+
+// react-pdf(~944KB)를 메인 번들에서 분리하기 위해 지연 로딩
+const TermsDetailSheet = lazy(() =>
+  import("./TermsDetailSheet").then((m) => ({ default: m.TermsDetailSheet }))
+);
 
 interface TermsPageBaseProps {
   /** 페이지 상단 타이틀 */
@@ -156,12 +160,16 @@ export function TermsPage({
       />
 
       {/* 약관 상세 시트 */}
-      <TermsDetailSheet
-        term={detailTerm}
-        isOpen={detailTerm !== null}
-        onClose={handleSheetClose}
-        onAgree={handleSheetAgree}
-      />
+      {detailTerm !== null && (
+        <Suspense fallback={null}>
+          <TermsDetailSheet
+            term={detailTerm}
+            isOpen={detailTerm !== null}
+            onClose={handleSheetClose}
+            onAgree={handleSheetAgree}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

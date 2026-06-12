@@ -10,6 +10,22 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react(), tailwindcss()],
 
+    // lucide-react tree shaking 최적화: 개별 아이콘만 번들에 포함되도록
+    optimizeDeps: {
+      include: ["lucide-react"],
+    },
+
+    build: {
+      rollupOptions: {
+        output: {
+          // lucide-react를 별도 청크로 분리하여 캐싱 효율 향상
+          manualChunks: {
+            'vendor-icons': ['lucide-react'],
+          },
+        },
+      },
+    },
+
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
