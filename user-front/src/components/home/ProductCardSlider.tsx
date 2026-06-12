@@ -40,6 +40,8 @@ interface ProductCardSliderProps {
   onCardClick?: (productId: number) => void;
   /** 자동 슬라이드 간격 (ms, 기본 3000) */
   interval?: number;
+  /** 자동 슬라이드 시작 지연 (ms, 기본 5000) — LCP 안정화를 위해 초기 렌더 후 일정 시간 고정 */
+  autoplayDelayStart?: number;
 }
 
 export function ProductCardSlider({
@@ -47,6 +49,7 @@ export function ProductCardSlider({
   originalCount,
   onCardClick,
   interval = 3000,
+  autoplayDelayStart = 5000,
 }: ProductCardSliderProps) {
   const N = cards.length;
   const [displayIndex, setDisplayIndex] = useState(0);
@@ -59,16 +62,23 @@ export function ProductCardSlider({
   const touchDeltaX = useRef(0);
   const isSwiping = useRef(false);
 
-  // 자동 슬라이드
+  // 자동 슬라이드 (초기 지연 후 시작 — LCP 안정화)
+  const [autoplayReady, setAutoplayReady] = useState(false);
+
   useEffect(() => {
-    if (isPaused || N <= 1) return;
+    const delayTimer = setTimeout(() => setAutoplayReady(true), autoplayDelayStart);
+    return () => clearTimeout(delayTimer);
+  }, [autoplayDelayStart]);
+
+  useEffect(() => {
+    if (!autoplayReady || isPaused || N <= 1) return;
     timerRef.current = setInterval(() => {
       advance(1);
     }, interval);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isPaused, N, interval]);
+  }, [autoplayReady, isPaused, N, interval]);
 
   const advance = (dir: 1 | -1) => {
     setDisplayIndex((prev) => {
