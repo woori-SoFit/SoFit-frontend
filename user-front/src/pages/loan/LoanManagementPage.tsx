@@ -19,7 +19,7 @@ import nonewibee1 from "@/assets/icons/None-BizData.svg";
 
 export default function LoanManagementPage() {
   useEffect(() => {
-    useLayoutStore.getState().setStepTitle("대출 관리");
+    useLayoutStore.getState().setStepTitle("실행 대출 관리");
   }, []);
 
   const { data: executions = [], isLoading } = useQuery({
@@ -57,7 +57,7 @@ export default function LoanManagementPage() {
       {/* 대출 카드 목록 */}
       <section className="px-5 flex flex-col gap-4">
         {executions.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[230px] gap-2">
+          <div className="fixed inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
             <img
               src={nonewibee1}
               alt=""

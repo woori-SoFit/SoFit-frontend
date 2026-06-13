@@ -22,7 +22,7 @@ export const HOME_MENU_ITEMS: MenuItem[] = [
   },
   {
     id: "loan-management",
-    label: "대출 관리",
+    label: "실행 대출 관리",
     to: "/loan-management",
     icon: icon5,
   },
