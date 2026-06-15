@@ -54,7 +54,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: "industry",
-    title: "업종 비교",
+    title: "업종/상권 비교",
     description: "업종 안에서 우리 가게 위치를 쉽게 보여드려요.",
     icon: Trophy,
     iconBg: "bg-blue-50",

@@ -42,7 +42,7 @@ function getCategoryLabel(category: MenuCategory): string {
     sales: "매출 분석",
     profit: "손익 현황",
     customer: "고객/온라인 활동",
-    industry: "업종 비교",
+    industry: "업종/상권 비교",
   };
   return labels[category];
 }
