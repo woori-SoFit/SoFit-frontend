@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/authStore";
 import { useAuthMe } from "@/hooks/useAuthMe";
 import { logoutAdmin } from "@/api/authApi";
+import { resetCsrfToken } from "@/api/axiosInstance";
 import Button from "@/components/common/Button";
 import mainLogo from "@/assets/mainLogo.svg";
 
@@ -22,6 +23,7 @@ export function Header() {
     try {
       await logoutAdmin();
     } finally {
+      resetCsrfToken();
       logout();
       queryClient.clear();
       navigate("/login", { replace: true });
