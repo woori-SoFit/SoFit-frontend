@@ -21,8 +21,8 @@ const FEATURES: IntroFeatureItem[] = [
   {
     icon: Trophy,
     iconColor: "text-primary",
-    title: "맞춤형 우대 혜택",
-    description: "성장 등급에 따른 높은 한도와 낮은 금리 설계",
+    title: "AI 분석 리포트",
+    description: "성장 요인과 개선 포인트를 한눈에 확인",
   },
 ];
 

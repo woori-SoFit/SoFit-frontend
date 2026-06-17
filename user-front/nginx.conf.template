@@ -53,5 +53,9 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+
+        # 백엔드가 쿠키 Path를 /api로 설정해도 브라우저 전체에서 유효하도록 보정
+        proxy_cookie_path /api /;
+        proxy_cookie_path / /;
     }
 }
