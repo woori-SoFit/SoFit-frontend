@@ -1,12 +1,11 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from '@playwright/test';
+import { mockAuthenticatedUser } from './helpers/mockAuth';
 
-test("메인 페이지 진입", async ({ page }) => {
-  await page.goto("/");
+test('메인 페이지 진입', async ({ page }) => {
+  await mockAuthenticatedUser(page);
 
-  await page.screenshot({
-    path: "main-page.png",
-    fullPage: true,
-  });
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
 
   await expect(page).toHaveTitle(/SoFit/i);
 });
