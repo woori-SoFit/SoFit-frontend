@@ -1,49 +1,45 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import { PublicLayout } from "@/components/common/PublicLayout";
 import { MainLayout } from "@/components/common/MainLayout";
 import { StepLayout } from "@/components/common/StepLayout";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 
 // Auth
 import LoginPage from "@/pages/auth/LoginPage";
-import SignupPage from "@/pages/auth/SignupPage";
 
-// Home
+// Home (첫 화면 — 즉시 로딩)
 import HomePage from "@/pages/home/HomePage";
 
-// Loan
-import LoanListPage from "@/pages/loan/LoanListPage";
-import LoanDetailPage from "@/pages/loan/LoanDetailPage";
-import LoanApplyPage from "@/pages/loan/LoanApplyPage";
-import LoanPreApplyPage from "@/pages/loan/LoanPreApplyPage";
-import LoanReviewPage from "@/pages/loan/LoanReviewPage";
-import LoanResultPage from "@/pages/loan/LoanResultPage";
-import LoanAgreementPage from "@/pages/loan/LoanAgreementPage";
-import LoanExecutionPage from "@/pages/loan/LoanExecutionPage";
-import LoanProgressPage from "@/pages/loan/LoanProgressPage";
+// 지연 로딩 페이지 (lottie-react, 대형 라이브러리 포함)
+const SignupPage = lazy(() => import("@/pages/auth/SignupPage"));
+const LoanListPage = lazy(() => import("@/pages/loan/LoanListPage"));
+const LoanDetailPage = lazy(() => import("@/pages/loan/LoanDetailPage"));
+const LoanApplyPage = lazy(() => import("@/pages/loan/LoanApplyPage"));
+const LoanPreApplyPage = lazy(() => import("@/pages/loan/LoanPreApplyPage"));
+const LoanReviewPage = lazy(() => import("@/pages/loan/LoanReviewPage"));
+const LoanResultPage = lazy(() => import("@/pages/loan/LoanResultPage"));
+const LoanAgreementPage = lazy(() => import("@/pages/loan/LoanAgreementPage"));
+const LoanExecutionPage = lazy(() => import("@/pages/loan/LoanExecutionPage"));
+const LoanProgressPage = lazy(() => import("@/pages/loan/LoanProgressPage"));
+const BizDataPage = lazy(() => import("@/pages/bizData/BizDataPage"));
+const BizDataCollectPage = lazy(() => import("@/pages/bizData/BizDataCollectPage"));
+const BizDashboardPage = lazy(() => import("@/pages/bizData/BizDashboardPage"));
+const GradeReportPage = lazy(() => import("@/pages/grade/GradeReportPage"));
+const GradeReportDetailPage = lazy(() => import("@/pages/grade/GradeReportDetailPage"));
+const LoanManagementPage = lazy(() => import("@/pages/loan/LoanManagementPage"));
+const MyPage = lazy(() => import("@/pages/mypage/MyPage"));
+const ProfilePage = lazy(() => import("@/pages/mypage/ProfilePage"));
+const BusinessInfoPage = lazy(() => import("@/pages/mypage/BusinessInfoPage"));
+const WithdrawPage = lazy(() => import("@/pages/mypage/WithdrawPage"));
+const NotificationsPage = lazy(() => import("@/pages/notification/NotificationsPage"));
+const NotFoundPage = lazy(() => import("@/pages/error/NotFoundPage"));
 
-// Biz Data
-import BizDataPage from "@/pages/bizData/BizDataPage";
-import BizDataCollectPage from "@/pages/bizData/BizDataCollectPage";
-
-// Grade Report
-import GradeReportPage from "@/pages/grade/GradeReportPage";
-
-// Calculate
-import CalculatePage from "@/pages/calculator/CalculatorPage";
-
-// Mypage
-import MyPage from "@/pages/mypage/MyPage";
-import ProfilePage from "@/pages/mypage/ProfilePage";
-import BusinessInfoPage from "@/pages/mypage/BusinessInfoPage";
-import WithdrawPage from "@/pages/mypage/WithdrawPage";
-
-// Notification
-import NotificationsPage from "@/pages/notification/NotificationsPage";
-
-// Error
-import NotFoundPage from "@/pages/error/NotFoundPage";
-import GradeReportDetailPage from "@/pages/grade/GradeReportDetailPage";
+/** 지연 로딩 페이지를 Suspense로 감싸는 헬퍼 */
+function Lazy({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<CharacterLoadingSpinner />}>{children}</Suspense>;
+}
 
 export const router = createBrowserRouter([
   /**
@@ -64,42 +60,47 @@ export const router = createBrowserRouter([
     element: <StepLayout />,
     children: [
       // 회원가입
-      { path: "/signup", element: <SignupPage /> },
+      { path: "/signup", element: <Lazy><SignupPage /></Lazy> },
 
       // 대출 신청 — /loan/apply 내부에서 step 기반 흐름
-      { path: "/loan/apply", element: <LoanApplyPage /> },
+      { path: "/loan/apply", element: <Lazy><LoanApplyPage /></Lazy> },
 
       // 대출 사전 입력
-      { path: "/loan/pre-apply/:productId", element: <LoanPreApplyPage /> },
+      { path: "/loan/pre-apply/:productId", element: <Lazy><LoanPreApplyPage /></Lazy> },
 
       // 대출 상품
-      { path: "/loan", element: <LoanListPage /> },
-      { path: "/loan/:productId", element: <LoanDetailPage /> },
+      { path: "/loan", element: <Lazy><LoanListPage /></Lazy> },
+      { path: "/loan/:productId", element: <Lazy><LoanDetailPage /></Lazy> },
 
-      // My Biz Data 수집
-      { path: "/biz-data/collect", element: <BizDataCollectPage /> },
+      // My Biz Data 대시보드 + 수집
+      { path: "/biz-data", element: <Lazy><BizDataPage /></Lazy> },
+      { path: "/biz-data/dashboard", element: <Lazy><BizDashboardPage /></Lazy> },
+      { path: "/biz-data/collect", element: <Lazy><BizDataCollectPage /></Lazy> },
 
       // 대출 약정 (약관 동의 → PIN → 계좌 설정)
-      { path: "/loan/agreement/:applicationId", element: <LoanAgreementPage /> },
+      { path: "/loan/agreement/:applicationId", element: <Lazy><LoanAgreementPage /></Lazy> },
 
       // 심사 이후 — route 기반 분리
-      { path: "/loan-applications", element: <LoanProgressPage />},
-      { path: "/loan/review/:applicationId", element: <LoanReviewPage /> },
-      { path: "/loan/result/:applicationId", element: <LoanResultPage /> },
-      { path: "/loan/execution/:applicationId", element: <LoanExecutionPage /> },
+      { path: "/loan-applications", element: <Lazy><LoanProgressPage /></Lazy> },
+      { path: "/loan/review/:applicationId", element: <Lazy><LoanReviewPage /></Lazy> },
+      { path: "/loan/result/:applicationId", element: <Lazy><LoanResultPage /></Lazy> },
+      { path: "/loan/execution/:applicationId", element: <Lazy><LoanExecutionPage /></Lazy> },
 
       // 마이페이지
-      { path: "/mypage", element: <MyPage /> },
-      { path: "/mypage/profile", element: <ProfilePage /> },
-      { path: "/mypage/business", element: <BusinessInfoPage /> },
-      { path: "/mypage/withdraw", element: <WithdrawPage /> },
+      { path: "/mypage", element: <Lazy><MyPage /></Lazy> },
+      { path: "/mypage/profile", element: <Lazy><ProfilePage /></Lazy> },
+      { path: "/mypage/business", element: <Lazy><BusinessInfoPage /></Lazy> },
+      { path: "/mypage/withdraw", element: <Lazy><WithdrawPage /></Lazy> },
 
       // 알림
-      { path: "/notifications", element: <NotificationsPage /> },
+      { path: "/notifications", element: <Lazy><NotificationsPage /></Lazy> },
 
       // S분석 리포트 — step 기반 흐름
-      { path: "/grade-report", element: <GradeReportPage /> },
-      { path: "/grade-report/detail", element: <GradeReportDetailPage /> },
+      { path: "/grade-report", element: <Lazy><GradeReportPage /></Lazy> },
+      { path: "/grade-report/detail", element: <Lazy><GradeReportDetailPage /></Lazy> },
+
+      // 대출 관리
+      { path: "/loan-management", element: <Lazy><LoanManagementPage /></Lazy> },
     ],
   },
 
@@ -111,15 +112,9 @@ export const router = createBrowserRouter([
     children: [
       // 홈
       { path: "/", element: <HomePage /> },
-
-      // My Biz Data 대시보드
-      { path: "/biz-data", element: <BizDataPage /> },
-
-      // 사전계산기
-      { path: "/calculate", element: <CalculatePage />},
     ],
   },
 
   // 404
-  { path: "*", element: <NotFoundPage /> },
+  { path: "*", element: <Lazy><NotFoundPage /></Lazy> },
 ]);

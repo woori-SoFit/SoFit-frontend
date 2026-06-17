@@ -17,6 +17,7 @@ import { LogoutSheet } from "@/components/mypage/LogoutSheet";
 import { useMe } from "@/hooks/useMe";
 import { usePushToggle } from "@/hooks/usePushToggle";
 import { postLogout } from "@/api/mypageApi";
+import { resetCsrfToken } from "@/api/axiosInstance";
 import { useLayoutStore } from "@/stores/layoutStore";
 
 export default function MyPage() {
@@ -40,6 +41,8 @@ export default function MyPage() {
       navigate("/login");
     } catch (error) {
       console.error("로그아웃 실패:", error);
+    } finally {
+      resetCsrfToken();
     }
   };
 

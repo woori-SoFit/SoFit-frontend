@@ -6,14 +6,6 @@ interface BatchTableProps {
   data: BatchItem[];
 }
 
-/** 주기 배지 */
-function getCycleBadge(cycle: string) {
-  if (cycle === 'DAILY') {
-    return { className: 'bg-blue-50 text-blue-600', label: '일단위' };
-  }
-  return { className: 'bg-purple-50 text-purple-600', label: '월단위' };
-}
-
 /** 소요 시간을 읽기 쉬운 형식으로 변환 */
 function formatElapsed(seconds: number): string {
   if (seconds < 60) return `${seconds}초`;
@@ -32,7 +24,6 @@ export default function BatchTable({ data }: BatchTableProps) {
         <thead>
           <tr className="border-b border-border-default bg-gray-50">
             <th className="px-4 py-3 text-xs font-semibold text-text-secondary text-center w-14">ID</th>
-            <th className="px-4 py-3 text-xs font-semibold text-text-secondary text-center w-20">주기</th>
             <th className="px-4 py-3 text-xs font-semibold text-text-secondary text-center w-20">상태</th>
             <th className="px-4 py-3 text-xs font-semibold text-text-secondary text-center w-28">처리 건수</th>
             <th className="px-4 py-3 text-xs font-semibold text-text-secondary text-center w-24">소요 시간</th>
@@ -44,25 +35,19 @@ export default function BatchTable({ data }: BatchTableProps) {
         <tbody>
           {data.length === 0 ? (
             <tr>
-              <td colSpan={8} className="px-4 py-12 text-center text-sm text-text-disabled">
+              <td colSpan={7} className="px-4 py-12 text-center text-sm text-text-disabled">
                 배치 실행 이력이 없습니다.
               </td>
             </tr>
           ) : (
             data.map((row) => {
               const statusBadge = getBatchStatusBadge(row.status);
-              const cycleBadge = getCycleBadge(row.cycle);
               return (
                 <tr
                   key={row.id}
                   className="border-b border-border-default last:border-b-0 hover:bg-gray-50 transition-colors"
                 >
                   <td className="px-4 py-3 text-center font-mono text-xs">{row.id}</td>
-                  <td className="px-4 py-3 text-center">
-                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${cycleBadge.className}`}>
-                      {cycleBadge.label}
-                    </span>
-                  </td>
                   <td className="px-4 py-3 text-center">
                     <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${statusBadge.className}`}>
                       {statusBadge.label}
@@ -77,7 +62,7 @@ export default function BatchTable({ data }: BatchTableProps) {
                       {row.errorMessage ?? '-'}
                     </span>
                     {row.errorMessage && (
-                      <div className="absolute left-4 bottom-full mb-2 z-50 hidden group-hover:block max-w-sm px-3 py-2 text-xs text-red-700 bg-white border border-border-default rounded-lg shadow-md whitespace-pre-wrap">
+                      <div className="absolute left-4 bottom-full mb-2 z-50 hidden group-hover:block max-w-sm px-3 py-2 text-xs text-red-700 bg-white border border-border-default rounded-lg whitespace-pre-wrap">
                         {row.errorMessage}
                       </div>
                     )}

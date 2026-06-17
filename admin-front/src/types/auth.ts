@@ -15,6 +15,7 @@ export interface LoginResponse {
 
 /** /auth/me 응답 */
 export interface AuthMeResponse {
+  userId?: number;
   name: string;
   loginId: string;
   phoneNumber: string;

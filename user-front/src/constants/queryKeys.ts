@@ -17,6 +17,9 @@ export const LOAN_KEYS = {
   applicationsCompleted: () => [...LOAN_KEYS.all, "applications", "completed"] as const,
   application: (id: number) =>
     [...LOAN_KEYS.all, "application", id] as const,
+  applicationCompleted: (id: number) =>
+    [...LOAN_KEYS.all, "application", "completed", id] as const,
+  management: () => [...LOAN_KEYS.all, "management"] as const,
 } as const;
 
 export const GRADE_KEYS = {
@@ -26,7 +29,7 @@ export const GRADE_KEYS = {
 
 export const BIZ_DATA_KEYS = {
   all: ["bizData"] as const,
-  dashboard: () => [...BIZ_DATA_KEYS.all, "dashboard"] as const,
+  dashboard: (month?: string) => [...BIZ_DATA_KEYS.all, "dashboard", month ?? "latest"] as const,
   status: () => [...BIZ_DATA_KEYS.all, "status"] as const,
 } as const;
 
@@ -35,9 +38,13 @@ export const TERMS_KEYS = {
   list: (termType: string) => [...TERMS_KEYS.all, "list", termType] as const,
 } as const;
 
+export const NOTIFICATION_KEYS = {
+  all: ["notifications"] as const,
+  list: () => [...NOTIFICATION_KEYS.all] as const,
+} as const;
+
 export const MYPAGE_KEYS = {
   all: ["mypage"] as const,
   profile: () => [...MYPAGE_KEYS.all, "profile"] as const,
   business: () => [...MYPAGE_KEYS.all, "business"] as const,
-  notifications: () => [...MYPAGE_KEYS.all, "notifications"] as const,
 } as const;

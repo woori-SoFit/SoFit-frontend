@@ -4,7 +4,6 @@
 import axiosInstance from "./axiosInstance";
 import type {
   BusinessInfoResponse,
-  NotificationsResponse,
   UserProfileResponse,
 } from "@/types/mypage";
 
@@ -17,12 +16,6 @@ export async function fetchUserProfile(): Promise<UserProfileResponse> {
 /** 사업자 정보 조회 */
 export async function fetchBusinessInfo(): Promise<BusinessInfoResponse> {
   const res = await axiosInstance.get<BusinessInfoResponse>("/businesses/me");
-  return res.data;
-}
-
-/** 알림 목록 조회 */
-export async function fetchNotifications(): Promise<NotificationsResponse> {
-  const res = await axiosInstance.get<NotificationsResponse>("/notifications");
   return res.data;
 }
 

@@ -57,7 +57,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-sm p-8 bg-white rounded-xl shadow-card">
+      <div className="w-full max-w-sm p-8 bg-white rounded-xl border border-border-default">
         {/* 로고 */}
         <div className="flex justify-center mb-4">
           <img src={mainLogo} alt="SoFit 로고" className="h-14" />

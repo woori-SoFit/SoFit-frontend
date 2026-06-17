@@ -8,6 +8,8 @@ export interface Column<T> {
   render: (row: T) => ReactNode;
   /** 헤더/셀 정렬 (기본: "center") */
   align?: 'left' | 'center' | 'right';
+  /** 컬럼 너비 (예: '200px', '20%') */
+  width?: string;
 }
 
 interface DataTableProps<T> {
@@ -17,8 +19,8 @@ interface DataTableProps<T> {
   data: T[];
   /** 각 행의 고유 키를 반환하는 함수 */
   rowKey: (row: T) => string | number;
-  /** 데이터가 비어있을 때 표시할 메시지 */
-  emptyMessage?: string;
+  /** 데이터가 비어있을 때 표시할 내용 */
+  emptyMessage?: ReactNode;
 }
 
 const ALIGN_CLASSES = {
@@ -45,6 +47,7 @@ export default function DataTable<T>({
             {columns.map((col) => (
               <th
                 key={col.header}
+                style={col.width ? { width: col.width } : undefined}
                 className={`px-4 py-3 text-xs font-semibold text-text-secondary ${ALIGN_CLASSES[col.align ?? 'center']}`}
               >
                 {col.header}

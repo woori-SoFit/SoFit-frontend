@@ -2,9 +2,11 @@ import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthMe } from '@/hooks/useAuthMe';
 import { useLoanSummary } from '@/hooks/useLoanSummary';
-import { useLoanDetail } from '@/hooks/useLoanDetail';
+import { useInfoTab } from '@/hooks/useInfoTab';
 import { useLoanMutations } from '@/hooks/useLoanMutations';
 import { useReviewTab } from '@/hooks/useReviewTab';
+import { useMyBizData } from '@/hooks/useMyBizData';
+import { useSGradeTab } from '@/hooks/useSGradeTab';
 import { formatDate } from '@/utils/formatters';
 import StatusBadge from '@/components/common/StatusBadge';
 import LoadingState from '@/components/common/LoadingState';
@@ -19,7 +21,7 @@ import CBScoreCard from '@/components/loan-detail/CBScoreCard';
 import SGradeCard from '@/components/loan-detail/SGradeCard';
 import SCBScoreCard from '@/components/loan-detail/SCBScoreCard';
 import ShapExplanation from '@/components/loan-detail/ShapExplanation';
-import type { ApprovalPayload, RejectionPayload, EscalationPayload } from '@/types';
+import type { ApprovalPayload, RejectionPayload } from '@/types';
 import type { EditableApprovalCondition } from '@/components/loan-detail/ConditionComparisonCard';
 
 type TabKey = 'info' | 'mybizdata' | 'sgrade' | 'review';
@@ -44,17 +46,34 @@ export default function LoanDetailPage() {
 
   const [activeTab, setActiveTab] = useState<TabKey>('info');
   const [approvalCondition, setApprovalCondition] = useState<EditableApprovalCondition | null>(null);
-  const [pendingAction, setPendingAction] = useState<'approve' | 'reject' | 'escalate' | null>(null);
+  const [pendingAction, setPendingAction] = useState<'approve' | 'reject' | null>(null);
   const [comment, setComment] = useState('');
 
-  const { data, isLoading, isError, refetch } = useLoanDetail(loanId ?? 0);
+  const { data: infoTab, isLoading, isError, refetch } = useInfoTab(loanId ?? 0);
   const { data: summary } = useLoanSummary(loanId ?? 0);
-  const mutations = useLoanMutations(loanId ?? 0);
+  const mutations = useLoanMutations(loanId ?? 0, {
+    onSuccess: () => {
+      setComment('');
+      setPendingAction(null);
+    },
+  });
 
   // 심사 결과 탭 전용 데이터 (탭이 review일 때 조회)
   const { data: reviewTab, isLoading: isReviewTabLoading } = useReviewTab(
     loanId ?? 0,
     activeTab === 'review',
+  );
+
+  // MY BIZ DATA 탭 전용 데이터 (탭이 mybizdata일 때 조회)
+  const { data: myBizData, isLoading: isMyBizDataLoading } = useMyBizData(
+    loanId ?? 0,
+    activeTab === 'mybizdata',
+  );
+
+  // S등급 분석 탭 전용 데이터 (탭이 sgrade일 때 조회)
+  const { data: sGradeTab, isLoading: isSGradeTabLoading } = useSGradeTab(
+    loanId ?? 0,
+    activeTab === 'sgrade',
   );
 
   if (loanId === null) {
@@ -74,7 +93,7 @@ export default function LoanDetailPage() {
     return <ErrorState onRetry={() => refetch()} />;
   }
 
-  if (!data) {
+  if (!infoTab) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
         <p className="mb-4 text-lg font-medium text-text-primary">해당 대출 신청 건을 찾을 수 없습니다.</p>
@@ -84,44 +103,44 @@ export default function LoanDetailPage() {
   }
 
   const userRole = authUser?.role;
-  const status = summary?.status ?? data?.reviewStatus;
+  const status = summary?.status ?? 'SUBMITTED';
 
-  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && (status === 'SYSTEM_APPROVED' || status === 'SYSTEM_HOLD');
+  // 담당자 본인 여부 확인 (userId가 있으면 ID 비교, 없으면 이름 비교로 fallback)
+  const isAssignedToMe = authUser
+    ? authUser.userId
+      ? summary?.assignedBankerId === authUser.userId
+      : summary?.assigneeName === authUser.name
+    : false;
+
+  const canTellerAct = userRole === 'ADMIN_BANK_TELLER' && isAssignedToMe && (status === 'SYSTEM_APPROVED' || status === 'SYSTEM_REJECTED');
   const canManagerAct = userRole === 'ADMIN_BANK_MANAGER' && status === 'MANAGER_REVIEW';
 
+  // 시스템 거절 시 은행원은 거절 확인만 가능
+  const isSystemRejected = status === 'SYSTEM_REJECTED';
   const showApproveReject = canTellerAct || canManagerAct;
-  const showEscalation = canTellerAct;
   const isDecided = status === 'APPROVED' || status === 'REJECTED';
 
-  const handleSelectAction = (action: 'approve' | 'reject' | 'escalate') => {
+  const handleSelectAction = (action: 'approve' | 'reject') => {
     setPendingAction(action);
     setComment('');
   };
 
   const handleSubmit = () => {
-    if (!comment.trim() || !pendingAction) return;
-
-    const onSuccess = () => {
-      setComment('');
-      setPendingAction(null);
-    };
+    if (!loanId || !comment.trim() || !pendingAction) return;
 
     if (pendingAction === 'approve') {
       if (!approvalCondition) return;
       const payload: ApprovalPayload = {
         approvedAmount: approvalCondition.approvedAmount,
-        interestRate: approvalCondition.approvedRate,
-        loanTermMonths: approvalCondition.approvedTerm,
+        approvedRate: approvalCondition.approvedRate,
+        approvedTerm: approvalCondition.approvedTerm,
         repaymentMethod: approvalCondition.repaymentMethod,
         comment: comment.trim(),
       };
-      mutations.approve.mutate(payload, { onSuccess });
+      mutations.approve.mutate(payload);
     } else if (pendingAction === 'reject') {
       const payload: RejectionPayload = { comment: comment.trim() };
-      mutations.reject.mutate(payload, { onSuccess });
-    } else if (pendingAction === 'escalate') {
-      const payload: EscalationPayload = { comment: comment.trim() };
-      mutations.escalate.mutate(payload, { onSuccess });
+      mutations.reject.mutate(payload);
     }
   };
 
@@ -132,22 +151,23 @@ export default function LoanDetailPage() {
 
   const isApproving = mutations.approve.isPending;
   const isRejecting = mutations.reject.isPending;
-  const isEscalating = mutations.escalate.isPending;
-  const isProcessing = isApproving || isRejecting || isEscalating;
-  const mutationError = mutations.approve.error || mutations.reject.error || mutations.escalate.error;
+  const isProcessing = isApproving || isRejecting;
+  const mutationError = mutations.approve.error || mutations.reject.error;
 
   return (
     <div className="p-6">
       {/* 헤더 */}
       <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/dashboard')}
-            className="text-sm text-text-secondary hover:text-text-primary transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-text-secondary hover:bg-gray-100 hover:text-text-primary transition-colors"
             aria-label="목록으로 돌아가기"
           >
-            ← 목록
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
           <h1 className="text-xl font-bold text-text-primary">
             {summary?.applicantName ?? '-'} / {summary?.businessName ?? '-'}
@@ -155,7 +175,6 @@ export default function LoanDetailPage() {
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
             {summary?.productName ?? '-'}
           </span>
-          {summary && <StatusBadge status={summary.status} />}
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-text-secondary">
@@ -164,11 +183,12 @@ export default function LoanDetailPage() {
           <span className="text-sm text-text-secondary">
             담당자: {summary?.assigneeName ?? '-'}
           </span>
+          {summary && <StatusBadge status={summary.status} />}
         </div>
       </div>
 
       {/* 탭 네비게이션 */}
-      <div className="mb-6 border-b border-border-default">
+      <div className="mb-6 flex items-center justify-between border-b border-border-default">
         <nav className="flex gap-0" aria-label="상세 탭">
           {TABS.map((tab) => (
             <button
@@ -188,22 +208,29 @@ export default function LoanDetailPage() {
             </button>
           ))}
         </nav>
+        {activeTab === 'mybizdata' && (
+          <span className="pr-1 text-sm text-text-secondary">
+            기준 월: 2025.05
+          </span>
+        )}
       </div>
 
       {/* ─── 정보 탭 ─── */}
       {activeTab === 'info' && (
-        <div className="grid grid-cols-2 gap-4">
-          {/* 1행: 고객 기본 정보 | 사업자 정보 */}
-          <CustomerInfoCard data={data.customerInfo} />
-          <BusinessInfoCard data={data.businessInfo} />
+        <div className="grid grid-cols-3 gap-6">
+          {/* 1열: 고객 기본 정보 + 사업자 정보 (세로 스택) */}
+          <div className="space-y-6">
+            <CustomerInfoCard data={infoTab.applicantInfo} />
+            <BusinessInfoCard data={infoTab.businessInfo} />
+          </div>
 
-          {/* 2행: 고객 신청 정보 (2열 전체) */}
-          <div className="col-span-2">
+          {/* 2~3열: 신청 정보 (1열과 높이 맞춤) */}
+          <div className="col-span-2 [&>*]:h-full">
             <ApplicationRequestCard
-              applicationInfo={data.applicationInfo}
-              userInputInfo={data.userInputInfo}
-              productInfo={data.productInfo}
-              consentHistories={data.consentHistories}
+              applicationInfo={infoTab.applicationInfo}
+              userInputInfo={infoTab.userInputInfo}
+              productName={summary?.productName}
+              consentHistories={infoTab.consentHistories}
             />
           </div>
         </div>
@@ -211,67 +238,78 @@ export default function LoanDetailPage() {
 
       {/* ─── MY BIZ DATA 탭 ─── */}
       {activeTab === 'mybizdata' && (
-        <MyBizDataCard data={data.myBizData} />
+        isMyBizDataLoading
+          ? <LoadingState />
+          : <MyBizDataCard data={myBizData} businessName={summary?.businessName} />
       )}
 
       {/* ─── S등급 분석 탭 ─── */}
       {activeTab === 'sgrade' && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <CBScoreCard score={data.cbScore} />
-            <SGradeCard grade={data.sGrade} />
-            <SCBScoreCard
-              scbScore={data.scbScore}
-              cbScore={data.cbScore}
-              bonusPoints={data.bonusPoints}
-              sGrade={data.sGrade}
-            />
-          </div>
-          <ShapExplanation loanId={loanId} />
-        </div>
+        isSGradeTabLoading
+          ? <LoadingState />
+          : sGradeTab ? (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                <CBScoreCard score={sGradeTab.cbScore.score} />
+                <SGradeCard grade={sGradeTab.sGrade} />
+                <SCBScoreCard
+                  scbScore={sGradeTab.scbInfo.score}
+                  cbScore={sGradeTab.cbScore.score}
+                  bonusPoints={sGradeTab.scbInfo.bonusPoints}
+                  sGrade={sGradeTab.sGrade}
+                />
+              </div>
+              <ShapExplanation shapResult={sGradeTab.shapResult} />
+            </div>
+          ) : (
+            <div className="py-12 text-center text-sm text-text-secondary">
+              S등급 분석 데이터가 아직 생성되지 않았습니다.
+            </div>
+          )
       )}
 
       {/* ─── 심사 결과 탭 ─── */}
       {activeTab === 'review' && (
         <div className="space-y-6">
-          {/* 상품 기준 | 신청 조건 | 승인 결과 3열 비교 + 심사 처리 */}
+          {isReviewTabLoading ? (
+            <LoadingState />
+          ) : reviewTab ? (
+          /* 상품 기준 | 신청 조건 | 승인 결과 3열 비교 + 심사 처리 */
           <ConditionComparisonCard
-            product={reviewTab?.productInfo ?? data.productInfo}
-            applicationInfo={reviewTab?.applicationInfo ?? data.applicationInfo}
-            recommendation={reviewTab?.recommendation}
-            isLoading={isReviewTabLoading}
+            product={reviewTab.productInfo}
+            applicationInfo={reviewTab.applicationInfo}
+            recommendation={reviewTab.recommendation}
+            isLoading={false}
             editable={showApproveReject}
             onConditionChange={setApprovalCondition}
-            decisions={reviewTab?.decisions ?? []}
+            decisions={reviewTab.decisions ?? []}
+            isRejected={status === 'REJECTED'}
           >
-            {!isDecided && (showApproveReject || showEscalation) && (
+            {!isDecided && showApproveReject && (
               <>
                 {/* 액션 선택 버튼 */}
                 {!pendingAction && (
                   <div className="flex items-center justify-end gap-2">
-                    {showEscalation && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSelectAction('reject')}
+                      className="text-error hover:bg-error/5"
+                    >
+                      {canTellerAct && isSystemRejected
+                        ? '거절 확인'
+                        : canTellerAct
+                          ? '거절 요청'
+                          : '최종 거절'}
+                    </Button>
+                    {!isSystemRejected && (
                       <Button
-                        variant="outline-info"
-                        onClick={() => handleSelectAction('escalate')}
+                        size="sm"
+                        onClick={() => handleSelectAction('approve')}
+                        disabled={!approvalCondition}
                       >
-                        추가 결재
+                        {canTellerAct ? '승인 요청' : '최종 승인'}
                       </Button>
-                    )}
-                    {showApproveReject && (
-                      <>
-                        <Button
-                          variant="outline-error"
-                          onClick={() => handleSelectAction('reject')}
-                        >
-                          거절
-                        </Button>
-                        <Button
-                          onClick={() => handleSelectAction('approve')}
-                          disabled={!approvalCondition}
-                        >
-                          승인
-                        </Button>
-                      </>
                     )}
                   </div>
                 )}
@@ -282,7 +320,6 @@ export default function LoanDetailPage() {
                     <label htmlFor="reviewComment" className="block text-sm font-medium text-text-primary">
                       {pendingAction === 'approve' && '승인 의견 (필수)'}
                       {pendingAction === 'reject' && '거절 사유 (필수)'}
-                      {pendingAction === 'escalate' && '전달 의견 (필수)'}
                     </label>
                     <textarea
                       id="reviewComment"
@@ -293,9 +330,7 @@ export default function LoanDetailPage() {
                       placeholder={
                         pendingAction === 'approve'
                           ? '승인 의견을 입력해 주세요.'
-                          : pendingAction === 'reject'
-                            ? '거절 사유를 입력해 주세요.'
-                            : '전달 의견을 입력해 주세요.'
+                          : '거절 사유를 입력해 주세요.'
                       }
                       disabled={isProcessing}
                       className="w-full resize-none rounded-md border border-border-default px-3 py-2 text-sm outline-none transition-colors focus:border-border-focus disabled:opacity-50"
@@ -310,6 +345,7 @@ export default function LoanDetailPage() {
                       <div className="flex items-center gap-2">
                         <Button
                           variant="ghost"
+                          size="sm"
                           onClick={handleCancelAction}
                           disabled={isProcessing}
                         >
@@ -318,21 +354,25 @@ export default function LoanDetailPage() {
                         <Button
                           variant={
                             pendingAction === 'reject'
-                              ? 'outline-error'
-                              : pendingAction === 'escalate'
-                                ? 'outline-info'
-                                : 'primary'
+                              ? 'ghost'
+                              : 'primary'
                           }
+                          size="sm"
                           onClick={handleSubmit}
                           disabled={!comment.trim() || isProcessing || (pendingAction === 'approve' && !approvalCondition)}
+                          className={pendingAction === 'reject' ? 'text-error hover:bg-error/5' : ''}
                         >
                           {isProcessing
                             ? '처리 중...'
-                            : pendingAction === 'approve'
-                              ? '승인 확인'
-                              : pendingAction === 'reject'
+                            : canTellerAct
+                              ? isSystemRejected
                                 ? '거절 확인'
-                                : '결재 요청'}
+                                : pendingAction === 'approve'
+                                  ? '승인 요청'
+                                  : '거절 요청'
+                              : pendingAction === 'approve'
+                                ? '최종 승인'
+                                : '최종 거절'}
                         </Button>
                       </div>
                     </div>
@@ -341,6 +381,11 @@ export default function LoanDetailPage() {
               </>
             )}
           </ConditionComparisonCard>
+          ) : (
+            <div className="py-12 text-center text-sm text-text-secondary">
+              심사 결과 데이터를 불러올 수 없습니다.
+            </div>
+          )}
         </div>
       )}
 

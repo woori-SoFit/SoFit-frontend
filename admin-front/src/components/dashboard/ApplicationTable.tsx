@@ -4,7 +4,7 @@ import StatusBadge from '@/components/common/StatusBadge';
 import DataTable from '@/components/common/DataTable';
 import type { Column } from '@/components/common/DataTable';
 import type { LoanApplicationItem } from '@/types/loan';
-import { formatDate } from '@/utils/formatters';
+import { formatDate, formatCurrency } from '@/utils/formatters';
 
 interface ApplicationTableProps {
   applications: LoanApplicationItem[];
@@ -12,9 +12,9 @@ interface ApplicationTableProps {
 
 const columns: Column<LoanApplicationItem>[] = [
   { header: '신청일', render: (row) => formatDate(row.appliedAt) },
-  { header: '신청자명', render: (row) => row.applicantName },
-  { header: '사업자명', render: (row) => row.businessName },
-  { header: '상품명', render: (row) => row.productName },
+  { header: '사업자(신청자)', render: (row) => `${row.businessName}(${row.applicantName})` },
+  { header: '상품명', render: (row) => row.productName, width: '20%' },
+  { header: '신청 금액', render: (row) => row.requestedAmount != null ? formatCurrency(row.requestedAmount) : '-' },
   { header: '담당자', render: (row) => row.assigneeName },
   { header: '심사 상태', render: (row) => <StatusBadge status={row.status} /> },
   {

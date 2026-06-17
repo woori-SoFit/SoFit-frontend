@@ -35,8 +35,13 @@ export default function BizDataCollectPage() {
   // 대출 신청 흐름에서 진입한 경우 완료 후 돌아갈 경로
   const locationState = history.state?.usr as { returnTo?: string; startAt?: string; buttonLabel?: string; applicationId?: number } | null;
   const returnTo = locationState?.returnTo;
-  const loadingButtonLabel = locationState?.buttonLabel ?? "분석 결과 보기";
   const loanApplicationId = locationState?.applicationId;
+
+  // grade-report에서 진입한 경우 커스텀 버튼 라벨 사용
+  const isFromGradeReport = returnTo === "/grade-report";
+  const loadingButtonLabel = isFromGradeReport
+    ? "성장 S등급 분석하러 가기"
+    : (locationState?.buttonLabel ?? "분석 결과 보기");
 
   // startAt이 지정되면 해당 step부터 시작
   useEffect(() => {
@@ -70,9 +75,9 @@ export default function BizDataCollectPage() {
 
   switch (currentStep) {
     case "CERT_INFO":
-      // TODO: API 연동 시 onVerify로 verifyFinancialCertificate 주입 (LoanApplyPage 참고)
       return (
         <CustomerVerifyPage
+          description="본인 확인을 위해 정보를 입력해 주세요."
           onSuccess={() => nextStep()}
         />
       );
@@ -101,8 +106,8 @@ export default function BizDataCollectPage() {
     case "LOADING":
       return (
         <LoadingScreen
-          title="사업 데이터를 분석하고 있어요"
-          description="AI가 다양한 데이터를 안전하게 수집 분석합니다."
+          title="사업 데이터를 수집하고 있어요"
+          description="수집된 사업 데이터는 S등급 분석 및 대출 심사에 활용됩니다."
           steps={MOCK_BIZ_DATA_COLLECT_STEPS}
           buttonLabel={loadingButtonLabel}
           onAllDone={async () => {
@@ -114,7 +119,9 @@ export default function BizDataCollectPage() {
           }}
           onComplete={() => {
             reset();
-            if (returnTo) {
+            if (isFromGradeReport) {
+              navigate(returnTo, { state: { startAt: "LOADING" } });
+            } else if (returnTo) {
               navigate(returnTo);
             } else {
               navigate("/biz-data");

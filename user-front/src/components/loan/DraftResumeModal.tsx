@@ -19,6 +19,7 @@ export function DraftResumeModal({ onResume, onNewApply, onClose }: DraftResumeM
       description="이전에 작성 중이던 대출 신청이 있습니다."
       cancelLabel="새로 작성"
       confirmLabel="이어가기"
+      onDimClick={onClose}
       onCancel={() => {
         onClose();
         onNewApply();

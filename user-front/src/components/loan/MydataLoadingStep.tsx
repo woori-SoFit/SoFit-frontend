@@ -8,6 +8,7 @@
  * 전체 완료 시 onComplete 호출
  */
 import { useEffect, useState } from "react";
+import Lottie from "lottie-react";
 import {
   BriefcaseBusiness,
   BarChart3,
@@ -20,7 +21,7 @@ import {
   LockKeyhole,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import mydataIcon from "@/assets/icons/mydata.svg";
+import files from "@/assets/lottie/Files.json";
 import { BottomButton } from "@/components/common/BottomButton";
 
 interface LoadingItem {
@@ -83,29 +84,44 @@ export function MydataLoadingStep({ onComplete }: MydataLoadingStepProps) {
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="flex-1 px-5 pt-6 pb-6">
+      <div className="flex-1 px-5 pt-1">
       {/* 상단 안내 */}
-      <div className="mb-8">
-        <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
-          <img src={mydataIcon} alt="" className="w-12 h-12" />
+      <div className="mt-4 mb-5 mx-2">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 shrink-0">
+            <Lottie
+              animationData={files}
+              loop={!allDone}
+              className="w-full h-full"
+            />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-text-primary leading-tight">
+              {allDone ? (
+                <>
+                  필요한 서류를 모두 불러왔어요
+                </>
+              ) : (
+                <>
+                  대출 심사에 필요한 서류를
+                  <br />
+                  불러오고 있어요
+                </>
+              )}
+            </h1>
+          </div>
         </div>
-        <h1 className="text-xl font-bold text-text-primary leading-tight mb-2">
-          대출 심사에 필요한 추가 서류를<br />불러오는 중이에요
-        </h1>
-        <p className="text-sm text-text-secondary">
-          잠시만 기다려주세요.
-        </p>
       </div>
 
       {/* 항목 목록 */}
-      <ul className="flex flex-col gap-5 flex-1">
+      <ul className="flex flex-col gap-7 flex-1 bg-white px-4 py-5 rounded-xl">
         {LOADING_ITEMS.map((item) => {
           const status = statuses[item.id];
           const Icon = item.icon;
           return (
             <li key={item.id} className="flex items-center gap-4">
               {/* 아이콘 */}
-              <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
                 <Icon size={20} className="text-primary" />
               </div>
 

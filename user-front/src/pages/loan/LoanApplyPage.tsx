@@ -23,20 +23,19 @@ import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { BizInfoConfirm } from "@/components/loan/BizInfoConfirm";
 import { MydataLoadingStep } from "@/components/loan/MydataLoadingStep";
 import { LoanConditionsStep } from "@/components/loan/LoanConditionsStep";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 import { LoanApplyResult } from "@/components/loan/LoanApplyResult";
 import { BizDataCheckStep } from "@/components/grade/BizDataCheckStep";
 import { IntroSection } from "@/components/bizData/IntroSection";
-import { BottomButton } from "@/components/common/BottomButton";
 import { ExitConfirmModal } from "@/components/loan/ExitConfirmModal";
 import { StepProgress } from "@/components/common/StepProgress";
 import { useNavigate, useLocation } from "react-router-dom";
-import { verifyFinancialCertificate } from "@/api/authApi";
 import { formatBusinessNumber } from "@/utils/signupValidation";
 import { checkMyBizConnected } from "@/api/mybizApi";
 import { submitLoanConsents, fetchLoanBizInfo, submitLoanMydata } from "@/api/loanApi";
 import { useTerms } from "@/hooks/useTerms";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
-import type { CustomerVerifyData } from "@/types/auth";
+import { formatAmount, formatDateTime } from "@/utils/format";
 import type { LoanApplyStep } from "@/types/loan";
 
 export default function LoanApplyPage() {
@@ -93,6 +92,13 @@ export default function LoanApplyPage() {
     const params = new URLSearchParams(location.search);
     const stepParam = params.get("step");
     if (stepParam === "LOAN_CONDITIONS") {
+      // state에서 productId/applicationId가 있으면 설정 (BizDataCollect에서 전달)
+      if (state?.productId) {
+        useLoanApplyStore.getState().setProductId(state.productId);
+      }
+      if (state?.applicationId) {
+        useLoanApplyStore.getState().setApplicationId(state.applicationId);
+      }
       setStep("LOAN_CONDITIONS");
       return;
     }
@@ -123,23 +129,37 @@ export default function LoanApplyPage() {
   }, []);
 
   useEffect(() => {
-    useLayoutStore.getState().setStepTitle("대출 신청");
+    // BIZ_INTRO에서는 헤더 타이틀 숨김
+    if (currentStep === "BIZ_INTRO") {
+      useLayoutStore.getState().setStepTitle("");
+    } else {
+      useLayoutStore.getState().setStepTitle("대출 신청");
+    }
 
-    // 뒤로가기: 이탈 방지 모달 표시
-    useLayoutStore.getState().setOnBack(() => {
-      setExitModal("back");
-    });
-
-    // 홈 버튼: 이탈 방지 모달 표시
-    useLayoutStore.getState().setOnHome(() => {
-      setExitModal("home");
-    });
+    if (currentStep === "RESULT") {
+      // 대출 신청 완료 화면에서는 뒤로가기 비활성, 홈 버튼은 바로 이동
+      useLayoutStore.getState().setOnBack(() => {
+        // 뒤로가기 무시 (아무 동작 안 함)
+      });
+      useLayoutStore.getState().setOnHome(() => {
+        reset();
+        navigate("/");
+      });
+    } else {
+      // 일반 스텝: 이탈 방지 모달 표시
+      useLayoutStore.getState().setOnBack(() => {
+        setExitModal("back");
+      });
+      useLayoutStore.getState().setOnHome(() => {
+        setExitModal("home");
+      });
+    }
 
     return () => {
       useLayoutStore.getState().setOnBack(null);
       useLayoutStore.getState().setOnHome(null);
     };
-  }, [navigate]);
+  }, [currentStep, navigate]);
 
   // 대출 신청 스텝퍼 정의
   const LOAN_STEP_LABELS = ["약관동의", "본인인증", "사업자확인", "데이터동의", "조건입력"];
@@ -151,8 +171,6 @@ export default function LoanApplyPage() {
     BIZ_CONFIRM: 2,
     MYDATA_TERMS: 3,
     MYDATA_LOADING: 3,
-    BIZ_DATA_CHECK: 3,
-    BIZ_INTRO: 3,
     LOAN_CONDITIONS: 4,
   };
 
@@ -194,16 +212,6 @@ export default function LoanApplyPage() {
       return (
         <CustomerVerifyPage
           description="본인 확인을 위해 정보를 입력해 주세요."
-          onVerify={async (data: CustomerVerifyData) => {
-            const response = await verifyFinancialCertificate({
-              phoneNumber: data.phone,
-              pin: data.pin,
-            });
-            return {
-              success: response.isSuccess,
-              message: response.message,
-            };
-          }}
           onSuccess={() => {
             // PIN 인증 완료 → BIZ_CONFIRM으로 이동
             setStep("BIZ_CONFIRM");
@@ -217,6 +225,7 @@ export default function LoanApplyPage() {
           title={<><span className="text-primary">사업자 정보</span>를 불러왔어요</>}
           description="아래 정보가 맞는지 확인해주세요."
           rows={loanBizInfoRows}
+          isLoading={loanBizInfo === null}
           onConfirm={() => nextStep()}
         />
       );
@@ -276,25 +285,21 @@ export default function LoanApplyPage() {
 
     case "BIZ_INTRO":
       return (
-        <div className="flex flex-col h-full">
-          <div className="flex-1">
-            <IntroSection />
-          </div>
-          <BottomButton
-            label="데이터 불러오기"
-            onClick={() => {
-              navigate("/biz-data/collect", {
-                state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "TERMS", buttonLabel: "대출 조건 입력하기", applicationId },
-              });
-            }}
-          />
-        </div>
+        <IntroSection
+          buttonLabel="데이터 불러오기"
+          onButtonClick={() => {
+            navigate("/biz-data/collect", {
+              state: { returnTo: "/loan/apply?step=LOAN_CONDITIONS", startAt: "TERMS", buttonLabel: "대출 조건 입력하기", applicationId },
+            });
+          }}
+        />
       );
 
     case "LOAN_CONDITIONS":
+      if (!productId) return <CharacterLoadingSpinner text="상품 정보를 불러오는 중..." />;
       return (
         <LoanConditionsStep
-          productId={productId ?? 0}
+          productId={productId}
           applicationId={applicationId ?? 0}
           onSubmit={(data) => {
             updateFormData({
@@ -314,17 +319,11 @@ export default function LoanApplyPage() {
             { label: "신청 상품", value: submitResult.productName },
             {
               label: "신청 금액",
-              value: `${(submitResult.requestedAmount / 10_000).toLocaleString()}만원`,
+              value: formatAmount(submitResult.requestedAmount),
             },
             {
               label: "신청 일시",
-              value: new Date(submitResult.appliedAt).toLocaleString("ko-KR", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-              }),
+              value: formatDateTime(submitResult.appliedAt),
             },
             {
               label: "상환 방식",
@@ -338,11 +337,11 @@ export default function LoanApplyPage() {
           rows={resultRows}
           onViewApplications={() => {
             reset();
-            navigate("/loan-applications");
+            navigate("/loan-applications", { replace: true });
           }}
           onGoHome={() => {
             reset();
-            navigate("/");
+            navigate("/", { replace: true });
           }}
         />
       );
@@ -367,11 +366,7 @@ export default function LoanApplyPage() {
           onClose={() => setExitModal(null)}
           onConfirm={() => {
             setExitModal(null);
-            if (exitModal === "home") {
-              navigate("/");
-            } else {
-              navigate(-1);
-            }
+            navigate("/");
           }}
         />
       )}

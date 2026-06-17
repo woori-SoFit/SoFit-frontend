@@ -16,11 +16,12 @@
  *
  * step 상태: useSignupStore (Zustand)
  */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useSignupStore } from "@/stores/signupStore";
 import { StepIndicator } from "@/components/signup/StepIndicator";
+import { ConfirmModal } from "@/components/common/ConfirmModal";
 import KycStep from "@/components/signup/KycStep";
 import CustomerVerifyStep from "@/components/signup/CustomerVerifyStep";
 import CredentialsStep from "@/components/signup/CredentialsStep";
@@ -30,64 +31,98 @@ import ConfirmStep from "@/components/signup/ConfirmStep";
 export default function SignupPage() {
   const currentStep = useSignupStore((s) => s.currentStep);
   const navigate = useNavigate();
+  const [showExitModal, setShowExitModal] = useState(false);
 
   useEffect(() => {
     useLayoutStore.getState().setStepTitle("회원가입");
 
-    // 커스텀 뒤로가기: 첫 step이면 플로우 이탈, 아니면 이전 step
+    // 뒤로가기/홈 버튼: 이탈 방지 모달 표시
     useLayoutStore.getState().setOnBack(() => {
       const step = useSignupStore.getState().currentStep;
-      if (step === "KYC") {
-        useSignupStore.getState().reset();
-        navigate(-1);
+      if (step === "CONFIRM") {
+        navigate("/login", { replace: true });
       } else {
-        useSignupStore.getState().prevStep();
+        setShowExitModal(true);
+      }
+    });
+
+    useLayoutStore.getState().setOnHome(() => {
+      const step = useSignupStore.getState().currentStep;
+      if (step === "CONFIRM") {
+        navigate("/");
+      } else {
+        setShowExitModal(true);
       }
     });
 
     return () => {
-      // 페이지 떠날 때 onBack 초기화 및 스토어 reset
       useLayoutStore.getState().setOnBack(null);
+      useLayoutStore.getState().setOnHome(null);
       useSignupStore.getState().reset();
     };
   }, [navigate]);
 
-  switch (currentStep) {
-    case "KYC":
-      return (
-        <div className="flex flex-col h-full overflow-hidden">
-          <StepIndicator />
-          <KycStep />
-        </div>
-      );
-    case "CUSTOMER_VERIFY":
-      return (
-        <div className="flex flex-col h-full overflow-hidden">
-          <StepIndicator />
-          <CustomerVerifyStep />
-        </div>
-      );
-    case "CREDENTIALS":
-      return (
-        <div className="flex flex-col h-full overflow-hidden">
-          <StepIndicator />
-          <CredentialsStep />
-        </div>
-      );
-    case "TERMS":
-      return (
-        <div className="flex flex-col h-full overflow-hidden">
-          <StepIndicator />
-          <TermsStep />
-        </div>
-      );
-    case "CONFIRM":
-      return (
-        <div className="flex flex-col h-full overflow-hidden">
-          <ConfirmStep />
-        </div>
-      );
-    default:
-      return null;
-  }
+  const renderStep = () => {
+    switch (currentStep) {
+      case "KYC":
+        return (
+          <div className="flex flex-col h-full overflow-hidden">
+            <StepIndicator />
+            <KycStep />
+          </div>
+        );
+      case "CUSTOMER_VERIFY":
+        return (
+          <div className="flex flex-col h-full overflow-hidden">
+            <StepIndicator />
+            <CustomerVerifyStep />
+          </div>
+        );
+      case "CREDENTIALS":
+        return (
+          <div className="flex flex-col h-full overflow-hidden">
+            <StepIndicator />
+            <CredentialsStep />
+          </div>
+        );
+      case "TERMS":
+        return (
+          <div className="flex flex-col h-full overflow-hidden">
+            <StepIndicator />
+            <TermsStep />
+          </div>
+        );
+      case "CONFIRM":
+        return (
+          <div className="flex flex-col h-full overflow-hidden">
+            <ConfirmStep />
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      {renderStep()}
+
+      {/* 이탈 방지 */}
+      {showExitModal && (
+        <ConfirmModal
+          title="회원가입을 그만두시겠어요?"
+          description="지금 나가면 입력한 정보가 저장되지 않아요."
+          cancelLabel="나가기"
+          confirmLabel="계속하기"
+          onCancel={() => {
+            setShowExitModal(false);
+            useSignupStore.getState().reset();
+            navigate("/login", { replace: true });
+          }}
+          onConfirm={() => setShowExitModal(false)}
+          onDimClick={() => setShowExitModal(false)}
+        />
+      )}
+    </>
+  );
 }

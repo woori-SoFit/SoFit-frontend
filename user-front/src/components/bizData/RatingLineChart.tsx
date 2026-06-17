@@ -15,7 +15,7 @@ export function RatingLineChart({ data }: RatingLineChartProps) {
   if (data.length < 2) {
     return (
       <div className="flex flex-col items-center justify-center h-[80px] gap-1">
-        <p className="text-xs text-text-secondary text-center">추이를 수집하는 중이에요</p>
+        <p className="text-xs text-text-secondary text-center">평점을 모으는 중이에요</p>
       </div>
     );
   }

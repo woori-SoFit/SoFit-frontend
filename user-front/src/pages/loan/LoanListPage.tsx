@@ -9,13 +9,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { LOAN_KEYS } from "@/constants/queryKeys";
 import { fetchLoanProducts } from "@/api/loanApi";
-
-/** 금액 포맷 (만원 단위) */
-function formatAmount(amount: number) {
-  const man = amount / 10_000;
-  if (man >= 10_000) return `${(man / 10_000).toFixed(0)}억`;
-  return `${man.toLocaleString()}만`;
-}
+import { formatMaxAmount } from "@/utils/format";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 
 export default function LoanListPage() {
   const navigate = useNavigate();
@@ -30,11 +25,7 @@ export default function LoanListPage() {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-text-secondary">상품 목록을 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="상품 목록을 불러오는 중..." />;
   }
 
   if (products.length === 0) {
@@ -59,19 +50,18 @@ export default function LoanListPage() {
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   {/* 상품명 */}
-                  <p className="text-sm text-text-secondary mb-2">
-                    {product.productName}
+                  <p className="text-sm text-text-secondary mb-1">
+                    {product.title}
                   </p>
                   {/* 소개 문구 */}
-                  <h3 className="text-base font-semibold text-text-primary">
-                    {product.title}
+                  <h3 className="text-md font-semibold text-text-primary">
+                    {product.productName}
                   </h3>
-                  
                 </div>
                 {/* 한도 정보 */}
-                  <p className="text-base text-text-secondary">
-                    최대 <span className="font-bold text-primary">{formatAmount(product.maxLimit)}원</span>
-                  </p>
+                <p className="text-base text-text-secondary">
+                  <span className="font-bold text-primary">{formatMaxAmount(product.maxLimit)}</span>
+                </p>
               </div>
             </button>
           </li>

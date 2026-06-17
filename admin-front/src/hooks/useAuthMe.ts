@@ -30,6 +30,7 @@ export function useAuthMe() {
   useEffect(() => {
     if (data) {
       const user: AuthUser = {
+        userId: data.userId,
         name: data.name,
         loginId: data.loginId,
         phoneNumber: data.phoneNumber,
@@ -40,6 +41,7 @@ export function useAuthMe() {
   }, [data, login]);
 
   const user: AuthUser | undefined = storeUser ?? (data ? {
+    userId: data.userId,
     name: data.name,
     loginId: data.loginId,
     phoneNumber: data.phoneNumber,

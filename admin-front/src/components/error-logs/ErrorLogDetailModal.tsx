@@ -19,7 +19,7 @@ export default function ErrorLogDetailModal({ log, onClose }: ErrorLogDetailModa
       aria-labelledby="error-log-detail-title"
     >
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[80vh] overflow-y-auto mx-4"
+        className="bg-white rounded-lg w-full max-w-4xl max-h-[80vh] overflow-y-auto mx-4"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}

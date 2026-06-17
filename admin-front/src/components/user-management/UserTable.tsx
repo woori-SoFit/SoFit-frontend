@@ -15,7 +15,7 @@ export default function UserTable({
   pageSize,
 }: UserTableProps) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+    <div className="rounded-lg border border-gray-200 bg-white">
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-b border-gray-200 bg-gray-50">

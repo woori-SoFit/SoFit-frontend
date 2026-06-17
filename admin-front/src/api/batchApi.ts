@@ -1,27 +1,56 @@
-// import axiosInstance from '@/api/axiosInstance';
-import { getMockBatchList, getMockBatchLatest } from '@/mocks/batch';
-import type { BatchLatestInfo, BatchListParams, PaginatedBatchResponse } from '@/types/batch';
+import axiosInstance from '@/api/axiosInstance';
+import type { BatchListParams, BatchType, PaginatedBatchApiResponse, PaginatedBatchResponse } from '@/types/batch';
 
 /**
  * S등급 배치 실행 이력을 페이징으로 조회한다.
+ * GET /api/admin/dev/batch/s-grade
  *
- * TODO: 백엔드 연동 시 아래 목 데이터 반환을 제거하고 실제 API 호출로 교체
- * const { data } = await axiosInstance.get<PaginatedBatchResponse>('/api/admin/dev/batch/s-grade', { params });
- * return data;
+ * axiosInstance 인터셉터가 공통 래퍼의 result를 자동 언래핑한다.
  */
 export async function fetchBatchList(params: BatchListParams): Promise<PaginatedBatchResponse> {
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return getMockBatchList(params);
+  const { data } = await axiosInstance.get<PaginatedBatchApiResponse>('/api/admin/dev/batch/s-grade', {
+    params: { page: params.page - 1, size: params.size },
+  });
+
+  return {
+    batches: data.contents,
+    totalCount: data.totalCount,
+    totalPages: data.totalPages,
+    currentPage: data.currentPage + 1,
+    size: data.size,
+  };
 }
 
 /**
- * 배치 주기별 최신 실행 정보를 조회한다. (카드용)
- *
- * TODO: 백엔드 연동 시 실제 API 호출로 교체
- * const { data } = await axiosInstance.get<BatchLatestInfo[]>('/api/admin/dev/batch/s-grade/latest');
- * return data;
+ * 시스템 심사 배치 실행 이력을 페이징으로 조회한다.
+ * GET /api/admin/dev/batch/loan-decision
  */
-export async function fetchBatchLatest(): Promise<BatchLatestInfo[]> {
-  await new Promise((resolve) => setTimeout(resolve, 200));
-  return getMockBatchLatest();
+export async function fetchLoanDecisionBatchList(params: BatchListParams): Promise<PaginatedBatchResponse> {
+  const { data } = await axiosInstance.get<PaginatedBatchApiResponse>('/api/admin/dev/batch/loan-decision', {
+    params: { page: params.page - 1, size: params.size },
+  });
+
+  return {
+    batches: data.contents,
+    totalCount: data.totalCount,
+    totalPages: data.totalPages,
+    currentPage: data.currentPage + 1,
+    size: data.size,
+  };
 }
+
+/**
+ * 수동 배치를 실행한다.
+ *
+ * - S등급 산출: POST /api/admin/dev/batch/s-grade/trigger
+ * - 시스템 심사: POST /api/admin/dev/batch/loan-decision
+ */
+export async function triggerManualBatch(batchType: BatchType): Promise<{ message: string }> {
+  const endpoint = batchType === 'S_GRADE'
+    ? '/api/admin/dev/batch/s-grade/trigger'
+    : '/api/admin/dev/batch/loan-decision/trigger';
+
+  const { data } = await axiosInstance.post(endpoint);
+  return data;
+}
+

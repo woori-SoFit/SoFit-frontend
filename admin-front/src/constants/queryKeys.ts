@@ -10,9 +10,11 @@ export const LOAN_KEYS = {
   applications: () => [...LOAN_KEYS.all, "applications"] as const,
   application: (id: number) => [...LOAN_KEYS.all, "application", id] as const,
   statusCounts: () => [...LOAN_KEYS.all, "status-counts"] as const,
+  sGradeTab: (id: number) => [...LOAN_KEYS.all, "sgrade-tab", id] as const,
   shap: (id: number) => [...LOAN_KEYS.all, "shap", id] as const,
   recommendation: (id: number) => [...LOAN_KEYS.all, "recommendation", id] as const,
   reviewTab: (id: number) => [...LOAN_KEYS.all, "review-tab", id] as const,
+  myBizData: (id: number) => [...LOAN_KEYS.all, "mybiz-data", id] as const,
   managerApprovals: () => [...LOAN_KEYS.all, "manager-approvals"] as const,
 } as const;
 
@@ -34,6 +36,5 @@ export const ERROR_LOG_KEYS = {
 
 export const BATCH_KEYS = {
   all: ["batch"] as const,
-  latest: () => [...BATCH_KEYS.all, "latest"] as const,
   list: (params?: unknown) => [...BATCH_KEYS.all, "list", params] as const,
 };

@@ -8,7 +8,7 @@ import type { LoanSummary } from '@/types';
  * GET /api/admin/loan-applications/{id} 응답에 대응합니다.
  */
 export function useLoanSummary(id: number) {
-  const { data, isLoading, isError, error, refetch } = useQuery<LoanSummary | undefined, Error>({
+  const { data, isLoading, isError, error, refetch } = useQuery<LoanSummary, Error>({
     queryKey: LOAN_KEYS.summary(id),
     queryFn: () => fetchLoanSummary(id),
     staleTime: 30_000,

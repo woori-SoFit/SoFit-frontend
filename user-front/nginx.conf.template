@@ -1,0 +1,61 @@
+server {
+    listen 80;
+
+    # .mjs 파일을 JavaScript MIME으로 응답
+    # (nginx 기본 mime.types 에 application/octet-stream 으로 떨어져
+    #  module script 가 strict MIME 체크에 걸려 로드 실패하는 문제 방지)
+    types {
+        application/javascript mjs js;
+        text/css               css;
+        text/html              html;
+        image/svg+xml          svg;
+        image/png              png;
+        image/jpeg             jpg jpeg;
+        font/woff2             woff2;
+        application/wasm       wasm;
+    }
+    default_type application/octet-stream;
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # robots.txt, favicon 등 정적 파일은 fallback 없이 직접 서빙
+    location = /robots.txt {
+        root /usr/share/nginx/html;
+    }
+
+    # SSE 전용 설정 (api보다 위에 있어야 우선 매칭)
+    location /api/notifications/subscribe {
+        proxy_pass ${BACKEND_URL};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_set_header Connection '';
+        proxy_http_version 1.1;
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+        keepalive_timeout 3600s; 
+        chunked_transfer_encoding on; 
+    }
+
+    # API 및 정적 약관 PDF는 모두 백엔드로 프록시
+    # ${BACKEND_URL} 은 컨테이너 시작 시 envsubst 로 치환됨
+    location ~ ^/(api|terms)/ {
+        proxy_pass ${BACKEND_URL};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # 백엔드가 쿠키 Path를 /api로 설정해도 브라우저 전체에서 유효하도록 보정
+        proxy_cookie_path /api /;
+        proxy_cookie_path / /;
+    }
+}

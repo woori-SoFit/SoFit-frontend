@@ -1,54 +1,6 @@
 import axiosInstance from "./axiosInstance";
 import type { BizDashboardData } from "@/types/bizData";
-import type { MyBizApiResponse, MyBizDashboardResult, LoanExecutionResult } from "@/types/mybizApi";
-
-// ─── 내부 유틸 ────────────────────────────────────────────────────
-
-/** "yyyy-MM" → "M월" */
-function toMonthLabel(yyyyMM: string): string {
-  const month = parseInt(yyyyMM.split("-")[1], 10);
-  return `${month}월`;
-}
-
-function mapToFrontendDashboard(res: MyBizDashboardResult): BizDashboardData {
-  return {
-    currentMonth: res.referenceMonth,
-    availableMonths: res.availableMonths ?? [],
-    monthlyRevenue: res.monthlyRevenue,
-    monthOverMonthChange: res.monthlyRevenueGrowthRate ?? null,
-    cashFlow: res.cashFlow,
-    netProfit: res.estimatedProfit,
-    industryComparison: {
-      industryName: res.industryCompare.industryName,
-      revenue: Number(res.industryCompare.industrySalesRank),
-      profitability: Number(res.industryCompare.industryProfitRank),
-      stability: Number(res.industryCompare.industryStabilityRank),
-    },
-    revenueTrend: res.revenueTrend.map((t) => ({
-      month: toMonthLabel(t.referenceMonth),
-      amount: t.monthlyRevenue,
-    })),
-    transactionFlow: res.cashFlowTrend.map((t) => ({
-      month: toMonthLabel(t.referenceMonth),
-      income: t.monthlyInflow,
-      expense: t.monthlyOutflow,
-    })),
-    loanBalance: 0,
-    loanRepaymentDate: "-",
-    review: {
-      averageRating: Number(res.reviewRating),
-      reviewCount: res.reviewCount,
-      ratingTrend: res.ratingTrend.map((t) => ({
-        month: toMonthLabel(t.referenceMonth),
-        rating: Number(t.reviewRating),
-      })),
-    },
-    customerRatio: {
-      repurchaseRate: Number(res.onlineReorderRate),
-      recommendCount: res.deliveryOrderCount,
-    },
-  };
-}
+import type { MyBizApiResponse, LoanExecutionResult } from "@/types/mybizApi";
 
 // ─── 공개 API 함수 ────────────────────────────────────────────────
 
@@ -60,11 +12,11 @@ export async function connectMyBiz(): Promise<void> {
 /** 마이비즈 대시보드 조회. month 미지정 시 최신 월 데이터 반환 */
 export async function fetchMyBizDashboard(month?: string): Promise<BizDashboardData> {
   const params = month ? { month } : {};
-  const res = await axiosInstance.get<MyBizApiResponse<MyBizDashboardResult>>(
+  const res = await axiosInstance.get<MyBizApiResponse<BizDashboardData>>(
     "/mybiz/dashboard",
     { params }
   );
-  return mapToFrontendDashboard(res.data.result);
+  return res.data.result;
 }
 
 /**

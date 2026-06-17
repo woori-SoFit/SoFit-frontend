@@ -15,7 +15,9 @@ RUN npm run build:user
 FROM nginx:alpine
 
 COPY --from=builder /app/user-front/dist /usr/share/nginx/html
-COPY user-front/nginx.conf /etc/nginx/conf.d/default.conf
+# 템플릿은 컨테이너 시작 시 nginx 공식 이미지의 entrypoint 가
+# envsubst 로 ${BACKEND_URL} 등을 치환해 /etc/nginx/conf.d/default.conf 에 생성
+COPY user-front/nginx.conf.template /etc/nginx/templates/default.conf.template
 
 EXPOSE 80
 

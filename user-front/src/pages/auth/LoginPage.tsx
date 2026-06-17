@@ -3,7 +3,7 @@
  * Layout: PublicLayout
  */
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import mainLogo from "@/assets/mainLogo.svg";
 import { useLogin } from "@/hooks/useLogin";
@@ -16,8 +16,11 @@ interface ValidationErrors {
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnUrl = searchParams.get("returnUrl");
 
   const passwordRef = useRef<HTMLInputElement>(null);
+  const loginIdRef = useRef<HTMLInputElement>(null);
 
   // 폼 상태
   const [loginId, setLoginId] = useState("");
@@ -29,14 +32,22 @@ export default function LoginPage() {
   // useLogin 훅 연동
   const { mutate: login, isPending } = useLogin({
     onSuccess: () => {
-      navigate("/");
+      navigate(returnUrl || "/", { replace: true });
     },
     onError: (error: AxiosError) => {
-      if (error.response?.status === 401) {
+      const responseData = error.response?.data as { code?: string } | undefined;
+      const code = responseData?.code;
+
+      if (code === "AUTH4031") {
+        setServerError("탈퇴한 계정입니다. 다시 가입 후 이용해주세요.");
+      } else if (error.response?.status === 401) {
         setServerError("아이디 또는 비밀번호가 올바르지 않습니다");
       } else {
         setServerError("로그인에 실패했습니다. 잠시 후 다시 시도해주세요");
       }
+      setLoginId("");
+      setPassword("");
+      setTimeout(() => loginIdRef.current?.focus(), 100);
     },
   });
 
@@ -101,11 +112,12 @@ export default function LoginPage() {
           </label>
           <input
             id="loginId"
+            ref={loginIdRef}
             type="text"
             value={loginId}
             onChange={handleLoginIdChange}
             placeholder="아이디를 입력하세요"
-            className="w-full px-4 py-3 border border-border-default rounded-lg text-base text-text-primary placeholder:text-gray-400 focus:outline-none focus:border-border-focus"
+            className="w-full px-4 py-3 bg-white border border-border-default rounded-lg text-base text-text-primary placeholder:text-gray-400 focus:outline-none focus:border-border-focus"
           />
           <p className="text-xs text-error min-h-4">
             {validationErrors.loginId ?? "\u00A0"}
@@ -125,7 +137,7 @@ export default function LoginPage() {
               value={password}
               onChange={handlePasswordChange}
               placeholder="비밀번호를 입력하세요"
-              className="w-full px-4 py-3 border border-border-default rounded-lg text-base text-text-primary placeholder:text-gray-400 focus:outline-none focus:border-border-focus pr-12"
+              className="w-full px-4 py-3 bg-white border border-border-default rounded-lg text-base text-text-primary placeholder:text-gray-400 focus:outline-none focus:border-border-focus pr-12"
             />
             <button
               type="button"
@@ -164,12 +176,12 @@ export default function LoginPage() {
         </button>
       </form>
 
-      {/* 비밀번호 찾기 링크 */}
-      <div className="flex justify-center mt-4">
-        <Link to="/find-password" className="text-sm text-primary">
+      {/* 비밀번호 찾기 링크 — 미구현 */}
+      {/* <div className="flex justify-center mt-4">
+        <Link to="" className="text-sm text-primary">
           비밀번호 찾기 &gt;
         </Link>
-      </div>
+      </div> */}
 
       {/* 하단 회원가입 링크 */}
       <div className="flex justify-center items-center mt-auto pb-10 gap-2">

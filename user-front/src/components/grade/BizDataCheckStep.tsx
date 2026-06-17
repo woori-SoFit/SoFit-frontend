@@ -10,10 +10,11 @@ import { BottomButton } from "@/components/common/BottomButton";
 
 interface BizDataCheckStepProps {
   onNext: () => void;
+  isLoading?: boolean;
   heading?: string;
 }
 
-export function BizDataCheckStep({ onNext, heading = "성장 S등급 리포트 서비스를\n이용하기 위해서는" }: BizDataCheckStepProps) {
+export function BizDataCheckStep({ onNext, isLoading = false, heading = "성장 S등급 리포트 서비스를\n이용하기 위해서는" }: BizDataCheckStepProps) {
   return (
     <div className="flex flex-col h-full">
       {/* 컨텐츠 영역 */}
@@ -27,7 +28,7 @@ export function BizDataCheckStep({ onNext, heading = "성장 S등급 리포트 �
         <h2 className="text-xl font-bold text-text-primary text-center leading-snug whitespace-pre-line">
           {heading}
           <br />
-          <span className="text-primary">마이 비즈 데이터</span>를 불러와야 해요.
+          <span className="text-primary">마이 비즈 데이터</span>를 불러와야 해요
         </h2>
 
         {/* 보조 설명 */}
@@ -40,8 +41,9 @@ export function BizDataCheckStep({ onNext, heading = "성장 S등급 리포트 �
 
       {/* 하단 버튼 */}
       <BottomButton
-        label="불러오기"
+        label={isLoading ? "확인 중..." : "불러오기"}
         onClick={onNext}
+        disabled={isLoading}
       />
     </div>
   );

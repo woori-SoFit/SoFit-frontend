@@ -18,8 +18,16 @@ import type {
   SubmitLoanApplicationRequest,
   SubmitLoanApplicationResponse,
   CheckDraftResponse,
+  LoanDraftItem,
+  LoanDraftsResponse,
   LoanConsentsRequest,
   LoanBizInfoResponse,
+  LoanExecutionDetailResponse,
+  LoanExecutionDetail,
+  LoanManagementItem,
+  LoanManagementListResponse,
+  AccountVerificationResponse,
+  AccountVerificationConfirmResponse,
 } from "@/types/loan";
 import type {
   CreateLoanApplicationRequest,
@@ -121,6 +129,17 @@ export async function submitLoanApplication(
   return res.data;
 }
 
+/** 대출 신청 임시저장(draft) 목록 조회 */
+export async function fetchLoanDrafts(): Promise<LoanDraftItem[]> {
+  const res = await axiosInstance.get<LoanDraftsResponse>("/loan-applications/drafts");
+  return res.data?.result?.drafts ?? [];
+}
+
+/** 대출 신청 임시저장(draft) 삭제 */
+export async function deleteLoanApplication(applicationId: number): Promise<void> {
+  await axiosInstance.delete(`/loan-applications/${applicationId}`);
+}
+
 /** 대출 신청 임시저장(draft) 존재 여부 조회 */
 export async function checkLoanDraft(
   productId: number
@@ -167,4 +186,46 @@ export async function submitLoanMydata(
 /** 대출 신청 마이비즈데이터 연동 완료 처리 (resumeStep 업데이트) */
 export async function completeLoanMybizData(applicationId: number): Promise<void> {
   await axiosInstance.post(`/loan-applications/${applicationId}/mybiz-data`);
+}
+
+/** 대출 실행 상세 조회 */
+export async function fetchLoanExecutionDetail(
+  applicationId: number
+): Promise<LoanExecutionDetail> {
+  const res = await axiosInstance.get<LoanExecutionDetailResponse>(
+    `/loan-applications/${applicationId}/execution`
+  );
+  return res.data.result;
+}
+
+/** 1원 송금 요청 */
+export async function requestAccountVerification(
+  applicationId: number,
+  accountNumber: string
+): Promise<AccountVerificationResponse["result"]> {
+  const res = await axiosInstance.post<AccountVerificationResponse>(
+    `/loan-applications/${applicationId}/account-verification`,
+    { accountNumber }
+  );
+  return res.data.result;
+}
+
+/** 인증 코드 확인 */
+export async function confirmAccountVerification(
+  applicationId: number,
+  verificationCode: string
+): Promise<boolean> {
+  const res = await axiosInstance.post<AccountVerificationConfirmResponse>(
+    `/loan-applications/${applicationId}/account-verification/confirm`,
+    { verificationCode }
+  );
+  return res.data.result.accountVerified;
+}
+
+/** 대출 관리 — 실행 완료된 대출 목록 조회 */
+export async function fetchLoanManagementList(): Promise<LoanManagementItem[]> {
+  const res = await axiosInstance.get<LoanManagementListResponse>(
+    "/loan-executions"
+  );
+  return res.data?.result?.executions ?? [];
 }

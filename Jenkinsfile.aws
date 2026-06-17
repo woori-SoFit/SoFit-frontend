@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+    options { disableConcurrentBuilds() }
+    triggers { githubPush() }
+    environment {
+        AWS_REGION   = 'ap-northeast-2'
+        S3_BUCKET    = 'sofit-frontend'
+        CF_DIST_ID   = 'EO0Q423Z1ELOF'
+    }
+    stages {
+        stage('Checkout') {
+            steps { checkout scm }
+        }
+        stage('Build user-front') {
+            steps {
+                sh '''
+                    echo "VITE_API_BASE_URL=/api" > user-front/.env
+                    docker run --rm \
+                        -v $(pwd):/app \
+                        -w /app \
+                        node:22-alpine \
+                        sh -c "npm ci && npm run build:user"
+                '''
+            }
+        }
+        stage('Deploy to S3') {
+            steps {
+                sh """
+                    aws s3 sync user-front/dist/ s3://${S3_BUCKET}/ \
+                        --delete \
+                        --region ${AWS_REGION}
+                """
+            }
+        }
+        stage('CloudFront Invalidation') {
+            steps {
+                sh """
+                    aws cloudfront create-invalidation \
+                        --distribution-id ${CF_DIST_ID} \
+                        --paths "/*"
+                """
+            }
+        }
+    }
+    post {
+        success { echo 'user-front 배포 성공: S3 + CloudFront 무효화 완료' }
+        failure { echo 'user-front 배포 실패' }
+    }
+}

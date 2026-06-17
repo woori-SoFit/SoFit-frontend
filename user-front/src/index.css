@@ -105,6 +105,7 @@ body {
   /* ── Neutral ── */
   --color-gray-50: #f8fafc;
   --color-gray-100: #f1f5f9;
+  --color-gray-150: #e9eff5;
   --color-gray-200: #e2e8f0;
   --color-gray-300: #cbd5e1;
   --color-gray-400: #94a3b8;
@@ -158,4 +159,17 @@ body {
   --z-modal: 100;
   --z-toast: 200;
   --z-tooltip: 300;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  50%, 100% { transform: translateX(200%); }
+}
+
+/* ── Recharts 포커스 테두리 제거 ── */
+.recharts-responsive-container,
+.recharts-responsive-container *,
+.recharts-wrapper,
+.recharts-surface {
+  outline: none !important;
 }

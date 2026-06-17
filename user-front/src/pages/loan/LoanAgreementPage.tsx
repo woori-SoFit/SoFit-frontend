@@ -21,13 +21,15 @@ import { CustomerVerifyPage } from "@/components/auth/CustomerVerifyPage";
 import { AccountStep } from "@/components/loan/AccountStep";
 import { formatAmount } from "@/utils/format";
 import { REPAYMENT_LABELS } from "@/constants/loanLabels";
-import { fetchLoanApplicationCompletedDetail } from "@/api/loanApi";
+import { requestAccountVerification, confirmAccountVerification, fetchLoanApplicationCompletedDetail } from "@/api/loanApi";
 import { submitTermsConsents } from "@/api/termsApi";
 import { useTerms } from "@/hooks/useTerms";
 import { LOAN_KEYS } from "@/constants/queryKeys";
-import confettiAnimation from "@/assets/lottie/Success-Celebration.json";
+import handshakeAnimation from "@/assets/lottie/Handshake.json";
+import { EmptyError } from "@/components/common/EmptyError";
+import { CharacterLoadingSpinner } from "@/components/common/CharacterLoadingSpinner";
 
-type AgreementStep = "CONFIRM" | "TERMS" | "CERT" | "ACCOUNT" | "COMPLETE";
+type AgreementStep = "CONFIRM" | "TERMS" | "CERT" | "ACCOUNT";
 
 export default function LoanAgreementPage() {
   const navigate = useNavigate();
@@ -36,7 +38,7 @@ export default function LoanAgreementPage() {
   const { terms: agreementTerms } = useTerms("LOAN_AGREEMENT");
 
   const { data, isLoading } = useQuery({
-    queryKey: LOAN_KEYS.application(Number(applicationId)),
+    queryKey: LOAN_KEYS.applicationCompleted(Number(applicationId)),
     queryFn: () => fetchLoanApplicationCompletedDetail(Number(applicationId)),
     enabled: !!applicationId,
   });
@@ -62,19 +64,11 @@ export default function LoanAgreementPage() {
   }, [navigate, step]);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-text-secondary">약정 정보를 불러오는 중...</p>
-      </div>
-    );
+    return <CharacterLoadingSpinner text="약정 정보를 불러오는 중..." />;
   }
 
   if (!data || !data.decisionInfo) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-text-secondary">약정 정보를 찾을 수 없습니다.</p>
-      </div>
-    );
+    return <EmptyError message="약정 정보를 찾을 수 없습니다." />;
   }
 
   const { decisionInfo } = data;
@@ -88,14 +82,18 @@ export default function LoanAgreementPage() {
     // 1. 약정 체결 확인
     case "CONFIRM":
       return (
-        <div className="h-full pt-25">
+        <div className="h-full pt-8">
           <ConfirmPage
-            icon={null}
+            icon={
+              <div className="w-32 h-32 mb-5">
+                <Lottie animationData={handshakeAnimation} loop={5} className="w-full h-full" />
+              </div>
+            }
             title={data.productName}
             description="아래 대출 조건을 확인하고 약정을 진행해주세요."
             rows={[
               { label: "승인금액", value: formatAmount(approvedAmount) },
-              { label: "예정 금리(연)", value: `${approvedRate}%` },
+              { label: "금리(연)", value: `${approvedRate}%` },
               { label: "대출기간", value: termLabel },
               { label: "상환 방식", value: repaymentLabel },
             ]}
@@ -139,35 +137,21 @@ export default function LoanAgreementPage() {
 
     // 4. 대출 실행 계좌 설정
     case "ACCOUNT":
-      return <AccountStep onSubmit={() => setStep("COMPLETE")} />;
-
-    // 5. 대출 실행 완료
-    case "COMPLETE":
       return (
-        <div className="relative h-full pt-15 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none z-10 flex items-start justify-center">
-            <Lottie
-              animationData={confettiAnimation}
-              loop={3}
-              className="w-full max-w-sm -translate-y-25"
-            />
-          </div>
-          <ConfirmPage
-            title="대출이 실행되었습니다!"
-            description="입금까지 영업일 기준 1~2일 소요됩니다."
-            rows={[
-              { label: "상품명", value: data.productName },
-              { label: "실행금액", value: formatAmount(approvedAmount) },
-              { label: "금리(연)", value: `${approvedRate}%` },
-              { label: "대출기간", value: termLabel },
-              { label: "상환방식", value: repaymentLabel },
-            ]}
-            buttonLabel="홈으로 이동"
-            onConfirm={() => navigate("/")}
-            secondaryButtonLabel="대출 진행 관리"
-            onSecondary={() => navigate("/loan-applications")}
-          />
-        </div>
+        <AccountStep
+          onSendVerification={async (accountNumber) => {
+            const result = await requestAccountVerification(data.applicationId, accountNumber);
+            return { authCode: result.authCode };
+          }}
+          onVerifyCode={async (code) => {
+            const verified = await confirmAccountVerification(data.applicationId, code);
+            return {
+              success: verified,
+              message: verified ? undefined : "인증코드가 일치하지 않습니다.",
+            };
+          }}
+          onSubmit={() => navigate(`/loan/execution/${applicationId}`, { replace: true })}
+        />
       );
 
     default:

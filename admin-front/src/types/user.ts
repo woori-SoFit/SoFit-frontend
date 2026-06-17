@@ -53,10 +53,15 @@ export interface UserFilters {
   status: UserStatus | '';
 }
 
-/** 엑셀 다운로드 파라미터 */
-export interface UserDownloadParams {
-  tab: UserTab;
-  keyword?: string;
-  role?: UserRole;
-  status?: UserStatus;
+// ─── API Raw 타입 (서버 응답 원본 구조) ───
+
+/** GET /api/admin/users 응답 항목 원본 */
+export interface UserListItemRaw {
+  id: number;
+  loginId: string;
+  name: string;
+  role: UserRole;
+  status: UserStatus;
+  phoneNumber: string;
+  createdAt: string;
 }

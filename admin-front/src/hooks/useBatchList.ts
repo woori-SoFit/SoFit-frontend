@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { BATCH_KEYS } from '@/constants/queryKeys';
-import { fetchBatchList } from '@/api/batchApi';
+import { fetchBatchList, fetchLoanDecisionBatchList } from '@/api/batchApi';
 import type { BatchListParams, PaginatedBatchResponse } from '@/types/batch';
 
 export interface UseBatchListReturn {
@@ -12,12 +12,17 @@ export interface UseBatchListReturn {
 }
 
 /**
- * S등급 배치 실행 이력을 페이징으로 조회하는 커스텀 훅.
+ * 배치 실행 이력을 페이징으로 조회하는 커스텀 훅.
+ * batchType에 따라 S등급 또는 시스템 심사 API를 호출한다.
  */
 export function useBatchList(params: BatchListParams): UseBatchListReturn {
+  const fetchFn = params.batchType === 'SYSTEM_REVIEW'
+    ? fetchLoanDecisionBatchList
+    : fetchBatchList;
+
   const { data, isLoading, isError, error, refetch } = useQuery<PaginatedBatchResponse, Error>({
     queryKey: [...BATCH_KEYS.list(), params],
-    queryFn: () => fetchBatchList(params),
+    queryFn: () => fetchFn(params),
     staleTime: 30_000,
     retry: 3,
   });

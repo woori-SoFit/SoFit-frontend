@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/authStore";
 import { useAuthMe } from "@/hooks/useAuthMe";
+import { logoutAdmin } from "@/api/authApi";
+import { resetCsrfToken } from "@/api/axiosInstance";
 import Button from "@/components/common/Button";
 import mainLogo from "@/assets/mainLogo.svg";
 
@@ -17,11 +19,15 @@ export function Header() {
   const queryClient = useQueryClient();
   const { data: user } = useAuthMe();
 
-  const handleLogout = () => {
-    // TODO: 로그아웃 API 구현 후 서버 세션 삭제 요청 추가
-    logout();
-    queryClient.clear();
-    navigate("/login", { replace: true });
+  const handleLogout = async () => {
+    try {
+      await logoutAdmin();
+    } finally {
+      resetCsrfToken();
+      logout();
+      queryClient.clear();
+      navigate("/login", { replace: true });
+    }
   };
 
   return (

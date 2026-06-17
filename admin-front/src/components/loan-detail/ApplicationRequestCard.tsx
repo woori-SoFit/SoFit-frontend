@@ -1,13 +1,14 @@
-import type { ApplicationInfo, UserInputInfo, LoanProductInfo, ConsentHistory } from '@/types';
+import type { ApplicationInfo, UserInputInfo, ConsentHistory } from '@/types';
 import { formatCurrency, formatMonths, displayValue } from '@/utils/formatters';
 import { REPAYMENT_METHOD_LABELS, PURPOSE_LABELS } from '@/constants/loanLabels';
+import { FileText } from 'lucide-react';
 import Card from '@/components/common/Card';
 import InfoRow from '@/components/common/InfoRow';
 
 interface ApplicationRequestCardProps {
   applicationInfo: ApplicationInfo;
   userInputInfo: UserInputInfo;
-  productInfo: LoanProductInfo;
+  productName?: string;
   consentHistories: ConsentHistory[];
 }
 
@@ -45,8 +46,12 @@ const EXISTING_LOAN_LABELS: Record<string, string> = {
  * 신청 조건(희망 금액, 기간, 상환 방식, 자금 용도)과
  * 신청자 직접 입력 정보(연 소득, 신용점수, 소득 종류, 보유 대출액)를 하나의 카드에 표시한다.
  */
-export default function ApplicationRequestCard({ applicationInfo, userInputInfo, productInfo, consentHistories }: ApplicationRequestCardProps) {
+export default function ApplicationRequestCard({ applicationInfo, userInputInfo, productName, consentHistories }: ApplicationRequestCardProps) {
   const applicationInfoItems = [
+    {
+      label: '신청 상품',
+      value: productName ?? '-',
+    },
     {
       label: '희망 대출 금액',
       value: applicationInfo.requestedAmount != null ? formatCurrency(applicationInfo.requestedAmount) : '-',
@@ -87,17 +92,9 @@ export default function ApplicationRequestCard({ applicationInfo, userInputInfo,
   ];
 
   return (
-    <Card title="고객 신청 정보" className="min-h-56">
+    <Card title="고객 신청 정보" titleIcon={<FileText size={16} className="text-text-primary" />} className="h-full flex flex-col">
 
-      {/* 대출 상품명 */}
-      <div className="mb-4 flex items-center gap-2">
-        <span className="text-xs text-text-secondary">신청 상품</span>
-        <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-          {productInfo.productName}
-        </span>
-      </div>
-
-      <div className="grid grid-cols-3 divide-x divide-border-default">
+      <div className="grid grid-cols-2 divide-x divide-border-default">
         {/* 신청 정보 */}
         <div className="pr-4">
           <dl className="space-y-2">
@@ -108,45 +105,46 @@ export default function ApplicationRequestCard({ applicationInfo, userInputInfo,
         </div>
 
         {/* 신청자 입력 */}
-        <div className="px-4">
+        <div className="pl-4">
           <dl className="space-y-2">
             {inputItems.map((item) => (
               <InfoRow key={item.label} label={item.label} value={item.value} />
             ))}
           </dl>
         </div>
+      </div>
 
-        {/* 약관 동의 */}
-        <div className="pl-4">
-          {consentHistories.length > 0 ? (
-            <ul className="space-y-2">
-              {consentHistories.map((consent) => (
-                <li key={consent.title} className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-text-secondary">
-                    {consent.title}
-                    {consent.isRequired ? '' : ' (선택)'}
-                  </span>
-                  <div className="flex shrink-0 items-center gap-1.5">
-                    {consent.isConsented && consent.consentedAt && (
-                      <span className="text-xs text-text-disabled">
-                        {new Date(consent.consentedAt).toLocaleDateString('ko-KR', {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit',
-                        })}
-                      </span>
-                    )}
-                    <span className={`text-xs font-medium ${consent.isConsented ? 'text-success' : 'text-text-disabled'}`}>
-                      {consent.isConsented ? '동의' : '미동의'}
+      {/* 약관 동의 (하단 별도 섹션) */}
+      <div className="mt-auto border-t border-border-default pt-4">
+        <h4 className="mb-2 text-xs font-semibold text-text-secondary">약관 동의</h4>
+        {consentHistories.length > 0 ? (
+          <ul className="grid grid-cols-2 gap-x-6 gap-y-1.5">
+            {consentHistories.map((consent) => (
+              <li key={consent.title} className="flex items-center justify-between gap-2">
+                <span className="text-xs text-text-secondary">
+                  {consent.title}
+                  {consent.isRequired ? '' : ' (선택)'}
+                </span>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  {consent.isConsented && consent.consentedAt && (
+                    <span className="text-xs text-text-disabled">
+                      {new Date(consent.consentedAt).toLocaleDateString('ko-KR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                      })}
                     </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-xs text-text-disabled">약관 동의 내역 없음</p>
-          )}
-        </div>
+                  )}
+                  <span className={`text-xs font-medium ${consent.isConsented ? 'text-success' : 'text-text-disabled'}`}>
+                    {consent.isConsented ? '동의' : '미동의'}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs text-text-disabled">약관 동의 내역 없음</p>
+        )}
       </div>
     </Card>
   );

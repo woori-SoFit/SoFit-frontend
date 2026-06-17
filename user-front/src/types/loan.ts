@@ -10,9 +10,8 @@ export type LoanApplicationStatus =
   | "S_CALCULATING"
   | "S_COMPLETED"
   | "SYSTEM_APPROVED"
-  | "SYSTEM_HOLD"
+  | "SYSTEM_REJECTED"
   | "MANAGER_REVIEW"
-  | "FINAL_REVIEW"
   | "APPROVED"
   | "REJECTED"
   | "CONTRACTED"
@@ -25,6 +24,7 @@ export interface LoanProductListItem {
   productName: string;
   title: string;
   maxLimit: number;
+  minRate: number;
 }
 
 /** 대출 상품 목록 API 응답 구조 */
@@ -49,6 +49,18 @@ export interface ProductFilterConditions {
   incomeTypeCodeLimit: string | null;
 }
 
+/** 상품 상세 설명 */
+export interface LoanProductDescription {
+  targetDetail: string;
+  limitDescription: string;
+  termDescription: string;
+  rateDescription: string;
+  preferentialRateDescription: string;
+  repaymentDescription: string;
+  collateralDescription: string;
+  feeDescription: string;
+}
+
 /** API 응답 기준 대출 상품 상세 */
 export interface LoanProductDetail {
   productId: number;
@@ -58,12 +70,13 @@ export interface LoanProductDetail {
   minLimit: number;
   maxLimit: number;
   maxTerm: number;
-  targetDescription: string;
+  targetSummary: string;
   interestRate: {
     minRate: number;
     maxRate: number;
   };
   filterConditions: ProductFilterConditions;
+  productDescription?: LoanProductDescription;
 }
 
 /** 대출 상품 상세 API 응답 구조 */
@@ -259,6 +272,24 @@ export interface CheckDraftResponse {
   };
 }
 
+/** 임시저장(draft) 목록 아이템 */
+export interface LoanDraftItem {
+  applicationId: number;
+  productId: number;
+  productName: string;
+  resumeStep: string;
+}
+
+/** 임시저장(draft) 목록 조회 API 응답 */
+export interface LoanDraftsResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    drafts: LoanDraftItem[];
+  };
+}
+
 /** 대출 약관 동의 요청 */
 export interface LoanConsentsRequest {
   termType: string;
@@ -283,5 +314,70 @@ export interface LoanBizInfoResponse {
     businessType: string;
     businessAddress: string;
     isMybizConnected: boolean;
+  };
+}
+
+/** 대출 실행 상세 조회 API 응답 */
+export interface LoanExecutionDetailResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: LoanExecutionDetail;
+}
+
+/** 대출 실행 상세 데이터 */
+export interface LoanExecutionDetail {
+  executionId: number;
+  applicationId: number;
+  productId: number;
+  productName: string;
+  executedAmount: number;
+  approvedRate: number;
+  approvedTerm: number;
+  repaymentMethod: string;
+}
+
+/** 대출 관리 — 실행 완료된 대출 목록 아이템 */
+export interface LoanManagementItem {
+  executionId: number;
+  applicationId: number;
+  productId: number;
+  productName: string;
+  executedAmount: number;
+  approvedRate: number;
+  approvedTerm: number;
+  repaymentMethod: string;
+  executedAt: string;
+}
+
+/** 대출 관리 목록 API 응답 */
+export interface LoanManagementListResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    executions: LoanManagementItem[];
+  };
+}
+
+/** 1원 송금 요청 API 응답 */
+export interface AccountVerificationResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    maskedAccountNumber: string;
+    authCode: string;
+    expiredAt: string;
+  };
+}
+
+/** 인증 코드 확인 API 응답 */
+export interface AccountVerificationConfirmResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    accountVerified: boolean;
   };
 }

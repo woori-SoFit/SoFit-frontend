@@ -5,11 +5,13 @@
 import type { PaginatedResponse } from './common';
 
 export type ReviewStatus = 
+  'SUBMITTED' |
   'SYSTEM_APPROVED' |
-  'SYSTEM_HOLD' | 
+  'SYSTEM_REJECTED' | 
   'MANAGER_REVIEW' | 
   'APPROVED' | 
-  'REJECTED';
+  'REJECTED' |
+  'EXECUTED';
 
 
 // ─── 대출 신청 현황 API (GET /api/admin/loan-applications) ──────────
@@ -33,6 +35,10 @@ export interface LoanApplicationItem {
   applicantName: string;
   businessName: string;
   productName: string;
+  /** 대출 신청 금액 (원) */
+  requestedAmount: number;
+  /** 승인 금액 (원) — 승인/실행 완료 시에만 존재 */
+  approvedAmount?: number;
   status: ReviewStatus;
   assignedBankerId: number;
   assigneeName: string;
@@ -44,10 +50,11 @@ export interface LoanApplicationItem {
 export interface LoanSummary {
   applicationId: number;
   applicantName: string;
-  businessName: string;
+  businessName: string | null;
   productName: string;
   status: ReviewStatus;
   appliedAt: string;
+  assignedBankerId: number | null;
   assigneeName: string;
   rejectionComment?: string;
   approvalComment?: string;
@@ -131,18 +138,51 @@ export type InsurancePaymentStatus = 'PAID' | 'PENDING' | 'OVERDUE';
 
 /** 시스템 수집 정보 (마이비즈데이터) */
 export interface MyBizData {
-  annualIncome: number;
   existingLoanCount: number;
-  monthlyRevenue: number;
-  monthlyRevenueGrowthRate: number;
-  cashFlow: number;
-  accountBalance: number;
+  /** DSR 관련 */
+  annualIncome: number;
+  annualRepayment: number;
+  monthlyRepayment: number;
+  /** 보유 대출 잔액 */
+  totalLoanBalance: number;
+  /** 운영 신뢰도 */
   businessAgeMonths: number;
   vatFilingStatus: VatFilingStatus;
   taxOverdue: boolean;
   insurancePaymentStatus: InsurancePaymentStatus;
-  industrySalesRank: number;
-  industryProfitRank: number;
+  /** 부가세 최근 신고일 (ISO 8601) */
+  vatFilingDate: string | null;
+  /** 매출 추이 (최근 6개월) */
+  revenueTrend: Array<{
+    referenceMonth: string;
+    monthlyRevenue: number;
+  }>;
+  /** 업종 평균 매출 추이 (최근 6개월) */
+  industryAvgRevenueTrend: Array<{
+    referenceMonth: string;
+    monthlyRevenue: number;
+  }>;
+  /** 수익 추이 (최근 6개월) */
+  profitTrend: Array<{
+    referenceMonth: string;
+    profit: number;
+  }>;
+  /** 업종/상권 비교 */
+  industryComparison: {
+    myRevenue: number;
+    industryAvgRevenue: number;
+    districtAvgRevenue: number;
+    myProfitRate: number;
+    industryAvgProfitRate: number;
+    districtAvgProfitRate: number;
+    /** 순위 (상위 %) */
+    industrySalesRank: number;
+    industryProfitRank: number;
+    industrySatisfactionRank: number;
+    districtSalesRank: number;
+    districtProfitRank: number;
+    districtSatisfactionRank: number;
+  };
 }
 
 /** SHAP 분석 결과 */
@@ -180,32 +220,6 @@ export interface LoanProductInfo {
   availablePurposes: LoanPurpose[];
 }
 
-/** 대출 신청 상세 전체 데이터 */
-export interface LoanDetailData {
-  id: number;
-  applicationDate: string;
-  reviewStatus: ReviewStatus;
-  assigneeName: string;
-  productInfo: LoanProductInfo;
-  customerInfo: CustomerInfo;
-  businessInfo: BusinessInfo;
-  applicationInfo: ApplicationInfo;
-  userInputInfo: UserInputInfo;
-  consentHistories: ConsentHistory[];
-  myBizData: MyBizData | null;
-  cbScore: number | null;
-  /** "S1" ~ "S10" */
-  sGrade: string | null;
-  scbScore: number | null;
-  /** 가산점 */
-  bonusPoints: number | null;
-  shapResult: ShapResult | null;
-  rejectionComment?: string;
-  approvalComment?: string;
-  /** 심사 결정 일시 (APPROVED/REJECTED 상태일 때만 존재, ISO 8601) */
-  decidedAt?: string;
-}
-
 /** 시스템 추천값 */
 export interface RecommendationData {
   /** 승인 금액 (원) */
@@ -214,15 +228,24 @@ export interface RecommendationData {
   approvedRate: number;
   /** 확정 기간 (개월) */
   approvedTerm: number;
-  repaymentMethod: RepaymentMethod;
+  repaymentMethod: RepaymentMethod | null;
 }
+
+/** 심사 결정 상태 (decisions 배열에서 사용) */
+export type DecisionStatus =
+  | 'SYSTEM_APPROVED'
+  | 'SYSTEM_REJECTED'
+  | 'TELLER_APPROVED'
+  | 'TELLER_REJECTED'
+  | 'MANAGER_APPROVED'
+  | 'MANAGER_REJECTED';
 
 /** 심사 결정 정보 */
 export interface ReviewDecision {
-  status: ReviewStatus;
-  comment: string;
+  status: DecisionStatus;
+  comment: string | null;
   reviewerName: string;
-  reviewerRole: 'SYSTEM' | 'BANK_TELLER' | 'BANK_MANAGER';
+  reviewerRole: 'SYSTEM' | 'ADMIN_BANK_TELLER' | 'ADMIN_BANK_MANAGER';
   /** 심사 일시 (ISO 8601) */
   decidedAt: string;
 }
@@ -239,10 +262,10 @@ export interface ReviewTabData {
 /** 승인 요청 페이로드 */
 export interface ApprovalPayload {
   approvedAmount: number;
-  interestRate: number;
-  loanTermMonths: number;
+  approvedRate: number;
+  approvedTerm: number;
   repaymentMethod: RepaymentMethod;
-  comment?: string;
+  comment: string;
 }
 
 /** 거절 요청 페이로드 */
@@ -250,9 +273,11 @@ export interface RejectionPayload {
   comment: string;
 }
 
-/** 추가 결재 요청 페이로드 */
-export interface EscalationPayload {
-  comment: string;
+/** 심사 결정 API 응답 */
+export interface ReviewDecisionResponse {
+  decisionId: number;
+  applicationId: number;
+  decision: 'APPROVED' | 'REJECTED';
 }
 
 /** 지점장 결재 목록 항목 */
@@ -273,4 +298,34 @@ export interface LoanStatusCounts {
   managerReview: number;
   approved: number;
   rejected: number;
+}
+
+/** 정보 탭 API 응답 (GET /api/admin/loan-applications/{id}/info) */
+export interface LoanInfoTabResponse {
+  applicantInfo: CustomerInfo;
+  businessInfo: BusinessInfo;
+  applicationInfo: ApplicationInfo;
+  userInputInfo: UserInputInfo;
+  consentHistories: ConsentHistory[];
+}
+
+/** CB 점수 정보 (S등급 분석 탭 API 응답 내부) */
+export interface CBScoreInfo {
+  score: number;
+  maxScore: number;
+}
+
+/** SCB 점수 정보 (S등급 분석 탭 API 응답 내부) */
+export interface SCBInfo {
+  score: number;
+  maxScore: number;
+  bonusPoints: number;
+}
+
+/** S등급 분석 탭 API 응답 (GET /api/admin/loan-applications/{id}/grade) */
+export interface SGradeTabResponse {
+  cbScore: CBScoreInfo;
+  sGrade: string;
+  scbInfo: SCBInfo;
+  shapResult: ShapResult;
 }

@@ -11,7 +11,7 @@ interface LoadingStateProps {
  */
 export default function LoadingState({ message = '데이터를 불러오는 중입니다' }: LoadingStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-16">
+    <div className="flex flex-col items-center justify-center min-h-[540px]">
       <Spinner className="mb-4" />
       <p className="text-sm text-text-secondary">{message}</p>
     </div>
